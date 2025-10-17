@@ -1,0 +1,395 @@
+"""
+Shared constraint checking logic
+Dùng chung cho GA algorithm, schedule validator, và validation scripts
+"""
+
+from typing import Dict, List, Tuple, Set
+from dataclasses import dataclass, field
+from collections import defaultdict
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ConstraintViolation:
+    """Cấu trúc chuẩn cho constraint violation"""
+    constraint_code: str  # 'HC-01', 'HC-02', 'HC-05', etc.
+    message: str
+    class_id: str
+    severity: str = 'error'  # 'error' hoặc 'warning'
+    details: Dict = field(default_factory=dict)
+
+
+class ConstraintChecker:
+    """
+    Kiểm tra hard constraints cho schedules
+    ⭐ LOGIC DÙNG CHUNG cho tất cả validation
+    """
+    
+    @staticmethod
+    def check_teacher_conflicts(
+        schedules: List[Dict],
+        assignments_map: Dict[str, str]
+    ) -> List[ConstraintViolation]:
+        """
+        HC-01: Kiểm tra GV dạy trùng giờ
+        
+        Args:
+            schedules: [{'class': 'LOP-xxx', 'slot': 'Thu2-Ca1', 'room': 'P101'}, ...]
+            assignments_map: {'LOP-xxx': 'GV001', ...}
+            
+        Returns:
+            List[ConstraintViolation]
+        """
+        violations = []
+        by_teacher_time = defaultdict(list)
+        
+        # Group schedules by (teacher, timeslot)
+        for sched in schedules:
+            class_id = sched.get('class')
+            slot = sched.get('slot')
+            teacher = assignments_map.get(class_id)
+            
+            if teacher and slot:
+                key = f"{teacher}_{slot}"
+                by_teacher_time[key].append(sched)
+        
+        # Detect conflicts
+        for key, conflicts in by_teacher_time.items():
+            if len(conflicts) > 1:
+                parts = key.rsplit('_', 1)
+                if len(parts) != 2:
+                    continue
+                teacher, slot = parts
+                class_ids = [c['class'] for c in conflicts]
+                
+                # Tạo 1 violation cho MỖI class bị ảnh hưởng bởi conflict
+                for class_id in class_ids:
+                    other_classes = [c for c in class_ids if c != class_id]
+                    violations.append(ConstraintViolation(
+                        constraint_code='HC-01',
+                        message=f"GV {teacher} dạy trùng {slot} với lớp {', '.join(other_classes[:3])}{'...' if len(other_classes) > 3 else ''}",
+                        class_id=class_id,
+                        details={'teacher': teacher, 'slot': slot, 'conflicts': other_classes}
+                    ))
+        
+        return violations
+    
+    @staticmethod
+    def check_room_conflicts(schedules: List[Dict]) -> List[ConstraintViolation]:
+        """
+        HC-02: Kiểm tra phòng bị trùng giờ
+        """
+        violations = []
+        by_room_time = defaultdict(list)
+        
+        for sched in schedules:
+            room = sched.get('room')
+            slot = sched.get('slot')
+            if room and slot:
+                key = f"{room}_{slot}"
+                by_room_time[key].append(sched)
+        
+        for key, conflicts in by_room_time.items():
+            if len(conflicts) > 1:
+                parts = key.rsplit('_', 1)
+                if len(parts) != 2:
+                    continue
+                room, slot = parts
+                class_ids = [c['class'] for c in conflicts]
+                
+                # Tạo 1 violation cho MỖI class bị ảnh hưởng bởi conflict
+                for class_id in class_ids:
+                    other_classes = [c for c in class_ids if c != class_id]
+                    violations.append(ConstraintViolation(
+                        constraint_code='HC-02',
+                        message=f"Phòng {room} bị trùng {slot} với lớp {', '.join(other_classes[:3])}{'...' if len(other_classes) > 3 else ''}",
+                        class_id=class_id,
+                        details={'room': room, 'slot': slot, 'conflicts': other_classes}
+                    ))
+        
+        return violations
+    
+    @staticmethod
+    def check_room_type_mismatch(
+        schedules: List[Dict],
+        class_types: Dict[str, str],  # {class_id: 'LT' or 'TH'}
+        room_types: Dict[str, str]     # {room_id: 'LT' or 'TH'}
+    ) -> List[ConstraintViolation]:
+        """
+        HC-05: Lớp TH xếp vào phòng LT
+        HC-06: Lớp LT xếp vào phòng TH
+        """
+        violations = []
+        
+        for sched in schedules:
+            class_id = sched.get('class')
+            room = sched.get('room')
+            
+            if not class_id or not room:
+                continue
+            
+            class_type = class_types.get(class_id, '')
+            room_type = room_types.get(room, '')
+            
+            # HC-05: TH class → LT room
+            if class_type == 'TH' and room_type == 'LT':
+                violations.append(ConstraintViolation(
+                    constraint_code='HC-05',
+                    message=f"Phòng {room} là Lý thuyết, nhưng lớp cần TH",
+                    class_id=class_id,
+                    details={'room': room, 'class_type': 'TH', 'room_type': 'LT'}
+                ))
+            
+            # HC-06: LT class → TH room
+            elif class_type == 'LT' and room_type == 'TH':
+                violations.append(ConstraintViolation(
+                    constraint_code='HC-06',
+                    message=f"Phòng {room} là Thực hành, nhưng lớp cần LT",
+                    class_id=class_id,
+                    details={'room': room, 'class_type': 'LT', 'room_type': 'TH'}
+                ))
+        
+        return violations
+    
+    @staticmethod
+    def check_room_capacity(
+        schedules: List[Dict],
+        class_sizes: Dict[str, int],      # {class_id: SoLuongSV}
+        room_capacities: Dict[str, int]   # {room_id: SucChua}
+    ) -> List[ConstraintViolation]:
+        """
+        HC-04: Phòng phải đủ chỗ ngồi cho lớp học
+        """
+        violations = []
+        
+        for sched in schedules:
+            class_id = sched.get('class')
+            room = sched.get('room')
+            
+            if not class_id or not room:
+                continue
+            
+            class_size = class_sizes.get(class_id, 0)
+            room_capacity = room_capacities.get(room, 0)
+            
+            # Phòng không đủ chỗ
+            if class_size > room_capacity:
+                violations.append(ConstraintViolation(
+                    constraint_code='HC-04',
+                    message=f"Phòng {room} chỉ chứa {room_capacity} SV, nhưng lớp có {class_size} SV (thiếu {class_size - room_capacity} chỗ)",
+                    class_id=class_id,
+                    details={
+                        'room': room,
+                        'class_size': class_size,
+                        'room_capacity': room_capacity,
+                        'shortage': class_size - room_capacity
+                    }
+                ))
+        
+        return violations
+    
+    @staticmethod
+    def check_sunday_classes(schedules: List[Dict]) -> List[ConstraintViolation]:
+        """
+        HC-08: Lớp học vào Chủ nhật
+        """
+        violations = []
+        
+        for sched in schedules:
+            slot = sched.get('slot', '')
+            if 'Thu8' in slot:  # Chủ nhật
+                violations.append(ConstraintViolation(
+                    constraint_code='HC-08',
+                    message=f"Xếp lịch vào Chủ nhật",
+                    class_id=sched.get('class'),
+                    details={'slot': slot}
+                ))
+        
+        return violations
+    
+    @staticmethod
+    def check_session_requirements(
+        schedules: List[Dict],
+        class_sessions: Dict[str, int]  # {class_id: SoCaTuan}
+    ) -> List[ConstraintViolation]:
+        """
+        HC-13: Kiểm tra yêu cầu SoCaTuan=2 (2 ca liên tiếp cùng ngày)
+        """
+        violations = []
+        
+        # Group schedules by class
+        by_class = defaultdict(list)
+        for sched in schedules:
+            by_class[sched['class']].append(sched)
+        
+        for class_id, sessions_required in class_sessions.items():
+            if sessions_required != 2:
+                continue  # Chỉ check SoCaTuan=2
+            
+            class_schedules = by_class.get(class_id, [])
+            
+            # Phải có đúng 2 buổi
+            if len(class_schedules) != 2:
+                violations.append(ConstraintViolation(
+                    constraint_code='HC-13',
+                    message=f"SoCaTuan=2 nhưng có {len(class_schedules)} buổi",
+                    class_id=class_id,
+                    details={'required': 2, 'actual': len(class_schedules)}
+                ))
+                continue
+            
+            # Parse days và slots
+            days = []
+            slots = []
+            for sched in class_schedules:
+                slot_str = sched.get('slot', '')
+                if '-' not in slot_str:
+                    continue
+                    
+                parts = slot_str.split('-')
+                if len(parts) != 2:
+                    continue
+                    
+                day_part = parts[0]  # "Thu2"
+                slot_part = parts[1]  # "Ca1"
+                
+                # Extract numbers
+                day_num_str = ''.join(filter(str.isdigit, day_part))
+                slot_num_str = ''.join(filter(str.isdigit, slot_part))
+                
+                if day_num_str and slot_num_str:
+                    day_num = int(day_num_str)
+                    slot_num = int(slot_num_str)
+                    days.append(day_num)
+                    slots.append(slot_num)
+            
+            if len(days) != 2 or len(slots) != 2:
+                continue
+            
+            # Phải cùng ngày
+            if days[0] != days[1]:
+                violations.append(ConstraintViolation(
+                    constraint_code='HC-13',
+                    message=f"2 ca không cùng ngày",
+                    class_id=class_id,
+                    details={'days': days}
+                ))
+            # Phải liên tiếp
+            elif abs(slots[0] - slots[1]) != 1:
+                violations.append(ConstraintViolation(
+                    constraint_code='HC-13',
+                    message=f"2 ca không liên tiếp: Ca{slots[0]} và Ca{slots[1]}",
+                    class_id=class_id,
+                    details={'slots': slots}
+                ))
+        
+        return violations
+    
+    @staticmethod
+    def check_missing_classes(
+        schedules: List[Dict],
+        all_classes: List[str]
+    ) -> List[ConstraintViolation]:
+        """
+        MISSING: Lớp chưa được xếp lịch
+        """
+        violations = []
+        scheduled_classes = {s['class'] for s in schedules}
+        
+        for class_id in all_classes:
+            if class_id not in scheduled_classes:
+                violations.append(ConstraintViolation(
+                    constraint_code='MISSING',
+                    message='Lớp chưa được xếp lịch',
+                    class_id=class_id
+                ))
+        
+        return violations
+
+
+# ⭐ MAIN VALIDATION FUNCTION
+def validate_all_constraints(
+    schedules: List[Dict],
+    classes_data: List[Dict],
+    rooms_data: Dict[str, List[str]],
+    assignments_data: List[Dict]
+) -> Dict:
+    """
+    Kiểm tra TẤT CẢ hard constraints
+    ⭐ Function dùng chung cho tất cả validation
+    
+    Returns:
+        {
+            'feasible': bool,
+            'violations': List[ConstraintViolation],
+            'violations_by_type': Dict[str, int],
+            'violations_by_class': Dict[str, List[ConstraintViolation]]
+        }
+    """
+    all_violations = []
+    
+    # Build helper maps
+    class_map = {c['id']: c for c in classes_data}
+    assignments_map = {}
+    for a in assignments_data:
+        malop = a.get('MaLop')
+        magv = a.get('MaGV')
+        if malop and magv:
+            assignments_map[malop] = magv
+    
+    class_types = {c['id']: c.get('type', '') for c in classes_data}
+    room_types = {}
+    for room in rooms_data.get('LT', []):
+        room_types[room] = 'LT'
+    for room in rooms_data.get('TH', []):
+        room_types[room] = 'TH'
+    
+    class_sessions = {c['id']: c.get('sessions', c.get('SoCaTuan', 1)) for c in classes_data}
+    class_sizes = {c['id']: c.get('size', c.get('SoLuongSV', 0)) for c in classes_data}
+    
+    # Build room capacities map (need to pass from caller)
+    room_capacities = {}
+    if 'room_capacities' in rooms_data:
+        room_capacities = rooms_data['room_capacities']
+    
+    # Run all checks
+    all_violations.extend(
+        ConstraintChecker.check_teacher_conflicts(schedules, assignments_map)
+    )
+    all_violations.extend(
+        ConstraintChecker.check_room_conflicts(schedules)
+    )
+    all_violations.extend(
+        ConstraintChecker.check_room_type_mismatch(schedules, class_types, room_types)
+    )
+    all_violations.extend(
+        ConstraintChecker.check_room_capacity(schedules, class_sizes, room_capacities)
+    )
+    all_violations.extend(
+        ConstraintChecker.check_sunday_classes(schedules)
+    )
+    all_violations.extend(
+        ConstraintChecker.check_session_requirements(schedules, class_sessions)
+    )
+    all_violations.extend(
+        ConstraintChecker.check_missing_classes(schedules, list(class_map.keys()))
+    )
+    
+    # Aggregate results
+    violations_by_type = defaultdict(int)
+    violations_by_class = defaultdict(list)
+    
+    for v in all_violations:
+        violations_by_type[v.constraint_code] += 1
+        violations_by_class[v.class_id].append(v)
+    
+    return {
+        'feasible': len(all_violations) == 0,
+        'total_violations': len(all_violations),
+        'violations': all_violations,
+        'violations_by_type': dict(violations_by_type),
+        'violations_by_class': dict(violations_by_class),
+        'violated_classes_count': len(violations_by_class)
+    }

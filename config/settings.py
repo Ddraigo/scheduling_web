@@ -63,10 +63,14 @@ INSTALLED_APPS = [
 
     # Charts
     "apps.charts",
+    
+    # Scheduling System - NEW
+    "apps.scheduling",
 
     # Tooling API-GEN
     'rest_framework',            # Include DRF           # <-- NEW 
-    'rest_framework.authtoken',  # Include DRF Auth      # <-- NEW   
+    'rest_framework.authtoken',  # Include DRF Auth      # <-- NEW
+    'django_filters',            # For filtering in DRF   # <-- NEW
 ]
 
 MIDDLEWARE = [
@@ -105,13 +109,16 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+# Migrated from src/config.py - DatabaseConfig
 
-DB_ENGINE   = os.getenv('DB_ENGINE'   , None)
-DB_USERNAME = os.getenv('DB_USERNAME' , None)
-DB_PASS     = os.getenv('DB_PASS'     , None)
-DB_HOST     = os.getenv('DB_HOST'     , None)
-DB_PORT     = os.getenv('DB_PORT'     , None)
-DB_NAME     = os.getenv('DB_NAME'     , None)
+DB_ENGINE   = os.getenv('DB_ENGINE', None)
+DB_USERNAME = os.getenv('DB_USERNAME', os.getenv('DB_USER', 'sa'))
+DB_PASS     = os.getenv('DB_PASS', os.getenv('DB_PASSWORD', 'sa123'))
+DB_HOST     = os.getenv('DB_HOST', os.getenv('DB_SERVER', 'MSI\\SQLEXPRESS'))
+DB_PORT     = os.getenv('DB_PORT', '')
+DB_NAME     = os.getenv('DB_NAME', os.getenv('DB_DATABASE', 'CSDL_TKB'))
+DB_DRIVER   = os.getenv('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
+DB_USE_WINDOWS_AUTH = os.getenv('DB_USE_WINDOWS_AUTH', 'false').lower() == 'true'
 
 if DB_ENGINE and DB_NAME and DB_USERNAME:
     if DB_ENGINE == 'mssql':
@@ -122,9 +129,9 @@ if DB_ENGINE and DB_NAME and DB_USERNAME:
             'USER'    : DB_USERNAME,
             'PASSWORD': DB_PASS,
             'HOST'    : DB_HOST,
-            'PORT'    : '',
+            'PORT'    : DB_PORT,
             'OPTIONS': {
-                'driver': 'ODBC Driver 17 for SQL Server',
+                'driver': DB_DRIVER,
                 'extra_params': 'TrustServerCertificate=yes',
             },
             }, 
@@ -207,5 +214,28 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 50,
 }
+########################################
+
+# AI Configuration (Migrated from src/config.py - AIConfig)
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+AI_MODEL_NAME = os.getenv('AI_MODEL_NAME', 'gemini-2.5-flash')
+AI_TEMPERATURE = float(os.getenv('AI_TEMPERATURE', '0'))
+AI_MAX_OUTPUT_TOKENS = int(os.getenv('AI_MAX_OUTPUT_TOKENS', '8192'))
+
+# System Configuration (Migrated from src/config.py - SystemConfig)
+LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
+SCHEDULE_OUTPUT_DIR = os.getenv('SCHEDULE_OUTPUT_DIR', './schedules')
+
+# Ensure output directory exists
+import os as _os
+if not _os.path.exists(SCHEDULE_OUTPUT_DIR):
+    _os.makedirs(SCHEDULE_OUTPUT_DIR)
 ########################################
