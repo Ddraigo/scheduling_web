@@ -116,7 +116,8 @@ class MonHoc(models.Model):
 
 
 class GVDayMon(models.Model):
-    """GV đủ điều kiện dạy môn - tb_GV_DAY_MON"""
+    """GV đủ điều kiện dạy môn - tb_GV_DAY_MON
+    Note: This table has composite PK (MaMonHoc, MaGV) in database"""
     ma_mon_hoc = models.ForeignKey(MonHoc, on_delete=models.CASCADE, db_column='MaMonHoc',
                                    related_name='gv_day_list', verbose_name="Môn học")
     ma_gv = models.ForeignKey(GiangVien, on_delete=models.CASCADE, db_column='MaGV',
@@ -127,6 +128,7 @@ class GVDayMon(models.Model):
         verbose_name = "GV dạy môn"
         verbose_name_plural = "GV dạy môn"
         unique_together = [['ma_mon_hoc', 'ma_gv']]
+        managed = False  # Table has composite PK, managed by SQL schema
     
     def __str__(self):
         return f"{self.ma_gv.ten_gv} -> {self.ma_mon_hoc.ten_mon_hoc}"
@@ -291,6 +293,7 @@ class PhanCong(models.Model):
         verbose_name = "Phân công"
         verbose_name_plural = "Phân công giảng dạy"
         unique_together = [['ma_dot', 'ma_lop']]
+        managed = False  # Table has composite PK (MaDot, MaLop), managed by SQL
         indexes = [
             models.Index(fields=['ma_gv'], name='IX_PC_MaGV'),
             models.Index(fields=['ma_lop'], name='IX_PC_MaLop'),
@@ -314,6 +317,7 @@ class RangBuocTrongDot(models.Model):
         verbose_name = "Ràng buộc trong đợt"
         verbose_name_plural = "Ràng buộc trong đợt"
         unique_together = [['ma_dot', 'ma_rang_buoc']]
+        managed = False  # Table has composite PK (MaDot, MaRangBuoc), managed by SQL
     
     def __str__(self):
         return f"{self.ma_dot.ma_dot} - {self.ma_rang_buoc.ten_rang_buoc}"
@@ -333,6 +337,7 @@ class NguyenVong(models.Model):
         verbose_name = "Nguyện vọng"
         verbose_name_plural = "Nguyện vọng giảng viên"
         unique_together = [['ma_gv', 'ma_dot', 'time_slot_id']]
+        managed = False  # Table has composite PK (MaGV, MaDot, TimeSlotID), managed by SQL
     
     def __str__(self):
         return f"{self.ma_gv.ten_gv} - {self.time_slot_id}"

@@ -131,11 +131,15 @@ def model_dt(request, aPath):
         if filter_data.key in db_fields: 
             filter_string[f'{filter_data.key}__icontains'] = filter_data.value
 
-    order_by = request.GET.get('order_by', 'id')
-    if order_by not in db_fields:
-        order_by = 'id'
+    # Get primary key field name
+    pk_field = aModelClass._meta.pk.name if aModelClass._meta.pk else 'id'
     
-    queryset = aModelClass.objects.filter(**filter_string).order_by(order_by)
+    order_by = request.GET.get('order_by', pk_field)
+    if order_by not in db_fields:
+        order_by = pk_field
+    
+    # Filter out records with empty primary key
+    queryset = aModelClass.objects.filter(**filter_string).exclude(**{f'{pk_field}': ''}).order_by(order_by)
     item_list = user_filter(request, queryset, db_fields, fk_fields.keys())
 
     # pagination
@@ -154,7 +158,7 @@ def model_dt(request, aPath):
     except EmptyPage:
         return redirect(reverse('model_dt', args=[aPath]))
     
-    read_only_fields = ('id', )
+    read_only_fields = (pk_field, )
 
     integer_fields = get_model_field_names(aModelClass, models.IntegerField)
     date_time_fields = get_model_field_names(aModelClass, models.DateTimeField)
@@ -205,7 +209,9 @@ def create(request, aPath):
 
             # Process FKs    
             if attribute in fk_fields.keys():
-                value = name_to_class( fk_fields[attribute] ).objects.filter(id=value).first()
+                fk_model = name_to_class( fk_fields[attribute] )
+                fk_pk_field = fk_model._meta.pk.name if fk_model._meta.pk else 'id'
+                value = fk_model.objects.filter(**{fk_pk_field: value}).first()
             
             data[attribute] = value if value else ''
 
@@ -225,7 +231,9 @@ def delete(request, aPath, id):
     if not aModelClass:
         return HttpResponse( ' > ERR: Getting ModelClass for path: ' + aPath )
     
-    item = aModelClass.objects.get(id=id)
+    # Get primary key field name
+    pk_field = aModelClass._meta.pk.name if aModelClass._meta.pk else 'id'
+    item = aModelClass.objects.get(**{pk_field: id})
     item.delete()
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -241,7 +249,9 @@ def update(request, aPath, id):
     if not aModelClass:
         return HttpResponse( ' > ERR: Getting ModelClass for path: ' + aPath )
 
-    item = aModelClass.objects.get(id=id)
+    # Get primary key field name
+    pk_field = aModelClass._meta.pk.name if aModelClass._meta.pk else 'id'
+    item = aModelClass.objects.get(**{pk_field: id})
     fk_fields = get_model_fk(aModelClass)
 
     if request.method == 'POST':
@@ -254,7 +264,9 @@ def update(request, aPath, id):
 
                 # Process FKs    
                 if attribute in fk_fields.keys():
-                    value = name_to_class( fk_fields[attribute] ).objects.filter(id=value).first()
+                    fk_model = name_to_class( fk_fields[attribute] )
+                    fk_pk_field = fk_model._meta.pk.name if fk_model._meta.pk else 'id'
+                    value = fk_model.objects.filter(**{fk_pk_field: value}).first()
 
                 setattr(item, attribute, value)
         
@@ -298,8 +310,13 @@ class ExportCSVView(View):
         for filter_data in filter_instance:
             filter_string[f'{filter_data.key}__icontains'] = filter_data.value
 
-        order_by = request.GET.get('order_by', 'id')
-        queryset = aModelClass.objects.filter(**filter_string).order_by(order_by)
+        # Get primary key field name
+        pk_field = aModelClass._meta.pk.name if aModelClass._meta.pk else 'id'
+        
+        order_by = request.GET.get('order_by', pk_field)
+        if order_by not in db_field_names:
+            order_by = pk_field
+        queryset = aModelClass.objects.filter(**filter_string).exclude(**{f'{pk_field}': ''}).order_by(order_by)
 
         items = user_filter(request, queryset, db_field_names)
 

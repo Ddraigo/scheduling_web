@@ -200,6 +200,22 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DYNAMIC_DATATB = {
     # SLUG -> Import_PATH 
     'product'  : "apps.pages.models.Product",
+    'khoa'  : "apps.scheduling.models.Khoa",
+    'boMon'  : "apps.scheduling.models.BoMon",
+    'giangVien'  : "apps.scheduling.models.GiangVien",
+    'monHoc'  : "apps.scheduling.models.MonHoc",
+    'phongHoc'  : "apps.scheduling.models.PhongHoc",
+    'lopMonHoc'  : "apps.scheduling.models.LopMonHoc",
+    'dotXep'  : "apps.scheduling.models.DotXep",
+    'phanCong'  : "apps.scheduling.models.PhanCong",
+    'timeSlot'  : "apps.scheduling.models.TimeSlot",
+    'thoiKhoaBieu'  : "apps.scheduling.models.ThoiKhoaBieu",
+    'duKienDT'  : "apps.scheduling.models.DuKienDT",
+    'gvDayMon'  : "apps.scheduling.models.GVDayMon",
+    'khungTG'  : "apps.scheduling.models.KhungTG",
+    'rangBuocMem'  : "apps.scheduling.models.RangBuocMem",
+    'rangBuocTrongDot'  : "apps.scheduling.models.RangBuocTrongDot",
+    'nguyenVong'  : "apps.scheduling.models.NguyenVong",
 }
 ########################################
 

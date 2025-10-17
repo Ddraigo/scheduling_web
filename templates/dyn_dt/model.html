@@ -161,6 +161,7 @@
                                     </thead>
                                     <tbody>
                                         {% for item in items %}
+                                        {% if item.pk %}
                                         <tr class="align-middle table-row">
                                             {% for field_name in db_field_names %}
                                             <td class="td_{{ field_name }} data-td">{{ item|getattribute:field_name }}</td>
@@ -168,18 +169,18 @@
                 
                                             {% if request.user.is_authenticated %}
                                             <td class="d-none action-td" >
-                                                <a data-toggle="modal" data-target="#editSales-{{item.id}}" class="btn btn-primary btn-sm p-0 px-3 pr-4 py-2 " href="#"><i class="tim-icons icon-pencil"></i></a>
-                                                <a data-toggle="modal" data-target="#deleteSales-{{item.id}}" class="btn btn-danger btn-sm p-0 px-3 pr-4 py-2 " href="#"><i class="tim-icons ti icon-trash-simple"></i></a>
+                                                <a data-toggle="modal" data-target="#editSales-{{item.pk}}" class="btn btn-primary btn-sm p-0 px-3 pr-4 py-2 " href="#"><i class="tim-icons icon-pencil"></i></a>
+                                                <a data-toggle="modal" data-target="#deleteSales-{{item.pk}}" class="btn btn-danger btn-sm p-0 px-3 pr-4 py-2 " href="#"><i class="tim-icons ti icon-trash-simple"></i></a>
                                             </td>
                                             {% else %}
                                             <td class="d-none action-td">
-                                                <a data-toggle="modal" data-target="#viewSales-{{item.id}}" class="btn btn-primary btn-sm p-0 px-3 pr-4 py-2 " href="#"><i class="tim-icons icon-bulb-63"></i></a>
+                                                <a data-toggle="modal" data-target="#viewSales-{{item.pk}}" class="btn btn-primary btn-sm p-0 px-3 pr-4 py-2 " href="#"><i class="tim-icons icon-bulb-63"></i></a>
                                             </td>
                                             {% endif %}
                                         </tr>
                 
                                         <!-- Edit Sales -->
-                                        <div class="modal fade" id="editSales-{{item.id}}" tabindex="-1" aria-labelledby="editSalesLabel" aria-hidden="true">
+                                        <div class="modal fade" id="editSales-{{item.pk}}" tabindex="-1" aria-labelledby="editSalesLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-xl">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -195,7 +196,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <form action="{% url "update" link item.id %}" method="post">
+                                                        <form action="{% url "update" link item.pk %}" method="post">
                                                             {% csrf_token %}
 
                                                             <div class="row">
@@ -206,7 +207,7 @@
                                                                         <label for="id_{{ key }}" class="form-label text-black">{{ key|title }}</label>
                                                                         <select class="form-control text-black" name="{{ key }}" id="id_{{ key }}">
                                                                             {% for i in values %}
-                                                                                <option value="{{ i.id }}">{{ i }}</option>
+                                                                                <option value="{{ i.pk }}">{{ i }}</option>
                                                                             {% endfor %}
                                                                         </select>                                                    
                                                                     </div>
@@ -254,7 +255,7 @@
                                         </div>
                 
                                         <!-- Delete Sales -->
-                                        <div class="modal fade" id="deleteSales-{{item.id}}" tabindex="-1" aria-labelledby="deleteSalesLabel" aria-hidden="true">
+                                        <div class="modal fade" id="deleteSales-{{item.pk}}" tabindex="-1" aria-labelledby="deleteSalesLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -274,14 +275,14 @@
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    <a href="{% url "delete" link item.id %}" class="btn btn-danger">Delete</a>
+                                                    <a href="{% url "delete" link item.pk %}" class="btn btn-danger">Delete</a>
                                                 </div>
                                             </div>
                                             </div>
                                         </div>
 
                                         <!-- View Sales -->
-                                        <div class="modal fade" id="viewSales-{{item.id}}" tabindex="-1" aria-labelledby="viweSalesLabel" aria-hidden="true">
+                                        <div class="modal fade" id="viewSales-{{item.pk}}" tabindex="-1" aria-labelledby="viweSalesLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-xl">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -297,7 +298,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <form action="{% url "update" link item.id %}" method="post">
+                                                        <form action="{% url "update" link item.pk %}" method="post">
                                                             {% csrf_token %}
                                                             
                                                             <div class="row">
@@ -316,6 +317,7 @@
                                             </div>
                                         </div>
                 
+                                        {% endif %}
                                         {% endfor %}
                                     </tbody>
                                 </table>

@@ -9,8 +9,8 @@ urlpatterns = [
     path('create-hide-show-items/<str:model_name>/', views.create_hide_show_filter, name="create_hide_show_filter"),
     path('delete-filter/<str:model_name>/<int:id>/', views.delete_filter, name="delete_filter"),
     path('create/<str:aPath>/', views.create, name="create"),
-    path('delete/<str:aPath>/<int:id>/', views.delete, name="delete"),
-    path('update/<str:aPath>/<int:id>/', views.update, name="update"),
+    path('delete/<str:aPath>/<str:id>/', views.delete, name="delete"),
+    path('update/<str:aPath>/<str:id>/', views.update, name="update"),
 
     path('export-csv/<str:aPath>/', views.ExportCSVView.as_view(), name='export_csv'),
 
