@@ -117,7 +117,8 @@ class MonHoc(models.Model):
 
 class GVDayMon(models.Model):
     """GV đủ điều kiện dạy môn - tb_GV_DAY_MON
-    Note: This table has composite PK (MaMonHoc, MaGV) in database"""
+    Updated: Now has auto-increment id as PK, composite key is UNIQUE constraint"""
+    id = models.AutoField(primary_key=True)
     ma_mon_hoc = models.ForeignKey(MonHoc, on_delete=models.CASCADE, db_column='MaMonHoc',
                                    related_name='gv_day_list', verbose_name="Môn học")
     ma_gv = models.ForeignKey(GiangVien, on_delete=models.CASCADE, db_column='MaGV',
@@ -128,7 +129,6 @@ class GVDayMon(models.Model):
         verbose_name = "GV dạy môn"
         verbose_name_plural = "GV dạy môn"
         unique_together = [['ma_mon_hoc', 'ma_gv']]
-        managed = False  # Table has composite PK, managed by SQL schema
     
     def __str__(self):
         return f"{self.ma_gv.ten_gv} -> {self.ma_mon_hoc.ten_mon_hoc}"
@@ -279,7 +279,9 @@ class DotXep(models.Model):
 
 
 class PhanCong(models.Model):
-    """Phân công giảng dạy - Teaching Assignment - tb_PHAN_CONG"""
+    """Phân công giảng dạy - Teaching Assignment - tb_PHAN_CONG
+    Updated: Now has auto-increment id as PK, composite key is UNIQUE constraint"""
+    id = models.AutoField(primary_key=True)
     ma_dot = models.ForeignKey(DotXep, on_delete=models.CASCADE, db_column='MaDot',
                               related_name='phan_cong_list', verbose_name="Đợt xếp")
     ma_lop = models.ForeignKey(LopMonHoc, on_delete=models.CASCADE, db_column='MaLop',
@@ -293,7 +295,6 @@ class PhanCong(models.Model):
         verbose_name = "Phân công"
         verbose_name_plural = "Phân công giảng dạy"
         unique_together = [['ma_dot', 'ma_lop']]
-        managed = False  # Table has composite PK (MaDot, MaLop), managed by SQL
         indexes = [
             models.Index(fields=['ma_gv'], name='IX_PC_MaGV'),
             models.Index(fields=['ma_lop'], name='IX_PC_MaLop'),
@@ -306,7 +307,9 @@ class PhanCong(models.Model):
 
 
 class RangBuocTrongDot(models.Model):
-    """Ràng buộc mềm áp dụng trong đợt - tb_RANG_BUOC_TRONG_DOT"""
+    """Ràng buộc mềm áp dụng trong đợt - tb_RANG_BUOC_TRONG_DOT
+    Updated: Now has auto-increment id as PK, composite key is UNIQUE constraint"""
+    id = models.AutoField(primary_key=True)
     ma_dot = models.ForeignKey(DotXep, on_delete=models.CASCADE, db_column='MaDot',
                               related_name='rang_buoc_list', verbose_name="Đợt xếp")
     ma_rang_buoc = models.ForeignKey(RangBuocMem, on_delete=models.CASCADE, db_column='MaRangBuoc',
@@ -317,14 +320,15 @@ class RangBuocTrongDot(models.Model):
         verbose_name = "Ràng buộc trong đợt"
         verbose_name_plural = "Ràng buộc trong đợt"
         unique_together = [['ma_dot', 'ma_rang_buoc']]
-        managed = False  # Table has composite PK (MaDot, MaRangBuoc), managed by SQL
     
     def __str__(self):
         return f"{self.ma_dot.ma_dot} - {self.ma_rang_buoc.ten_rang_buoc}"
 
 
 class NguyenVong(models.Model):
-    """Nguyện vọng giảng viên - tb_NGUYEN_VONG"""
+    """Nguyện vọng giảng viên - tb_NGUYEN_VONG
+    Updated: Now has auto-increment id as PK, composite key is UNIQUE constraint"""
+    id = models.AutoField(primary_key=True)
     ma_gv = models.ForeignKey(GiangVien, on_delete=models.CASCADE, db_column='MaGV',
                              related_name='nguyen_vong_list', verbose_name="Giảng viên")
     ma_dot = models.ForeignKey(DotXep, on_delete=models.CASCADE, db_column='MaDot',
@@ -337,7 +341,6 @@ class NguyenVong(models.Model):
         verbose_name = "Nguyện vọng"
         verbose_name_plural = "Nguyện vọng giảng viên"
         unique_together = [['ma_gv', 'ma_dot', 'time_slot_id']]
-        managed = False  # Table has composite PK (MaGV, MaDot, TimeSlotID), managed by SQL
     
     def __str__(self):
         return f"{self.ma_gv.ten_gv} - {self.time_slot_id}"

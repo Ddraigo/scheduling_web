@@ -131,15 +131,22 @@ def model_dt(request, aPath):
         if filter_data.key in db_fields: 
             filter_string[f'{filter_data.key}__icontains'] = filter_data.value
 
-    # Get primary key field name
+    # Get primary key field name and type
     pk_field = aModelClass._meta.pk.name if aModelClass._meta.pk else 'id'
+    pk_field_type = type(aModelClass._meta.pk)
     
     order_by = request.GET.get('order_by', pk_field)
     if order_by not in db_fields:
         order_by = pk_field
     
-    # Filter out records with empty primary key
-    queryset = aModelClass.objects.filter(**filter_string).exclude(**{f'{pk_field}': ''}).order_by(order_by)
+    # Filter out records with empty primary key (only for CharField/string PKs)
+    queryset = aModelClass.objects.filter(**filter_string)
+    
+    # Only exclude empty string for CharField primary keys, not for IntegerField
+    if isinstance(aModelClass._meta.pk, models.CharField):
+        queryset = queryset.exclude(**{f'{pk_field}': ''})
+    
+    queryset = queryset.order_by(order_by)
     item_list = user_filter(request, queryset, db_fields, fk_fields.keys())
 
     # pagination
@@ -316,7 +323,15 @@ class ExportCSVView(View):
         order_by = request.GET.get('order_by', pk_field)
         if order_by not in db_field_names:
             order_by = pk_field
-        queryset = aModelClass.objects.filter(**filter_string).exclude(**{f'{pk_field}': ''}).order_by(order_by)
+        
+        # Filter and order
+        queryset = aModelClass.objects.filter(**filter_string)
+        
+        # Only exclude empty string for CharField primary keys
+        if isinstance(aModelClass._meta.pk, models.CharField):
+            queryset = queryset.exclude(**{f'{pk_field}': ''})
+        
+        queryset = queryset.order_by(order_by)
 
         items = user_filter(request, queryset, db_field_names)
 

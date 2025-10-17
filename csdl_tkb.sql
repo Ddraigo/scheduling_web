@@ -66,9 +66,10 @@ GO
 
 /* ===== GV đủ điều kiện dạy môn ===== */
 CREATE TABLE tb_GV_DAY_MON(
-    MaMonHoc VARCHAR(10) NOT NULL, 
-    MaGV     VARCHAR(12) NOT NULL,
-    PRIMARY KEY (MaMonHoc, MaGV),
+    id          INT         IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    MaMonHoc    VARCHAR(10) NOT NULL, 
+    MaGV        VARCHAR(12) NOT NULL,
+    UNIQUE (MaMonHoc, MaGV),
     FOREIGN KEY (MaMonHoc) REFERENCES tb_MON_HOC(MaMonHoc),
     FOREIGN KEY (MaGV)     REFERENCES tb_GIANG_VIEN(MaGV)
 );
@@ -158,34 +159,35 @@ GO
 
 -- bảng tb_PHAN_CONG 
 CREATE TABLE tb_PHAN_CONG (
-    MaDot VARCHAR(20) NOT NULL,
-    MaLop VARCHAR(12) NOT NULL,
-    MaGV VARCHAR(12) NULL,
-    PRIMARY KEY (MaDot, MaLop),
+    id      INT         IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    MaDot   VARCHAR(20) NOT NULL,
+    MaLop   VARCHAR(12) NOT NULL,
+    MaGV    VARCHAR(12) NULL,
+    UNIQUE (MaDot, MaLop),
     FOREIGN KEY (MaDot) REFERENCES tb_DOT_XEP(MaDot),
     FOREIGN KEY (MaLop) REFERENCES tb_LOP_MONHOC(MaLop),
-    FOREIGN KEY (MaGV) REFERENCES tb_GIANG_VIEN(MaGV)
+    FOREIGN KEY (MaGV)  REFERENCES tb_GIANG_VIEN(MaGV)
 );
-
 GO
 
 CREATE TABLE tb_RANG_BUOC_TRONG_DOT (
-	MaDot          VARCHAR(20)  NOT NULL,
-    MaRangBuoc     VARCHAR(15)  NOT NULL,  
-    FOREIGN KEY (MaDot) REFERENCES tb_DOT_XEP(MaDot),
-	FOREIGN KEY (MaRangBuoc) REFERENCES tb_RANG_BUOC_MEM(MaRangBuoc),
-	PRIMARY KEY( MaDot, MaRangBuoc)
+    id          INT         IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    MaDot       VARCHAR(20) NOT NULL,
+    MaRangBuoc  VARCHAR(15) NOT NULL, 
+    UNIQUE (MaDot, MaRangBuoc),
+    FOREIGN KEY (MaDot)      REFERENCES tb_DOT_XEP(MaDot),
+    FOREIGN KEY (MaRangBuoc) REFERENCES tb_RANG_BUOC_MEM(MaRangBuoc)
 );
-GO
 
 CREATE TABLE tb_NGUYEN_VONG(
-	MaGV     VARCHAR(12) NOT NULL,
-	MaDot    VARCHAR(20)  NOT NULL,
-	TimeSlotID VARCHAR(10) NOT NULL, 
-	PRIMARY KEY (MaGV, MaDot, TimeSlotID),
-	FOREIGN KEY (TimeSlotID) REFERENCES tb_TIME_SLOT(TimeSlotID),
-	FOREIGN KEY (MaGV) REFERENCES tb_GIANG_VIEN(MaGV),
-	FOREIGN KEY (MaDot) REFERENCES dbo.tb_DOT_XEP(MaDot)
+    id          INT         IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    MaGV        VARCHAR(12) NOT NULL,
+    MaDot       VARCHAR(20) NOT NULL,
+    TimeSlotID  VARCHAR(10) NOT NULL, 
+    UNIQUE (MaGV, MaDot, TimeSlotID),
+    FOREIGN KEY (TimeSlotID) REFERENCES tb_TIME_SLOT(TimeSlotID),
+    FOREIGN KEY (MaGV)       REFERENCES tb_GIANG_VIEN(MaGV),
+    FOREIGN KEY (MaDot)      REFERENCES tb_DOT_XEP(MaDot)
 );
 GO
 
@@ -208,6 +210,8 @@ CREATE TABLE tb_TKB(
 	FOREIGN KEY (MaDot) REFERENCES tb_DOT_XEP(MaDot)
 );
 GO
+
+
 
 /* ===== Dữ liệu mẫu cho 5 ca (điển hình; chỉnh lại theo quy định của bạn) ===== */
 INSERT INTO tb_KHUNG_TG(MaKhungGio, TenCa, GioBatDau, GioKetThuc, SoTiet)
