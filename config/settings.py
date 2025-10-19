@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     "apps.pages",
 
     # Dynamic DT
-    "apps.dyn_dt",
+    "apps.data_table",
 
     # Dynamic API
     "apps.dyn_api",
@@ -199,23 +199,23 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # ### DYNAMIC_DATATB Settings ###
 DYNAMIC_DATATB = {
     # SLUG -> Import_PATH 
-    'product'  : "apps.pages.models.Product",
-    'khoa'  : "apps.scheduling.models.Khoa",
-    'boMon'  : "apps.scheduling.models.BoMon",
-    'giangVien'  : "apps.scheduling.models.GiangVien",
-    'monHoc'  : "apps.scheduling.models.MonHoc",
-    'phongHoc'  : "apps.scheduling.models.PhongHoc",
-    'lopMonHoc'  : "apps.scheduling.models.LopMonHoc",
-    'dotXep'  : "apps.scheduling.models.DotXep",
-    'phanCong'  : "apps.scheduling.models.PhanCong",
-    'timeSlot'  : "apps.scheduling.models.TimeSlot",
-    'thoiKhoaBieu'  : "apps.scheduling.models.ThoiKhoaBieu",
-    'duKienDT'  : "apps.scheduling.models.DuKienDT",
-    'gvDayMon'  : "apps.scheduling.models.GVDayMon",
-    'khungTG'  : "apps.scheduling.models.KhungTG",
-    'rangBuocMem'  : "apps.scheduling.models.RangBuocMem",
-    'rangBuocTrongDot'  : "apps.scheduling.models.RangBuocTrongDot",
-    'nguyenVong'  : "apps.scheduling.models.NguyenVong",
+    'Sản phẩm'  : "apps.pages.models.Product",
+    'Khoa'  : "apps.scheduling.models.Khoa",
+    'Tổ bộ môn'  : "apps.scheduling.models.BoMon",
+    'Giảng viên'  : "apps.scheduling.models.GiangVien",
+    'Môn học'  : "apps.scheduling.models.MonHoc",
+    'Giáo viên dạy môn'  : "apps.scheduling.models.GVDayMon",
+    'Khung thời gian'  : "apps.scheduling.models.KhungTG",
+    'Ràng buộc mềm'  : "apps.scheduling.models.RangBuocMem",
+    'Phòng học'  : "apps.scheduling.models.PhongHoc",
+    'Lớp môn học'  : "apps.scheduling.models.LopMonHoc",
+    'Dự kiến dạy học'  : "apps.scheduling.models.DuKienDT",
+    'Đợt xếp'  : "apps.scheduling.models.DotXep",
+    'Nguyện vọng'  : "apps.scheduling.models.NguyenVong",
+    'Phân công'  : "apps.scheduling.models.PhanCong",
+    'Thời gian'  : "apps.scheduling.models.TimeSlot",
+    'Ràng buộc trong đợt'  : "apps.scheduling.models.RangBuocTrongDot",
+    'Thời khóa biểu'  : "apps.scheduling.models.ThoiKhoaBieu",
 }
 ########################################
 

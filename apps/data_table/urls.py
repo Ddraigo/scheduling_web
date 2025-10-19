@@ -1,8 +1,8 @@
 from django.urls import path
-from apps.dyn_dt import views 
+from apps.data_table import views 
 
 urlpatterns = [
-    path('dynamic-dt/', views.index, name="dynamic_dt"),
+    path('data_table/', views.index, name="data_table"),
 
     path('create-filter/<str:model_name>/', views.create_filter, name="create_filter"),
     path('create-page-items/<str:model_name>/', views.create_page_items, name="create_page_items"),
@@ -14,5 +14,5 @@ urlpatterns = [
 
     path('export-csv/<str:aPath>/', views.ExportCSVView.as_view(), name='export_csv'),
 
-    path('dynamic-dt/<str:aPath>/', views.model_dt, name="model_dt"),
+    path('data_table/<str:aPath>/', views.model_dt, name="model_dt"),
 ]

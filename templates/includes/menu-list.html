@@ -1,4 +1,4 @@
-{% load i18n static admin_black %}
+{% load i18n static %}
 <ul class="nav">
   <li class="{% if 'dashboard' in segment %} active {% endif %}">
     <a href="/">
@@ -6,10 +6,10 @@
       <p>Dashboard</p>
     </a>
   </li>
-  <li class="{% if 'dynamic_dt' in segment %} active {% endif %}">
-    <a href="{% url "dynamic_dt" %}">
+  <li class="{% if 'data_table' in segment %} active {% endif %}">
+    <a href="{% url "data_table" %}">
       <i class="tim-icons icon-puzzle-10"></i>
-      <p>Dynamic Tables</p>
+      <p>Dữ liệu</p>
     </a>
   </li>   
   <li class="{% if 'dynamic_api' in segment %} active {% endif %}">
@@ -59,6 +59,7 @@
     </div>
   </li>
   {% endif %}
+
 
   <li class="{% if 'icons' in segment %} active {% endif %}">
     <a href="{% url 'icons' %}">

@@ -120,46 +120,6 @@ class DotXepAdmin(BaseAdmin):
     trang_thai_colored.short_description = 'Trạng thái'
 
 
-# Models with composite primary keys - Django admin doesn't support them well
-# Temporarily disabled to avoid ProgrammingError
-
-# @admin.register(GVDayMon)
-# class GVDayMonAdmin(admin.ModelAdmin):
-#     # Composite PK: (MaMonHoc, MaGV)
-#     list_display = ['ma_gv', 'ma_mon_hoc']
-#     list_filter = ['ma_mon_hoc']
-#     search_fields = ['ma_gv__ten_gv', 'ma_mon_hoc__ten_mon_hoc']
-#     ordering = ['ma_gv', 'ma_mon_hoc']
-
-
-# @admin.register(PhanCong)
-# class PhanCongAdmin(BaseAdmin):
-#     # Composite PK: (MaDot, MaLop) 
-#     list_display = ['ma_dot', 'ma_lop', 'ma_gv', 'gv_name']
-#     list_filter = ['ma_dot']
-#     search_fields = ['ma_gv__ten_gv', 'ma_lop__ma_lop']
-#     raw_id_fields = ['ma_gv', 'ma_lop']
-#     list_per_page = 100
-#     
-#     def gv_name(self, obj):
-#         return obj.ma_gv.ten_gv if obj.ma_gv else 'Chưa phân công'
-#     gv_name.short_description = 'Tên Giảng viên'
-
-
-# @admin.register(RangBuocTrongDot)
-# class RangBuocTrongDotAdmin(admin.ModelAdmin):
-#     # Composite PK: (MaDot, MaRangBuoc)
-#     list_display = ['ma_dot', 'ma_rang_buoc']
-#     list_filter = ['ma_dot']
-
-
-# @admin.register(NguyenVong)
-# class NguyenVongAdmin(admin.ModelAdmin):
-#     # Composite PK: (MaGV, MaDot, TimeSlotID)
-#     list_display = ['ma_gv', 'ma_dot', 'time_slot_id']
-#     list_filter = ['ma_dot']
-
-
 @admin.register(TimeSlot)
 class TimeSlotAdmin(BaseAdmin):
     list_display = ['time_slot_id', 'thu_display', 'ca']

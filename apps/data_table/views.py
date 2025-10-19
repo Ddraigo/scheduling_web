@@ -12,8 +12,8 @@ from django.views import View
 from django.db import models
 from pprint import pp 
 
-from apps.dyn_dt.models import ModelFilter, PageItems, HideShowFilter
-from apps.dyn_dt.utils import user_filter
+from apps.data_table.models import ModelFilter, PageItems, HideShowFilter
+from apps.data_table.utils import user_filter
 
 from cli import *
 
@@ -23,10 +23,10 @@ def index(request):
     
     context = {
         'routes' : settings.DYNAMIC_DATATB.keys(),
-        'segment': 'dynamic_dt'
+        'segment': 'Dữ liệu'
     }
 
-    return render(request, 'dyn_dt/index.html', context)
+    return render(request, 'data_table/index.html', context)
 
 def create_filter(request, model_name):
     model_name = model_name.lower()
@@ -173,7 +173,7 @@ def model_dt(request, aPath):
     text_fields = get_model_field_names(aModelClass, (models.TextField, models.CharField))
     
     context = {
-        'page_title': 'Dynamic DataTable - ' + aPath.lower().title(),
+        'page_title': 'DataTable - ' + aPath.lower().title(),
         'link': aPath,
         'field_names': field_names,
         'db_field_names': db_fields,
@@ -190,9 +190,9 @@ def model_dt(request, aPath):
         'fk_fields_keys': list( fk_fields.keys() ),
         'fk_fields': fk_fields ,
         'choices_dict': choices_dict,
-        'segment': 'dynamic_dt'
+        'segment': 'data_table'
     }
-    return render(request, 'dyn_dt/model.html', context)
+    return render(request, 'data_table/model.html', context)
 
 
 @login_required(login_url='/accounts/login/')
@@ -221,6 +221,21 @@ def create(request, aPath):
                 value = fk_model.objects.filter(**{fk_pk_field: value}).first()
             
             data[attribute] = value if value else ''
+
+        # Auto-generate ma_khoa for Khoa model
+        if aModelClass.__name__ == 'Khoa':
+            # Get max number from existing ma_khoa
+            existing = aModelClass.objects.filter(ma_khoa__startswith='KHOA-')
+            max_num = 0
+            for obj in existing:
+                try:
+                    num = int(obj.ma_khoa.split('-')[1])
+                    if num > max_num:
+                        max_num = num
+                except Exception:
+                    continue
+            next_num = max_num + 1
+            data['ma_khoa'] = f"KHOA-{next_num:03d}"
 
         aModelClass.objects.create(**data)
 

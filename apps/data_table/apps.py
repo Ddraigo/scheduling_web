@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
-class DynDtConfig(AppConfig):
+class DataTableConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.dyn_dt'
+    name = 'apps.data_table'
