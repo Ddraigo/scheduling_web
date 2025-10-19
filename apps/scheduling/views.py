@@ -33,6 +33,21 @@ class KhoaViewSet(viewsets.ModelViewSet):
     serializer_class = KhoaSerializer
     permission_classes = [IsAuthenticated]
 
+    def perform_create(self, serializer):
+        # Sinh mã khoa tự động dạng KHOA-xxx
+        existing = Khoa.objects.filter(ma_khoa__startswith='KHOA-')
+        used_nums = set()
+        for obj in existing:
+            try:
+                num = int(obj.ma_khoa.split('-')[1])
+                used_nums.add(num)
+            except Exception:
+                continue
+        next_num = 1
+        while next_num in used_nums:
+            next_num += 1
+        serializer.save(ma_khoa=f"KHOA-{next_num:03d}")
+
 
 class BoMonViewSet(viewsets.ModelViewSet):
     """ViewSet for BoMon (Department)"""

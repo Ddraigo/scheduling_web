@@ -29,6 +29,31 @@ class KhoaAdmin(BaseAdmin):
         return format_html('<span style="background-color: #0066cc; color: white; padding: 3px 8px; border-radius: 3px;">{}</span>', count)
     bo_mon_count.short_description = 'Số Bộ môn'
 
+    # Ẩn trường ma_khoa khi thêm mới
+    def get_fields(self, request, obj=None):
+        fields = super().get_fields(request, obj)
+        if obj is None:
+            # Thêm mới: ẩn ma_khoa
+            return [f for f in fields if f != 'ma_khoa']
+        return fields
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            # Tự động sinh mã khoa khi thêm mới
+            existing = type(obj).objects.filter(ma_khoa__startswith='KHOA-')
+            used_nums = set()
+            for item in existing:
+                try:
+                    num = int(item.ma_khoa.split('-')[1])
+                    used_nums.add(num)
+                except Exception:
+                    continue
+            next_num = 1
+            while next_num in used_nums:
+                next_num += 1
+            obj.ma_khoa = f"KHOA-{next_num:03d}"
+        super().save_model(request, obj, form, change)
+
 
 @admin.register(BoMon)
 class BoMonAdmin(BaseAdmin):

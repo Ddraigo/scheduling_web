@@ -166,7 +166,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "vi"
 
 TIME_ZONE = "UTC"
 
@@ -223,6 +223,52 @@ DYNAMIC_DATATB = {
 DYNAMIC_API = {
     # SLUG -> Import_PATH 
     'product'  : "apps.pages.models.Product",
+}
+
+# JAZZMIN Configuration
+JAZZMIN_SETTINGS = {
+    "site_title": "Quản lý lịch dạy học",
+    "site_header": "Hệ thống quản lý lịch dạy học",
+    "site_brand": "TKB",
+    "welcome_sign": "Chào mừng đến hệ thống quản lý lịch dạy học",
+    "copyright": "2025 - Scheduling System",
+    "search_model": "auth.User",
+    "topmenu_links": [
+        {"name": "Trang chủ", "url": "/", "permissions": ["auth.view_user"]},
+        {"name": "Dữ liệu", "url": "/data_table/", "permissions": ["auth.view_user"]},
+    ],
+    "usermenu_links": [
+        {"name": "Hồ sơ", "url": "/admin/auth/user/", "icon": "fas fa-cogs"},
+    ],
+    "show_sidebar": True,
+    "navigation_expanded": False,
+    "icons": {
+        "auth": "fas fa-lock",
+        "auth.user": "fas fa-user",
+        "auth.group": "fas fa-users",
+        "scheduling.khoa": "fas fa-building",
+        "scheduling.bomon": "fas fa-sitemap",
+        "scheduling.giangvien": "fas fa-chalkboard-user",
+        "scheduling.monhoc": "fas fa-book",
+        "scheduling.phonghoc": "fas fa-door-open",
+        "scheduling.lopmonhoc": "fas fa-graduation-cap",
+        "scheduling.dotxep": "fas fa-calendar-days",
+        "scheduling.phancong": "fas fa-handshake",
+        "scheduling.khuangtg": "fas fa-clock",
+        "scheduling.ranbuocmem": "fas fa-link",
+        "scheduling.ranbuoctrongdot": "fas fa-chain",
+        "scheduling.dukilendtao": "fas fa-list-check",
+        "scheduling.nguyenvong": "fas fa-heart",
+        "scheduling.timeslot": "fas fa-hourglass-end",
+        "scheduling.thoikhoabieu": "fas fa-calendar-check",
+    },
+    "default_icon_children": "fas fa-chevron-right",
+    "related_modal_active": False,
+    "custom_css": "assets/css/jazzmin-purple.css",
+    "custom_js": None,
+    "show_ui_builder": False,
+    "changeform_format": "horizontal_tabs",
+    "language_code": "vi",
 }
 
 REST_FRAMEWORK = {
