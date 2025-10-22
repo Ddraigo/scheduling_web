@@ -1,391 +1,221 @@
 """
-Query Handler - Xử lý các query phân tích và kiểm tra xung đột
-Migrated from src/scheduling/query_handler.py
+Xử lý các query và phân tích dữ liệu
 """
 
 import logging
-from typing import Dict, List, Optional
-from collections import defaultdict
+import pandas as pd
 from tabulate import tabulate
+from typing import List
 
 logger = logging.getLogger(__name__)
 
 
 class QueryHandler:
-    """Xử lý query và phân tích dữ liệu thời khóa biểu"""
+    """Xử lý các truy vấn dữ liệu"""
     
-    def __init__(self):
-        pass
+    def __init__(self, db_connection):
+        self.db = db_connection
     
-    def get_specific_data(self, query: str, connection=None) -> str:
-        """
-        Execute custom SQL query và format output
-        
-        Args:
-            query: SQL query string
-            connection: Database connection (optional, uses Django if not provided)
-            
-        Returns:
-            Formatted string output with table
-        """
+    def get_specific_data(self, query: str) -> str:
+        """Lấy dữ liệu cụ thể theo query với format đẹp"""
         try:
-            if connection is None:
-                # Use Django ORM raw query
-                from django.db import connection as django_conn
-                connection = django_conn
-            
-            with connection.cursor() as cursor:
-                cursor.execute(query)
-                columns = [col[0] for col in cursor.description]
-                rows = cursor.fetchall()
-            
-            if not rows:
-                return "Không có dữ liệu."
-            
-            # Format as table
-            table = tabulate(rows, headers=columns, tablefmt='grid')
-            return f"Kết quả truy vấn:\n{table}\n\nTổng: {len(rows)} dòng"
-        
-        except Exception as e:
-            logger.error(f"Query execution error: {e}")
-            return f"Lỗi khi thực thi query: {str(e)}"
-    
-    def get_schedule_conflicts(self, ma_dot: str) -> str:
-        """
-        Kiểm tra xung đột trong thời khóa biểu
-        Tìm các trường hợp giảng viên hoặc phòng bị trùng slot
-        
-        Args:
-            ma_dot: Mã đợt xếp lịch
-            
-        Returns:
-            Formatted conflict report
-        """
-        from ..models import ThoiKhoaBieu
-        
-        try:
-            schedules = ThoiKhoaBieu.objects.filter(
-                dot_xep__ma_dot=ma_dot
-            ).select_related(
-                'lop_mon_hoc',
-                'phong_hoc',
-                'time_slot',
-                'phan_cong__giang_vien'
-            ).order_by('time_slot__ma_time_slot')
-            
-            if not schedules.exists():
-                return f"Không tìm thấy thời khóa biểu cho đợt {ma_dot}"
-            
-            # Check teacher conflicts
-            teacher_conflicts = self._find_teacher_conflicts(schedules)
-            
-            # Check room conflicts
-            room_conflicts = self._find_room_conflicts(schedules)
-            
-            # Format output
-            output = []
-            output.append(f"=== KIỂM TRA XUNG ĐỘT - ĐỢT {ma_dot} ===\n")
-            
-            # Teacher conflicts
-            if teacher_conflicts:
-                output.append(f"🔴 XUNG ĐỘT GIẢNG VIÊN ({len(teacher_conflicts)} trường hợp):")
-                for conflict in teacher_conflicts[:20]:  # Show top 20
-                    output.append(
-                        f"  - GV {conflict['teacher']}: "
-                        f"Slot {conflict['slot']} - "
-                        f"Lớp {', '.join(conflict['classes'])}"
-                    )
-                if len(teacher_conflicts) > 20:
-                    output.append(f"  ... và {len(teacher_conflicts) - 20} xung đột khác")
-            else:
-                output.append("✅ Không có xung đột giảng viên")
-            
-            output.append("")
-            
-            # Room conflicts
-            if room_conflicts:
-                output.append(f"🔴 XUNG ĐỘT PHÒNG HỌC ({len(room_conflicts)} trường hợp):")
-                for conflict in room_conflicts[:20]:
-                    output.append(
-                        f"  - Phòng {conflict['room']}: "
-                        f"Slot {conflict['slot']} - "
-                        f"Lớp {', '.join(conflict['classes'])}"
-                    )
-                if len(room_conflicts) > 20:
-                    output.append(f"  ... và {len(room_conflicts) - 20} xung đột khác")
-            else:
-                output.append("✅ Không có xung đột phòng học")
-            
-            # Summary
-            total_conflicts = len(teacher_conflicts) + len(room_conflicts)
-            output.append(f"\n📊 TỔNG KẾT: {total_conflicts} xung đột")
-            
-            return "\n".join(output)
-        
-        except Exception as e:
-            logger.error(f"Error checking conflicts: {e}")
-            return f"Lỗi khi kiểm tra xung đột: {str(e)}"
-    
-    def _find_teacher_conflicts(self, schedules) -> List[Dict]:
-        """Tìm xung đột giảng viên"""
-        teacher_slots = defaultdict(lambda: defaultdict(list))
-        
-        for tkb in schedules:
-            if not tkb.phan_cong:
-                continue
-            
-            teacher = tkb.phan_cong.giang_vien.ma_gv
-            slot = tkb.time_slot.ma_time_slot
-            class_id = tkb.lop_mon_hoc.ma_lop
-            
-            teacher_slots[teacher][slot].append(class_id)
-        
-        conflicts = []
-        for teacher, slots in teacher_slots.items():
-            for slot, classes in slots.items():
-                if len(classes) > 1:
-                    conflicts.append({
-                        'teacher': teacher,
-                        'slot': slot,
-                        'classes': classes,
-                        'count': len(classes)
-                    })
-        
-        return sorted(conflicts, key=lambda x: x['count'], reverse=True)
-    
-    def _find_room_conflicts(self, schedules) -> List[Dict]:
-        """Tìm xung đột phòng học"""
-        room_slots = defaultdict(lambda: defaultdict(list))
-        
-        for tkb in schedules:
-            room = tkb.phong_hoc.ma_phong
-            slot = tkb.time_slot.ma_time_slot
-            class_id = tkb.lop_mon_hoc.ma_lop
-            
-            room_slots[room][slot].append(class_id)
-        
-        conflicts = []
-        for room, slots in room_slots.items():
-            for slot, classes in slots.items():
-                if len(classes) > 1:
-                    conflicts.append({
-                        'room': room,
-                        'slot': slot,
-                        'classes': classes,
-                        'count': len(classes)
-                    })
-        
-        return sorted(conflicts, key=lambda x: x['count'], reverse=True)
-    
-    def get_teacher_availability(self, ma_gv: str, ma_dot: str) -> str:
-        """
-        Xem lịch dạy và nguyện vọng của giảng viên
-        
-        Args:
-            ma_gv: Mã giảng viên
-            ma_dot: Mã đợt xếp lịch
-            
-        Returns:
-            Formatted teacher schedule
-        """
-        from ..models import ThoiKhoaBieu, GiangVien
-        
-        try:
-            # Get teacher info
-            try:
-                teacher = GiangVien.objects.get(ma_gv=ma_gv)
-            except GiangVien.DoesNotExist:
-                return f"Không tìm thấy giảng viên {ma_gv}"
-            
-            # Get schedule
-            schedules = ThoiKhoaBieu.objects.filter(
-                phan_cong__giang_vien__ma_gv=ma_gv,
-                dot_xep__ma_dot=ma_dot
-            ).select_related(
-                'lop_mon_hoc__mon_hoc',
-                'phong_hoc',
-                'time_slot'
-            ).order_by('time_slot__ma_time_slot')
-            
-            output = []
-            output.append(f"=== LỊCH GIẢNG VIÊN - {ma_dot} ===")
-            output.append(f"Giảng viên: {teacher.ten_gv} ({ma_gv})")
-            output.append(f"Email: {teacher.email or 'N/A'}")
-            output.append("")
-            
-            if schedules.exists():
-                # Build table
-                table_data = []
-                for tkb in schedules:
-                    table_data.append([
-                        tkb.time_slot.ma_time_slot,
-                        tkb.lop_mon_hoc.ma_lop,
-                        tkb.lop_mon_hoc.mon_hoc.ten_mon if tkb.lop_mon_hoc.mon_hoc else 'N/A',
-                        tkb.phong_hoc.ma_phong,
-                        tkb.lop_mon_hoc.si_so
-                    ])
+            df = self.db.execute_query(query)
+            if not df.empty:
+                try:
+                    # Xử lý DataFrame để tránh lỗi với None values
+                    clean_df = df.fillna('')  # Thay None bằng chuỗi rỗng
+                    for col in clean_df.columns:
+                        clean_df[col] = clean_df[col].astype(str)
+                    
+                    table_str = tabulate(clean_df, headers=clean_df.columns, tablefmt="grid", 
+                                       showindex=False, stralign="left")
+                    
+                    result = f"📊 **Kết quả query ({len(df)} dòng):**\n\n"
+                    result += f"```sql\n{query}\n```\n\n"
+                    result += f"{table_str}\n\n"
+                except Exception as table_error:
+                    # Nếu tabulate lỗi, hiển thị theo cách khác
+                    result = f"📊 **Kết quả query ({len(df)} dòng):**\n\n"
+                    result += f"```sql\n{query}\n```\n\n"
+                    for idx, row in df.iterrows():
+                        result += f"**Bản ghi {idx+1}:**\n"
+                        for col, val in row.items():
+                            result += f"  - {col}: {val}\n"
+                        result += "\n"
                 
-                table = tabulate(
-                    table_data,
-                    headers=['Slot', 'Lớp', 'Môn học', 'Phòng', 'Sĩ số'],
-                    tablefmt='grid'
-                )
-                output.append(table)
-                output.append(f"\nTổng: {len(table_data)} lớp")
+                # Thêm thống kê nếu có nhiều dòng
+                if len(df) > 5:
+                    result += f"📈 **Thống kê:** Tìm thấy {len(df)} bản ghi, {len(df.columns)} cột dữ liệu\n"
+                    
+                return result
             else:
-                output.append("Chưa có lịch dạy trong đợt này.")
-            
-            return "\n".join(output)
-        
+                return f"❌ **Không có dữ liệu:**\n```sql\n{query}\n```\nKhông tìm thấy bản ghi nào phù hợp."
         except Exception as e:
-            logger.error(f"Error getting teacher availability: {e}")
-            return f"Lỗi: {str(e)}"
+            return f"❌ **Lỗi thực thi query:**\n```sql\n{query}\n```\nLỗi: {e}"
     
-    def get_room_utilization(self, ma_dot: str) -> str:
-        """
-        Phân tích mức độ sử dụng phòng học
-        
-        Args:
-            ma_dot: Mã đợt xếp lịch
+    def get_schedule_conflicts(self, ma_dot: str = None) -> str:
+        """Kiểm tra conflict trong lịch học"""
+        if ma_dot:
+            # Conflict giảng viên - cùng thời gian dạy nhiều lớp
+            gv_conflict_query = f"""
+            SELECT 
+                pc1.MaGV,
+                gv.TenGV,
+                tkb1.TimeSlotID,
+                tkb1.MaLop as Lop1,
+                tkb2.MaLop as Lop2,
+                tkb1.MaPhong as Phong1,
+                tkb2.MaPhong as Phong2
+            FROM tb_TKB tkb1
+            JOIN tb_TKB tkb2 ON tkb1.TimeSlotID = tkb2.TimeSlotID 
+                AND tkb1.MaDot = tkb2.MaDot 
+                AND tkb1.MaTKB < tkb2.MaTKB
+            JOIN tb_PHAN_CONG pc1 ON tkb1.MaLop = pc1.MaLop AND tkb1.MaDot = pc1.MaDot
+            JOIN tb_PHAN_CONG pc2 ON tkb2.MaLop = pc2.MaLop AND tkb2.MaDot = pc2.MaDot
+            JOIN tb_GIANG_VIEN gv ON pc1.MaGV = gv.MaGV
+            WHERE tkb1.MaDot = '{ma_dot}' AND pc1.MaGV = pc2.MaGV
+            """
             
-        Returns:
-            Room utilization report
-        """
-        from ..models import ThoiKhoaBieu, PhongHoc, TimeSlot
-        
-        try:
-            # Get total slots
-            total_slots = TimeSlot.objects.count()
-            if total_slots == 0:
-                return "Chưa có time slots trong hệ thống"
+            # Conflict phòng học - cùng phòng cùng thời gian
+            room_conflict_query = f"""
+            SELECT 
+                tkb1.MaPhong,
+                ph.LoaiPhong,
+                tkb1.TimeSlotID,
+                tkb1.MaLop as Lop1,
+                tkb2.MaLop as Lop2
+            FROM tb_TKB tkb1
+            JOIN tb_TKB tkb2 ON tkb1.MaPhong = tkb2.MaPhong 
+                AND tkb1.TimeSlotID = tkb2.TimeSlotID 
+                AND tkb1.MaDot = tkb2.MaDot 
+                AND tkb1.MaTKB < tkb2.MaTKB
+            JOIN tb_PHONG_HOC ph ON tkb1.MaPhong = ph.MaPhong
+            WHERE tkb1.MaDot = '{ma_dot}'
+            """
             
-            # Get all rooms
-            rooms = PhongHoc.objects.all()
+            gv_conflicts = self.db.execute_query(gv_conflict_query)
+            room_conflicts = self.db.execute_query(room_conflict_query)
             
-            # Get schedules
-            schedules = ThoiKhoaBieu.objects.filter(
-                dot_xep__ma_dot=ma_dot
-            ).select_related('phong_hoc')
+            result = "=== KIỂM TRA CONFLICT LỊCH HỌC ===\n\n"
+            result += f"📋 Đợt xếp: {ma_dot}\n\n"
             
-            # Calculate utilization
-            room_usage = defaultdict(set)
-            for tkb in schedules:
-                room = tkb.phong_hoc.ma_phong
-                slot = tkb.time_slot.ma_time_slot
-                room_usage[room].add(slot)
-            
-            # Build table
-            table_data = []
-            for room in rooms:
-                ma_phong = room.ma_phong
-                used_slots = len(room_usage[ma_phong])
-                util_rate = (used_slots / total_slots * 100) if total_slots > 0 else 0
+            if not gv_conflicts.empty:
+                result += "⚠️ **CONFLICT GIẢNG VIÊN:**\n"
+                table_str = tabulate(gv_conflicts, headers=gv_conflicts.columns, 
+                                   tablefmt="grid", showindex=False, stralign="left")
+                result += f"{table_str}\n\n"
+            else:
+                result += "✅ **Không có conflict giảng viên**\n\n"
                 
-                table_data.append([
-                    ma_phong,
-                    room.loai_phong or 'N/A',
-                    room.suc_chua,
-                    used_slots,
-                    total_slots,
-                    f"{util_rate:.1f}%"
-                ])
-            
-            # Sort by utilization
-            table_data.sort(key=lambda x: float(x[5].replace('%', '')), reverse=True)
-            
-            table = tabulate(
-                table_data,
-                headers=['Phòng', 'Loại', 'Sức chứa', 'Đã dùng', 'Tổng slots', 'Tỷ lệ'],
-                tablefmt='grid'
-            )
-            
-            # Summary
-            total_rooms = len(rooms)
-            total_used_slots = sum(len(slots) for slots in room_usage.values())
-            total_available_slots = total_rooms * total_slots
-            overall_util = (total_used_slots / total_available_slots * 100) if total_available_slots > 0 else 0
-            
-            output = []
-            output.append(f"=== MỨC ĐỘ SỬ DỤNG PHÒNG HỌC - ĐỢT {ma_dot} ===\n")
-            output.append(table)
-            output.append(f"\n📊 TỔNG KẾT:")
-            output.append(f"  - Tổng phòng: {total_rooms}")
-            output.append(f"  - Tổng slots: {total_slots}")
-            output.append(f"  - Slots đã dùng: {total_used_slots}/{total_available_slots}")
-            output.append(f"  - Tỷ lệ sử dụng: {overall_util:.1f}%")
-            
-            return "\n".join(output)
+            if not room_conflicts.empty:
+                result += "⚠️ **CONFLICT PHÒNG HỌC:**\n"
+                table_str = tabulate(room_conflicts, headers=room_conflicts.columns, 
+                                   tablefmt="grid", showindex=False, stralign="left")
+                result += f"{table_str}\n\n"
+            else:
+                result += "✅ **Không có conflict phòng học**\n\n"
+                
+            return result
         
-        except Exception as e:
-            logger.error(f"Error calculating room utilization: {e}")
-            return f"Lỗi: {str(e)}"
+        return "Vui lòng cung cấp mã đợt xếp."
     
-    def get_class_distribution(self, ma_dot: str) -> str:
+    def get_teacher_availability(self, ma_gv: str = None, ma_dot: str = None) -> str:
+        """Lấy thông tin lịch trống và nguyện vọng của giảng viên"""
+        if not ma_gv or not ma_dot:
+            return "Vui lòng cung cấp mã giảng viên và mã đợt xếp."
+            
+        # Lịch hiện tại của giảng viên
+        current_schedule_query = f"""
+        SELECT 
+            gv.TenGV,
+            mh.TenMonHoc,
+            lmh.Nhom_MH,
+            ts.TimeSlotID,
+            ts.Thu,
+            ts.Ca,
+            ktg.TenCa,
+            ktg.GioBatDau,
+            ktg.GioKetThuc,
+            tkb.MaPhong
+        FROM tb_PHAN_CONG pc
+        JOIN tb_GIANG_VIEN gv ON pc.MaGV = gv.MaGV
+        JOIN tb_LOP_MONHOC lmh ON pc.MaLop = lmh.MaLop
+        JOIN tb_MON_HOC mh ON lmh.MaMonHoc = mh.MaMonHoc
+        LEFT JOIN tb_TKB tkb ON pc.MaLop = tkb.MaLop AND pc.MaDot = tkb.MaDot
+        LEFT JOIN tb_TIME_SLOT ts ON tkb.TimeSlotID = ts.TimeSlotID
+        LEFT JOIN tb_KHUNG_TG ktg ON ts.Ca = ktg.MaKhungGio
+        WHERE pc.MaGV = '{ma_gv}' AND pc.MaDot = '{ma_dot}'
+        ORDER BY ts.Thu, ts.Ca
         """
-        Phân tích phân bố lớp học theo giảng viên và bộ môn
         
-        Args:
-            ma_dot: Mã đợt xếp lịch
-            
-        Returns:
-            Distribution report
+        # Nguyện vọng của giảng viên
+        preferences_query = f"""
+        SELECT 
+            nv.TimeSlotID,
+            ts.Thu,
+            ts.Ca,
+            ktg.TenCa,
+            ktg.GioBatDau,
+            ktg.GioKetThuc
+        FROM tb_NGUYEN_VONG nv
+        JOIN tb_TIME_SLOT ts ON nv.TimeSlotID = ts.TimeSlotID
+        JOIN tb_KHUNG_TG ktg ON ts.Ca = ktg.MaKhungGio
+        WHERE nv.MaGV = '{ma_gv}' AND nv.MaDot = '{ma_dot}'
+        ORDER BY ts.Thu, ts.Ca
         """
-        from ..models import PhanCong
-        from django.db.models import Count
         
-        try:
-            # By teacher
-            teacher_dist = PhanCong.objects.filter(
-                dot_xep__ma_dot=ma_dot
-            ).values(
-                'giang_vien__ma_gv',
-                'giang_vien__ten_gv'
-            ).annotate(
-                so_lop=Count('lop_mon_hoc')
-            ).order_by('-so_lop')
-            
-            output = []
-            output.append(f"=== PHÂN BỐ LỚP HỌC - ĐỢT {ma_dot} ===\n")
-            
-            if teacher_dist:
-                output.append("📚 THEO GIẢNG VIÊN:")
-                table_data = [
-                    [t['giang_vien__ma_gv'], t['giang_vien__ten_gv'], t['so_lop']]
-                    for t in teacher_dist
-                ]
-                table = tabulate(
-                    table_data,
-                    headers=['Mã GV', 'Tên', 'Số lớp'],
-                    tablefmt='grid'
-                )
-                output.append(table)
-            
-            # By department
-            dept_dist = PhanCong.objects.filter(
-                dot_xep__ma_dot=ma_dot
-            ).values(
-                'giang_vien__bo_mon__ma_bo_mon',
-                'giang_vien__bo_mon__ten_bo_mon'
-            ).annotate(
-                so_lop=Count('lop_mon_hoc')
-            ).order_by('-so_lop')
-            
-            if dept_dist:
-                output.append("\n📊 THEO BỘ MÔN:")
-                table_data = [
-                    [d['giang_vien__bo_mon__ma_bo_mon'], d['giang_vien__bo_mon__ten_bo_mon'], d['so_lop']]
-                    for d in dept_dist
-                    if d['giang_vien__bo_mon__ma_bo_mon']  # Filter None
-                ]
-                table = tabulate(
-                    table_data,
-                    headers=['Mã BM', 'Tên', 'Số lớp'],
-                    tablefmt='grid'
-                )
-                output.append(table)
-            
-            return "\n".join(output)
+        current_schedule = self.db.execute_query(current_schedule_query)
+        preferences = self.db.execute_query(preferences_query)
         
-        except Exception as e:
-            logger.error(f"Error getting distribution: {e}")
-            return f"Lỗi: {str(e)}"
+        result = f"=== LỊCH GIẢNG VIÊN {ma_gv} ===\n\n"
+        
+        if not current_schedule.empty:
+            result += "📅 LỊCH HIỆN TẠI:\n"
+            result += current_schedule.to_string(index=False) + "\n\n"
+        else:
+            result += "📅 Chưa có lịch được xếp\n\n"
+            
+        if not preferences.empty:
+            result += "💡 NGUYỆN VỌNG THỜI GIAN:\n"
+            result += preferences.to_string(index=False) + "\n\n"
+        else:
+            result += "💡 Chưa đăng ký nguyện vọng\n\n"
+            
+        return result
+    
+    def get_room_utilization(self, ma_dot: str = None) -> str:
+        """Phân tích tỷ lệ sử dụng phòng học"""
+        if not ma_dot:
+            return "Vui lòng cung cấp mã đợt xếp lịch."
+            
+        room_usage_query = f"""
+        SELECT 
+            ph.MaPhong,
+            ph.LoaiPhong,
+            ph.SucChua,
+            COUNT(tkb.MaTKB) as SoTietSuDung,
+            CAST(COUNT(tkb.MaTKB) * 100.0 / 35 AS DECIMAL(5,2)) as TyLeSuDung
+        FROM tb_PHONG_HOC ph
+        LEFT JOIN tb_TKB tkb ON ph.MaPhong = tkb.MaPhong AND tkb.MaDot = '{ma_dot}'
+        GROUP BY ph.MaPhong, ph.LoaiPhong, ph.SucChua
+        ORDER BY TyLeSuDung DESC
+        """
+        
+        room_usage = self.db.execute_query(room_usage_query)
+        
+        result = f"=== TỶ LỆ SỬ DỤNG PHÒNG HỌC (Đợt: {ma_dot}) ===\n\n"
+        
+        if not room_usage.empty:
+            result += "📊 CHI TIẾT SỬ DỤNG:\n"
+            result += room_usage.to_string(index=False) + "\n\n"
+            
+            # Phân tích tổng quan
+            avg_usage = room_usage['TyLeSuDung'].mean()
+            overused = room_usage[room_usage['TyLeSuDung'] > 80]
+            underused = room_usage[room_usage['TyLeSuDung'] < 20]
+            
+            result += f"📈 Tỷ lệ sử dụng trung bình: {avg_usage:.2f}%\n"
+            result += f"⚠️ Phòng sử dụng cao (>80%): {len(overused)}\n"
+            result += f"💡 Phòng sử dụng thấp (<20%): {len(underused)}\n"
+            
+        return result

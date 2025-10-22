@@ -5,11 +5,14 @@ Usage: python manage.py generate_schedule --period 2025-2026_HK1
 
 from django.core.management.base import BaseCommand, CommandError
 from apps.scheduling.models import DotXep
-from apps.scheduling.services.schedule_service import ScheduleService
+from apps.scheduling.services.schedule_generator_llm import ScheduleGeneratorLLM
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = 'Generate optimal schedule for a scheduling period'
+    help = 'Generate optimal schedule for a scheduling period using LLM'
     
     def add_arguments(self, parser):
         parser.add_argument(
@@ -19,47 +22,64 @@ class Command(BaseCommand):
             help='Scheduling period code (e.g., 2025-2026_HK1)'
         )
         parser.add_argument(
-            '--use-ai',
+            '--dry-run',
             action='store_true',
-            default=True,
-            help='Use AI for optimization (default: True)'
+            help='Test without saving to database'
         )
         parser.add_argument(
-            '--greedy',
+            '--verbose',
             action='store_true',
-            help='Use greedy algorithm instead of AI'
+            help='Show detailed processing information'
         )
     
     def handle(self, *args, **options):
         ma_dot = options['period']
-        use_ai = not options['greedy']  # If greedy flag is set, don't use AI
+        dry_run = options.get('dry_run', False)
+        verbose = options.get('verbose', False)
         
         self.stdout.write(self.style.WARNING(
-            f'Generating schedule for period: {ma_dot}'
+            f'🔄 Generating schedule for period: {ma_dot}'
         ))
-        self.stdout.write(f'Method: {"AI" if use_ai else "Greedy Algorithm"}')
+        self.stdout.write(f'Method: LLM-optimized')
         
-        # Check if period exists
+        # Verify period exists
         try:
             dot_xep = DotXep.objects.get(ma_dot=ma_dot)
-            self.stdout.write(f'Period found: {dot_xep.ten_dot}')
+            self.stdout.write(f'✓ Period found: {dot_xep.ten_dot}')
         except DotXep.DoesNotExist:
-            raise CommandError(f'Period "{ma_dot}" does not exist')
+            raise CommandError(f'❌ Period "{ma_dot}" does not exist')
         
-        # Generate schedule
         try:
-            service = ScheduleService()
-            result = service.generate_schedule(ma_dot, use_ai=use_ai)
+            # Create generator and generate schedule
+            generator = ScheduleGeneratorLLM()
             
-            if result['success']:
+            if verbose:
+                self.stdout.write("📊 Fetching data...")
+            
+            result = generator.create_schedule_llm(
+                ma_dot=ma_dot,
+                dry_run=dry_run,
+                verbose=verbose
+            )
+            
+            if result.get('success', False):
                 self.stdout.write(self.style.SUCCESS(
-                    f'\n✅ Schedule generated successfully!'
+                    '\n✅ Schedule generated successfully!'
                 ))
-                self.stdout.write(f"Total classes: {result['total_classes']}")
-                self.stdout.write(f"Scheduled: {result['scheduled_count']}")
-                self.stdout.write(f"Method: {result['method']}")
+                self.stdout.write(f"📦 Total classes: {result.get('total_classes', 'N/A')}")
+                self.stdout.write(f"✓ Scheduled: {result.get('scheduled_count', 'N/A')}")
+                
+                if 'metrics' in result:
+                    metrics = result['metrics']
+                    self.stdout.write(f"📈 Token usage: {metrics.get('token_count', 'N/A')}")
+                    self.stdout.write(f"⏱️ Processing time: {metrics.get('processing_time', 'N/A')}s")
+                    
+                if 'file_path' in result:
+                    self.stdout.write(f"💾 Saved to: {result['file_path']}")
             else:
-                raise CommandError(f"Failed to generate schedule: {result.get('error')}")
-        
+                error_msg = result.get('error', 'Unknown error')
+                raise CommandError(f'❌ Failed to generate schedule: {error_msg}')
+                
         except Exception as e:
-            raise CommandError(f'Error: {str(e)}')
+            logger.exception(f"Error generating schedule: {e}")
+            raise CommandError(f'❌ Error: {str(e)}')

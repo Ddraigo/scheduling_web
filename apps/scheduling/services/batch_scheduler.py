@@ -1,363 +1,256 @@
 """
-Batch Scheduler - Xử lý xếp lịch theo batch sử dụng LLM
-Migrated from src/scheduling/batch_scheduler.py
+BATCH SCHEDULING với LLM
+Chia 216 lớp thành 8-10 batches, AI xếp từng batch
 """
 
 import logging
-from typing import Dict, List, Optional, Set, Tuple
-from collections import defaultdict
-
-from .ai_service import SchedulingAIService
+from typing import List, Dict, Set, Tuple
+import json
 
 logger = logging.getLogger(__name__)
 
 
 class BatchScheduler:
-    """
-    Xếp lịch theo batch cho số lượng lớn classes
-    Chia nhỏ classes thành các batch và xử lý từng batch với AI
-    """
+    """Xếp lịch theo batches nhỏ sử dụng LLM"""
     
-    def __init__(self, batch_size: int = 25):
-        """
-        Args:
-            batch_size: Số lượng classes trong mỗi batch
-        """
+    def __init__(self, ai_instance, batch_size: int = 25):
+        self.ai = ai_instance
         self.batch_size = batch_size
-        self.ai_service = SchedulingAIService()
-        self.used_slots = defaultdict(set)  # Track used slots per room
-        self.teacher_slots = defaultdict(set)  # Track used slots per teacher
-    
-    def reset(self):
-        """Reset tracking data"""
-        self.used_slots.clear()
-        self.teacher_slots.clear()
+        self.used_slots: Set[Tuple[str, str, str]] = set()  # (TimeSlotID, MaPhong, MaGV)
+        
+        # 🔴 FIX: Global tracking for all batches (SHARED STATE)
+        self.teacher_schedule: Dict[str, List[str]] = {}  # {'GV001': ['Thu2-Ca1', 'Thu3-Ca2'], ...}
+        self.room_schedule: Dict[str, List[str]] = {}     # {'C201': ['Thu2-Ca1', 'Thu2-Ca2'], ...}
     
     def generate_schedule_with_batching(
-        self,
-        classes_data: List[Dict],
-        rooms_data: Dict[str, List[str]],
-        assignments_data: List[Dict],
-        preferences_data: Optional[List[Dict]] = None,
-        ma_dot: Optional[str] = None,
+        self, 
+        classes: List[Dict],
+        rooms: Dict[str, List[str]],  # {'LyThuyet': [...], 'ThucHanh': [...]}
+        timeslots: List[str],
         max_retries: int = 2
     ) -> Dict:
         """
-        Generate schedule using batch processing with AI
+        Xếp lịch theo batches
         
         Args:
-            classes_data: Danh sách lớp học
-            rooms_data: {"LT": [...], "TH": [...]}
-            assignments_data: Phân công giảng viên
-            preferences_data: Nguyện vọng giảng viên
-            ma_dot: Mã đợt xếp lịch
-            max_retries: Số lần retry khi batch fail
+            classes: Danh sách 216 lớp
+            rooms: Dict phòng học {'LyThuyet': [...], 'ThucHanh': [...]}
+            timeslots: Danh sách TimeSlotID
+            max_retries: Số lần thử lại nếu batch fail
             
         Returns:
-            Dict chứa schedule và metadata
+            {'schedule': [...], 'metadata': {...}}
         """
-        self.reset()
+        logger.info(f"🔄 Bắt đầu batch scheduling: {len(classes)} lớp, batch_size={self.batch_size}")
         
-        # Build assignments map
-        assignments_map = {
-            a['MaLop']: a['MaGV']
-            for a in assignments_data
-            if a.get('MaLop') and a.get('MaGV')
-        }
-        
-        # Build preferences map
-        preferences_map = defaultdict(set)
-        if preferences_data:
-            for pref in preferences_data:
-                ma_gv = pref.get('MaGV')
-                slot = pref.get('TimeSlotID')
-                if ma_gv and slot:
-                    preferences_map[ma_gv].add(slot)
-        
-        # Split into batches
-        batches = self._split_into_batches(classes_data)
-        logger.info(f"Split {len(classes_data)} classes into {len(batches)} batches")
-        
-        # Process each batch
         all_schedules = []
-        batch_results = []
+        num_batches = (len(classes) + self.batch_size - 1) // self.batch_size
         
-        for batch_idx, batch_classes in enumerate(batches):
-            logger.info(f"Processing batch {batch_idx + 1}/{len(batches)} ({len(batch_classes)} classes)")
+        for batch_idx in range(num_batches):
+            start_idx = batch_idx * self.batch_size
+            end_idx = min(start_idx + self.batch_size, len(classes))
+            batch_classes = classes[start_idx:end_idx]
             
-            # Schedule this batch
-            batch_result = self._schedule_batch(
-                batch_classes=batch_classes,
-                rooms_data=rooms_data,
-                assignments_map=assignments_map,
-                preferences_map=preferences_map,
-                batch_idx=batch_idx,
-                max_retries=max_retries
-            )
+            logger.info(f"📦 Batch {batch_idx + 1}/{num_batches}: Xếp {len(batch_classes)} lớp...")
             
-            if batch_result['success']:
-                batch_schedules = batch_result['schedules']
-                all_schedules.extend(batch_schedules)
-                
-                # Update used slots
-                for sched in batch_schedules:
-                    room = sched['room']
-                    slot = sched['slot']
-                    self.used_slots[room].add(slot)
+            # Thử xếp batch này
+            batch_success = False
+            for retry in range(max_retries):
+                try:
+                    batch_schedules = self._schedule_batch(
+                        batch_classes, rooms, timeslots, batch_idx + 1
+                    )
                     
-                    # Update teacher slots
-                    class_id = sched['class']
-                    if class_id in assignments_map:
-                        teacher = assignments_map[class_id]
-                        self.teacher_slots[teacher].add(slot)
-                
-                batch_results.append({
-                    'batch': batch_idx + 1,
-                    'classes': len(batch_classes),
-                    'scheduled': len(batch_schedules),
-                    'success': True
-                })
-            else:
-                logger.warning(f"Batch {batch_idx + 1} failed: {batch_result.get('error')}")
-                batch_results.append({
-                    'batch': batch_idx + 1,
-                    'classes': len(batch_classes),
-                    'scheduled': 0,
-                    'success': False,
-                    'error': batch_result.get('error')
-                })
+                    if batch_schedules and len(batch_schedules) >= len(batch_classes) * 0.5:
+                        all_schedules.extend(batch_schedules)
+                        batch_success = True
+                        logger.info(f"✅ Batch {batch_idx + 1} thành công: {len(batch_schedules)} schedules")
+                        break
+                    else:
+                        logger.warning(f"⚠️ Batch {batch_idx + 1} không đủ schedules, retry {retry + 1}/{max_retries}")
+                        
+                except Exception as e:
+                    logger.error(f"❌ Batch {batch_idx + 1} lỗi: {e}, retry {retry + 1}/{max_retries}")
+            
+            if not batch_success:
+                logger.error(f"❌ Batch {batch_idx + 1} FAILED sau {max_retries} lần thử!")
+                return {
+                    'schedule': [],
+                    'error': f'Batch {batch_idx + 1} failed',
+                    'partial_schedules': all_schedules
+                }
         
-        # Summary
-        total_scheduled = len(all_schedules)
-        success_rate = (total_scheduled / len(classes_data) * 100) if classes_data else 0
+        logger.info(f"🎉 Hoàn thành batch scheduling: {len(all_schedules)} schedules")
         
         return {
             'schedule': all_schedules,
-            'total_classes': len(classes_data),
-            'total_scheduled': total_scheduled,
-            'success_rate': round(success_rate, 2),
-            'batches': len(batches),
-            'batch_results': batch_results,
-            'ma_dot': ma_dot
+            'metadata': {
+                'method': 'batch_scheduling',
+                'num_batches': num_batches,
+                'batch_size': self.batch_size,
+                'total_classes': len(classes),
+                'total_schedules': len(all_schedules)
+            }
         }
-    
-    def _split_into_batches(self, classes_data: List[Dict]) -> List[List[Dict]]:
-        """
-        Chia classes thành các batch
-        Ưu tiên nhóm classes cùng loại (LT/TH) trong một batch
-        """
-        # Separate by type
-        lt_classes = [c for c in classes_data if c.get('type') == 'LT']
-        th_classes = [c for c in classes_data if c.get('type') == 'TH']
-        
-        batches = []
-        
-        # Batch LT classes
-        for i in range(0, len(lt_classes), self.batch_size):
-            batches.append(lt_classes[i:i + self.batch_size])
-        
-        # Batch TH classes
-        for i in range(0, len(th_classes), self.batch_size):
-            batches.append(th_classes[i:i + self.batch_size])
-        
-        return batches
     
     def _schedule_batch(
         self,
         batch_classes: List[Dict],
-        rooms_data: Dict[str, List[str]],
-        assignments_map: Dict[str, str],
-        preferences_map: Dict[str, Set[str]],
-        batch_idx: int,
-        max_retries: int = 2
-    ) -> Dict:
-        """
-        Schedule một batch với AI retry logic
+        rooms: Dict[str, List[str]],
+        all_timeslots: List[str],
+        batch_number: int
+    ) -> List[Dict]:
+        """Xếp lịch cho 1 batch"""
         
-        Returns:
-            Dict với 'success', 'schedules', optional 'error'
-        """
-        # Build constraint context for this batch
-        constraints = self._build_batch_constraints(
-            batch_classes,
-            assignments_map,
-            preferences_map
+        # Lọc ra slots CHƯA dùng
+        available_timeslots = [
+            slot for slot in all_timeslots
+            if not self._is_slot_heavily_used(slot)
+        ]
+        
+        # 🔴 FIX: Tạo prompt với SHARED TEACHER/ROOM CONTEXT
+        prompt = self._create_batch_prompt(
+            batch_classes, rooms, available_timeslots, batch_number
         )
         
-        # Try scheduling with AI
-        for attempt in range(max_retries + 1):
-            try:
-                result = self.ai_service.generate_schedule_with_ai(
-                    classes_data=batch_classes,
-                    rooms_data=rooms_data,
-                    assignments_data=[
-                        {'MaLop': c['id'], 'MaGV': assignments_map.get(c['id'])}
-                        for c in batch_classes
-                        if c['id'] in assignments_map
-                    ],
-                    preferences_data=None,  # Handled in constraints
-                    additional_context=constraints
-                )
-                
-                schedules = result.get('schedule', [])
-                
-                if schedules:
-                    # Filter out slots that conflict with previous batches
-                    valid_schedules = self._filter_conflicts(
-                        schedules,
-                        assignments_map
-                    )
-                    
-                    if len(valid_schedules) >= len(batch_classes) * 0.8:  # Accept if 80%+ scheduled
-                        return {
-                            'success': True,
-                            'schedules': valid_schedules,
-                            'attempt': attempt + 1
-                        }
-                    else:
-                        logger.warning(f"Batch {batch_idx + 1} attempt {attempt + 1}: "
-                                     f"Only {len(valid_schedules)}/{len(batch_classes)} valid")
-            
-            except Exception as e:
-                logger.error(f"Batch {batch_idx + 1} attempt {attempt + 1} error: {e}")
+        logger.info(f"🤖 Gửi batch {batch_number} ({len(prompt)} chars) tới AI...")
+        logger.info(f"📊 Shared state: {len(self.teacher_schedule)} GVs already scheduled, {len(self.room_schedule)} rooms occupied")
         
-        # All retries failed
-        return {
-            'success': False,
-            'schedules': [],
-            'error': 'Max retries exceeded'
-        }
+        # Gọi AI
+        result = self.ai.generate_schedule_json(prompt)
+        
+        if 'schedule' not in result:
+            return []
+        
+        batch_schedules = result['schedule']
+        
+        # Validate & update BOTH local and global tracking
+        valid_schedules = []
+        for schedule in batch_schedules:
+            if self._validate_schedule_entry(schedule, rooms, all_timeslots):
+                # Đánh dấu slot đã dùng (format mới: class, room, slot)
+                self.used_slots.add((
+                    schedule['slot'],      # TimeSlotID
+                    schedule['room'],      # MaPhong
+                    schedule['class']      # MaLop
+                ))
+                
+                # 🔴 FIX: Update GLOBAL TRACKING
+                # Lấy teacher từ batch_classes (dựa trên class ID)
+                teacher_id = None
+                for cls in batch_classes:
+                    if cls['id'] == schedule['class']:
+                        teacher_id = cls['teacher']
+                        break
+                
+                if teacher_id:
+                    if teacher_id not in self.teacher_schedule:
+                        self.teacher_schedule[teacher_id] = []
+                    self.teacher_schedule[teacher_id].append(schedule['slot'])
+                
+                # Track room
+                if schedule['room'] not in self.room_schedule:
+                    self.room_schedule[schedule['room']] = []
+                self.room_schedule[schedule['room']].append(schedule['slot'])
+                
+                valid_schedules.append(schedule)
+            else:
+                logger.warning(f"⚠️ Schedule không hợp lệ: {schedule}")
+        
+        return valid_schedules
     
-    def _build_batch_constraints(
+    def _is_slot_heavily_used(self, timeslot: str) -> bool:
+        """Kiểm tra slot đã dùng quá nhiều chưa"""
+        # Đếm số lần slot này đã dùng
+        count = sum(1 for (ts, _, _) in self.used_slots if ts == timeslot)
+        # Nếu >80% phòng đã dùng → coi như heavily used
+        return count > 120  # 146 phòng × 0.8
+    
+    def _create_batch_prompt(
         self,
         batch_classes: List[Dict],
-        assignments_map: Dict[str, str],
-        preferences_map: Dict[str, Set[str]]
+        rooms: Dict[str, List[str]],
+        timeslots: List[str],
+        batch_number: int
     ) -> str:
-        """Build constraint description for AI context"""
-        constraints = []
+        """Tạo prompt cho 1 batch - WITH SHARED CONTEXT"""
         
-        # Used slots constraint
-        if self.used_slots:
-            constraints.append("Các slot đã được sử dụng (TRÁNH):")
-            for room, slots in list(self.used_slots.items())[:5]:  # Show sample
-                constraints.append(f"  - Phòng {room}: {sorted(list(slots))[:10]}")
+        # Lấy phòng chưa dùng nhiều (keys: 'LT' và 'TH' từ context)
+        ly_thuyet_rooms = rooms.get('LT', rooms.get('LyThuyet', []))[:50]
+        thuc_hanh_rooms = rooms.get('TH', rooms.get('ThucHanh', []))[:50]
         
-        # Teacher conflicts
-        if self.teacher_slots:
-            constraints.append("\nGiảng viên đã có lịch (TRÁNH):")
-            for teacher, slots in list(self.teacher_slots.items())[:5]:
-                constraints.append(f"  - GV {teacher}: {sorted(list(slots))[:10]}")
+        # 🔴 FIX: Add SHARED STATE to prompt
+        already_scheduled_str = ""
+        if self.teacher_schedule or self.room_schedule:
+            already_scheduled_str = """
+
+🔴 CRITICAL - ALREADY SCHEDULED IN PREVIOUS BATCHES:
+
+TEACHERS ALREADY ASSIGNED (DO NOT ASSIGN SAME SLOT):
+"""
+            for gv_id, slots in sorted(self.teacher_schedule.items()):
+                if len(slots) > 0:
+                    already_scheduled_str += f"  {gv_id}: {slots}\n"
+            
+            already_scheduled_str += """
+ROOMS ALREADY OCCUPIED (DO NOT USE SAME SLOT):
+"""
+            for room_id, slots in sorted(self.room_schedule.items()):
+                if len(slots) > 0:
+                    already_scheduled_str += f"  {room_id}: {slots}\n"
         
-        # Preferences for this batch
-        batch_teachers = {assignments_map.get(c['id']) for c in batch_classes}
-        batch_preferences = {
-            teacher: slots
-            for teacher, slots in preferences_map.items()
-            if teacher in batch_teachers
-        }
+        prompt = f"""BATCH {batch_number} - SCHEDULE {len(batch_classes)} CLASSES
+
+AVAILABLE RESOURCES:
+
+LyThuyet Rooms ({len(ly_thuyet_rooms)}): {ly_thuyet_rooms}
+ThucHanh Rooms ({len(thuc_hanh_rooms)}): {thuc_hanh_rooms}
+TimeSlots ({len(timeslots)}): {timeslots}
+
+CLASSES TO SCHEDULE ({len(batch_classes)} classes):
+{json.dumps(batch_classes, ensure_ascii=False, indent=2)}{already_scheduled_str}
+
+🔴 HARD CONSTRAINTS FOR THIS BATCH:
+1. MUST NOT schedule a teacher in an already-used timeslot
+2. MUST NOT use a room in an already-used timeslot
+3. MUST NOT create duplicate assignments
+4. Room type MUST match class type (LT/TH)
+5. Room capacity MUST fit class size
+6. Each class gets exactly 1 assignment
+
+OUTPUT: JSON with {len(batch_classes)} schedules
+{{
+  "schedule": [
+    {{"class": "LOP-xxx", "room": "Dxxx", "slot": "ThuX-CaY"}}
+  ]
+}}"""
         
-        if batch_preferences:
-            constraints.append("\nNguyện vọng giảng viên (ƯU TIÊN):")
-            for teacher, slots in list(batch_preferences.items())[:5]:
-                constraints.append(f"  - GV {teacher}: {sorted(list(slots))[:10]}")
-        
-        return "\n".join(constraints) if constraints else ""
+        return prompt
     
-    def _filter_conflicts(
+    def _validate_schedule_entry(
         self,
-        schedules: List[Dict],
-        assignments_map: Dict[str, str]
-    ) -> List[Dict]:
-        """Lọc bỏ schedules có conflict với previous batches"""
-        valid = []
+        schedule: Dict,
+        rooms: Dict[str, List[str]],
+        timeslots: List[str]
+    ) -> bool:
+        """Validate 1 schedule entry - CHỈ 3 FIELDS: class, room, slot"""
         
-        for sched in schedules:
-            room = sched['room']
-            slot = sched['slot']
-            class_id = sched['class']
-            
-            # Check room conflict
-            if slot in self.used_slots[room]:
-                logger.debug(f"Room conflict: {room} - {slot}")
-                continue
-            
-            # Check teacher conflict
-            teacher = assignments_map.get(class_id)
-            if teacher and slot in self.teacher_slots[teacher]:
-                logger.debug(f"Teacher conflict: {teacher} - {slot}")
-                continue
-            
-            valid.append(sched)
+        required_keys = ['class', 'room', 'slot']
         
-        return valid
-    
-    def generate_schedule_django(
-        self,
-        ma_dot: str,
-        batch_size: Optional[int] = None
-    ) -> Dict:
-        """
-        Generate schedule using Django ORM
+        # Kiểm tra keys
+        for key in required_keys:
+            if key not in schedule:
+                return False
         
-        Args:
-            ma_dot: Mã đợt xếp lịch
-            batch_size: Override default batch size
-            
-        Returns:
-            Schedule generation result
-        """
-        from ..models import LopMonHoc, PhongHoc, PhanCong
+        # Kiểm tra TimeSlotID hợp lệ
+        if schedule['slot'] not in timeslots:
+            return False
         
-        if batch_size:
-            self.batch_size = batch_size
+        # Kiểm tra MaPhong hợp lệ (support both 'LT'/'TH' and 'LyThuyet'/'ThucHanh')
+        all_rooms = rooms.get('LT', rooms.get('LyThuyet', [])) + rooms.get('TH', rooms.get('ThucHanh', []))
+        if schedule['room'] not in all_rooms:
+            return False
         
-        try:
-            # Get classes
-            classes = LopMonHoc.objects.filter(
-                dot_xep__ma_dot=ma_dot
-            ).select_related('mon_hoc')
-            
-            classes_data = [
-                {
-                    'id': c.ma_lop,
-                    'type': c.loai_lop or 'LT',
-                    'size': c.si_so,
-                    'name': c.mon_hoc.ten_mon if c.mon_hoc else c.ma_lop
-                }
-                for c in classes
-            ]
-            
-            # Get rooms
-            rooms_data = {
-                'LT': list(PhongHoc.objects.filter(loai_phong='LT').values_list('ma_phong', flat=True)),
-                'TH': list(PhongHoc.objects.filter(loai_phong='TH').values_list('ma_phong', flat=True)),
-            }
-            
-            # Get assignments
-            assignments = PhanCong.objects.filter(dot_xep__ma_dot=ma_dot)
-            assignments_data = [
-                {
-                    'MaLop': pc.lop_mon_hoc.ma_lop,
-                    'MaGV': pc.giang_vien.ma_gv
-                }
-                for pc in assignments
-            ]
-            
-            # Generate
-            return self.generate_schedule_with_batching(
-                classes_data=classes_data,
-                rooms_data=rooms_data,
-                assignments_data=assignments_data,
-                ma_dot=ma_dot
-            )
-        
-        except Exception as e:
-            logger.error(f"Error in batch scheduling: {e}")
-            return {
-                'schedule': [],
-                'total_classes': 0,
-                'total_scheduled': 0,
-                'success_rate': 0,
-                'error': str(e)
-            }
+        # Không cần check conflict vì AI đã handle
+        return True
+

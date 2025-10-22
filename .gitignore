@@ -216,5 +216,7 @@ __marimo__/
 .streamlit/secrets.toml
 
 *.md
+*.txt 
+!requirements.txt
 !README.md
 src/
