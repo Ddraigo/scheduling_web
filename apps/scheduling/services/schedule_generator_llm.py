@@ -156,6 +156,7 @@ class ScheduleGeneratorLLM:
                 'ma_phong': p.ma_phong,
                 'suc_chua': p.suc_chua,
                 'thiet_bi': p.thiet_bi if hasattr(p, 'thiet_bi') else '',
+                'loai_phong': room_type,  # Thêm loai_phong để validator kiểm tra HC-05 & HC-06
             }
             rooms_by_type[room_type].append(room_obj)
         prepared['rooms_by_type'] = rooms_by_type
@@ -213,16 +214,31 @@ class ScheduleGeneratorLLM:
         🔴 TỐI ƯU: Format phân công - CHỈ VỚI DỮ LIỆU THIẾT YẾU
         Loại bỏ: ten_mon_hoc, nhom, to, he_dao_tao, ngon_ngu
         Giữ: thiet_bi_yeu_cau (để so sánh với phòng)
+        
+        ⭐ FIX HC-05: Xác định loai_phong từ MonHoc.so_tiet_th
+        - Nếu môn học có so_tiet_th > 0 → lớp TH
+        - Ngược lại → lớp LT
         """
         result = []
         for pc in phan_cong_list:
+            # Lấy ma_lop
+            ma_lop_obj = pc.ma_lop if hasattr(pc, 'ma_lop') else None
+            ma_lop = ma_lop_obj.ma_lop if ma_lop_obj and hasattr(ma_lop_obj, 'ma_lop') else pc.get('ma_lop')
+            
+            # Xác định loại phòng dựa vào MonHoc.so_tiet_th
+            loai_phong = 'LT'  # Mặc định LT
+            if ma_lop_obj and hasattr(ma_lop_obj, 'ma_mon_hoc') and ma_lop_obj.ma_mon_hoc:
+                mon_hoc = ma_lop_obj.ma_mon_hoc
+                if hasattr(mon_hoc, 'so_tiet_th') and mon_hoc.so_tiet_th and mon_hoc.so_tiet_th > 0:
+                    loai_phong = 'TH'
+            
             result.append({
-                'ma_lop': pc.ma_lop.ma_lop if hasattr(pc.ma_lop, 'ma_lop') else pc.get('ma_lop'),
-                'so_sv': pc.ma_lop.so_luong_sv if hasattr(pc.ma_lop, 'so_luong_sv') else pc.get('so_sv'),
-                'so_ca_tuan': pc.ma_lop.so_ca_tuan if hasattr(pc.ma_lop, 'so_ca_tuan') else pc.get('so_ca_tuan'),
-                'loai_phong': 'TH' if (hasattr(pc.ma_lop, 'thiet_bi_yeu_cau') and 'TH' in str(pc.ma_lop.thiet_bi_yeu_cau)) else 'LT',
-                'thiet_bi_yeu_cau': pc.ma_lop.thiet_bi_yeu_cau if hasattr(pc.ma_lop, 'thiet_bi_yeu_cau') else '',
-                'ma_gv': pc.ma_gv.ma_gv if pc.ma_gv and hasattr(pc.ma_gv, 'ma_gv') else pc.get('ma_gv'),
+                'ma_lop': ma_lop,
+                'so_sv': ma_lop_obj.so_luong_sv if ma_lop_obj and hasattr(ma_lop_obj, 'so_luong_sv') else pc.get('so_sv', 0),
+                'so_ca_tuan': ma_lop_obj.so_ca_tuan if ma_lop_obj and hasattr(ma_lop_obj, 'so_ca_tuan') else pc.get('so_ca_tuan', 1),
+                'loai_phong': loai_phong,
+                'thiet_bi_yeu_cau': ma_lop_obj.thiet_bi_yeu_cau if ma_lop_obj and hasattr(ma_lop_obj, 'thiet_bi_yeu_cau') else '',
+                'ma_gv': pc.ma_gv.ma_gv if hasattr(pc, 'ma_gv') and pc.ma_gv and hasattr(pc.ma_gv, 'ma_gv') else pc.get('ma_gv'),
             })
         return result
     
@@ -432,17 +448,19 @@ class ScheduleGeneratorLLM:
         
         logger.info(f"📊 Map slot: {mapped_count} thành công, {failed_map_count} lỗi")
         
-        # Validate schedule using compact validator
         # Chuẩn bị phan_cong dict cho validator
         phan_cong_dict = {}
         for dot_info in processed_data.get('dot_xep_list', []):
-            for cls in dot_info.get('classes', []):
+            for cls in dot_info.get('phan_cong', []):
                 ma_lop = cls.get('ma_lop')
                 if ma_lop:
                     phan_cong_dict[ma_lop] = {
                         'ma_gv': cls.get('ma_gv'),
                         'ma_dot': dot_info.get('ma_dot'),
-                        'so_sv': cls.get('so_sv', 0)
+                        'so_sv': cls.get('so_sv', 0),
+                        'so_ca_tuan': cls.get('so_ca_tuan', 1),  # Số ca/tuần (1, 2, 3, ...)
+                        'class_type': cls.get('loai_phong', 'LT'),  # TH hoặc LT
+                        'thiet_bi_yeu_cau': cls.get('thiet_bi_yeu_cau', '')  # Thiết bị yêu cầu cho HC-04
                     }
         
         validation_result = self.validator.validate_schedule_compact(
@@ -511,19 +529,19 @@ class ScheduleGeneratorLLM:
                         slot_idx += 1
                         room_idx += 1
         
-        # Validate
-        schedule_data = {'schedule': schedule}
-        
         # Chuẩn bị phan_cong dict cho validator
         phan_cong_dict = {}
         for dot_info in processed_data.get('dot_xep_list', []):
-            for cls in dot_info.get('classes', []):
+            for cls in dot_info.get('phan_cong', []):
                 ma_lop = cls.get('ma_lop')
                 if ma_lop:
                     phan_cong_dict[ma_lop] = {
                         'ma_gv': cls.get('ma_gv'),
                         'ma_dot': dot_info.get('ma_dot'),
-                        'so_sv': cls.get('so_sv', 0)
+                        'so_sv': cls.get('so_sv', 0),
+                        'so_ca_tuan': cls.get('so_ca_tuan', 1),  # Số ca/tuần (1, 2, 3, ...)
+                        'class_type': cls.get('loai_phong', 'LT'),  # TH hoặc LT
+                        'thiet_bi_yeu_cau': cls.get('thiet_bi_yeu_cau', '')  # Thiết bị yêu cầu cho HC-04
                     }
         
         validation_result = self.validator.validate_schedule_compact(

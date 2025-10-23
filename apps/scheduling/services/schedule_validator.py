@@ -37,9 +37,9 @@ class ScheduleValidator:
     
     def reset(self):
         """Reset tất cả counters"""
-        self.teacher_schedule = defaultdict(list)  # {ma_gv: [(ma_dot, time_slot_id), ...]}
-        self.room_schedule = defaultdict(list)      # {ma_phong: [(ma_dot, time_slot_id), ...]}
-        self.class_schedule = defaultdict(dict)     # {ma_lop: {'ma_phong': ..., 'time_slot_id': ..., 'ma_gv': ...}}
+        self.teacher_schedule = {}      # {ma_gv_slot_compact: ma_lop}
+        self.room_schedule = {}         # {ma_phong_slot_compact: ma_lop}
+        self.class_schedule = {}        # {ma_lop: {'ma_phong': ..., 'time_slot_id': ..., 'ma_gv': ...}}
         self.violations = []
         self.soft_violations = []
     
@@ -74,7 +74,24 @@ class ScheduleValidator:
             }
         
         total_classes = len(phan_cong_dict)
-        assigned_classes = len(schedule_assignments)
+        
+        # Tính tổng SoCaTuan yêu cầu (total assignments cần thiết)
+        total_required_assignments = 0
+        for ma_lop, pc_info in phan_cong_dict.items():
+            # Mỗi lớp có so_ca_tuan entries (1, 2, 3, ...)
+            # Nếu không có so_ca_tuan, mặc định là 1
+            so_ca = pc_info.get('so_ca_tuan', 1)
+            total_required_assignments += so_ca
+        
+        # Đếm số LỚPUNIQUE được xếp
+        assigned_class_ids = set()
+        for assignment in schedule_assignments:
+            class_id = assignment.get('class')
+            if class_id:
+                assigned_class_ids.add(class_id)
+        
+        assigned_classes = len(assigned_class_ids)
+        actual_assignments = len(schedule_assignments)
         
         # 1. Validate Hard Constraints
         for assignment in schedule_assignments:
@@ -89,11 +106,22 @@ class ScheduleValidator:
                 {'assigned': assigned_classes, 'total': total_classes}
             ))
         
+        # 3. Check all required assignments fulfilled
+        if actual_assignments < total_required_assignments:
+            self.violations.append(ConstraintViolation(
+                'HC-05',
+                f'Chỉ xếp được {actual_assignments}/{total_required_assignments} ca học',
+                'OVERALL',
+                {'assigned': actual_assignments, 'total': total_required_assignments}
+            ))
+        
         # Format output
         return {
             'feasible': len(self.violations) == 0,
             'total_classes': total_classes,
             'assigned_classes': assigned_classes,
+            'total_assignments': total_required_assignments,
+            'actual_assignments': actual_assignments,
             'hard_violations': len(self.violations),
             'soft_violations': len(self.soft_violations),
             'violations': [
@@ -132,8 +160,9 @@ class ScheduleValidator:
         
         # HC-01: Giảng viên không dạy nhiều lớp cùng lúc
         if ma_gv:
-            slot_key = (ma_gv, slot_compact)
-            if slot_key in self.teacher_schedule[ma_gv]:
+            slot_key = f"{ma_gv}_{slot_compact}"
+            if slot_key in self.teacher_schedule:
+                # GV đã dạy ở slot này rồi
                 self.violations.append(ConstraintViolation(
                     'HC-01',
                     f'GV {ma_gv} dạy nhiều lớp cùng slot {slot_compact}',
@@ -141,11 +170,12 @@ class ScheduleValidator:
                     {'teacher': ma_gv, 'slot': slot_compact}
                 ))
             else:
-                self.teacher_schedule[ma_gv].append(slot_key)
+                self.teacher_schedule[slot_key] = ma_lop
         
         # HC-02: Phòng không có 2 lớp cùng lúc
-        slot_key = (ma_phong, slot_compact)
-        if slot_key in self.room_schedule[ma_phong]:
+        slot_key = f"{ma_phong}_{slot_compact}"
+        if slot_key in self.room_schedule:
+            # Phòng đã được sử dụng ở slot này rồi
             self.violations.append(ConstraintViolation(
                 'HC-02',
                 f'Phòng {ma_phong} có 2 lớp cùng slot {slot_compact}',
@@ -153,7 +183,7 @@ class ScheduleValidator:
                 {'room': ma_phong, 'slot': slot_compact}
             ))
         else:
-            self.room_schedule[ma_phong].append(slot_key)
+            self.room_schedule[slot_key] = ma_lop
         
         # HC-03: Phòng phải đủ sức chứa
         room_obj = self._find_room(ma_phong, prepared_data)
@@ -166,6 +196,56 @@ class ScheduleValidator:
                     ma_lop,
                     {'room': ma_phong, 'students': so_sv, 'capacity': room_obj.get('suc_chua')}
                 ))
+        
+        # HC-05 & HC-06: Kiểm tra loại phòng phù hợp với loại lớp
+        if room_obj:
+            class_type = phan_cong.get('class_type', '')  # 'LT' hoặc 'TH'
+            room_type = room_obj.get('loai_phong', '')     # 'LT' hoặc 'TH'
+            
+            # Normalize room type
+            room_type_normalized = room_type.replace('Lý thuyết', 'LT').replace('Thực hành', 'TH')
+            
+            # HC-05: Lớp TH xếp vào phòng LT
+            if class_type == 'TH' and room_type_normalized == 'LT':
+                self.violations.append(ConstraintViolation(
+                    'HC-05',
+                    f'Phòng {ma_phong} là Lý thuyết, nhưng lớp {ma_lop} cần Thực hành',
+                    ma_lop,
+                    {'room': ma_phong, 'class_type': 'TH', 'room_type': 'LT'}
+                ))
+            
+            # HC-06: Lớp LT xếp vào phòng TH
+            elif class_type == 'LT' and room_type_normalized == 'TH':
+                self.violations.append(ConstraintViolation(
+                    'HC-06',
+                    f'Phòng {ma_phong} là Thực hành, nhưng lớp {ma_lop} cần Lý thuyết',
+                    ma_lop,
+                    {'room': ma_phong, 'class_type': 'LT', 'room_type': 'TH'}
+                ))
+        
+        # HC-04: Phòng phải có thiết bị yêu cầu
+        if room_obj:
+            thiet_bi_yeu_cau = phan_cong.get('thiet_bi_yeu_cau', '')
+            thiet_bi_phong = room_obj.get('thiet_bi', '')
+            
+            if thiet_bi_yeu_cau and thiet_bi_yeu_cau.strip():
+                # Tách thiết bị yêu cầu thành list (có thể phân cách bằng dấu phẩy, chấm phẩy)
+                required_items = [item.strip().lower() for item in thiet_bi_yeu_cau.replace(';', ',').split(',') if item.strip()]
+                available_items = thiet_bi_phong.lower() if thiet_bi_phong else ''
+                
+                # Kiểm tra từng thiết bị yêu cầu
+                missing_equipment = []
+                for req_item in required_items:
+                    if req_item not in available_items:
+                        missing_equipment.append(req_item)
+                
+                if missing_equipment:
+                    self.violations.append(ConstraintViolation(
+                        'HC-04',
+                        f'Phòng {ma_phong} thiếu thiết bị: {", ".join(missing_equipment)}',
+                        ma_lop,
+                        {'room': ma_phong, 'required': thiet_bi_yeu_cau, 'available': thiet_bi_phong, 'missing': missing_equipment}
+                    ))
         
         # Store assignment
         self.class_schedule[ma_lop] = {

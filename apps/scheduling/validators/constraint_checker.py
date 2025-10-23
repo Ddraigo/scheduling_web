@@ -218,7 +218,7 @@ class ConstraintChecker:
         room_capacities: Dict[str, int]   # {room_id: SucChua}
     ) -> List[ConstraintViolation]:
         """
-        HC-04: Phòng phải đủ chỗ ngồi cho lớp học
+        HC-03: Phòng phải đủ chỗ ngồi cho lớp học
         """
         violations = []
         
@@ -236,7 +236,7 @@ class ConstraintChecker:
             # Phòng không đủ chỗ
             if class_size > room_capacity:
                 violations.append(ConstraintViolation(
-                    constraint_code='HC-04',
+                    constraint_code='HC-03',
                     message=f"Phòng {room} chỉ chứa {room_capacity} SV, nhưng lớp có {class_size} SV (thiếu {class_size - room_capacity} chỗ)",
                     class_id=class_id,
                     details={
@@ -244,6 +244,52 @@ class ConstraintChecker:
                         'class_size': class_size,
                         'room_capacity': room_capacity,
                         'shortage': class_size - room_capacity
+                    }
+                ))
+        
+        return violations
+    
+    @staticmethod
+    def check_room_equipment(
+        schedules: List[Dict],
+        class_equipment: Dict[str, str],    # {class_id: ThietBiYeuCau}
+        room_equipment: Dict[str, str]      # {room_id: ThietBi}
+    ) -> List[ConstraintViolation]:
+        """
+        HC-04: Phòng phải có đủ thiết bị yêu cầu của lớp học
+        """
+        violations = []
+        
+        for sched in schedules:
+            normalized = ConstraintChecker._normalize_schedule(sched)
+            class_id = normalized.get('class')
+            room = normalized.get('room')
+            
+            if not class_id or not room:
+                continue
+            
+            required = class_equipment.get(class_id, '')
+            if not required:
+                continue
+            
+            # Parse required equipment (comma or semicolon separated)
+            required_items = [item.strip().lower() for item in required.replace(';', ',').split(',') if item.strip()]
+            
+            # Get available equipment
+            available = room_equipment.get(room, '').lower()
+            
+            # Check missing equipment
+            missing = [req for req in required_items if req not in available]
+            if missing:
+                violations.append(ConstraintViolation(
+                    constraint_code='HC-04',
+                    message=f"Phòng {room} thiếu thiết bị: {', '.join(missing)}",
+                    class_id=class_id,
+                    details={
+                        'room': room,
+                        'required': required,
+                        'available': room_equipment.get(room, ''),
+                        'missing': missing
                     }
                 ))
         

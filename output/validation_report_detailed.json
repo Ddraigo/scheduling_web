@@ -1,0 +1,7298 @@
+{
+  "timestamp": "2025-10-23T15:43:22.329177",
+  "summary": {
+    "total_classes": 216,
+    "ok_classes": 164,
+    "hard_violated_classes": 52,
+    "soft_violated_classes": 109,
+    "ok_percentage": 75.93,
+    "hard_violated_percentage": 24.07,
+    "soft_violated_percentage": 50.46
+  },
+  "hard_violation_stats": {
+    "HC-01": 50,
+    "HC-03": 3
+  },
+  "soft_violation_stats": {
+    "RBM-NGUYEN-VONG": 109
+  },
+  "hard_violated_classes": [
+    {
+      "MaLop": "LOP-00000003",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Văn Bình",
+      "teacher_id": "GV009",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu2-Ca1",
+          "room": "A402",
+          "reason": "GV Ngô Văn Bình dạy 3 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca1",
+          "reason": "GV Ngô Văn Bình KHÔNG mong muốn dạy Thứ 2 Ca1 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000003",
+          "MaPhong": "A402",
+          "MaSlot": "Thu2-Ca1",
+          "MaGV": "GV009",
+          "index": 2
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000091",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Ngô Văn Bình",
+      "teacher_id": "GV009",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu2-Ca1",
+          "room": "B310",
+          "reason": "GV Ngô Văn Bình dạy 3 lớp cùng lúc"
+        },
+        {
+          "constraint": "HC-03",
+          "name": "Phòng không đủ chỗ ngồi",
+          "slot": "Thu2-Ca1",
+          "room": "B310",
+          "reason": "Lớp có 80 sinh viên, phòng B310 chỉ chứa 45"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca1",
+          "reason": "GV Ngô Văn Bình KHÔNG mong muốn dạy Thứ 2 Ca1 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000091",
+          "MaPhong": "B310",
+          "MaSlot": "Thu2-Ca1",
+          "MaGV": "GV009",
+          "index": 90
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000092",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Văn Bình",
+      "teacher_id": "GV009",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu2-Ca1",
+          "room": "B311",
+          "reason": "GV Ngô Văn Bình dạy 3 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca1",
+          "reason": "GV Ngô Văn Bình KHÔNG mong muốn dạy Thứ 2 Ca1 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000092",
+          "MaPhong": "B311",
+          "MaSlot": "Thu2-Ca1",
+          "MaGV": "GV009",
+          "index": 91
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000006",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Văn Bình",
+      "teacher_id": "GV009",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu2-Ca2",
+          "room": "A404",
+          "reason": "GV Ngô Văn Bình dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000006",
+          "MaPhong": "A404",
+          "MaSlot": "Thu2-Ca2",
+          "MaGV": "GV009",
+          "index": 5
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000093",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Văn Bình",
+      "teacher_id": "GV009",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu2-Ca2",
+          "room": "B402",
+          "reason": "GV Ngô Văn Bình dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000093",
+          "MaPhong": "B402",
+          "MaSlot": "Thu2-Ca2",
+          "MaGV": "GV009",
+          "index": 92
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000011",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phan Ngọc Bích",
+      "teacher_id": "GV006",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu2-Ca4",
+          "room": "A407",
+          "reason": "GV Phan Ngọc Bích dạy 3 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000011",
+          "MaPhong": "A407",
+          "MaSlot": "Thu2-Ca4",
+          "MaGV": "GV006",
+          "index": 10
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000125",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phan Ngọc Bích",
+      "teacher_id": "GV006",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu2-Ca4",
+          "room": "F601",
+          "reason": "GV Phan Ngọc Bích dạy 3 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000125",
+          "MaPhong": "F601",
+          "MaSlot": "Thu2-Ca4",
+          "MaGV": "GV006",
+          "index": 124
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000185",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phan Ngọc Bích",
+      "teacher_id": "GV006",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu2-Ca4",
+          "room": "F505",
+          "reason": "GV Phan Ngọc Bích dạy 3 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000185",
+          "MaPhong": "F505",
+          "MaSlot": "Thu2-Ca4",
+          "MaGV": "GV006",
+          "index": 184
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000013",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Vũ Minh Đức",
+      "teacher_id": "GV016",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu2-Ca5",
+          "room": "B209",
+          "reason": "GV Vũ Minh Đức dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000013",
+          "MaPhong": "B209",
+          "MaSlot": "Thu2-Ca5",
+          "MaGV": "GV016",
+          "index": 12
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000014",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Minh Đức",
+      "teacher_id": "GV016",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu2-Ca5",
+          "room": "A409",
+          "reason": "GV Vũ Minh Đức dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000014",
+          "MaPhong": "A409",
+          "MaSlot": "Thu2-Ca5",
+          "MaGV": "GV016",
+          "index": 13
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000018",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Đức Long",
+      "teacher_id": "GV005",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu3-Ca1",
+          "room": "A503",
+          "reason": "GV Hoàng Đức Long dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca1",
+          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy Thứ 3 Ca1 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000018",
+          "MaPhong": "A503",
+          "MaSlot": "Thu3-Ca1",
+          "MaGV": "GV005",
+          "index": 17
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000127",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Đức Long",
+      "teacher_id": "GV005",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu3-Ca1",
+          "room": "F603",
+          "reason": "GV Hoàng Đức Long dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca1",
+          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy Thứ 3 Ca1 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000127",
+          "MaPhong": "F603",
+          "MaSlot": "Thu3-Ca1",
+          "MaGV": "GV005",
+          "index": 126
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000019",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Nguyễn Đức Cường",
+      "teacher_id": "GV030",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu3-Ca2",
+          "room": "B306",
+          "reason": "GV Nguyễn Đức Cường dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000019",
+          "MaPhong": "B306",
+          "MaSlot": "Thu3-Ca2",
+          "MaGV": "GV030",
+          "index": 18
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000020",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Đức Cường",
+      "teacher_id": "GV030",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu3-Ca2",
+          "room": "A504",
+          "reason": "GV Nguyễn Đức Cường dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000020",
+          "MaPhong": "A504",
+          "MaSlot": "Thu3-Ca2",
+          "MaGV": "GV030",
+          "index": 19
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000022",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Nguyễn Đức Cường",
+      "teacher_id": "GV030",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu3-Ca3",
+          "room": "B307",
+          "reason": "GV Nguyễn Đức Cường dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca3",
+          "reason": "GV Nguyễn Đức Cường KHÔNG mong muốn dạy Thứ 3 Ca3 (có 12 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000022",
+          "MaPhong": "B307",
+          "MaSlot": "Thu3-Ca3",
+          "MaGV": "GV030",
+          "index": 21
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000024",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Đức Cường",
+      "teacher_id": "GV030",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu3-Ca3",
+          "room": "A507",
+          "reason": "GV Nguyễn Đức Cường dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca3",
+          "reason": "GV Nguyễn Đức Cường KHÔNG mong muốn dạy Thứ 3 Ca3 (có 12 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000024",
+          "MaPhong": "A507",
+          "MaSlot": "Thu3-Ca3",
+          "MaGV": "GV030",
+          "index": 23
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000025",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu3-Ca4",
+          "room": "C202",
+          "reason": "GV Vũ Quang Hảo dạy 3 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca4",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 3 Ca4 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000025",
+          "MaPhong": "C202",
+          "MaSlot": "Thu3-Ca4",
+          "MaGV": "GV024",
+          "index": 24
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000026",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu3-Ca4",
+          "room": "C203",
+          "reason": "GV Vũ Quang Hảo dạy 3 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca4",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 3 Ca4 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000026",
+          "MaPhong": "C203",
+          "MaSlot": "Thu3-Ca4",
+          "MaGV": "GV024",
+          "index": 25
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000190",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu3-Ca4",
+          "room": "F601",
+          "reason": "GV Vũ Quang Hảo dạy 3 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca4",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 3 Ca4 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000190",
+          "MaPhong": "F601",
+          "MaSlot": "Thu3-Ca4",
+          "MaGV": "GV024",
+          "index": 189
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000027",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế yêu cầu",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu3-Ca4",
+          "room": "C204",
+          "reason": "GV Phạm Văn Khánh dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca4",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 3 Ca4 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000027",
+          "MaPhong": "C204",
+          "MaSlot": "Thu3-Ca4",
+          "MaGV": "GV004",
+          "index": 26
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000160",
+      "info": {
+        "TenMonHoc": "Kiến tập công nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu3-Ca4",
+          "room": "F306",
+          "reason": "GV Phạm Văn Khánh dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca4",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 3 Ca4 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000160",
+          "MaPhong": "F306",
+          "MaSlot": "Thu3-Ca4",
+          "MaGV": "GV004",
+          "index": 159
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000030",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu3-Ca5",
+          "room": "A508",
+          "reason": "GV Phạm Văn Khánh dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000030",
+          "MaPhong": "A508",
+          "MaSlot": "Thu3-Ca5",
+          "MaGV": "GV004",
+          "index": 29
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000161",
+      "info": {
+        "TenMonHoc": "Kiến tập công nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu3-Ca5",
+          "room": "F304",
+          "reason": "GV Phạm Văn Khánh dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000161",
+          "MaPhong": "F304",
+          "MaSlot": "Thu3-Ca5",
+          "MaGV": "GV004",
+          "index": 160
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000035",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Tạ Bảo Châu",
+      "teacher_id": "GV023",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu4-Ca2",
+          "room": "B401",
+          "reason": "GV Tạ Bảo Châu dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000035",
+          "MaPhong": "B401",
+          "MaSlot": "Thu4-Ca2",
+          "MaGV": "GV023",
+          "index": 34
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000036",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Bảo Châu",
+      "teacher_id": "GV023",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu4-Ca2",
+          "room": "A603",
+          "reason": "GV Tạ Bảo Châu dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000036",
+          "MaPhong": "A603",
+          "MaSlot": "Thu4-Ca2",
+          "MaGV": "GV023",
+          "index": 35
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000039",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu4-Ca3",
+          "room": "A605",
+          "reason": "GV Phạm Văn Khánh dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca3",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 4 Ca3 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000039",
+          "MaPhong": "A605",
+          "MaSlot": "Thu4-Ca3",
+          "MaGV": "GV004",
+          "index": 38
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000164",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin 2",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu4-Ca3",
+          "room": "F309",
+          "reason": "GV Phạm Văn Khánh dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca3",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 4 Ca3 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000164",
+          "MaPhong": "F309",
+          "MaSlot": "Thu4-Ca3",
+          "MaGV": "GV004",
+          "index": 163
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000043",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Minh Khang",
+      "teacher_id": "GV025",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu4-Ca5",
+          "room": "A608",
+          "reason": "GV Hoàng Minh Khang dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000043",
+          "MaPhong": "A608",
+          "MaSlot": "Thu4-Ca5",
+          "MaGV": "GV025",
+          "index": 42
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000045",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Minh Khang",
+      "teacher_id": "GV025",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu4-Ca5",
+          "room": "A609",
+          "reason": "GV Hoàng Minh Khang dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000045",
+          "MaPhong": "A609",
+          "MaSlot": "Thu4-Ca5",
+          "MaGV": "GV025",
+          "index": 44
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000047",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Phạm Thu Hà",
+      "teacher_id": "GV015",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu5-Ca1",
+          "room": "B409",
+          "reason": "GV Phạm Thu Hà dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000047",
+          "MaPhong": "B409",
+          "MaSlot": "Thu5-Ca1",
+          "MaGV": "GV015",
+          "index": 46
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000197",
+      "info": {
+        "TenMonHoc": "Kỹ năng soạn thảo văn bản kỹ thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Thu Hà",
+      "teacher_id": "GV015",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu5-Ca1",
+          "room": "C408",
+          "reason": "GV Phạm Thu Hà dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000197",
+          "MaPhong": "C408",
+          "MaSlot": "Thu5-Ca1",
+          "MaGV": "GV015",
+          "index": 196
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000059",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Hoài Nam",
+      "teacher_id": "GV020",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu5-Ca5",
+          "room": "D408",
+          "reason": "GV Đặng Hoài Nam dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000059",
+          "MaPhong": "D408",
+          "MaSlot": "Thu5-Ca5",
+          "MaGV": "GV020",
+          "index": 58
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000060",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Hoài Nam",
+      "teacher_id": "GV020",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu5-Ca5",
+          "room": "B202",
+          "reason": "GV Đặng Hoài Nam dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000060",
+          "MaPhong": "B202",
+          "MaSlot": "Thu5-Ca5",
+          "MaGV": "GV020",
+          "index": 59
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000061",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Hoài Nam",
+      "teacher_id": "GV020",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu6-Ca1",
+          "room": "B203",
+          "reason": "GV Đặng Hoài Nam dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000061",
+          "MaPhong": "B203",
+          "MaSlot": "Thu6-Ca1",
+          "MaGV": "GV020",
+          "index": 60
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000063",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Hoài Nam",
+      "teacher_id": "GV020",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu6-Ca1",
+          "room": "B204",
+          "reason": "GV Đặng Hoài Nam dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000063",
+          "MaPhong": "B204",
+          "MaSlot": "Thu6-Ca1",
+          "MaGV": "GV020",
+          "index": 62
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000071",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "teacher_id": "GV013",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu6-Ca4",
+          "room": "D411",
+          "reason": "GV Ngô Thảo My dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000071",
+          "MaPhong": "D411",
+          "MaSlot": "Thu6-Ca4",
+          "MaGV": "GV013",
+          "index": 70
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000205",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý tiếng nói",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "teacher_id": "GV013",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu6-Ca4",
+          "room": "C410",
+          "reason": "GV Ngô Thảo My dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000205",
+          "MaPhong": "C410",
+          "MaSlot": "Thu6-Ca4",
+          "MaGV": "GV013",
+          "index": 204
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000073",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "teacher_id": "GV013",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu6-Ca5",
+          "room": "B305",
+          "reason": "GV Ngô Thảo My dạy 3 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000073",
+          "MaPhong": "B305",
+          "MaSlot": "Thu6-Ca5",
+          "MaGV": "GV013",
+          "index": 72
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000075",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "teacher_id": "GV013",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu6-Ca5",
+          "room": "F302",
+          "reason": "GV Ngô Thảo My dạy 3 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000075",
+          "MaPhong": "F302",
+          "MaSlot": "Thu6-Ca5",
+          "MaGV": "GV013",
+          "index": 74
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000206",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý tiếng nói",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "teacher_id": "GV013",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu6-Ca5",
+          "room": "C411",
+          "reason": "GV Ngô Thảo My dạy 3 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000206",
+          "MaPhong": "C411",
+          "MaSlot": "Thu6-Ca5",
+          "MaGV": "GV013",
+          "index": 205
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000077",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Minh Châu",
+      "teacher_id": "GV037",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu7-Ca1",
+          "room": "F306",
+          "reason": "GV Bùi Minh Châu dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca1",
+          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy Thứ 7 Ca1 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000077",
+          "MaPhong": "F306",
+          "MaSlot": "Thu7-Ca1",
+          "MaGV": "GV037",
+          "index": 76
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000078",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Minh Châu",
+      "teacher_id": "GV037",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu7-Ca1",
+          "room": "F304",
+          "reason": "GV Bùi Minh Châu dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca1",
+          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy Thứ 7 Ca1 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000078",
+          "MaPhong": "F304",
+          "MaSlot": "Thu7-Ca1",
+          "MaGV": "GV037",
+          "index": 77
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000079",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Minh Châu",
+      "teacher_id": "GV037",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu7-Ca2",
+          "room": "F305",
+          "reason": "GV Bùi Minh Châu dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca2",
+          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy Thứ 7 Ca2 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000079",
+          "MaPhong": "F305",
+          "MaSlot": "Thu7-Ca2",
+          "MaGV": "GV037",
+          "index": 78
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000080",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Minh Châu",
+      "teacher_id": "GV037",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu7-Ca2",
+          "room": "F307",
+          "reason": "GV Bùi Minh Châu dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca2",
+          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy Thứ 7 Ca2 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000080",
+          "MaPhong": "F307",
+          "MaSlot": "Thu7-Ca2",
+          "MaGV": "GV037",
+          "index": 79
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000083",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Thuỷ Tiên",
+      "teacher_id": "GV044",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu7-Ca3",
+          "room": "C206",
+          "reason": "GV Phạm Thuỷ Tiên dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000083",
+          "MaPhong": "C206",
+          "MaSlot": "Thu7-Ca3",
+          "MaGV": "GV044",
+          "index": 82
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000084",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Thuỷ Tiên",
+      "teacher_id": "GV044",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu7-Ca3",
+          "room": "C207",
+          "reason": "GV Phạm Thuỷ Tiên dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000084",
+          "MaPhong": "C207",
+          "MaSlot": "Thu7-Ca3",
+          "MaGV": "GV044",
+          "index": 83
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000085",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Đỗ Phương Linh",
+      "teacher_id": "GV011",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu7-Ca4",
+          "room": "F308",
+          "reason": "GV Đỗ Phương Linh dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000085",
+          "MaPhong": "F308",
+          "MaSlot": "Thu7-Ca4",
+          "MaGV": "GV011",
+          "index": 84
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000086",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Đỗ Phương Linh",
+      "teacher_id": "GV011",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu7-Ca4",
+          "room": "F311",
+          "reason": "GV Đỗ Phương Linh dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000086",
+          "MaPhong": "F311",
+          "MaSlot": "Thu7-Ca4",
+          "MaGV": "GV011",
+          "index": 85
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000143",
+      "info": {
+        "TenMonHoc": "Nhập môn Tư duy Logic",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "teacher_id": "GV013",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu6-Ca2",
+          "room": "C307",
+          "reason": "GV Ngô Thảo My dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca2",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 6 Ca2 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000143",
+          "MaPhong": "C307",
+          "MaSlot": "Thu6-Ca2",
+          "MaGV": "GV013",
+          "index": 142
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000203",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "teacher_id": "GV013",
+      "hard_violations": [
+        {
+          "constraint": "HC-01",
+          "name": "Trùng giờ giảng viên",
+          "slot": "Thu6-Ca2",
+          "room": "F608",
+          "reason": "GV Ngô Thảo My dạy 2 lớp cùng lúc"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca2",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 6 Ca2 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000203",
+          "MaPhong": "F608",
+          "MaSlot": "Thu6-Ca2",
+          "MaGV": "GV013",
+          "index": 202
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000094",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Ngô Văn Bình",
+      "teacher_id": "GV009",
+      "hard_violations": [
+        {
+          "constraint": "HC-03",
+          "name": "Phòng không đủ chỗ ngồi",
+          "slot": "Thu2-Ca3",
+          "room": "B403",
+          "reason": "Lớp có 80 sinh viên, phòng B403 chỉ chứa 45"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca3",
+          "reason": "GV Ngô Văn Bình KHÔNG mong muốn dạy Thứ 2 Ca3 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000094",
+          "MaPhong": "B403",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV009",
+          "index": 93
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000148",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Trần Quang Huy",
+      "teacher_id": "GV002",
+      "hard_violations": [
+        {
+          "constraint": "HC-03",
+          "name": "Phòng không đủ chỗ ngồi",
+          "slot": "Thu7-Ca2",
+          "room": "F711",
+          "reason": "Lớp có 80 sinh viên, phòng F711 chỉ chứa 45"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca2",
+          "reason": "GV Trần Quang Huy KHÔNG mong muốn dạy Thứ 7 Ca2 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000148",
+          "MaPhong": "F711",
+          "MaSlot": "Thu7-Ca2",
+          "MaGV": "GV002",
+          "index": 147
+        }
+      ]
+    }
+  ],
+  "soft_violated_classes": [
+    {
+      "MaLop": "LOP-00000004",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Nguyễn Minh An",
+      "teacher_id": "GV001",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca2",
+          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 2 Ca2 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000004",
+          "MaPhong": "B206",
+          "MaSlot": "Thu2-Ca2",
+          "MaGV": "GV001",
+          "index": 3
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000008",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phan Ngọc Bích",
+      "teacher_id": "GV006",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca3",
+          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 2 Ca3 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000008",
+          "MaPhong": "A405",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV006",
+          "index": 7
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000010",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Hoàng Đức Long",
+      "teacher_id": "GV005",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca4",
+          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy Thứ 2 Ca4 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000010",
+          "MaPhong": "B208",
+          "MaSlot": "Thu2-Ca4",
+          "MaGV": "GV005",
+          "index": 9
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000012",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Anh Tuấn",
+      "teacher_id": "GV010",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca4",
+          "reason": "GV Bùi Anh Tuấn KHÔNG mong muốn dạy Thứ 2 Ca4 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000012",
+          "MaPhong": "A408",
+          "MaSlot": "Thu2-Ca4",
+          "MaGV": "GV010",
+          "index": 11
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000015",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Đức Long",
+      "teacher_id": "GV005",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca5",
+          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy Thứ 2 Ca5 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000015",
+          "MaPhong": "A501",
+          "MaSlot": "Thu2-Ca5",
+          "MaGV": "GV005",
+          "index": 14
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000016",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Phan Ngọc Bích",
+      "teacher_id": "GV006",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca1",
+          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 3 Ca1 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000016",
+          "MaPhong": "B301",
+          "MaSlot": "Thu3-Ca1",
+          "MaGV": "GV006",
+          "index": 15
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000017",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Minh Đức",
+      "teacher_id": "GV016",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca1",
+          "reason": "GV Vũ Minh Đức KHÔNG mong muốn dạy Thứ 3 Ca1 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000017",
+          "MaPhong": "A502",
+          "MaSlot": "Thu3-Ca1",
+          "MaGV": "GV016",
+          "index": 16
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000021",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "teacher_id": "GV001",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca2",
+          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 3 Ca2 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000021",
+          "MaPhong": "A505",
+          "MaSlot": "Thu3-Ca2",
+          "MaGV": "GV001",
+          "index": 20
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000032",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Lê Thị Mai",
+      "teacher_id": "GV003",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca1",
+          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 4 Ca1 (có 10 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000032",
+          "MaPhong": "B309",
+          "MaSlot": "Thu4-Ca1",
+          "MaGV": "GV003",
+          "index": 31
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000033",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca1",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 4 Ca1 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000033",
+          "MaPhong": "A601",
+          "MaSlot": "Thu4-Ca1",
+          "MaGV": "GV004",
+          "index": 32
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000037",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Bảo Châu",
+      "teacher_id": "GV023",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca3",
+          "reason": "GV Tạ Bảo Châu KHÔNG mong muốn dạy Thứ 4 Ca3 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000037",
+          "MaPhong": "A604",
+          "MaSlot": "Thu4-Ca3",
+          "MaGV": "GV023",
+          "index": 36
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000038",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Lê Thị Mai",
+      "teacher_id": "GV003",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca3",
+          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 4 Ca3 (có 10 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000038",
+          "MaPhong": "B406",
+          "MaSlot": "Thu4-Ca3",
+          "MaGV": "GV003",
+          "index": 37
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000040",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Bảo Châu",
+      "teacher_id": "GV023",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca4",
+          "reason": "GV Tạ Bảo Châu KHÔNG mong muốn dạy Thứ 4 Ca4 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000040",
+          "MaPhong": "A606",
+          "MaSlot": "Thu4-Ca4",
+          "MaGV": "GV023",
+          "index": 39
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000041",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Minh Khang",
+      "teacher_id": "GV025",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca4",
+          "reason": "GV Hoàng Minh Khang KHÔNG mong muốn dạy Thứ 4 Ca4 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000041",
+          "MaPhong": "B407",
+          "MaSlot": "Thu4-Ca4",
+          "MaGV": "GV025",
+          "index": 40
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000044",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thuỳ Dương",
+      "teacher_id": "GV021",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca5",
+          "reason": "GV Nguyễn Thuỳ Dương KHÔNG mong muốn dạy Thứ 4 Ca5 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000044",
+          "MaPhong": "B408",
+          "MaSlot": "Thu4-Ca5",
+          "MaGV": "GV021",
+          "index": 43
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000046",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thuỳ Dương",
+      "teacher_id": "GV021",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca1",
+          "reason": "GV Nguyễn Thuỳ Dương KHÔNG mong muốn dạy Thứ 5 Ca1 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000046",
+          "MaPhong": "A701",
+          "MaSlot": "Thu5-Ca1",
+          "MaGV": "GV021",
+          "index": 45
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000048",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Ngọc Ánh",
+      "teacher_id": "GV017",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca1",
+          "reason": "GV Nguyễn Ngọc Ánh KHÔNG mong muốn dạy Thứ 5 Ca1 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000048",
+          "MaPhong": "A702",
+          "MaSlot": "Thu5-Ca1",
+          "MaGV": "GV017",
+          "index": 47
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000049",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Lê Minh Hiếu",
+      "teacher_id": "GV031",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca2",
+          "reason": "GV Lê Minh Hiếu KHÔNG mong muốn dạy Thứ 5 Ca2 (có 12 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000049",
+          "MaPhong": "A703",
+          "MaSlot": "Thu5-Ca2",
+          "MaGV": "GV031",
+          "index": 48
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000051",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Ngọc Ánh",
+      "teacher_id": "GV017",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca2",
+          "reason": "GV Nguyễn Ngọc Ánh KHÔNG mong muốn dạy Thứ 5 Ca2 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000051",
+          "MaPhong": "A704",
+          "MaSlot": "Thu5-Ca2",
+          "MaGV": "GV017",
+          "index": 50
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000052",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Lê Minh Hiếu",
+      "teacher_id": "GV031",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca3",
+          "reason": "GV Lê Minh Hiếu KHÔNG mong muốn dạy Thứ 5 Ca3 (có 12 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000052",
+          "MaPhong": "A705",
+          "MaSlot": "Thu5-Ca3",
+          "MaGV": "GV031",
+          "index": 51
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000053",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Phạm Thu Hà",
+      "teacher_id": "GV015",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca3",
+          "reason": "GV Phạm Thu Hà KHÔNG mong muốn dạy Thứ 5 Ca3 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000053",
+          "MaPhong": "D208",
+          "MaSlot": "Thu5-Ca3",
+          "MaGV": "GV015",
+          "index": 52
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000055",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Lê Minh Hiếu",
+      "teacher_id": "GV031",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca4",
+          "reason": "GV Lê Minh Hiếu KHÔNG mong muốn dạy Thứ 5 Ca4 (có 12 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000055",
+          "MaPhong": "A707",
+          "MaSlot": "Thu5-Ca4",
+          "MaGV": "GV031",
+          "index": 54
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000056",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Phạm Thu Hà",
+      "teacher_id": "GV015",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca4",
+          "reason": "GV Phạm Thu Hà KHÔNG mong muốn dạy Thứ 5 Ca4 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000056",
+          "MaPhong": "D308",
+          "MaSlot": "Thu5-Ca4",
+          "MaGV": "GV015",
+          "index": 55
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000057",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Ngọc Ánh",
+      "teacher_id": "GV017",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca4",
+          "reason": "GV Nguyễn Ngọc Ánh KHÔNG mong muốn dạy Thứ 5 Ca4 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000057",
+          "MaPhong": "A708",
+          "MaSlot": "Thu5-Ca4",
+          "MaGV": "GV017",
+          "index": 56
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000058",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Lê Minh Hiếu",
+      "teacher_id": "GV031",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca5",
+          "reason": "GV Lê Minh Hiếu KHÔNG mong muốn dạy Thứ 5 Ca5 (có 12 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000058",
+          "MaPhong": "A709",
+          "MaSlot": "Thu5-Ca5",
+          "MaGV": "GV031",
+          "index": 57
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000062",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phan Ngọc Bích",
+      "teacher_id": "GV006",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca1",
+          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 6 Ca1 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000062",
+          "MaPhong": "D111",
+          "MaSlot": "Thu6-Ca1",
+          "MaGV": "GV006",
+          "index": 61
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000068",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Minh Tuấn",
+      "teacher_id": "GV040",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca3",
+          "reason": "GV Tạ Minh Tuấn KHÔNG mong muốn dạy Thứ 6 Ca3 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000068",
+          "MaPhong": "D311",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV040",
+          "index": 67
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000069",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Đức Thịnh",
+      "teacher_id": "GV043",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca3",
+          "reason": "GV Vũ Đức Thịnh KHÔNG mong muốn dạy Thứ 6 Ca3 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000069",
+          "MaPhong": "B302",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV043",
+          "index": 68
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000070",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trương Mạnh Hùng",
+      "teacher_id": "GV045",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca4",
+          "reason": "GV Trương Mạnh Hùng KHÔNG mong muốn dạy Thứ 6 Ca4 (có 17 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000070",
+          "MaPhong": "B303",
+          "MaSlot": "Thu6-Ca4",
+          "MaGV": "GV045",
+          "index": 69
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000072",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "teacher_id": "GV047",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca4",
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy Thứ 6 Ca4 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000072",
+          "MaPhong": "B304",
+          "MaSlot": "Thu6-Ca4",
+          "MaGV": "GV047",
+          "index": 71
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000076",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "teacher_id": "GV047",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca1",
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy Thứ 7 Ca1 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000076",
+          "MaPhong": "F303",
+          "MaSlot": "Thu7-Ca1",
+          "MaGV": "GV047",
+          "index": 75
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000081",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "teacher_id": "GV001",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca2",
+          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 7 Ca2 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000081",
+          "MaPhong": "F309",
+          "MaSlot": "Thu7-Ca2",
+          "MaGV": "GV001",
+          "index": 80
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000082",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Lê Thị Mai",
+      "teacher_id": "GV003",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca3",
+          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 7 Ca3 (có 10 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000082",
+          "MaPhong": "F310",
+          "MaSlot": "Thu7-Ca3",
+          "MaGV": "GV003",
+          "index": 81
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000087",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "teacher_id": "GV001",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca4",
+          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 7 Ca4 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000087",
+          "MaPhong": "F401",
+          "MaSlot": "Thu7-Ca4",
+          "MaGV": "GV001",
+          "index": 86
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000090",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "teacher_id": "GV001",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca5",
+          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 7 Ca5 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000090",
+          "MaPhong": "F403",
+          "MaSlot": "Thu7-Ca5",
+          "MaGV": "GV001",
+          "index": 89
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000100",
+      "info": {
+        "TenMonHoc": "Hệ thống hoạch định nguồn lực doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Thu Trang",
+      "teacher_id": "GV008",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca4",
+          "reason": "GV Đặng Thu Trang KHÔNG mong muốn dạy Thứ 3 Ca4 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000100",
+          "MaPhong": "C211",
+          "MaSlot": "Thu3-Ca4",
+          "MaGV": "GV008",
+          "index": 99
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000101",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Minh Châu",
+      "teacher_id": "GV037",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca5",
+          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy Thứ 3 Ca5 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000101",
+          "MaPhong": "F407",
+          "MaSlot": "Thu3-Ca5",
+          "MaGV": "GV037",
+          "index": 100
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000104",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "teacher_id": "GV001",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca3",
+          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 4 Ca3 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000104",
+          "MaPhong": "F408",
+          "MaSlot": "Thu4-Ca3",
+          "MaGV": "GV001",
+          "index": 103
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000105",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Lê Thị Mai",
+      "teacher_id": "GV003",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca4",
+          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 4 Ca4 (có 10 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000105",
+          "MaPhong": "F409",
+          "MaSlot": "Thu4-Ca4",
+          "MaGV": "GV003",
+          "index": 104
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000106",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Minh Châu",
+      "teacher_id": "GV037",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca5",
+          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy Thứ 4 Ca5 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000106",
+          "MaPhong": "F410",
+          "MaSlot": "Thu4-Ca5",
+          "MaGV": "GV037",
+          "index": 105
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000107",
+      "info": {
+        "TenMonHoc": "Nhập môn thị giác máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phan Quốc Việt",
+      "teacher_id": "GV038",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca1",
+          "reason": "GV Phan Quốc Việt KHÔNG mong muốn dạy Thứ 5 Ca1 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000107",
+          "MaPhong": "C301",
+          "MaSlot": "Thu5-Ca1",
+          "MaGV": "GV038",
+          "index": 106
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000112",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Lê Thị Mai",
+      "teacher_id": "GV003",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca1",
+          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 6 Ca1 (có 10 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000112",
+          "MaPhong": "F501",
+          "MaSlot": "Thu6-Ca1",
+          "MaGV": "GV003",
+          "index": 111
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000114",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "teacher_id": "GV001",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca3",
+          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 6 Ca3 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000114",
+          "MaPhong": "F506",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV001",
+          "index": 113
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000115",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Lê Thị Mai",
+      "teacher_id": "GV003",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca4",
+          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 6 Ca4 (có 10 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000115",
+          "MaPhong": "F503",
+          "MaSlot": "Thu6-Ca4",
+          "MaGV": "GV003",
+          "index": 114
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000119",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thị Hương",
+      "teacher_id": "GV041",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca3",
+          "reason": "GV Nguyễn Thị Hương KHÔNG mong muốn dạy Thứ 7 Ca3 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000119",
+          "MaPhong": "F508",
+          "MaSlot": "Thu7-Ca3",
+          "MaGV": "GV041",
+          "index": 118
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000120",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "teacher_id": "GV013",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca4",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 7 Ca4 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000120",
+          "MaPhong": "F509",
+          "MaSlot": "Thu7-Ca4",
+          "MaGV": "GV013",
+          "index": 119
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000122",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "teacher_id": "GV047",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca1",
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy Thứ 2 Ca1 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000122",
+          "MaPhong": "F511",
+          "MaSlot": "Thu2-Ca1",
+          "MaGV": "GV047",
+          "index": 121
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000123",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca2",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 2 Ca2 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000123",
+          "MaPhong": "C305",
+          "MaSlot": "Thu2-Ca2",
+          "MaGV": "GV004",
+          "index": 122
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000124",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thuỳ Dương",
+      "teacher_id": "GV021",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca3",
+          "reason": "GV Nguyễn Thuỳ Dương KHÔNG mong muốn dạy Thứ 2 Ca3 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000124",
+          "MaPhong": "C306",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV021",
+          "index": 123
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000126",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Hoài Nam",
+      "teacher_id": "GV020",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca5",
+          "reason": "GV Đặng Hoài Nam KHÔNG mong muốn dạy Thứ 2 Ca5 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000126",
+          "MaPhong": "F602",
+          "MaSlot": "Thu2-Ca5",
+          "MaGV": "GV020",
+          "index": 125
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000129",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Hoài Nam",
+      "teacher_id": "GV020",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca3",
+          "reason": "GV Đặng Hoài Nam KHÔNG mong muốn dạy Thứ 3 Ca3 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000129",
+          "MaPhong": "F604",
+          "MaSlot": "Thu3-Ca3",
+          "MaGV": "GV020",
+          "index": 128
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000132",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Dương Quốc Khánh",
+      "teacher_id": "GV014",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca1",
+          "reason": "GV Dương Quốc Khánh KHÔNG mong muốn dạy Thứ 4 Ca1 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000132",
+          "MaPhong": "F608",
+          "MaSlot": "Thu4-Ca1",
+          "MaGV": "GV014",
+          "index": 131
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000133",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Dương Quốc Khánh",
+      "teacher_id": "GV014",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca2",
+          "reason": "GV Dương Quốc Khánh KHÔNG mong muốn dạy Thứ 4 Ca2 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000133",
+          "MaPhong": "F609",
+          "MaSlot": "Thu4-Ca2",
+          "MaGV": "GV014",
+          "index": 132
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000136",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "teacher_id": "GV047",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca5",
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy Thứ 4 Ca5 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000136",
+          "MaPhong": "F611",
+          "MaSlot": "Thu4-Ca5",
+          "MaGV": "GV047",
+          "index": 135
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000138",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thảo Nguyên",
+      "teacher_id": "GV048",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca2",
+          "reason": "GV Nguyễn Thảo Nguyên KHÔNG mong muốn dạy Thứ 5 Ca2 (có 12 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000138",
+          "MaPhong": "F702",
+          "MaSlot": "Thu5-Ca2",
+          "MaGV": "GV048",
+          "index": 137
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000139",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Hồ Thanh Tùng",
+      "teacher_id": "GV012",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca3",
+          "reason": "GV Hồ Thanh Tùng KHÔNG mong muốn dạy Thứ 5 Ca3 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000139",
+          "MaPhong": "F703",
+          "MaSlot": "Thu5-Ca3",
+          "MaGV": "GV012",
+          "index": 138
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000144",
+      "info": {
+        "TenMonHoc": "Nhập môn Tư duy Logic",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Ngọc Ánh",
+      "teacher_id": "GV017",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca3",
+          "reason": "GV Nguyễn Ngọc Ánh KHÔNG mong muốn dạy Thứ 6 Ca3 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000144",
+          "MaPhong": "C308",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV017",
+          "index": 143
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000145",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Trần Quang Huy",
+      "teacher_id": "GV002",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca4",
+          "reason": "GV Trần Quang Huy KHÔNG mong muốn dạy Thứ 6 Ca4 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000145",
+          "MaPhong": "F708",
+          "MaSlot": "Thu6-Ca4",
+          "MaGV": "GV002",
+          "index": 144
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000146",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Trần Quang Huy",
+      "teacher_id": "GV002",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca5",
+          "reason": "GV Trần Quang Huy KHÔNG mong muốn dạy Thứ 6 Ca5 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000146",
+          "MaPhong": "F709",
+          "MaSlot": "Thu6-Ca5",
+          "MaGV": "GV002",
+          "index": 145
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000150",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Quang Huy",
+      "teacher_id": "GV002",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca4",
+          "reason": "GV Trần Quang Huy KHÔNG mong muốn dạy Thứ 7 Ca4 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000150",
+          "MaPhong": "B411",
+          "MaSlot": "Thu7-Ca4",
+          "MaGV": "GV002",
+          "index": 149
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000152",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đào Khánh Linh",
+      "teacher_id": "GV033",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca1",
+          "reason": "GV Đào Khánh Linh KHÔNG mong muốn dạy Thứ 2 Ca1 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000152",
+          "MaPhong": "C310",
+          "MaSlot": "Thu2-Ca1",
+          "MaGV": "GV033",
+          "index": 151
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000154",
+      "info": {
+        "TenMonHoc": "Xử lý dữ liệu lớn",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Gia Bảo",
+      "teacher_id": "GV035",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca3",
+          "reason": "GV Hoàng Gia Bảo KHÔNG mong muốn dạy Thứ 2 Ca3 (có 12 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000154",
+          "MaPhong": "C401",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV035",
+          "index": 153
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000156",
+      "info": {
+        "TenMonHoc": "Hệ thống thương mại thông minh",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trương Mạnh Hùng",
+      "teacher_id": "GV045",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca5",
+          "reason": "GV Trương Mạnh Hùng KHÔNG mong muốn dạy Thứ 2 Ca5 (có 17 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000156",
+          "MaPhong": "C403",
+          "MaSlot": "Thu2-Ca5",
+          "MaGV": "GV045",
+          "index": 155
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000159",
+      "info": {
+        "TenMonHoc": "Kiến tập công nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca3",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 3 Ca3 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000159",
+          "MaPhong": "F303",
+          "MaSlot": "Thu3-Ca3",
+          "MaGV": "GV004",
+          "index": 158
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000168",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin 2",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca2",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 5 Ca2 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000168",
+          "MaPhong": "F401",
+          "MaSlot": "Thu5-Ca2",
+          "MaGV": "GV004",
+          "index": 167
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000169",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "teacher_id": "GV047",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca3",
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy Thứ 5 Ca3 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000169",
+          "MaPhong": "F406",
+          "MaSlot": "Thu5-Ca3",
+          "MaGV": "GV047",
+          "index": 168
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000171",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "teacher_id": "GV047",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca5",
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy Thứ 5 Ca5 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000171",
+          "MaPhong": "F403",
+          "MaSlot": "Thu5-Ca5",
+          "MaGV": "GV047",
+          "index": 170
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000172",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "teacher_id": "GV047",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca1",
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy Thứ 6 Ca1 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000172",
+          "MaPhong": "F407",
+          "MaSlot": "Thu6-Ca1",
+          "MaGV": "GV047",
+          "index": 171
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000174",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "teacher_id": "GV047",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca3",
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy Thứ 6 Ca3 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000174",
+          "MaPhong": "F405",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV047",
+          "index": 173
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000177",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Minh Tuấn",
+      "teacher_id": "GV040",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca1",
+          "reason": "GV Tạ Minh Tuấn KHÔNG mong muốn dạy Thứ 7 Ca1 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000177",
+          "MaPhong": "F410",
+          "MaSlot": "Thu7-Ca1",
+          "MaGV": "GV040",
+          "index": 176
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000179",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Minh Tuấn",
+      "teacher_id": "GV040",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca3",
+          "reason": "GV Tạ Minh Tuấn KHÔNG mong muốn dạy Thứ 7 Ca3 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000179",
+          "MaPhong": "F501",
+          "MaSlot": "Thu7-Ca3",
+          "MaGV": "GV040",
+          "index": 178
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000182",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca1",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 2 Ca1 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000182",
+          "MaPhong": "F503",
+          "MaSlot": "Thu2-Ca1",
+          "MaGV": "GV024",
+          "index": 181
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000184",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca3",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 2 Ca3 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000184",
+          "MaPhong": "F507",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV024",
+          "index": 183
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000186",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca5",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 2 Ca5 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000186",
+          "MaPhong": "F508",
+          "MaSlot": "Thu2-Ca5",
+          "MaGV": "GV024",
+          "index": 185
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000188",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca2",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 3 Ca2 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000188",
+          "MaPhong": "F510",
+          "MaSlot": "Thu3-Ca2",
+          "MaGV": "GV024",
+          "index": 187
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000189",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca3",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 3 Ca3 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000189",
+          "MaPhong": "F511",
+          "MaSlot": "Thu3-Ca3",
+          "MaGV": "GV024",
+          "index": 188
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000191",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca5",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 3 Ca5 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000191",
+          "MaPhong": "F602",
+          "MaSlot": "Thu3-Ca5",
+          "MaGV": "GV024",
+          "index": 190
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000192",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca1",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 4 Ca1 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000192",
+          "MaPhong": "F603",
+          "MaSlot": "Thu4-Ca1",
+          "MaGV": "GV024",
+          "index": 191
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000194",
+      "info": {
+        "TenMonHoc": "Xử lý dữ liệu lớn",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đào Khánh Linh",
+      "teacher_id": "GV033",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca3",
+          "reason": "GV Đào Khánh Linh KHÔNG mong muốn dạy Thứ 4 Ca3 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000194",
+          "MaPhong": "C405",
+          "MaSlot": "Thu4-Ca3",
+          "MaGV": "GV033",
+          "index": 193
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000198",
+      "info": {
+        "TenMonHoc": "Kỹ năng soạn thảo văn bản kỹ thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "teacher_id": "GV013",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca2",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 5 Ca2 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000198",
+          "MaPhong": "C409",
+          "MaSlot": "Thu5-Ca2",
+          "MaGV": "GV013",
+          "index": 197
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000200",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "teacher_id": "GV013",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca4",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 5 Ca4 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000200",
+          "MaPhong": "F604",
+          "MaSlot": "Thu5-Ca4",
+          "MaGV": "GV013",
+          "index": 199
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000201",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "teacher_id": "GV013",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca5",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 5 Ca5 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000201",
+          "MaPhong": "F605",
+          "MaSlot": "Thu5-Ca5",
+          "MaGV": "GV013",
+          "index": 200
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000204",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "teacher_id": "GV013",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca3",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 6 Ca3 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000204",
+          "MaPhong": "F609",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV013",
+          "index": 203
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000208",
+      "info": {
+        "TenMonHoc": "Khai thác dữ liệu và Khai phá tri thức",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Đức Thịnh",
+      "teacher_id": "GV043",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca2",
+          "reason": "GV Vũ Đức Thịnh KHÔNG mong muốn dạy Thứ 7 Ca2 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000208",
+          "MaPhong": "D102",
+          "MaSlot": "Thu7-Ca2",
+          "MaGV": "GV043",
+          "index": 207
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000212",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Hải Nam",
+      "teacher_id": "GV007",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca1",
+          "reason": "GV Vũ Hải Nam KHÔNG mong muốn dạy Thứ 2 Ca1 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000212",
+          "MaPhong": "F706",
+          "MaSlot": "Thu2-Ca1",
+          "MaGV": "GV007",
+          "index": 211
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000213",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Thu Trang",
+      "teacher_id": "GV008",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca2",
+          "reason": "GV Đặng Thu Trang KHÔNG mong muốn dạy Thứ 2 Ca2 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000213",
+          "MaPhong": "F702",
+          "MaSlot": "Thu2-Ca2",
+          "MaGV": "GV008",
+          "index": 212
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000215",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Hải Nam",
+      "teacher_id": "GV007",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca4",
+          "reason": "GV Vũ Hải Nam KHÔNG mong muốn dạy Thứ 2 Ca4 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000215",
+          "MaPhong": "D103",
+          "MaSlot": "Thu2-Ca4",
+          "MaGV": "GV007",
+          "index": 214
+        }
+      ]
+    }
+  ],
+  "ok_classes": [
+    {
+      "MaLop": "LOP-00000001",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Nguyễn Minh An",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000001",
+          "MaPhong": "B201",
+          "MaSlot": "Thu2-Ca1",
+          "MaGV": "GV001",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000002",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Lê Thị Mai",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000002",
+          "MaPhong": "A401",
+          "MaSlot": "Thu2-Ca1",
+          "MaGV": "GV003",
+          "index": 1
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000004",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Nguyễn Minh An",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000004",
+          "MaPhong": "B206",
+          "MaSlot": "Thu2-Ca2",
+          "MaGV": "GV001",
+          "index": 3
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000005",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Lê Thị Mai",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000005",
+          "MaPhong": "A403",
+          "MaSlot": "Thu2-Ca2",
+          "MaGV": "GV003",
+          "index": 4
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000007",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Hoàng Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000007",
+          "MaPhong": "B207",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV005",
+          "index": 6
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000008",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phan Ngọc Bích",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000008",
+          "MaPhong": "A405",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV006",
+          "index": 7
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000009",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Anh Tuấn",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000009",
+          "MaPhong": "A406",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV010",
+          "index": 8
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000010",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Hoàng Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000010",
+          "MaPhong": "B208",
+          "MaSlot": "Thu2-Ca4",
+          "MaGV": "GV005",
+          "index": 9
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000012",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Anh Tuấn",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000012",
+          "MaPhong": "A408",
+          "MaSlot": "Thu2-Ca4",
+          "MaGV": "GV010",
+          "index": 11
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000015",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000015",
+          "MaPhong": "A501",
+          "MaSlot": "Thu2-Ca5",
+          "MaGV": "GV005",
+          "index": 14
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000016",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Phan Ngọc Bích",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000016",
+          "MaPhong": "B301",
+          "MaSlot": "Thu3-Ca1",
+          "MaGV": "GV006",
+          "index": 15
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000017",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Minh Đức",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000017",
+          "MaPhong": "A502",
+          "MaSlot": "Thu3-Ca1",
+          "MaGV": "GV016",
+          "index": 16
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000021",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000021",
+          "MaPhong": "A505",
+          "MaSlot": "Thu3-Ca2",
+          "MaGV": "GV001",
+          "index": 20
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000023",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000023",
+          "MaPhong": "A506",
+          "MaSlot": "Thu3-Ca3",
+          "MaGV": "GV001",
+          "index": 22
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000028",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế yêu cầu",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thuỳ Dương",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000028",
+          "MaPhong": "C205",
+          "MaSlot": "Thu3-Ca5",
+          "MaGV": "GV021",
+          "index": 27
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000029",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Đỗ Phương Linh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000029",
+          "MaPhong": "B308",
+          "MaSlot": "Thu3-Ca5",
+          "MaGV": "GV011",
+          "index": 28
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000031",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Đỗ Phương Linh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000031",
+          "MaPhong": "A509",
+          "MaSlot": "Thu4-Ca1",
+          "MaGV": "GV011",
+          "index": 30
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000032",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Lê Thị Mai",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000032",
+          "MaPhong": "B309",
+          "MaSlot": "Thu4-Ca1",
+          "MaGV": "GV003",
+          "index": 31
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000033",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000033",
+          "MaPhong": "A601",
+          "MaSlot": "Thu4-Ca1",
+          "MaGV": "GV004",
+          "index": 32
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000034",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đỗ Phương Linh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000034",
+          "MaPhong": "A602",
+          "MaSlot": "Thu4-Ca2",
+          "MaGV": "GV011",
+          "index": 33
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000037",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Bảo Châu",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000037",
+          "MaPhong": "A604",
+          "MaSlot": "Thu4-Ca3",
+          "MaGV": "GV023",
+          "index": 36
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000038",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Lê Thị Mai",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000038",
+          "MaPhong": "B406",
+          "MaSlot": "Thu4-Ca3",
+          "MaGV": "GV003",
+          "index": 37
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000040",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Bảo Châu",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000040",
+          "MaPhong": "A606",
+          "MaSlot": "Thu4-Ca4",
+          "MaGV": "GV023",
+          "index": 39
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000041",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Minh Khang",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000041",
+          "MaPhong": "B407",
+          "MaSlot": "Thu4-Ca4",
+          "MaGV": "GV025",
+          "index": 40
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000042",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thuỳ Dương",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000042",
+          "MaPhong": "A607",
+          "MaSlot": "Thu4-Ca4",
+          "MaGV": "GV021",
+          "index": 41
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000044",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thuỳ Dương",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000044",
+          "MaPhong": "B408",
+          "MaSlot": "Thu4-Ca5",
+          "MaGV": "GV021",
+          "index": 43
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000046",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thuỳ Dương",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000046",
+          "MaPhong": "A701",
+          "MaSlot": "Thu5-Ca1",
+          "MaGV": "GV021",
+          "index": 45
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000048",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Ngọc Ánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000048",
+          "MaPhong": "A702",
+          "MaSlot": "Thu5-Ca1",
+          "MaGV": "GV017",
+          "index": 47
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000049",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Lê Minh Hiếu",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000049",
+          "MaPhong": "A703",
+          "MaSlot": "Thu5-Ca2",
+          "MaGV": "GV031",
+          "index": 48
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000050",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Phạm Thu Hà",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000050",
+          "MaPhong": "D108",
+          "MaSlot": "Thu5-Ca2",
+          "MaGV": "GV015",
+          "index": 49
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000051",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Ngọc Ánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000051",
+          "MaPhong": "A704",
+          "MaSlot": "Thu5-Ca2",
+          "MaGV": "GV017",
+          "index": 50
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000052",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Lê Minh Hiếu",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000052",
+          "MaPhong": "A705",
+          "MaSlot": "Thu5-Ca3",
+          "MaGV": "GV031",
+          "index": 51
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000053",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Phạm Thu Hà",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000053",
+          "MaPhong": "D208",
+          "MaSlot": "Thu5-Ca3",
+          "MaGV": "GV015",
+          "index": 52
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000054",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Ngọc Ánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000054",
+          "MaPhong": "A706",
+          "MaSlot": "Thu5-Ca3",
+          "MaGV": "GV017",
+          "index": 53
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000055",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Lê Minh Hiếu",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000055",
+          "MaPhong": "A707",
+          "MaSlot": "Thu5-Ca4",
+          "MaGV": "GV031",
+          "index": 54
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000056",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Phạm Thu Hà",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000056",
+          "MaPhong": "D308",
+          "MaSlot": "Thu5-Ca4",
+          "MaGV": "GV015",
+          "index": 55
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000057",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Ngọc Ánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000057",
+          "MaPhong": "A708",
+          "MaSlot": "Thu5-Ca4",
+          "MaGV": "GV017",
+          "index": 56
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000058",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Lê Minh Hiếu",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000058",
+          "MaPhong": "A709",
+          "MaSlot": "Thu5-Ca5",
+          "MaGV": "GV031",
+          "index": 57
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000062",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phan Ngọc Bích",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000062",
+          "MaPhong": "D111",
+          "MaSlot": "Thu6-Ca1",
+          "MaGV": "GV006",
+          "index": 61
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000064",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000064",
+          "MaPhong": "B205",
+          "MaSlot": "Thu6-Ca2",
+          "MaGV": "GV005",
+          "index": 63
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000065",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Minh Tuấn",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000065",
+          "MaPhong": "D211",
+          "MaSlot": "Thu6-Ca2",
+          "MaGV": "GV040",
+          "index": 64
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000066",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Đức Thịnh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000066",
+          "MaPhong": "B210",
+          "MaSlot": "Thu6-Ca2",
+          "MaGV": "GV043",
+          "index": 65
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000067",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Trương Mạnh Hùng",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000067",
+          "MaPhong": "B211",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV045",
+          "index": 66
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000068",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Minh Tuấn",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000068",
+          "MaPhong": "D311",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV040",
+          "index": 67
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000069",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Đức Thịnh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000069",
+          "MaPhong": "B302",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV043",
+          "index": 68
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000070",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trương Mạnh Hùng",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000070",
+          "MaPhong": "B303",
+          "MaSlot": "Thu6-Ca4",
+          "MaGV": "GV045",
+          "index": 69
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000072",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000072",
+          "MaPhong": "B304",
+          "MaSlot": "Thu6-Ca4",
+          "MaGV": "GV047",
+          "index": 71
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000074",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000074",
+          "MaPhong": "F301",
+          "MaSlot": "Thu6-Ca5",
+          "MaGV": "GV047",
+          "index": 73
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000076",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000076",
+          "MaPhong": "F303",
+          "MaSlot": "Thu7-Ca1",
+          "MaGV": "GV047",
+          "index": 75
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000081",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000081",
+          "MaPhong": "F309",
+          "MaSlot": "Thu7-Ca2",
+          "MaGV": "GV001",
+          "index": 80
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000082",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Lê Thị Mai",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000082",
+          "MaPhong": "F310",
+          "MaSlot": "Thu7-Ca3",
+          "MaGV": "GV003",
+          "index": 81
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000087",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000087",
+          "MaPhong": "F401",
+          "MaSlot": "Thu7-Ca4",
+          "MaGV": "GV001",
+          "index": 86
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000088",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80
+      },
+      "teacher": "Lê Thị Mai",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000088",
+          "MaPhong": "F406",
+          "MaSlot": "Thu7-Ca5",
+          "MaGV": "GV003",
+          "index": 87
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000089",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đỗ Phương Linh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000089",
+          "MaPhong": "F402",
+          "MaSlot": "Thu7-Ca5",
+          "MaGV": "GV011",
+          "index": 88
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000090",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000090",
+          "MaPhong": "F403",
+          "MaSlot": "Thu7-Ca5",
+          "MaGV": "GV001",
+          "index": 89
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000095",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Lê Thị Mai",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000095",
+          "MaPhong": "B404",
+          "MaSlot": "Thu2-Ca4",
+          "MaGV": "GV003",
+          "index": 94
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000096",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Văn Bình",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000096",
+          "MaPhong": "B405",
+          "MaSlot": "Thu2-Ca5",
+          "MaGV": "GV009",
+          "index": 95
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000097",
+      "info": {
+        "TenMonHoc": "Nhập môn Học máy",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Hải Nam",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000097",
+          "MaPhong": "C208",
+          "MaSlot": "Thu3-Ca1",
+          "MaGV": "GV007",
+          "index": 96
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000098",
+      "info": {
+        "TenMonHoc": "Nhập môn Học máy",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Thu Trang",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000098",
+          "MaPhong": "C209",
+          "MaSlot": "Thu3-Ca2",
+          "MaGV": "GV008",
+          "index": 97
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000099",
+      "info": {
+        "TenMonHoc": "Hệ thống hoạch định nguồn lực doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Thu Trang",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000099",
+          "MaPhong": "C210",
+          "MaSlot": "Thu3-Ca3",
+          "MaGV": "GV008",
+          "index": 98
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000100",
+      "info": {
+        "TenMonHoc": "Hệ thống hoạch định nguồn lực doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Thu Trang",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000100",
+          "MaPhong": "C211",
+          "MaSlot": "Thu3-Ca4",
+          "MaGV": "GV008",
+          "index": 99
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000101",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Minh Châu",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000101",
+          "MaPhong": "F407",
+          "MaSlot": "Thu3-Ca5",
+          "MaGV": "GV037",
+          "index": 100
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000102",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Minh Châu",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000102",
+          "MaPhong": "F404",
+          "MaSlot": "Thu4-Ca1",
+          "MaGV": "GV037",
+          "index": 101
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000103",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Minh Châu",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000103",
+          "MaPhong": "F405",
+          "MaSlot": "Thu4-Ca2",
+          "MaGV": "GV037",
+          "index": 102
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000104",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000104",
+          "MaPhong": "F408",
+          "MaSlot": "Thu4-Ca3",
+          "MaGV": "GV001",
+          "index": 103
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000105",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Lê Thị Mai",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000105",
+          "MaPhong": "F409",
+          "MaSlot": "Thu4-Ca4",
+          "MaGV": "GV003",
+          "index": 104
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000106",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Minh Châu",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000106",
+          "MaPhong": "F410",
+          "MaSlot": "Thu4-Ca5",
+          "MaGV": "GV037",
+          "index": 105
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000107",
+      "info": {
+        "TenMonHoc": "Nhập môn thị giác máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phan Quốc Việt",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000107",
+          "MaPhong": "C301",
+          "MaSlot": "Thu5-Ca1",
+          "MaGV": "GV038",
+          "index": 106
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000108",
+      "info": {
+        "TenMonHoc": "Nhập môn thị giác máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Hải Nam",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000108",
+          "MaPhong": "C302",
+          "MaSlot": "Thu5-Ca2",
+          "MaGV": "GV007",
+          "index": 107
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000109",
+      "info": {
+        "TenMonHoc": "Nhập môn học máy",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Đào Khánh Linh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000109",
+          "MaPhong": "C303",
+          "MaSlot": "Thu5-Ca3",
+          "MaGV": "GV033",
+          "index": 108
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000110",
+      "info": {
+        "TenMonHoc": "Nhập môn học máy",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Trọng Tài",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000110",
+          "MaPhong": "C304",
+          "MaSlot": "Thu5-Ca4",
+          "MaGV": "GV036",
+          "index": 109
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000111",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000111",
+          "MaPhong": "F411",
+          "MaSlot": "Thu5-Ca5",
+          "MaGV": "GV001",
+          "index": 110
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000112",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Lê Thị Mai",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000112",
+          "MaPhong": "F501",
+          "MaSlot": "Thu6-Ca1",
+          "MaGV": "GV003",
+          "index": 111
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000113",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Minh Châu",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000113",
+          "MaPhong": "F502",
+          "MaSlot": "Thu6-Ca2",
+          "MaGV": "GV037",
+          "index": 112
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000114",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000114",
+          "MaPhong": "F506",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV001",
+          "index": 113
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000115",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Lê Thị Mai",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000115",
+          "MaPhong": "F503",
+          "MaSlot": "Thu6-Ca4",
+          "MaGV": "GV003",
+          "index": 114
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000116",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Bùi Minh Châu",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000116",
+          "MaPhong": "F504",
+          "MaSlot": "Thu6-Ca5",
+          "MaGV": "GV037",
+          "index": 115
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000117",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thị Hương",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000117",
+          "MaPhong": "F507",
+          "MaSlot": "Thu7-Ca1",
+          "MaGV": "GV041",
+          "index": 116
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000118",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thị Hương",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000118",
+          "MaPhong": "F505",
+          "MaSlot": "Thu7-Ca2",
+          "MaGV": "GV041",
+          "index": 117
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000119",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thị Hương",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000119",
+          "MaPhong": "F508",
+          "MaSlot": "Thu7-Ca3",
+          "MaGV": "GV041",
+          "index": 118
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000120",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000120",
+          "MaPhong": "F509",
+          "MaSlot": "Thu7-Ca4",
+          "MaGV": "GV013",
+          "index": 119
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000121",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thị Hương",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000121",
+          "MaPhong": "F510",
+          "MaSlot": "Thu7-Ca5",
+          "MaGV": "GV041",
+          "index": 120
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000122",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000122",
+          "MaPhong": "F511",
+          "MaSlot": "Thu2-Ca1",
+          "MaGV": "GV047",
+          "index": 121
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000123",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000123",
+          "MaPhong": "C305",
+          "MaSlot": "Thu2-Ca2",
+          "MaGV": "GV004",
+          "index": 122
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000124",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thuỳ Dương",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000124",
+          "MaPhong": "C306",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV021",
+          "index": 123
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000126",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Hoài Nam",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000126",
+          "MaPhong": "F602",
+          "MaSlot": "Thu2-Ca5",
+          "MaGV": "GV020",
+          "index": 125
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000128",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phan Ngọc Bích",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000128",
+          "MaPhong": "F606",
+          "MaSlot": "Thu3-Ca2",
+          "MaGV": "GV006",
+          "index": 127
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000129",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Hoài Nam",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000129",
+          "MaPhong": "F604",
+          "MaSlot": "Thu3-Ca3",
+          "MaGV": "GV020",
+          "index": 128
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000130",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000130",
+          "MaPhong": "F605",
+          "MaSlot": "Thu3-Ca4",
+          "MaGV": "GV005",
+          "index": 129
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000131",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Dương Quốc Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000131",
+          "MaPhong": "F607",
+          "MaSlot": "Thu3-Ca5",
+          "MaGV": "GV014",
+          "index": 130
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000132",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Dương Quốc Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000132",
+          "MaPhong": "F608",
+          "MaSlot": "Thu4-Ca1",
+          "MaGV": "GV014",
+          "index": 131
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000133",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Dương Quốc Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000133",
+          "MaPhong": "F609",
+          "MaSlot": "Thu4-Ca2",
+          "MaGV": "GV014",
+          "index": 132
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000134",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Dương Quốc Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000134",
+          "MaPhong": "F701",
+          "MaSlot": "Thu4-Ca3",
+          "MaGV": "GV014",
+          "index": 133
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000135",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Dương Quốc Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000135",
+          "MaPhong": "F610",
+          "MaSlot": "Thu4-Ca4",
+          "MaGV": "GV014",
+          "index": 134
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000136",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000136",
+          "MaPhong": "F611",
+          "MaSlot": "Thu4-Ca5",
+          "MaGV": "GV047",
+          "index": 135
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000137",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Hồ Thanh Tùng",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000137",
+          "MaPhong": "F706",
+          "MaSlot": "Thu5-Ca1",
+          "MaGV": "GV012",
+          "index": 136
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000138",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thảo Nguyên",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000138",
+          "MaPhong": "F702",
+          "MaSlot": "Thu5-Ca2",
+          "MaGV": "GV048",
+          "index": 137
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000139",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Hồ Thanh Tùng",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000139",
+          "MaPhong": "F703",
+          "MaSlot": "Thu5-Ca3",
+          "MaGV": "GV012",
+          "index": 138
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000140",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thảo Nguyên",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000140",
+          "MaPhong": "F707",
+          "MaSlot": "Thu5-Ca4",
+          "MaGV": "GV048",
+          "index": 139
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000141",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Hồ Thanh Tùng",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000141",
+          "MaPhong": "F704",
+          "MaSlot": "Thu5-Ca5",
+          "MaGV": "GV012",
+          "index": 140
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000142",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thảo Nguyên",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000142",
+          "MaPhong": "F705",
+          "MaSlot": "Thu6-Ca1",
+          "MaGV": "GV048",
+          "index": 141
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000144",
+      "info": {
+        "TenMonHoc": "Nhập môn Tư duy Logic",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Ngọc Ánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000144",
+          "MaPhong": "C308",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV017",
+          "index": 143
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000145",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Trần Quang Huy",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000145",
+          "MaPhong": "F708",
+          "MaSlot": "Thu6-Ca4",
+          "MaGV": "GV002",
+          "index": 144
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000146",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Trần Quang Huy",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000146",
+          "MaPhong": "F709",
+          "MaSlot": "Thu6-Ca5",
+          "MaGV": "GV002",
+          "index": 145
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000147",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Trần Quang Huy",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000147",
+          "MaPhong": "F710",
+          "MaSlot": "Thu7-Ca1",
+          "MaGV": "GV002",
+          "index": 146
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000149",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Quang Huy",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000149",
+          "MaPhong": "B410",
+          "MaSlot": "Thu7-Ca3",
+          "MaGV": "GV002",
+          "index": 148
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000150",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Quang Huy",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000150",
+          "MaPhong": "B411",
+          "MaSlot": "Thu7-Ca4",
+          "MaGV": "GV002",
+          "index": 149
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000151",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Đào Khánh Linh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000151",
+          "MaPhong": "C309",
+          "MaSlot": "Thu7-Ca5",
+          "MaGV": "GV033",
+          "index": 150
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000152",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đào Khánh Linh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000152",
+          "MaPhong": "C310",
+          "MaSlot": "Thu2-Ca1",
+          "MaGV": "GV033",
+          "index": 151
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000153",
+      "info": {
+        "TenMonHoc": "Xử lý dữ liệu lớn",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Gia Bảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000153",
+          "MaPhong": "C311",
+          "MaSlot": "Thu2-Ca2",
+          "MaGV": "GV035",
+          "index": 152
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000154",
+      "info": {
+        "TenMonHoc": "Xử lý dữ liệu lớn",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Gia Bảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000154",
+          "MaPhong": "C401",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV035",
+          "index": 153
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000155",
+      "info": {
+        "TenMonHoc": "Hệ thống thương mại thông minh",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Đức Thịnh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000155",
+          "MaPhong": "C402",
+          "MaSlot": "Thu2-Ca4",
+          "MaGV": "GV043",
+          "index": 154
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000156",
+      "info": {
+        "TenMonHoc": "Hệ thống thương mại thông minh",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trương Mạnh Hùng",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000156",
+          "MaPhong": "C403",
+          "MaSlot": "Thu2-Ca5",
+          "MaGV": "GV045",
+          "index": 155
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000157",
+      "info": {
+        "TenMonHoc": "Kiến tập công nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80
+      },
+      "teacher": "Phạm Văn Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000157",
+          "MaPhong": "F301",
+          "MaSlot": "Thu3-Ca1",
+          "MaGV": "GV004",
+          "index": 156
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000158",
+      "info": {
+        "TenMonHoc": "Kiến tập công nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000158",
+          "MaPhong": "F302",
+          "MaSlot": "Thu3-Ca2",
+          "MaGV": "GV004",
+          "index": 157
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000159",
+      "info": {
+        "TenMonHoc": "Kiến tập công nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000159",
+          "MaPhong": "F303",
+          "MaSlot": "Thu3-Ca3",
+          "MaGV": "GV004",
+          "index": 158
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000162",
+      "info": {
+        "TenMonHoc": "Kiến tập công nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Minh An",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000162",
+          "MaPhong": "F305",
+          "MaSlot": "Thu4-Ca1",
+          "MaGV": "GV001",
+          "index": 161
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000163",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin 2",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Lê Thị Mai",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000163",
+          "MaPhong": "F307",
+          "MaSlot": "Thu4-Ca2",
+          "MaGV": "GV003",
+          "index": 162
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000165",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin 2",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000165",
+          "MaPhong": "F310",
+          "MaSlot": "Thu4-Ca4",
+          "MaGV": "GV004",
+          "index": 164
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000166",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin 2",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000166",
+          "MaPhong": "F308",
+          "MaSlot": "Thu4-Ca5",
+          "MaGV": "GV004",
+          "index": 165
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000167",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin 2",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000167",
+          "MaPhong": "F311",
+          "MaSlot": "Thu5-Ca1",
+          "MaGV": "GV004",
+          "index": 166
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000168",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin 2",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phạm Văn Khánh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000168",
+          "MaPhong": "F401",
+          "MaSlot": "Thu5-Ca2",
+          "MaGV": "GV004",
+          "index": 167
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000169",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000169",
+          "MaPhong": "F406",
+          "MaSlot": "Thu5-Ca3",
+          "MaGV": "GV047",
+          "index": 168
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000170",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000170",
+          "MaPhong": "F402",
+          "MaSlot": "Thu5-Ca4",
+          "MaGV": "GV047",
+          "index": 169
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000171",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000171",
+          "MaPhong": "F403",
+          "MaSlot": "Thu5-Ca5",
+          "MaGV": "GV047",
+          "index": 170
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000172",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000172",
+          "MaPhong": "F407",
+          "MaSlot": "Thu6-Ca1",
+          "MaGV": "GV047",
+          "index": 171
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000173",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000173",
+          "MaPhong": "F404",
+          "MaSlot": "Thu6-Ca2",
+          "MaGV": "GV047",
+          "index": 172
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000174",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Trần Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000174",
+          "MaPhong": "F405",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV047",
+          "index": 173
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000175",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Minh Tuấn",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000175",
+          "MaPhong": "F408",
+          "MaSlot": "Thu6-Ca4",
+          "MaGV": "GV040",
+          "index": 174
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000176",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Minh Tuấn",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000176",
+          "MaPhong": "F409",
+          "MaSlot": "Thu6-Ca5",
+          "MaGV": "GV040",
+          "index": 175
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000177",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Minh Tuấn",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000177",
+          "MaPhong": "F410",
+          "MaSlot": "Thu7-Ca1",
+          "MaGV": "GV040",
+          "index": 176
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000178",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Minh Tuấn",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000178",
+          "MaPhong": "F411",
+          "MaSlot": "Thu7-Ca2",
+          "MaGV": "GV040",
+          "index": 177
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000179",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Tạ Minh Tuấn",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000179",
+          "MaPhong": "F501",
+          "MaSlot": "Thu7-Ca3",
+          "MaGV": "GV040",
+          "index": 178
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000180",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Đức Long",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000180",
+          "MaPhong": "F502",
+          "MaSlot": "Thu7-Ca4",
+          "MaGV": "GV005",
+          "index": 179
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000181",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000181",
+          "MaPhong": "F506",
+          "MaSlot": "Thu7-Ca5",
+          "MaGV": "GV024",
+          "index": 180
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000182",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000182",
+          "MaPhong": "F503",
+          "MaSlot": "Thu2-Ca1",
+          "MaGV": "GV024",
+          "index": 181
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000183",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000183",
+          "MaPhong": "F504",
+          "MaSlot": "Thu2-Ca2",
+          "MaGV": "GV024",
+          "index": 182
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000184",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000184",
+          "MaPhong": "F507",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV024",
+          "index": 183
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000186",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000186",
+          "MaPhong": "F508",
+          "MaSlot": "Thu2-Ca5",
+          "MaGV": "GV024",
+          "index": 185
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000187",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000187",
+          "MaPhong": "F509",
+          "MaSlot": "Thu3-Ca1",
+          "MaGV": "GV024",
+          "index": 186
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000188",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000188",
+          "MaPhong": "F510",
+          "MaSlot": "Thu3-Ca2",
+          "MaGV": "GV024",
+          "index": 187
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000189",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000189",
+          "MaPhong": "F511",
+          "MaSlot": "Thu3-Ca3",
+          "MaGV": "GV024",
+          "index": 188
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000191",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000191",
+          "MaPhong": "F602",
+          "MaSlot": "Thu3-Ca5",
+          "MaGV": "GV024",
+          "index": 190
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000192",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Quang Hảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000192",
+          "MaPhong": "F603",
+          "MaSlot": "Thu4-Ca1",
+          "MaGV": "GV024",
+          "index": 191
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000193",
+      "info": {
+        "TenMonHoc": "Xử lý dữ liệu lớn",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Gia Bảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000193",
+          "MaPhong": "C404",
+          "MaSlot": "Thu4-Ca2",
+          "MaGV": "GV035",
+          "index": 192
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000194",
+      "info": {
+        "TenMonHoc": "Xử lý dữ liệu lớn",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đào Khánh Linh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000194",
+          "MaPhong": "C405",
+          "MaSlot": "Thu4-Ca3",
+          "MaGV": "GV033",
+          "index": 193
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000195",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Đào Khánh Linh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000195",
+          "MaPhong": "C406",
+          "MaSlot": "Thu4-Ca4",
+          "MaGV": "GV033",
+          "index": 194
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000196",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Nguyễn Thị Hương",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000196",
+          "MaPhong": "C407",
+          "MaSlot": "Thu4-Ca5",
+          "MaGV": "GV041",
+          "index": 195
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000198",
+      "info": {
+        "TenMonHoc": "Kỹ năng soạn thảo văn bản kỹ thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000198",
+          "MaPhong": "C409",
+          "MaSlot": "Thu5-Ca2",
+          "MaGV": "GV013",
+          "index": 197
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000199",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000199",
+          "MaPhong": "F606",
+          "MaSlot": "Thu5-Ca3",
+          "MaGV": "GV013",
+          "index": 198
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000200",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000200",
+          "MaPhong": "F604",
+          "MaSlot": "Thu5-Ca4",
+          "MaGV": "GV013",
+          "index": 199
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000201",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000201",
+          "MaPhong": "F605",
+          "MaSlot": "Thu5-Ca5",
+          "MaGV": "GV013",
+          "index": 200
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000202",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000202",
+          "MaPhong": "F607",
+          "MaSlot": "Thu6-Ca1",
+          "MaGV": "GV013",
+          "index": 201
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000204",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Ngô Thảo My",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000204",
+          "MaPhong": "F609",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV013",
+          "index": 203
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000207",
+      "info": {
+        "TenMonHoc": "Khai thác dữ liệu và Khai phá tri thức",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Gia Bảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000207",
+          "MaPhong": "D101",
+          "MaSlot": "Thu7-Ca1",
+          "MaGV": "GV035",
+          "index": 206
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000208",
+      "info": {
+        "TenMonHoc": "Khai thác dữ liệu và Khai phá tri thức",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Đức Thịnh",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000208",
+          "MaPhong": "D102",
+          "MaSlot": "Thu7-Ca2",
+          "MaGV": "GV043",
+          "index": 207
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000209",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phan Quốc Việt",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000209",
+          "MaPhong": "F610",
+          "MaSlot": "Thu7-Ca3",
+          "MaGV": "GV038",
+          "index": 208
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000210",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Hải Nam",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000210",
+          "MaPhong": "F611",
+          "MaSlot": "Thu7-Ca4",
+          "MaGV": "GV007",
+          "index": 209
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000211",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Phan Quốc Việt",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000211",
+          "MaPhong": "F701",
+          "MaSlot": "Thu7-Ca5",
+          "MaGV": "GV038",
+          "index": 210
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000212",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Hải Nam",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000212",
+          "MaPhong": "F706",
+          "MaSlot": "Thu2-Ca1",
+          "MaGV": "GV007",
+          "index": 211
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000213",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Đặng Thu Trang",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000213",
+          "MaPhong": "F702",
+          "MaSlot": "Thu2-Ca2",
+          "MaGV": "GV008",
+          "index": 212
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000214",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Phan Quốc Việt",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000214",
+          "MaPhong": "F703",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV038",
+          "index": 213
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000215",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40
+      },
+      "teacher": "Vũ Hải Nam",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000215",
+          "MaPhong": "D103",
+          "MaSlot": "Thu2-Ca4",
+          "MaGV": "GV007",
+          "index": 214
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000216",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40
+      },
+      "teacher": "Hoàng Gia Bảo",
+      "assignments": [
+        {
+          "MaLop": "LOP-00000216",
+          "MaPhong": "D104",
+          "MaSlot": "Thu2-Ca5",
+          "MaGV": "GV035",
+          "index": 215
+        }
+      ]
+    }
+  ]
+}

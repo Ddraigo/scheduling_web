@@ -96,14 +96,18 @@ HC-02 ⭐ CRITICAL - Room Conflicts:
 - If conflict detected, IMMEDIATELY choose a DIFFERENT slot
 - Track: room_schedule = {room_id: [assigned_slots]}
 
-HC-03 - Room Capacity:
-- Room capacity >= class size (students count)
-
-HC-04 - Room Capacity ⭐ CRITICAL:
-- Room capacity >= class size (students count)
-- If class has 80 students, room must have capacity >= 80
-- Check context['room_capacity'][room_id] >= class['students']
+HC-03 ⭐ CRITICAL - Room Capacity:
+- Room capacity MUST be >= class size (students count)
+- Example: 80-student class → needs room with capacity >= 80
+- Check: context['room_capacity'][room_id] >= class['students']
 - DO NOT assign 80-student class to 45-capacity room
+
+HC-04 ⭐ CRITICAL - Room Equipment:
+- Room MUST have ALL required equipment from class
+- Example: Class needs "Máy chiếu, Micro" → room MUST have both
+- Check: context['room_equipment'][room_id] contains all items from class['equipment_required']
+- Equipment matching is case-insensitive and flexible (substring match)
+- DO NOT assign class to room missing required equipment
 
 HC-05 ⭐ CRITICAL - Room Type Matching (LT vs TH):
 - RULE: If class.type == "LT" → room MUST be in rooms['LT']
@@ -222,7 +226,7 @@ IMPORTANT:
             Dict với format: {"schedule": [{"class": "ma_lop", "room": "ma_phong", "slot": "T2-C1"}, ...]}
         """
         config = types.GenerateContentConfig(
-            temperature=0.3,  # Cao hơn một chút để linh hoạt trong scheduling
+            temperature=0.5,  # Cao hơn một chút để linh hoạt trong scheduling
             top_p=0.95,
             top_k=40,
             max_output_tokens=100000,  # Tăng cao để chứa 216 schedules
@@ -416,7 +420,7 @@ IMPORTANT:
         total_sessions = 0
         
         for dot_info in prepared_data.get('dot_xep_list', []):
-            classes = dot_info.get('classes', [])
+            classes = dot_info.get('phan_cong', [])  # FIX: Dùng 'phan_cong' thay vì 'classes'
             total_classes += len(classes)
             for cls in classes:
                 total_gv.add(cls.get('ma_gv'))
@@ -432,5 +436,59 @@ IMPORTANT:
         lines.append(f"\n📊 STATS:")
         lines.append(f"  Total rooms: {stats.get('total_rooms', 0)}")
         lines.append(f"  Total timeslots: {stats.get('total_timeslots', 0)}")
+        
+        # 5. Room Type & Capacity mapping for HC-05 & HC-04 validation
+        lines.append(f"\n🏷️ ROOM DETAILS (for constraint checking):")
+        lines.append("  room_type: {")
+        for room_type in ['LT', 'TH']:
+            for room in prepared_data.get('rooms_by_type', {}).get(room_type, [])[:3]:
+                lines.append(f'    "{room["ma_phong"]}": "{room_type}",')
+        lines.append("    ... (all rooms)")
+        lines.append("  }")
+        
+        lines.append("  room_capacity: {")
+        for room_type in ['LT', 'TH']:
+            for room in prepared_data.get('rooms_by_type', {}).get(room_type, [])[:3]:
+                lines.append(f'    "{room["ma_phong"]}": {room["suc_chua"]},')
+        lines.append("    ... (all rooms)")
+        lines.append("  }")
+        
+        lines.append("  room_equipment: {")
+        for room_type in ['LT', 'TH']:
+            for room in prepared_data.get('rooms_by_type', {}).get(room_type, [])[:3]:
+                equipment = room.get('thiet_bi', 'N/A')
+                lines.append(f'    "{room["ma_phong"]}": "{equipment}",')
+        lines.append("    ... (all rooms)")
+        lines.append("  }")
+        
+        # 6. Class types for HC-05 validation
+        lines.append(f"\n📚 CLASS TYPES (LT vs TH):")
+        lt_count = 0
+        th_count = 0
+        for dot_info in prepared_data.get('dot_xep_list', []):
+            for cls in dot_info.get('phan_cong', []):
+                class_type = cls.get('loai_phong', 'LT')
+                if class_type == 'TH':
+                    th_count += 1
+                else:
+                    lt_count += 1
+        lines.append(f"  LT classes: {lt_count}")
+        lines.append(f"  TH classes: {th_count}")
+        lines.append("  ⚠️ CRITICAL: TH classes MUST use TH rooms, LT classes MUST use LT rooms!")
+        
+        # 7. Teacher preferences (nguyện vọng GV)
+        total_prefs = 0
+        teacher_with_prefs = set()
+        for dot_info in prepared_data.get('dot_xep_list', []):
+            prefs = dot_info.get('preferences', [])
+            total_prefs += len(prefs)
+            for pref in prefs:
+                teacher_with_prefs.add(pref.get('ma_gv'))
+        
+        if total_prefs > 0:
+            lines.append(f"\n💚 TEACHER PREFERENCES:")
+            lines.append(f"  Teachers with preferences: {len(teacher_with_prefs)}")
+            lines.append(f"  Total preferred slots: {total_prefs}")
+            lines.append("  Try to honor these when possible (soft constraint)")
         
         return "\n".join(lines)
