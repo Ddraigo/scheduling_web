@@ -370,6 +370,18 @@ function testFullPipeline() {
             `;
         });
         
+        // Add download button if file was generated
+        if (data.output_file) {
+            html += `
+                <div style="margin-top: 20px;">
+                    <a href="/llm-test/download/?file=${data.output_file}" class="btn btn-primary" download>
+                        📥 Download JSON Output
+                    </a>
+                    <span style="color: #666; margin-left: 10px;">${data.output_file}</span>
+                </div>
+            `;
+        }
+        
         document.getElementById('resultsContainer').innerHTML = html;
     })
     .catch(e => showError(e.message));

@@ -234,7 +234,7 @@ class DataAccessLayer:
         """Lấy lịch học của giảng viên"""
         query = ThoiKhoaBieu.objects.filter(
             phan_cong__ma_gv=ma_gv
-        ).select_related('lop_mon_hoc', 'phong_hoc', 'time_slot_id', 'ma_dot')
+        ).select_related('ma_lop', 'ma_phong', 'time_slot_id', 'ma_dot')
         if ma_dot:
             query = query.filter(ma_dot__ma_dot=ma_dot)
         return query

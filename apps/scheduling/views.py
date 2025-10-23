@@ -19,7 +19,6 @@ from .serializers import (
     DotXepSerializer, PhanCongSerializer, TimeSlotSerializer,
     ThoiKhoaBieuSerializer, ScheduleGenerationSerializer
 )
-from .services.schedule_service import ScheduleService
 from .services.schedule_validator import ScheduleValidator
 from .services.batch_scheduler import BatchScheduler
 from .services.query_handler import QueryHandler
@@ -202,13 +201,18 @@ class ScheduleGenerationViewSet(viewsets.ViewSet):
         logger.info(f"Generating schedule for period {ma_dot}, use_ai={use_ai}")
         
         try:
-            schedule_service = ScheduleService()
-            result = schedule_service.generate_schedule(ma_dot, use_ai=use_ai)
+            # schedule_service = ScheduleService()  # ← ScheduleService no longer exists
+            # result = schedule_service.generate_schedule(ma_dot, use_ai=use_ai)
             
-            if result['success']:
+            # Use LLM generator instead
+            from .services.schedule_generator_llm import ScheduleGeneratorLLM
+            generator = ScheduleGeneratorLLM()
+            result = generator.create_schedule_llm(ma_dot)
+            
+            if result and isinstance(result, dict):
                 return Response(result, status=status.HTTP_200_OK)
             else:
-                return Response(result, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Failed to generate schedule'}, status=status.HTTP_400_BAD_REQUEST)
         
         except Exception as e:
             logger.error(f"Error in schedule generation: {e}")

@@ -340,6 +340,31 @@ def handle_full_test(generator, semester_code):
             results['steps'][-1]['info'] = 'Invalid format'
             results['success'] = False
         
+        # Step 6: Save schedule to file
+        results['steps'].append({'name': 'Save to File', 'status': 'running'})
+        if results['success'] and result:
+            try:
+                save_msg = generator._validate_and_save_schedule(result, semester_code, compact)
+                # Extract filename from message if successful
+                import re
+                filename_match = re.search(r'schedule_llm_.*?\.json', save_msg)
+                if filename_match:
+                    filename = filename_match.group(0)
+                    results['steps'][-1]['status'] = 'success'
+                    results['steps'][-1]['info'] = filename
+                    results['output_file'] = filename
+                else:
+                    results['steps'][-1]['status'] = 'success'
+                    results['steps'][-1]['info'] = 'Saved'
+                    results['output_file'] = 'schedule_llm_*.json'
+            except Exception as e:
+                results['steps'][-1]['status'] = 'error'
+                results['steps'][-1]['info'] = f"Save failed: {str(e)[:50]}"
+                logger.exception(f"Failed to save schedule: {e}")
+        else:
+            results['steps'][-1]['status'] = 'skipped'
+            results['steps'][-1]['info'] = 'No valid schedule'
+        
         return JsonResponse(results)
     
     except Exception as e:
@@ -347,3 +372,43 @@ def handle_full_test(generator, semester_code):
         results['success'] = False
         results['error'] = str(e)
         return JsonResponse(results)
+
+
+@require_http_methods(["GET"])
+def download_llm_output(request):
+    """Download LLM output JSON file"""
+    import os
+    from django.http import FileResponse
+    
+    try:
+        filename = request.GET.get('file')
+        if not filename:
+            return JsonResponse({'error': 'Filename required'}, status=400)
+        
+        # Validate filename to prevent directory traversal
+        if '..' in filename or '/' in filename or '\\' in filename:
+            return JsonResponse({'error': 'Invalid filename'}, status=400)
+        
+        if not filename.startswith('schedule_llm_'):
+            return JsonResponse({'error': 'Invalid filename pattern'}, status=400)
+        
+        # Path to output directory
+        output_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'output')
+        filepath = os.path.join(output_dir, filename)
+        
+        # Check if file exists
+        if not os.path.exists(filepath):
+            return JsonResponse({'error': f'File not found: {filename}'}, status=404)
+        
+        # Check if path is within output directory (security check)
+        if not os.path.abspath(filepath).startswith(os.path.abspath(output_dir)):
+            return JsonResponse({'error': 'Invalid file path'}, status=400)
+        
+        # Return file for download
+        response = FileResponse(open(filepath, 'rb'), content_type='application/json')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+    
+    except Exception as e:
+        logger.exception(f"Download failed: {e}")
+        return JsonResponse({'error': str(e)}, status=500)

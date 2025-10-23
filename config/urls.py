@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework.authtoken.views import obtain_auth_token # <-- NEW
-from apps.scheduling.views_llm_test import llm_test_interactive
+from apps.scheduling.views_llm_test import llm_test_interactive, download_llm_output
 
 urlpatterns = [
     path('', include('apps.pages.urls')),
@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('apps.dyn_api.urls')),
     path('charts/', include('apps.charts.urls')),
     path('llm-test/', llm_test_interactive, name='llm_test_interactive'),  # <-- LLM Test Interface
+    path('llm-test/download/', download_llm_output, name='download_llm_output'),  # <-- Download LLM output
     path('scheduling/', include('apps.scheduling.urls')),  # <-- NEW Scheduling API
     path("admin/", admin.site.urls),
     path("", include('admin_black.urls')),

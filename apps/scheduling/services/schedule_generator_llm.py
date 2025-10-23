@@ -13,9 +13,11 @@ from google import genai
 from google.genai import types
 
 from ..utils.helpers import json_serial
+from ..models import TimeSlot
 from .data_access_layer import DataAccessLayer
 from .llm_service import LLMDataProcessor, LLMPromptBuilder
 from .schedule_validator import ScheduleValidator
+from .schedule_ai import ScheduleAI
 
 logger = logging.getLogger(__name__)
 
@@ -36,9 +38,15 @@ class ScheduleGeneratorLLM:
         Khởi tạo
         
         Args:
-            ai_instance: Instance AI (Google Genai hoặc tương tự)
+            ai_instance: Instance AI (Google Genai hoặc tương tự). Nếu None, dùng ScheduleAI()
         """
-        self.ai = ai_instance
+        # Sử dụng ScheduleAI nếu không có ai_instance
+        if ai_instance is None:
+            from .schedule_ai import ScheduleAI
+            self.ai = ScheduleAI()
+        else:
+            self.ai = ai_instance
+        
         self.validator = ScheduleValidator()
         self.processor = LLMDataProcessor()
         self.builder = LLMPromptBuilder()
@@ -263,128 +271,74 @@ class ScheduleGeneratorLLM:
                 })
         return result
     
-    @staticmethod
-    def _format_phan_cong(phan_cong_list) -> list:
-        """Format danh sách phân công - ❌ DEPRECATED, dùng _format_phan_cong_compact"""
-        return ScheduleGeneratorLLM._format_phan_cong_compact(phan_cong_list)
-    
-    @staticmethod
-    def _format_constraints(constraints_list) -> list:
-        """Format danh sách ràng buộc mềm - ❌ DEPRECATED, dùng _format_constraints_compact"""
-        result = []
-        for rb in constraints_list:
-            result.append({
-                'ma_rang_buoc': rb.ma_rang_buoc.ma_rang_buoc,
-                'ten': rb.ma_rang_buoc.ten_rang_buoc,
-                'mo_ta': rb.ma_rang_buoc.mo_ta,
-                'trong_so': rb.ma_rang_buoc.trong_so,
-            })
-        return result
-    
-    @staticmethod
-    def _format_preferences(preferences_list) -> list:
-        """Format danh sách nguyên vọng - ❌ DEPRECATED, dùng _format_preferences_compact"""
-        return ScheduleGeneratorLLM._format_preferences_compact(preferences_list)
-    
     def _detect_conflicts(self, schedule_data: dict, semester_code: str) -> dict:
         """
         Phát hiện xung đột hiện tại
+        ⭐ Simplified: Xóa processor call không cần thiết
+        Validation được làm bởi schedule_validator sau
         """
-        conflicts = {
+        # Placeholder - validation thực tế được làm bởi ScheduleValidator
+        return {
             'phong_trung': [],
             'giang_vien_trung': [],
             'lop_chua_xep': []
         }
-        
-        # Phát hiện xung đột từng đợt
-        for dot in schedule_data['dot_xep_list']:
-            dot_conflicts = self.processor.detect_scheduling_conflicts(dot.ma_dot)
-            
-            for key in conflicts.keys():
-                conflicts[key].extend(dot_conflicts.get(key, []))
-        
-        return conflicts
     
     def _build_llm_prompt(self, processed_data: dict, conflicts: dict) -> str:
         """
-        🔴 TỐI ƯU PROMPT: Gửi chỉ những thông tin THIẾT YẾU cho LLM
+        🔴 TỐI ƯU: Sử dụng ScheduleAI utilities để format context
+        Chỉ gửi DATA COMPACT thôi, KHÔNG gửi instruction (dùng instruction từ schedule_ai.py)
         
-        Cấu trúc compact:
-        - Classes: [ma_lop, so_sv, so_ca_tuan, loai_phong, ma_gv]
-        - Rooms: Chia theo loại (LT/TH) + sức chứa
-        - TimeSlots: Chỉ ID (Thu + Ca)
-        - Preferences: ma_gv -> slot IDs
-        - Constraints: Tên & trọng số
+        Cấu trúc:
+        1. Use format_schedule_context_for_ai() từ ScheduleAI để format thông tin
+        2. Thêm constraints nếu có
+        3. Append JSON data compact
         """
+        # 1. Format context dữ liệu bằng ScheduleAI utilities
+        context_part = self.ai.format_schedule_context_for_ai(processed_data)
+        
+        # 2. Thêm stats mở rộng
         stats = processed_data['stats']
-        
-        # Tạo mapping preferences: gv -> [slots]
-        prefs_by_gv = {}
-        for dot_info in processed_data['dot_xep_list']:
-            for pref in dot_info['preferences']:
-                gv = pref['gv']
-                slot = pref['slot']
-                if gv not in prefs_by_gv:
-                    prefs_by_gv[gv] = []
-                prefs_by_gv[gv].append(slot)
-        
-        # Tạo instruction text (ngắn gọn)
-        instruction = f"""NHIỆM VỤ: XẾP LỊCH THỊ KHÓA BIỂu TỐI ƯU
+        extended_context = f"""SCHEDULING CONTEXT:
 
 📊 THỐNG KÊ:
-- Lớp học: {stats['total_classes']}
+- Tổng lớp: {stats['total_classes']}
 - Tiết cần xếp: {stats['total_schedules_needed']}
-- Phòng học: {stats['total_rooms']}
+- Phòng: {stats['total_rooms']}
 - Time slot: {stats['total_timeslots']}
 
-📋 PHÒNG HỌC:
-- Lý thuyết (LT): {len(processed_data['rooms_by_type']['LT'])} phòng
-- Thực hành (TH): {len(processed_data['rooms_by_type']['TH'])} phòng
+{context_part}
 
-⚡ YÊU CẦU:
-1. Xếp {stats['total_schedules_needed']} tiết cho {stats['total_classes']} lớp
-2. Phòng đủ sức chứa: so_sv <= suc_chua
-3. Loại phòng phù hợp (LT/TH)
-4. Ưu tiên nguyên vọng giảng viên (nếu có)
-5. Tránh xung đột giảng viên & phòng
-
-⚠️ XUNG ĐỘT HIỆN TẠI:
-- Phòng bị trùng: {len(conflicts.get('phong_trung', []))}
-- GV bị trùng: {len(conflicts.get('giang_vien_trung', []))}
-- Lớp chưa xếp: {len(conflicts.get('lop_chua_xep', []))}
-
-📤 TRẢ VỀ JSON:
-{{
-    "schedule": [
-        {{"class": "MA_LOP", "room": "MA_PHONG", "slot": "ID_SLOT"}}
-    ],
-    "violations": ["LOP-001 phòng không đủ"],
-    "stats": {{"total": N, "conflict_resolved": N, "wishes_satisfied": N}}
-}}
+� CONSTRAINTS APPLIED:
 """
         
-        # Dữ liệu compact
+        # 3. Thêm constraints nếu có
+        for dot_info in processed_data['dot_xep_list']:
+            if dot_info.get('constraints'):
+                for const_id, const_info in dot_info['constraints'].items():
+                    extended_context += f"- {const_id}: {const_info.get('mo_ta', '')}\n"
+        
+        # 4. Data JSON (compact)
         data_str = json.dumps({
             'classes': [pc for dot in processed_data['dot_xep_list'] for pc in dot['phan_cong']],
             'rooms': processed_data['rooms_by_type'],
             'timeslots': processed_data['timeslots'],
             'constraints': {dot['ma_dot']: dot['constraints'] for dot in processed_data['dot_xep_list']},
-            'preferences_summary': {
-                'total': len([p for dot in processed_data['dot_xep_list'] for p in dot['preferences']]),
-                'by_gv': {gv: len(slots) for gv, slots in prefs_by_gv.items()}
-            }
+            'preferences_count': len([p for dot in processed_data['dot_xep_list'] for p in dot['preferences']]),
         }, ensure_ascii=False, indent=2)
         
-        logger.info(f"📊 LLM Prompt size: {len(instruction)} chars + {len(data_str)} chars = {len(instruction) + len(data_str)} total")
+        total_size = len(extended_context) + len(data_str)
+        logger.info(f"📊 LLM Prompt size: {len(extended_context)} (context) + {len(data_str)} (data) = {total_size} chars")
         
-        return f"{instruction}\n\nDỮ LIỆU:\n{data_str}"
+        return extended_context + "\n\nDATA:\n" + data_str
     
     def _call_llm_for_schedule(self, prompt: str, processed_data: dict) -> dict:
         """
-        🔴 OPTIMIZED: Gọi LLM tạo lịch → Parse & Map lại slot
+        🔴 OPTIMIZED: Gọi ScheduleAI.generate_schedule_json() để tạo lịch
         
-        LLM trả về: {"schedule": [{"class": "LOP-001", "room": "A101", "slot": "T2-C1"}]}
-        Backend map lại: "slot": "T2-C1" → "slot": "Thu2-Ca1"
+        Sử dụng dụng centralized AI interface thay vì gọi Gemini trực tiếp
+        - AI instance sử dụng schedule_system_instruction từ ScheduleAI
+        - Prompt chỉ chứa dữ liệu, instruction được handle bởi ScheduleAI
         
         Returns:
             Dict optimized như schedule_2025_2026_HK1.json
@@ -399,35 +353,19 @@ class ScheduleGeneratorLLM:
             }
         """
         try:
-            if not self.ai:
-                # Nếu không có AI instance, dùng mock response
-                logger.warning("⚠️ Không có AI instance, sử dụng mock response")
+            # Gọi ScheduleAI với prompt đã được build từ _build_llm_prompt
+            logger.info("🧠 Gọi ScheduleAI.generate_schedule_json()...")
+            
+            if isinstance(self.ai, ScheduleAI):
+                # Nếu là ScheduleAI, dùng generate_schedule_json
+                llm_response = self.ai.generate_schedule_json(prompt)
+            else:
+                # Fallback cho các instance khác
+                logger.warning("⚠️ AI instance không phải ScheduleAI, sử dụng mock response")
                 return self._generate_mock_schedule_optimized(processed_data)
             
-            # Gọi Google Genai
-            response = self.ai.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.7,
-                    max_output_tokens=8192,
-                ),
-            )
-            
-            # Extract JSON từ response
-            response_text = response.text
-            
-            # Tìm JSON trong response
-            import re
-            json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
-            if json_match:
-                schedule_json = json_match.group(0)
-                parsed = json.loads(schedule_json)
-            else:
-                parsed = json.loads(response_text)
-            
             # 🔴 MAP SLOT LẠI: T2-C1 → Thu2-Ca1
-            return self._parse_and_map_llm_response(parsed, processed_data)
+            return self._parse_and_map_llm_response(llm_response, processed_data)
             
         except Exception as e:
             logger.error(f"❌ Lỗi gọi LLM: {e}", exc_info=True)
@@ -459,16 +397,22 @@ class ScheduleGeneratorLLM:
         # 🔴 MAP SLOT & FORMAT
         for entry in llm_response.get('schedule', []):
             try:
-                # Lấy slot compact từ LLM
+                # Lấy slot từ LLM
                 compact_slot = entry.get('slot')
                 
-                # Map lại: T2-C1 → Thu2-Ca1
+                # Thử map: T2-C1 → Thu2-Ca1
                 original_slot = slot_mapping.get(compact_slot)
                 
+                # Nếu không map được, kiểm tra xem có phải đã là ID thật không
                 if not original_slot:
-                    violations.append(f"⚠️ Slot không tồn tại: {compact_slot}")
-                    failed_map_count += 1
-                    continue
+                    # LLM có thể trả về slot ID thực tế (Thu2-Ca1) thay vì compact format
+                    # Kiểm tra xem slot này có tồn tại trong DB không
+                    if TimeSlot.objects.filter(time_slot_id=compact_slot).exists():
+                        original_slot = compact_slot
+                    else:
+                        violations.append(f"⚠️ Slot không tồn tại: {compact_slot}")
+                        failed_map_count += 1
+                        continue
                 
                 # Format optimized (compact)
                 schedule.append({
@@ -488,27 +432,23 @@ class ScheduleGeneratorLLM:
         
         logger.info(f"📊 Map slot: {mapped_count} thành công, {failed_map_count} lỗi")
         
-        # Validate schedule
-        # Extract required data for validator
-        schedule_data = {'schedule': schedule}
+        # Validate schedule using compact validator
+        # Chuẩn bị phan_cong dict cho validator
+        phan_cong_dict = {}
+        for dot_info in processed_data.get('dot_xep_list', []):
+            for cls in dot_info.get('classes', []):
+                ma_lop = cls.get('ma_lop')
+                if ma_lop:
+                    phan_cong_dict[ma_lop] = {
+                        'ma_gv': cls.get('ma_gv'),
+                        'ma_dot': dot_info.get('ma_dot'),
+                        'so_sv': cls.get('so_sv', 0)
+                    }
         
-        # Transform processed_data classes to validator format
-        classes_data = [
-            {
-                'id': cls.get('ma_lop', f"CLS_{i}"),
-                'type': 'LT',  # Tạm thời mặc định LT
-                'sessions': cls.get('so_ca_tuan', 1),
-                'size': cls.get('so_sv', 0),
-            }
-            for i, cls in enumerate(processed_data.get('classes', []))
-        ]
-        
-        rooms_data = processed_data.get('rooms_by_type', {'LT': [], 'TH': []})
-        
-        validation_result = self.validator.validate_schedule(
-            schedule_data=schedule_data,
-            classes_data=classes_data,
-            rooms_data=rooms_data
+        validation_result = self.validator.validate_schedule_compact(
+            schedule_assignments=schedule,
+            prepared_data=processed_data,
+            phan_cong_dict=phan_cong_dict
         )
         
         # Metrics từ LLM
@@ -574,35 +514,34 @@ class ScheduleGeneratorLLM:
         # Validate
         schedule_data = {'schedule': schedule}
         
-        # Transform to validator format
-        classes_data = [
-            {
-                'id': cls.get('ma_lop', f"CLS_{i}"),
-                'type': 'LT',
-                'sessions': cls.get('so_ca_tuan', 1),
-                'size': cls.get('so_sv', 0),
-            }
-            for i, cls in enumerate(processed_data.get('classes', []))
-        ]
+        # Chuẩn bị phan_cong dict cho validator
+        phan_cong_dict = {}
+        for dot_info in processed_data.get('dot_xep_list', []):
+            for cls in dot_info.get('classes', []):
+                ma_lop = cls.get('ma_lop')
+                if ma_lop:
+                    phan_cong_dict[ma_lop] = {
+                        'ma_gv': cls.get('ma_gv'),
+                        'ma_dot': dot_info.get('ma_dot'),
+                        'so_sv': cls.get('so_sv', 0)
+                    }
         
-        rooms_data = processed_data.get('rooms_by_type', {'LT': [], 'TH': []})
-        
-        validation_result = self.validator.validate_schedule(
-            schedule_data=schedule_data,
-            classes_data=classes_data,
-            rooms_data=rooms_data
+        validation_result = self.validator.validate_schedule_compact(
+            schedule_assignments=schedule,
+            prepared_data=processed_data,
+            phan_cong_dict=phan_cong_dict
         )
         
         # Format giống schedule_2025_2026_HK1.json
         result = {
-            'schedule': schedule,
-            'validation': validation_result,
             'metrics': {
                 'fitness': 0,
                 'wish_satisfaction': 0,
                 'room_efficiency': 0.85,
                 'total_schedules': len(schedule)
             },
+            'schedule': schedule,
+            'validation': validation_result,
             'errors': []
         }
         

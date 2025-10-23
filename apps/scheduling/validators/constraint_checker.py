@@ -1,6 +1,12 @@
 """
 Shared constraint checking logic
 Dùng chung cho GA algorithm, schedule validator, và validation scripts
+
+Data Format Support:
+1. Generic format: {'class': 'LOP-xxx', 'room': 'P101', 'slot': 'Thu2-Ca1'}
+2. LLM format: {'ma_lop': 'LOP-xxx', 'ma_phong': 'P101', 'time_slot_id': 'T2-C1'}
+
+Tự động detect format và xử lý cả hai
 """
 
 from typing import Dict, List, Tuple, Set
@@ -25,7 +31,56 @@ class ConstraintChecker:
     """
     Kiểm tra hard constraints cho schedules
     ⭐ LOGIC DÙNG CHUNG cho tất cả validation
+    Hỗ trợ cả format generic và LLM
     """
+    
+    @staticmethod
+    def _normalize_schedule(sched: Dict) -> Dict:
+        """
+        Normalize schedule sang format chung
+        {'class': ..., 'room': ..., 'slot': ...}
+        
+        Hỗ trợ:
+        - {'class': 'LOP-xxx', 'room': 'P101', 'slot': 'Thu2-Ca1'} → as-is
+        - {'ma_lop': 'LOP-xxx', 'ma_phong': 'P101', 'time_slot_id': 'T2-C1'} → convert
+        """
+        normalized = {}
+        
+        # Class ID
+        normalized['class'] = sched.get('class') or sched.get('ma_lop')
+        
+        # Room ID  
+        normalized['room'] = sched.get('room') or sched.get('ma_phong')
+        
+        # Slot (standardize format)
+        slot = sched.get('slot') or sched.get('time_slot_id')
+        if slot:
+            # Convert T2-C1 → Thu2-Ca1 if needed
+            if slot.startswith('T') and '-C' in slot:
+                parts = slot.split('-')
+                day_str = 'Thu' + parts[0][1:]  # T2 → Thu2
+                slot_str = 'Ca' + parts[1][1:]  # C1 → Ca1
+                normalized['slot'] = f"{day_str}-{slot_str}"
+            else:
+                normalized['slot'] = slot
+        
+        # Da Dot (for LLM format)
+        normalized['ma_dot'] = sched.get('ma_dot')
+        
+        return normalized
+    
+    @staticmethod
+    def _normalize_assignment(assignment_data: Dict) -> Tuple[str, str]:
+        """
+        Normalize assignment data sang (class_id, teacher_id)
+        
+        Hỗ trợ:
+        - {'MaLop': 'LOP-xxx', 'MaGV': 'GV001'} → ('LOP-xxx', 'GV001')
+        - {'ma_lop': 'LOP-xxx', 'ma_gv': 'GV001'} → ('LOP-xxx', 'GV001')
+        """
+        class_id = assignment_data.get('MaLop') or assignment_data.get('ma_lop')
+        teacher_id = assignment_data.get('MaGV') or assignment_data.get('ma_gv')
+        return (class_id, teacher_id)
     
     @staticmethod
     def check_teacher_conflicts(
@@ -37,6 +92,7 @@ class ConstraintChecker:
         
         Args:
             schedules: [{'class': 'LOP-xxx', 'slot': 'Thu2-Ca1', 'room': 'P101'}, ...]
+                       hoặc [{'ma_lop': 'LOP-xxx', 'time_slot_id': 'T2-C1', 'ma_phong': 'P101'}, ...]
             assignments_map: {'LOP-xxx': 'GV001', ...}
             
         Returns:
@@ -47,22 +103,22 @@ class ConstraintChecker:
         
         # Group schedules by (teacher, timeslot)
         for sched in schedules:
-            class_id = sched.get('class')
-            slot = sched.get('slot')
+            normalized = ConstraintChecker._normalize_schedule(sched)
+            class_id = normalized.get('class')
+            slot = normalized.get('slot')
             teacher = assignments_map.get(class_id)
             
             if teacher and slot:
                 key = f"{teacher}_{slot}"
-                by_teacher_time[key].append(sched)
+                by_teacher_time[key].append(class_id)
         
         # Detect conflicts
-        for key, conflicts in by_teacher_time.items():
-            if len(conflicts) > 1:
+        for key, class_ids in by_teacher_time.items():
+            if len(class_ids) > 1:
                 parts = key.rsplit('_', 1)
                 if len(parts) != 2:
                     continue
                 teacher, slot = parts
-                class_ids = [c['class'] for c in conflicts]
                 
                 # Tạo 1 violation cho MỖI class bị ảnh hưởng bởi conflict
                 for class_id in class_ids:
@@ -85,19 +141,20 @@ class ConstraintChecker:
         by_room_time = defaultdict(list)
         
         for sched in schedules:
-            room = sched.get('room')
-            slot = sched.get('slot')
+            normalized = ConstraintChecker._normalize_schedule(sched)
+            room = normalized.get('room')
+            slot = normalized.get('slot')
+            class_id = normalized.get('class')
             if room and slot:
                 key = f"{room}_{slot}"
-                by_room_time[key].append(sched)
+                by_room_time[key].append(class_id)
         
-        for key, conflicts in by_room_time.items():
-            if len(conflicts) > 1:
+        for key, class_ids in by_room_time.items():
+            if len(class_ids) > 1:
                 parts = key.rsplit('_', 1)
                 if len(parts) != 2:
                     continue
                 room, slot = parts
-                class_ids = [c['class'] for c in conflicts]
                 
                 # Tạo 1 violation cho MỖI class bị ảnh hưởng bởi conflict
                 for class_id in class_ids:
@@ -124,8 +181,9 @@ class ConstraintChecker:
         violations = []
         
         for sched in schedules:
-            class_id = sched.get('class')
-            room = sched.get('room')
+            normalized = ConstraintChecker._normalize_schedule(sched)
+            class_id = normalized.get('class')
+            room = normalized.get('room')
             
             if not class_id or not room:
                 continue
@@ -165,8 +223,9 @@ class ConstraintChecker:
         violations = []
         
         for sched in schedules:
-            class_id = sched.get('class')
-            room = sched.get('room')
+            normalized = ConstraintChecker._normalize_schedule(sched)
+            class_id = normalized.get('class')
+            room = normalized.get('room')
             
             if not class_id or not room:
                 continue
@@ -198,12 +257,14 @@ class ConstraintChecker:
         violations = []
         
         for sched in schedules:
-            slot = sched.get('slot', '')
-            if 'Thu8' in slot:  # Chủ nhật
+            normalized = ConstraintChecker._normalize_schedule(sched)
+            slot = normalized.get('slot', '')
+            class_id = normalized.get('class')
+            if 'Thu8' in slot or 'T8' in slot:  # Chủ nhật
                 violations.append(ConstraintViolation(
                     constraint_code='HC-08',
                     message=f"Xếp lịch vào Chủ nhật",
-                    class_id=sched.get('class'),
+                    class_id=class_id,
                     details={'slot': slot}
                 ))
         
@@ -222,7 +283,10 @@ class ConstraintChecker:
         # Group schedules by class
         by_class = defaultdict(list)
         for sched in schedules:
-            by_class[sched['class']].append(sched)
+            normalized = ConstraintChecker._normalize_schedule(sched)
+            class_id = normalized.get('class')
+            if class_id:
+                by_class[class_id].append(normalized)
         
         for class_id, sessions_required in class_sessions.items():
             if sessions_required != 2:
@@ -252,8 +316,8 @@ class ConstraintChecker:
                 if len(parts) != 2:
                     continue
                     
-                day_part = parts[0]  # "Thu2"
-                slot_part = parts[1]  # "Ca1"
+                day_part = parts[0]  # "Thu2" hoặc "T2"
+                slot_part = parts[1]  # "Ca1" hoặc "C1"
                 
                 # Extract numbers
                 day_num_str = ''.join(filter(str.isdigit, day_part))
