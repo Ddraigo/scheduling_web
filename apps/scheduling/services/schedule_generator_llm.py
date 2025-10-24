@@ -183,7 +183,22 @@ class ScheduleGeneratorLLM:
         prepared['stats']['total_timeslots'] = len(prepared['timeslots'])
         logger.info(f"Total timeslots: {len(prepared['timeslots'])}")
         
-        # 🔴 TỐI ƯU: Xử lý từng đợt xếp - CHỈ GỬI DỮ LIỆU THIẾT YẾU
+        # � HC-04 EQUIPMENT PRE-FILTER: Build mapping of suitable rooms for each class
+        # This helps LLM avoid equipment violations before post-processing
+        suitable_rooms_by_class = {}  # {ma_lop: [suitable_room_ids]}
+        all_rooms_list = [
+            {
+                'ma_phong': r.get('ma_phong') if isinstance(r, dict) else r.ma_phong,
+                'suc_chua': r.get('suc_chua') if isinstance(r, dict) else r.suc_chua,
+                'loai_phong': r.get('loai_phong') if isinstance(r, dict) else (
+                    'TH' if hasattr(r, 'loai_phong') and r.loai_phong and ('Thực hành' in r.loai_phong or 'TH' in r.loai_phong or 'hành' in r.loai_phong) else 'LT'
+                ),
+                'thiet_bi': r.get('thiet_bi') if isinstance(r, dict) else (r.thiet_bi if hasattr(r, 'thiet_bi') else ''),
+            }
+            for r in schedule_data['all_rooms']
+        ]
+        
+        # �🔴 TỐI ƯU: Xử lý từng đợt xếp - CHỈ GỬI DỮ LIỆU THIẾT YẾU
         for dot in schedule_data['dot_xep_list']:
             dot_data = schedule_data['all_dot_data'].get(dot.ma_dot, {})
             logger.info(f"Processing dot: {dot.ma_dot}, dot_data keys: {dot_data.keys()}")
@@ -191,10 +206,21 @@ class ScheduleGeneratorLLM:
             phan_cong_list = dot_data.get('phan_cong', [])
             logger.info(f"Phan cong count for {dot.ma_dot}: {len(phan_cong_list)}")
             
+            # HC-04: Pre-filter suitable rooms for each class
+            formatted_phan_cong = self._format_phan_cong_compact(phan_cong_list)
+            for pc_formatted in formatted_phan_cong:
+                ma_lop = pc_formatted.get('ma_lop')
+                suitable = self._get_suitable_rooms_for_class(pc_formatted, all_rooms_list)
+                suitable_rooms_by_class[ma_lop] = suitable
+                if len(suitable) == 0:
+                    logger.warning(f"⚠️ HC-04 WARNING: No suitable rooms for {ma_lop}")
+                else:
+                    logger.debug(f"✅ {ma_lop}: {len(suitable)} suitable rooms")
+            
             dot_info = {
                 'ma_dot': dot.ma_dot,
                 'hoc_ky': dot.ma_du_kien_dt.get_hoc_ky_display() if hasattr(dot.ma_du_kien_dt, 'get_hoc_ky_display') else '',
-                'phan_cong': self._format_phan_cong_compact(phan_cong_list),
+                'phan_cong': formatted_phan_cong,
                 'constraints': self._format_constraints_compact(dot_data.get('constraints', [])),
                 'preferences': self._format_preferences_compact(dot_data.get('preferences', [])),
             }
@@ -208,6 +234,7 @@ class ScheduleGeneratorLLM:
             )
         
         logger.info(f"Prepared data stats: {prepared['stats']}")
+        prepared['suitable_rooms_by_class'] = suitable_rooms_by_class  # HC-04 mapping
         return prepared
     
     @staticmethod
@@ -461,7 +488,7 @@ class ScheduleGeneratorLLM:
         
         logger.info(f"📊 Map slot: {mapped_count} thành công, {failed_map_count} lỗi")
         
-        # Chuẩn bị phan_cong dict cho validator
+        # Chuẩn bị phan_cong dict cho validator & fixers
         phan_cong_dict = {}
         for dot_info in processed_data.get('dot_xep_list', []):
             for cls in dot_info.get('phan_cong', []):
@@ -475,6 +502,12 @@ class ScheduleGeneratorLLM:
                         'class_type': cls.get('loai_phong', 'LT'),  # TH hoặc LT
                         'thiet_bi_yeu_cau': cls.get('thiet_bi_yeu_cau', '')  # Thiết bị yêu cầu cho HC-04
                     }
+        
+        # 🔴 NEW: Detect & Fix HC-01 Teacher Conflicts
+        schedule = self._fix_teacher_conflicts(schedule, processed_data, phan_cong_dict)
+        
+        # 🔴 NEW: Detect & Fix HC-04 Equipment Violations
+        schedule = self._fix_equipment_violations(schedule, processed_data, phan_cong_dict)
         
         validation_result = self.validator.validate_schedule_compact(
             schedule_assignments=schedule,
@@ -642,5 +675,235 @@ class ScheduleGeneratorLLM:
         except Exception as e:
             logger.error(f"❌ Lỗi lưu lịch: {e}", exc_info=True)
             return f"❌ Lỗi: {str(e)}"
+    
+    def _fix_teacher_conflicts(self, schedule: List[Dict], processed_data: Dict, phan_cong_dict: Dict) -> List[Dict]:
+        """
+        🔴 HC-01 CONFLICT FIXER
+        Detect & fix teacher teaching 2+ classes at same time
+        
+        Algorithm:
+        1. Build (teacher, slot) → [class list] mapping
+        2. For each (teacher, slot) with conflicts, reassign all but first
+        3. Find best available slot for each conflicting class
+        4. Update schedule with new assignments
+        
+        Args:
+            schedule: List of {class, room, slot} assignments
+            processed_data: Contains available rooms, timeslots, etc.
+            phan_cong_dict: {ma_lop: {ma_gv, ma_dot, ...}}
+        
+        Returns:
+            Fixed schedule with conflicts resolved
+        """
+        from collections import defaultdict
+        
+        # Build (teacher, slot) → classes mapping
+        teacher_slot_assignments = defaultdict(list)
+        for assignment in schedule:
+            class_id = assignment.get('class')
+            slot = assignment.get('slot')
             
+            # Get teacher for this class
+            pc_info = phan_cong_dict.get(class_id, {})
+            teacher = pc_info.get('ma_gv')
+            
+            if teacher and slot:
+                teacher_slot_assignments[(teacher, slot)].append(assignment)
+        
+        # Detect conflicts & fix
+        fixed_schedule = []
+        conflicting_classes = []
+        
+        for assignment in schedule:
+            class_id = assignment.get('class')
+            slot = assignment.get('slot')
+            pc_info = phan_cong_dict.get(class_id, {})
+            teacher = pc_info.get('ma_gv')
+            
+            # Check if this is a conflicting assignment
+            if teacher and slot and len(teacher_slot_assignments[(teacher, slot)]) > 1:
+                # This class has a conflict
+                conflicting_classes.append({
+                    'assignment': assignment,
+                    'teacher': teacher,
+                    'original_slot': slot
+                })
+            else:
+                # No conflict, keep as is
+                fixed_schedule.append(assignment)
+        
+        # Try to reassign conflicting classes
+        available_slots = processed_data.get('timeslots', [])
+        available_rooms_by_type = processed_data.get('rooms_by_type', {'LT': [], 'TH': []})
+        
+        for conflict in conflicting_classes:
+            assignment = conflict['assignment']
+            teacher = conflict['teacher']
+            original_slot = conflict['original_slot']
+            class_id = assignment['class']
+            room = assignment['room']
+            
+            # Find best available slot for this class (not used by teacher)
+            found_slot = None
+            for slot_obj in available_slots:
+                candidate_slot = slot_obj.get('id') or slot_obj.get('time_slot_id')
+                
+                # Check if teacher is free at this slot
+                teacher_slot_key = (teacher, candidate_slot)
+                conflicts_at_slot = sum(
+                    1 for a in fixed_schedule 
+                    if a.get('class') in [c for c in phan_cong_dict if phan_cong_dict[c].get('ma_gv') == teacher]
+                    and a.get('slot') == candidate_slot
+                )
+                
+                if conflicts_at_slot == 0:
+                    found_slot = candidate_slot
+                    break
+            
+            if found_slot:
+                # Reassign to new slot
+                fixed_schedule.append({
+                    'class': class_id,
+                    'room': room,
+                    'slot': found_slot
+                })
+                logger.info(f"✅ Fixed HC-01: {class_id} moved from {original_slot} to {found_slot} (teacher {teacher})")
+            else:
+                # Couldn't find available slot, keep original (will be detected as violation)
+                fixed_schedule.append(assignment)
+                logger.warning(f"⚠️ Could not fix HC-01 for {class_id}: no available slots for {teacher}")
+        
+        return fixed_schedule
+    
+    def _check_equipment_match(self, class_equipment_required: str, room_equipment_available: str) -> bool:
+        """
+        HC-04 EQUIPMENT CHECKER - Check if room has required equipment
+        
+        Args:
+            class_equipment_required: Comma/semicolon separated equipment list (e.g. "PC, Máy chiếu")
+            room_equipment_available: Available equipment in room
+            
+        Returns:
+            True if room has all required equipment (case-insensitive, substring match)
+        """
+        if not class_equipment_required or not class_equipment_required.strip():
+            return True  # No requirement = any room ok
+        
+        if not room_equipment_available:
+            return False  # Has requirement but room has no equipment
+        
+        # Parse required items
+        required_items = [
+            item.strip().lower() 
+            for item in class_equipment_required.replace(';', ',').split(',') 
+            if item.strip()
+        ]
+        
+        # Check each required item exists in room equipment (case-insensitive)
+        available_lower = room_equipment_available.lower()
+        for required in required_items:
+            if required not in available_lower:
+                return False
+        
+        return True
+    
+    def _get_suitable_rooms_for_class(self, class_info: dict, all_rooms: list) -> list:
+        """
+        HC-04 PRE-FILTER - Get rooms suitable for this class
+        
+        Filters rooms by:
+        1. Room type matches class requirement (LT/TH)
+        2. Room capacity >= class size
+        3. Room has all required equipment (HC-04)
+        
+        Args:
+            class_info: Class info dict with loai_phong, so_sv, thiet_bi_yeu_cau
+            all_rooms: List of all available rooms {ma_phong, loai_phong, suc_chua, thiet_bi}
+            
+        Returns:
+            List of suitable room IDs (ma_phong)
+        """
+        class_type = class_info.get('loai_phong', 'LT')
+        class_size = class_info.get('so_sv', 0)
+        equipment_req = class_info.get('thiet_bi_yeu_cau', '')
+        
+        suitable = []
+        for room in all_rooms:
+            # 1. Check room type
+            room_type = room.get('loai_phong', 'LT')
+            if class_type != room_type:
+                continue
+            
+            # 2. Check capacity
+            capacity = room.get('suc_chua', 0)
+            if capacity < class_size:
+                continue
+            
+            # 3. Check equipment (HC-04)
+            room_equipment = room.get('thiet_bi', '')
+            if not self._check_equipment_match(equipment_req, room_equipment):
+                continue
+            
+            # All criteria passed
+            suitable.append(room.get('ma_phong'))
+        
+        return suitable
+    
+    def _fix_equipment_violations(self, schedule: List[Dict], processed_data: Dict, phan_cong_dict: Dict) -> List[Dict]:
+        """
+        HC-04 EQUIPMENT FIXER - Detect & fix room equipment mismatches
+        
+        After LLM generates schedule, this method:
+        1. Detects HC-04 violations (room missing required equipment)
+        2. Reassigns class to room with correct equipment
+        3. Falls back to LLM result if no suitable room available
+        
+        Args:
+            schedule: List of {class, room, slot} assignments
+            processed_data: {suitable_rooms_by_class, rooms_by_type}
+            phan_cong_dict: {ma_lop: {thiet_bi_yeu_cau, loai_phong, ...}}
+            
+        Returns:
+            Fixed schedule with HC-04 violations resolved where possible
+        """
+        fixed_schedule = []
+        violations_fixed = 0
+        
+        suitable_rooms = processed_data.get('suitable_rooms_by_class', {})
+        rooms_by_type = processed_data.get('rooms_by_type', {'LT': [], 'TH': []})
+        
+        # Build room info lookup
+        all_rooms = {}
+        for room_obj in rooms_by_type.get('LT', []) + rooms_by_type.get('TH', []):
+            all_rooms[room_obj.get('ma_phong')] = room_obj
+        
+        for assignment in schedule:
+            class_id = assignment.get('class')
+            room = assignment.get('room')
+            slot = assignment.get('slot')
+            
+            # Check if this room is in suitable list for this class
+            suitable_for_class = suitable_rooms.get(class_id, [])
+            if room in suitable_for_class:
+                # No violation - keep assignment
+                fixed_schedule.append(assignment)
+            else:
+                # Potential violation - try to reassign to suitable room
+                if suitable_for_class:
+                    # Use first suitable room (or could optimize further)
+                    new_room = suitable_for_class[0]
+                    fixed_schedule.append({
+                        'class': class_id,
+                        'room': new_room,
+                        'slot': slot
+                    })
+                    violations_fixed += 1
+                    logger.info(f"✅ Fixed HC-04: {class_id} moved from {room} to {new_room}")
+                else:
+                    # No suitable room available - keep LLM result (will show as violation)
+                    fixed_schedule.append(assignment)
+                    logger.warning(f"⚠️ Could not fix HC-04 for {class_id}: no suitable rooms available")
+        
+        logger.info(f"HC-04 violations fixed: {violations_fixed}")
+        return fixed_schedule
             
