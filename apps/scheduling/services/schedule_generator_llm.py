@@ -151,7 +151,9 @@ class ScheduleGeneratorLLM:
         # 🔴 TỐI ƯU: Chỉ lấy phòng theo loại + thiết bị
         rooms_by_type = {'LT': [], 'TH': []}
         for p in schedule_data['all_rooms']:
-            room_type = 'TH' if 'TH' in p.loai_phong or 'hành' in p.loai_phong else 'LT'
+            # Chuẩn hóa loại phòng: "Lý thuyết" → LT, "Thực hành" → TH
+            raw_loai = p.loai_phong if p.loai_phong else ''
+            room_type = 'TH' if 'Thực hành' in raw_loai or 'TH' in raw_loai or 'hành' in raw_loai else 'LT'
             room_obj = {
                 'ma_phong': p.ma_phong,
                 'suc_chua': p.suc_chua,
@@ -215,9 +217,11 @@ class ScheduleGeneratorLLM:
         Loại bỏ: ten_mon_hoc, nhom, to, he_dao_tao, ngon_ngu
         Giữ: thiet_bi_yeu_cau (để so sánh với phòng)
         
-        ⭐ FIX HC-05: Xác định loai_phong từ MonHoc.so_tiet_th
-        - Nếu môn học có so_tiet_th > 0 → lớp TH
-        - Ngược lại → lớp LT
+        ⭐ FIX HC-05: Xác định loai_phong từ MonHoc theo SQL logic:
+        - Nếu so_tiet_th = 0 → LT
+        - Nếu so_tiet_lt = 0 AND so_tiet_th > 0 → TH
+        - Nếu so_tiet_lt > 0 AND so_tiet_th > 0 AND to_mh = 0 → LT
+        - Else → TH
         """
         result = []
         for pc in phan_cong_list:
@@ -225,11 +229,22 @@ class ScheduleGeneratorLLM:
             ma_lop_obj = pc.ma_lop if hasattr(pc, 'ma_lop') else None
             ma_lop = ma_lop_obj.ma_lop if ma_lop_obj and hasattr(ma_lop_obj, 'ma_lop') else pc.get('ma_lop')
             
-            # Xác định loại phòng dựa vào MonHoc.so_tiet_th
+            # Xác định loại phòng dựa vào SQL logic
             loai_phong = 'LT'  # Mặc định LT
             if ma_lop_obj and hasattr(ma_lop_obj, 'ma_mon_hoc') and ma_lop_obj.ma_mon_hoc:
                 mon_hoc = ma_lop_obj.ma_mon_hoc
-                if hasattr(mon_hoc, 'so_tiet_th') and mon_hoc.so_tiet_th and mon_hoc.so_tiet_th > 0:
+                so_tiet_th = mon_hoc.so_tiet_th if hasattr(mon_hoc, 'so_tiet_th') else 0
+                so_tiet_lt = mon_hoc.so_tiet_lt if hasattr(mon_hoc, 'so_tiet_lt') else 0
+                to_mh = ma_lop_obj.to_mh if hasattr(ma_lop_obj, 'to_mh') else None
+                
+                # Apply SQL logic
+                if so_tiet_th == 0:
+                    loai_phong = 'LT'
+                elif so_tiet_lt == 0 and so_tiet_th > 0:
+                    loai_phong = 'TH'
+                elif so_tiet_lt > 0 and so_tiet_th > 0 and to_mh == 0:
+                    loai_phong = 'LT'
+                else:
                     loai_phong = 'TH'
             
             result.append({
@@ -248,17 +263,15 @@ class ScheduleGeneratorLLM:
         🔴 TỐI ƯU: Format ràng buộc - CHỈ MÔ TẢ & TRỌNG SỐ
         LLM cần mô tả để hiểu mục đích ràng buộc
         Loại bỏ: tên (không cần), ma (có thể query sau)
+        
+        Input: List of RangBuocMem objects (normalized from DAL)
         """
         result = {}
         for rb in constraints_list:
-            if hasattr(rb, 'ma_rang_buoc'):
-                constraint_id = rb.ma_rang_buoc.ma_rang_buoc
-                constraint_desc = rb.ma_rang_buoc.mo_ta
-                constraint_weight = rb.ma_rang_buoc.trong_so
-            else:
-                constraint_id = rb.get('ma_rang_buoc', rb.get('id', 'UNKNOWN'))
-                constraint_desc = rb.get('mo_ta', rb.get('desc', ''))
-                constraint_weight = rb.get('trong_so', 1)
+            # RangBuocMem has: ma_rang_buoc, ten_rang_buoc, mo_ta, trong_so
+            constraint_id = rb.ma_rang_buoc if isinstance(rb, dict) else rb.ma_rang_buoc
+            constraint_desc = rb.get('mo_ta') if isinstance(rb, dict) else rb.mo_ta
+            constraint_weight = rb.get('trong_so', 1) if isinstance(rb, dict) else rb.trong_so
             
             # Format: ID -> {mo_ta, trong_so}
             result[constraint_id] = {

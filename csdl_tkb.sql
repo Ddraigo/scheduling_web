@@ -9,6 +9,21 @@ USE CSDL_TKB
 
 GO
 
+SELECT *, 
+           CASE 
+               WHEN mh.SoTietTH = 0 THEN N'LT'
+			   WHEN mh.SoTietLT = 0 AND mh.SoTietTH > 0 THEN N'TH'
+			   WHEN mh.SoTietLT > 0 AND mh.SoTietTH > 0 AND lm.To_MH = 0 THEN N'LT'
+			   ELSE N'TH'
+               
+           END AS LoaiLop
+    FROM tb_LOP_MONHOC lm
+    JOIN tb_MON_HOC mh ON lm.MaMonHoc = mh.MaMonHoc
+
+select * from tb_PHONG_HOC
+
+
+
 /* ===== Danh mục khoa ===== */
 CREATE TABLE tb_KHOA(
     MaKhoa      VARCHAR(12)  NOT NULL PRIMARY KEY, -- VD: KHOA-001
@@ -637,22 +652,34 @@ R AS (
 ),
 Gen AS (
     SELECT 
-        MaPhong   = CONCAT('B', Tang, RIGHT('00' + CAST(Phong AS VARCHAR(2)), 2)), -- B201..B211, B301..B311, B401..B411
-        LoaiPhong =  N'Thực hành',       -- đổi thành N'TH' nếu muốn
-        SucChua   = CASE 
-                        WHEN Phong IN (1,6,7,8,9) THEN 90           -- phòng lớn
-                        ELSE 45                                   -- còn lại
-                    END,
-        ThietBi   = N'Máy chiếu, máy lạnh, TV',      
-        GhiChu    = NULL
-    FROM F CROSS JOIN R
+        B.MaPhong,
+        B.LoaiPhong,
+        B.SucChua,
+        ThietBi = CASE 
+                    WHEN B.LoaiPhong IN (N'Thực hành', N'TH') THEN N'PC'
+                    WHEN B.LoaiPhong IN (N'Lý thuyết', N'LT') THEN N'Máy chiếu, TV, máy lạnh, quạt'
+                    ELSE NULL
+                  END,
+        B.GhiChu
+    FROM (
+        -- TÍNH LoaiPhong TRƯỚC: hiện để cố định 'Thực hành' (có thể đổi thành 'Lý thuyết' nếu muốn)
+        SELECT 
+            MaPhong   = CONCAT('B', Tang, RIGHT('00' + CAST(Phong AS VARCHAR(2)), 2)), -- B201..B211, B301..B311, B401..B411
+            LoaiPhong = CASE WHEN Phong IN (3,4,5) THEN N'Thực hành' ELSE N'Lý thuyết' END,
+            -- (Tùy chọn) Nếu muốn tự phân loại theo số phòng:
+            -- LoaiPhong = CASE WHEN Phong IN (3,4,5) THEN N'Thực hành' ELSE N'Lý thuyết' END,
+            SucChua   = CASE 
+                            WHEN Phong IN (1,6,7,8,9) THEN 90
+                            ELSE 45
+                        END,
+            GhiChu    = NULL
+        FROM F CROSS JOIN R
+    ) AS B
 )
 INSERT INTO dbo.tb_PHONG_HOC (MaPhong, LoaiPhong, SucChua, ThietBi, GhiChu)
 SELECT g.MaPhong, g.LoaiPhong, g.SucChua, g.ThietBi, g.GhiChu
 FROM Gen g
 WHERE NOT EXISTS (SELECT 1 FROM dbo.tb_PHONG_HOC x WHERE x.MaPhong = g.MaPhong);
-
-
 GO
 
 
@@ -664,28 +691,34 @@ R AS (
 ),
 Gen AS (
     SELECT 
-        MaPhong   = CONCAT('D', Tang, RIGHT('00' + CAST(Phong AS VARCHAR(2)), 2)), -- D101..D111, D201..D211, D301..D311, D401..D411
-        LoaiPhong = CASE 
-                        WHEN Phong IN (8,11) THEN N'Thực hành'           -- thực hành
-                        ELSE N'Lý thuyết'                                 -- mặc định lý thuyết; gồm cả 1,6,7,9
-                    END,
-        SucChua   = CASE 
-                        WHEN Phong IN (1,6,7,8,9) THEN 90           -- phòng lớn
-                        ELSE 45                                   -- còn lại
-                    END,
-        ThietBi   = CASE 
-                        WHEN Phong IN (3,4,5)   THEN N'Thiết bị về điện'
-                        WHEN Phong IN (1,2,6,7,8,9,10,11)    THEN N'Máy chiếu, TV, máy lạnh, quạt'
-                        ELSE NULL
-                    END,
-        GhiChu    = NULL
-    FROM F CROSS JOIN R
+        B.MaPhong,
+        B.LoaiPhong,
+        B.SucChua,
+        ThietBi = CASE 
+                    WHEN B.LoaiPhong IN (N'Thực hành', N'TH') THEN N'Thiết bị về điện'
+                    WHEN B.LoaiPhong IN (N'Lý thuyết', N'LT') THEN N'Máy chiếu, TV, máy lạnh, quạt'
+                    ELSE NULL
+                  END,
+        B.GhiChu
+    FROM (
+        SELECT 
+            MaPhong   = CONCAT('D', Tang, RIGHT('00' + CAST(Phong AS VARCHAR(2)), 2)), -- D101..D111, D201..D211, D301..D311, D401..D411
+            LoaiPhong = CASE 
+                            WHEN Phong IN (8,11) THEN N'Thực hành'      -- thực hành
+                            ELSE N'Lý thuyết'                            -- mặc định lý thuyết
+                        END,
+            SucChua   = CASE 
+                            WHEN Phong IN (1,6,7,8,9) THEN 90            -- phòng lớn
+                            ELSE 45                                      -- còn lại
+                        END,
+            GhiChu    = NULL
+        FROM F CROSS JOIN R
+    ) AS B
 )
 INSERT INTO dbo.tb_PHONG_HOC (MaPhong, LoaiPhong, SucChua, ThietBi, GhiChu)
 SELECT g.MaPhong, g.LoaiPhong, g.SucChua, g.ThietBi, g.GhiChu
 FROM Gen g
 WHERE NOT EXISTS (SELECT 1 FROM dbo.tb_PHONG_HOC x WHERE x.MaPhong = g.MaPhong);
-
 GO
 
 ;WITH F AS (
@@ -714,6 +747,12 @@ WHERE NOT EXISTS (SELECT 1 FROM dbo.tb_PHONG_HOC x WHERE x.MaPhong = g.MaPhong);
 GO
 
 SELECT * FROM tb_PHONG_HOC
+
+SELECT
+    SUM(CASE WHEN LoaiPhong IN (N'Lý thuyết', N'LT') THEN 1 ELSE 0 END) AS SoPhongLyThuyet,
+    SUM(CASE WHEN LoaiPhong IN (N'Thực hành', N'TH') THEN 1 ELSE 0 END) AS SoPhongThucHanh
+FROM dbo.tb_PHONG_HOC;
+
 
 -----------THEM RANG BUOC MEM--------------
 MERGE dbo.tb_RANG_BUOC_MEM AS T

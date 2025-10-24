@@ -41,7 +41,8 @@ for cls in classes:
         'TenMonHoc': cls.ma_mon_hoc.ten_mon_hoc if cls.ma_mon_hoc else 'N/A',
         'SoCaTuan': cls.so_ca_tuan if cls.so_ca_tuan else 1,
         'Nhom': cls.nhom_mh if cls.nhom_mh else '?',
-        'SoSV': cls.so_luong_sv if cls.so_luong_sv else 0
+        'SoSV': cls.so_luong_sv if cls.so_luong_sv else 0,
+        'ThietBiYeuCau': cls.thiet_bi_yeu_cau if cls.thiet_bi_yeu_cau else ''
     }
 
 # 2. Lấy phân công giảng viên
@@ -70,14 +71,32 @@ room_info = {}
 for r in rooms:
     room_info[r.ma_phong] = {
         'LoaiPhong': r.loai_phong if r.loai_phong else '?',
-        'SucChua': r.suc_chua if r.suc_chua else 0
+        'SucChua': r.suc_chua if r.suc_chua else 0,
+        'ThietBi': r.thiet_bi if r.thiet_bi else ''
     }
 
 # 6. Lấy loại lớp từ môn học (LT/TH)
+# Logic từ SQL:
+#   WHEN so_tiet_th = 0 → 'LT'
+#   WHEN so_tiet_lt = 0 AND so_tiet_th > 0 → 'TH'
+#   WHEN so_tiet_lt > 0 AND so_tiet_th > 0 AND to_mh = 0 → 'LT'
+#   ELSE → 'TH'
 class_type = {}
 for cls in classes:
-    if cls.ma_mon_hoc and hasattr(cls.ma_mon_hoc, 'so_tiet_th') and cls.ma_mon_hoc.so_tiet_th > 0:
-        class_type[cls.ma_lop] = 'TH'
+    if cls.ma_mon_hoc:
+        so_tiet_th = cls.ma_mon_hoc.so_tiet_th if hasattr(cls.ma_mon_hoc, 'so_tiet_th') else 0
+        so_tiet_lt = cls.ma_mon_hoc.so_tiet_lt if hasattr(cls.ma_mon_hoc, 'so_tiet_lt') else 0
+        to_mh = cls.to_mh if hasattr(cls, 'to_mh') else None
+        
+        # Apply SQL logic
+        if so_tiet_th == 0:
+            class_type[cls.ma_lop] = 'LT'
+        elif so_tiet_lt == 0 and so_tiet_th > 0:
+            class_type[cls.ma_lop] = 'TH'
+        elif so_tiet_lt > 0 and so_tiet_th > 0 and to_mh == 0:
+            class_type[cls.ma_lop] = 'LT'
+        else:
+            class_type[cls.ma_lop] = 'TH'
     else:
         class_type[cls.ma_lop] = 'LT'
 
@@ -287,6 +306,8 @@ print()
 total_classes = len(class_info)
 hard_violated_classes = len(violations_by_class)
 soft_violated_classes = len(soft_violations_by_class)
+# ⚠️ IMPORTANT: soft_violated_classes should NOT include classes already in hard_violated_classes
+# soft_violated_classes = len([c for c in soft_violations_by_class.keys() if c not in violations_by_class])
 ok_count = len(ok_classes)
 
 print(f"📊 TỔNG QUAN:")
@@ -324,6 +345,29 @@ for constraint in sorted(constraint_stats.keys()):
         'MISSING': 'Chưa xếp lịch'
     }.get(constraint, constraint)
     print(f"   {constraint} ({name}): {count} vi phạm")
+print()
+
+# Thống kê số lớp bị dính từng loại ràng buộc cứng
+print(f"📚 SỐ LỚP BỊ DÍNH RÀNG BUỘC CỨNG:")
+affected_classes_by_hc = defaultdict(set)
+for class_id, viols in violations_by_class.items():
+    for v in viols:
+        affected_classes_by_hc[v['constraint']].add(class_id)
+
+for constraint in sorted(affected_classes_by_hc.keys()):
+    classes = affected_classes_by_hc[constraint]
+    name = {
+        'HC-01': 'Trùng giờ giảng viên',
+        'HC-02': 'Trùng phòng',
+        'HC-03': 'Phòng không đủ chỗ ngồi',
+        'HC-04': 'Phòng thiếu thiết bị yêu cầu',
+        'HC-05': 'Lớp TH xếp phòng LT',
+        'HC-06': 'Lớp LT xếp phòng TH',
+        'HC-08': 'Xếp vào Chủ nhật',
+        'HC-13': 'Số ca/Liên tiếp',
+        'MISSING': 'Chưa xếp lịch'
+    }.get(constraint, constraint)
+    print(f"   {constraint} ({name}): {len(classes)} lớp")
 print()
 
 # Thống kê vi phạm RÀNG BUỘC MỀM

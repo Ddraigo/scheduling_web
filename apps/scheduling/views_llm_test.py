@@ -118,8 +118,8 @@ def handle_fetch_data(generator, semester_code):
             'success': True,
             'data': {
                 'classes': sum(len(dot_data.get('phan_cong', [])) for dot_data in data.get('all_dot_data', {}).values()),
-                'rooms_lt': len([r for r in data.get('all_rooms', []) if 'LT' in r.loai_phong or 'Lý' in r.loai_phong]),
-                'rooms_th': len([r for r in data.get('all_rooms', []) if 'TH' in r.loai_phong or 'Thực' in r.loai_phong]),
+                'rooms_lt': len([r for r in data.get('all_rooms', []) if any(x in (r.loai_phong or '') for x in ['LT', 'Lý'])]),
+                'rooms_th': len([r for r in data.get('all_rooms', []) if any(x in (r.loai_phong or '') for x in ['TH', 'Thực', 'hành'])]),
                 'teachers': len(set([pc.ma_gv.ma_gv for dot_data in data.get('all_dot_data', {}).values() for pc in dot_data.get('phan_cong', [])])),
                 'constraints': sum(len(dot_data.get('constraints', [])) for dot_data in data.get('all_dot_data', {}).values()),
                 'preferences': sum(len(dot_data.get('preferences', [])) for dot_data in data.get('all_dot_data', {}).values()),

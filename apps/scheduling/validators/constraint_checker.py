@@ -83,6 +83,40 @@ class ConstraintChecker:
         return (class_id, teacher_id)
     
     @staticmethod
+    def _calculate_class_type(class_data: Dict) -> str:
+        """
+        Xác định class type theo SQL logic:
+        - WHEN so_tiet_th = 0 → 'LT'
+        - WHEN so_tiet_lt = 0 AND so_tiet_th > 0 → 'TH'
+        - WHEN so_tiet_lt > 0 AND so_tiet_th > 0 AND to_mh = 0 → 'LT'
+        - ELSE → 'TH'
+        
+        Args:
+            class_data: Dict có thể chứa: 
+                - 'type': nếu đã có, dùng nó
+                - 'SoTietTH', 'SoTietLT', 'To_MH': dùng để tính
+                - 'so_tiet_th', 'so_tiet_lt', 'to_mh': dùng để tính
+        """
+        # Nếu đã có type, dùng luôn
+        if 'type' in class_data and class_data['type']:
+            return class_data['type']
+        
+        # Lấy giá trị (support cả snake_case và PascalCase)
+        so_tiet_th = class_data.get('SoTietTH') or class_data.get('so_tiet_th') or 0
+        so_tiet_lt = class_data.get('SoTietLT') or class_data.get('so_tiet_lt') or 0
+        to_mh = class_data.get('To_MH') or class_data.get('to_mh')
+        
+        # Apply SQL logic
+        if so_tiet_th == 0:
+            return 'LT'
+        elif so_tiet_lt == 0 and so_tiet_th > 0:
+            return 'TH'
+        elif so_tiet_lt > 0 and so_tiet_th > 0 and to_mh == 0:
+            return 'LT'
+        else:
+            return 'TH'
+    
+    @staticmethod
     def check_teacher_conflicts(
         schedules: List[Dict],
         assignments_map: Dict[str, str]
@@ -449,7 +483,12 @@ def validate_all_constraints(
         if malop and magv:
             assignments_map[malop] = magv
     
-    class_types = {c['id']: c.get('type', '') for c in classes_data}
+    # Calculate class types using SQL logic
+    class_types = {}
+    for c in classes_data:
+        class_id = c.get('id')
+        if class_id:
+            class_types[class_id] = ConstraintChecker._calculate_class_type(c)
     room_types = {}
     for room in rooms_data.get('LT', []):
         room_types[room] = 'LT'

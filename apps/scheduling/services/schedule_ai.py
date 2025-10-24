@@ -131,11 +131,12 @@ HC-08 - Teacher Daily Limit:
 HC-09 - Preferred Courses:
 - Respect teacher's preferred courses (if constraint enabled)
 
-HC-10 - Preferred Teaching Days ⭐ NEW:
-- Use context['teacher_preferences'] to check preferred slots
-- Each teacher has 'preferred_slots' - TRY to use these
-- If teacher has preferences, prioritize those timeslots
-- Example: GV003 prefers [Thu2-Ca1, Thu2-Ca2, ...] → schedule at these if possible
+HC-10 ⭐⭐ TEACHER PREFERENCE (NguyenVong) = SEMI-HARD CONSTRAINT:
+- Satisfy teacher preferences BEFORE soft constraints
+- Try best effort to schedule at preferred slots (from tb_NGUYEN_VONG)
+- Only violate IF conflict with HC-01 to HC-09 (hard constraints)
+- NEVER violate preference just to improve soft constraint score
+- Violation only = necessary compromise for hard constraint conflict (NOT a penalty)
 
 HC-11 - Busy Slots:
 - Do NOT schedule during teacher's busy slots
@@ -147,6 +148,13 @@ HC-13 - Session-based Slot Assignment ⭐ CRITICAL:
 - Each class MUST have EXACTLY `sessions` number of assignments
 - sessions=1 → 1 assignment
 - sessions=2 → 2 assignments
+
+SOFT CONSTRAINTS (SHOULD satisfy - weighted score penalty):
+- Defined in context['soft_constraints'] with weight values
+- ONLY optimize AFTER all hard constraints + teacher preferences are satisfied
+- Violation = weight × count
+- Example: "Minimize Sunday classes" weight=0.5, violate 10 times → -5 points
+- Priority order: Hard Constraints > Teacher Preferences > Soft Constraints
 
 **NEW CONTEXT FIELDS (for better scheduling):**
 
@@ -167,11 +175,12 @@ HC-13 - Session-based Slot Assignment ⭐ CRITICAL:
 **VERIFICATION CHECKLIST:**
 Before returning schedule:
 - ✅ Each class appears exactly `sessions` times
-- ✅ No teacher teaches 2+ classes in same slot
-- ✅ No room hosts 2+ classes in same slot
-- ✅ All LT classes use LT rooms
-- ✅ All TH classes use TH rooms
-- ✅ All rooms have capacity >= class size
+- ✅ No teacher teaches 2+ classes in same slot (HC-01)
+- ✅ No room hosts 2+ classes in same slot (HC-02)
+- ✅ All rooms have capacity >= class size (HC-03)
+- ✅ All rooms have required equipment (HC-04)
+- ✅ All LT classes use LT rooms, all TH use TH rooms (HC-05/HC-06)
+- ✅ Teacher preferences honored when possible (HC-10)
 - ✅ Total output count = sum(sessions for all classes)
 
 OUTPUT FORMAT:

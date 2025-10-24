@@ -401,16 +401,6 @@ class DataAccessLayer:
         )
     
     @staticmethod
-    def get_rang_buoc_for_dot(ma_dot: str):
-        """
-        Lấy các ràng buộc mềm cho đợt xếp
-        """
-        from ..models import RangBuocTrongDot
-        
-        return RangBuocTrongDot.objects.filter(
-            ma_dot=ma_dot
-        ).select_related('ma_rang_buoc')
-    
     @staticmethod
     def get_nguyen_vong_for_dot(ma_dot: str):
         """
@@ -419,6 +409,27 @@ class DataAccessLayer:
         return NguyenVong.objects.filter(
             ma_dot=ma_dot
         ).select_related('ma_gv', 'time_slot_id')
+    
+    @staticmethod
+    def get_rang_buoc_for_dot(ma_dot: str):
+        """
+        Lấy các ràng buộc mềm cho đợt xếp:
+        1. Nếu đợt có RangBuocTrongDot → lấy những ràng buộc đó
+        2. Nếu không có → lấy tất cả RangBuocMem (mặc định)
+        
+        Returns: List of RangBuocMem objects (normalized)
+        """
+        # Check if period has custom soft constraints
+        has_custom = RangBuocTrongDot.objects.filter(ma_dot=ma_dot).exists()
+        
+        if has_custom:
+            # Get RangBuocMem objects from the junction table
+            return RangBuocMem.objects.filter(
+                rangbuoctrongdot__ma_dot=ma_dot
+            ).distinct()
+        else:
+            # Get default constraints
+            return RangBuocMem.objects.all()
     
     @staticmethod
     def get_schedule_data_for_llm(semester_code: str) -> dict:
