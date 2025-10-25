@@ -246,18 +246,32 @@ JAZZMIN_SETTINGS = {
         "auth": "fas fa-lock",
         "auth.user": "fas fa-user",
         "auth.group": "fas fa-users",
+        
+        # Auth token (DRF authtoken)
+        "authtoken": "fas fa-key",
+        "authtoken.tokenproxy": "fas fa-user-shield",
+        "scheduling": "fas fa-calendar-check",
+        
+        # Data table app
+        "data_table": "fas fa-table",
+
+        # REST framework / tooling
+        "rest_framework": "fas fa-cubes",
+
+        # Scheduling models
         "scheduling.khoa": "fas fa-building",
         "scheduling.bomon": "fas fa-sitemap",
         "scheduling.giangvien": "fas fa-chalkboard-user",
+        "scheduling.gvdaymon": "fas fa-user-tie",  # Giáo viên dạy môn
         "scheduling.monhoc": "fas fa-book",
         "scheduling.phonghoc": "fas fa-door-open",
         "scheduling.lopmonhoc": "fas fa-graduation-cap",
         "scheduling.dotxep": "fas fa-calendar-days",
         "scheduling.phancong": "fas fa-handshake",
-        "scheduling.khuangtg": "fas fa-clock",
-        "scheduling.ranbuocmem": "fas fa-link",
-        "scheduling.ranbuoctrongdot": "fas fa-chain",
-        "scheduling.dukilendtao": "fas fa-list-check",
+        "scheduling.khungtg": "fas fa-hourglass-half",  # Khung thời gian
+        "scheduling.rangbuocmem": "fas fa-wave-square",  # Ràng buộc mềm
+        "scheduling.rangbuoctrongdot": "fas fa-shield-alt",  # Ràng buộc trong đợt
+        "scheduling.dukiendt": "fas fa-clipboard-check",  # Dự kiến dạy-học (fixed: was dukilendtao)
         "scheduling.nguyenvong": "fas fa-heart",
         "scheduling.timeslot": "fas fa-hourglass-end",
         "scheduling.thoikhoabieu": "fas fa-calendar-check",
@@ -269,6 +283,7 @@ JAZZMIN_SETTINGS = {
     "show_ui_builder": False,
     "changeform_format": "horizontal_tabs",
     "language_code": "vi",
+
 }
 
 REST_FRAMEWORK = {
