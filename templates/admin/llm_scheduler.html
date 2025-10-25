@@ -1,0 +1,261 @@
+{% extends "admin/base_site.html" %}
+{% load static i18n %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Trang chủ</a>
+    &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- Control Panel -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>⚙️ Bảng điều khiển</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group mb-3">
+                    <label for="periodSelect">Chọn đợt xếp:</label>
+                    <select id="periodSelect" class="form-control">
+                        <option value="">-- Chọn đợt --</option>
+                        {% for period in periods %}
+                        <option value="{{ period.ma_dot }}">
+                            {{ period.ma_dot }} - {{ period.ten_dot }} ({{ period.trang_thai }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary" onclick="testFetchData()">
+                        📥 Tải dữ liệu
+                    </button>
+                    <button type="button" class="btn btn-info" onclick="testPrepareCompact()">
+                        🔧 Định dạng compact
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="testBuildPrompt()">
+                        📝 Xây dựng prompt
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="testCallLLM()">
+                        🤖 Gọi LLM
+                    </button>
+                </div>
+                
+                <hr>
+                
+                <button type="button" class="btn btn-lg btn-success" onclick="testFullPipeline()">
+                    ▶️ Chạy toàn bộ quy trình
+                </button>
+            </div>
+        </div>
+        
+        <!-- Output Console -->
+        <div class="card">
+            <div class="card-header">
+                <h5>📊 Kết quả</h5>
+            </div>
+            <div class="card-body">
+                <div id="outputConsole" style="background-color: #1e1e1e; color: #00ff00; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; max-height: 600px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word;">
+                    Đang chờ thực hiện lệnh...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    .card {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #ddd;
+        padding: 10px 15px;
+    }
+    .card-header h5 {
+        margin: 0;
+    }
+    .card-body {
+        padding: 15px;
+    }
+    #outputConsole {
+        font-size: 12px;
+        line-height: 1.4;
+    }
+    .btn-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+</style>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script>
+    const apiBaseUrl = '/api/scheduling';
+    
+    function log(message, type = 'info') {
+        const console = document.getElementById('outputConsole');
+        const timestamp = new Date().toLocaleTimeString();
+        const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+        console.innerHTML += `[${timestamp}] ${prefix} ${message}\n`;
+        console.scrollTop = console.scrollHeight;
+    }
+    
+    function clearLog() {
+        document.getElementById('outputConsole').innerHTML = '';
+    }
+    
+    function getSelectedPeriod() {
+        const select = document.getElementById('periodSelect');
+        const periodId = select.value;
+        if (!periodId) {
+            log('⚠️ Vui lòng chọn đợt xếp!', 'error');
+            return null;
+        }
+        return periodId;
+    }
+    
+    async function testFetchData() {
+        clearLog();
+        const periodId = getSelectedPeriod();
+        if (!periodId) return;
+        
+        log(`Đang tải dữ liệu cho đợt: ${periodId}...`);
+        
+        try {
+            const response = await fetch(`${apiBaseUrl}/schedule-llm/?period_id=${periodId}&step=fetch_data`);
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                log(`✅ Đã tải thành công dữ liệu`, 'success');
+                log(`📊 Thống kê:`);
+                log(`   - Lớp môn học: ${data.data.classes?.length || 0}`);
+                log(`   - Giảng viên: ${data.data.teachers?.length || 0}`);
+                log(`   - Phòng học: ${data.data.rooms?.length || 0}`);
+                log(`   - Khung thời gian: ${data.data.time_slots?.length || 0}`);
+                log(JSON.stringify(data.data, null, 2));
+            } else {
+                log(`❌ Lỗi: ${data.message}`, 'error');
+            }
+        } catch (error) {
+            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
+        }
+    }
+    
+    async function testPrepareCompact() {
+        clearLog();
+        const periodId = getSelectedPeriod();
+        if (!periodId) return;
+        
+        log(`Đang chuẩn bị định dạng compact cho đợt: ${periodId}...`);
+        
+        try {
+            const response = await fetch(`${apiBaseUrl}/schedule-llm/?period_id=${periodId}&step=prepare_compact`);
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                log(`✅ Đã tạo định dạng compact`, 'success');
+                log(JSON.stringify(data.data, null, 2));
+            } else {
+                log(`❌ Lỗi: ${data.message}`, 'error');
+            }
+        } catch (error) {
+            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
+        }
+    }
+    
+    async function testBuildPrompt() {
+        clearLog();
+        const periodId = getSelectedPeriod();
+        if (!periodId) return;
+        
+        log(`Đang xây dựng prompt cho đợt: ${periodId}...`);
+        
+        try {
+            const response = await fetch(`${apiBaseUrl}/schedule-llm/?period_id=${periodId}&step=build_prompt`);
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                log(`✅ Đã tạo prompt`, 'success');
+                log(`📝 Prompt preview (first 500 chars):`);
+                log(data.data.prompt.substring(0, 500) + '...');
+            } else {
+                log(`❌ Lỗi: ${data.message}`, 'error');
+            }
+        } catch (error) {
+            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
+        }
+    }
+    
+    async function testCallLLM() {
+        clearLog();
+        const periodId = getSelectedPeriod();
+        if (!periodId) return;
+        
+        log(`Đang gọi LLM để tạo lịch cho đợt: ${periodId}...`);
+        log(`⏳ Đang chờ phản hồi từ LLM... (có thể mất 10-30 giây)`);
+        
+        try {
+            const response = await fetch(`${apiBaseUrl}/schedule-llm/?period_id=${periodId}&step=call_llm`);
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                log(`✅ LLM đã phản hồi thành công`, 'success');
+                log(`📊 Kết quả:`);
+                log(JSON.stringify(data.data, null, 2));
+            } else {
+                log(`❌ Lỗi: ${data.message}`, 'error');
+            }
+        } catch (error) {
+            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
+        }
+    }
+    
+    async function testFullPipeline() {
+        clearLog();
+        const periodId = getSelectedPeriod();
+        if (!periodId) return;
+        
+        log(`🚀 Bắt đầu quy trình hoàn chỉnh cho đợt: ${periodId}`);
+        log(`⏳ Đang xử lý... (có thể mất vài phút)`);
+        
+        try {
+            const response = await fetch(`${apiBaseUrl}/schedule-llm/?period_id=${periodId}`);
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                log(`✅ Hoàn thành quy trình!`, 'success');
+                log(`📊 Kết quả cuối cùng:`);
+                log(JSON.stringify(data.data, null, 2));
+            } else {
+                log(`❌ Lỗi: ${data.message}`, 'error');
+                if (data.data) {
+                    log(`Chi tiết lỗi:`);
+                    log(JSON.stringify(data.data, null, 2));
+                }
+            }
+        } catch (error) {
+            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
+        }
+    }
+</script>
+{% endblock %}

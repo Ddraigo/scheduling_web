@@ -66,6 +66,9 @@ INSTALLED_APPS = [
     
     # Scheduling System - NEW
     "apps.scheduling",
+    
+    # Sap Lich - Scheduling Tools Container
+    "apps.sap_lich",
 
     # Tooling API-GEN
     'rest_framework',            # Include DRF           # <-- NEW 
@@ -236,13 +239,36 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
         {"name": "Trang chủ", "url": "/", "permissions": ["auth.view_user"]},
         {"name": "Dữ liệu", "url": "/data_table/", "permissions": ["auth.view_user"]},
+        {"name": "Sắp lịch bằng LLM", "url": "admin:llm_scheduler", "permissions": ["auth.view_user"], "icon": "fas fa-robot"},
+        {"name": "Sắp lịch bằng thuật toán", "url": "admin:algo_scheduler", "permissions": ["auth.view_user"], "icon": "fas fa-cogs"},
     ],
     "usermenu_links": [
         {"name": "Hồ sơ", "url": "/admin/auth/user/", "icon": "fas fa-cogs"},
     ],
     "show_sidebar": True,
     "navigation_expanded": False,
+    # Order apps - put "Sắp lịch" first
+    "order_with_respect_to": ["sap_lich", "scheduling", "auth", "authtoken", "data_table"],
+    # Show all apps including new ones
+    "show_ui_builder": False,
+    # Custom links under "Sắp lịch" app
+    "custom_links": {
+        "sap_lich": [
+            {
+                "name": "Sắp lịch bằng LLM",
+                "url": "admin:llm_scheduler",
+                "icon": "fas fa-robot",
+            },
+            {
+                "name": "Sắp lịch bằng thuật toán",
+                "url": "admin:algo_scheduler",
+                "icon": "fas fa-cogs",
+            }
+        ]
+    },
     "icons": {
+        # Sap Lich app icon
+        "sap_lich": "fas fa-calendar-plus",
         "auth": "fas fa-lock",
         "auth.user": "fas fa-user",
         "auth.group": "fas fa-users",
