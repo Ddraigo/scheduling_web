@@ -149,8 +149,17 @@ class DataAccessLayer:
         return PhongHoc.objects.filter(suc_chua__gte=so_luong_toi_thieu)
     
     @staticmethod
-    def get_phong_hoc_trống_time_slot(ma_time_slot, ma_dot=None):
-        """Lấy phòng trống trong time slot cụ thể"""
+    def get_available_rooms_in_timeslot(ma_time_slot, ma_dot=None):
+        """
+        Get available (empty) rooms in a specific time slot
+        
+        Args:
+            ma_time_slot: Time slot ID
+            ma_dot: Optional period filter
+            
+        Returns:
+            QuerySet of available PhongHoc objects
+        """
         occupied = ThoiKhoaBieu.objects.filter(
             time_slot_id=ma_time_slot
         )
@@ -401,7 +410,6 @@ class DataAccessLayer:
         )
     
     @staticmethod
-    @staticmethod
     def get_nguyen_vong_for_dot(ma_dot: str):
         """
         Lấy các nguyên vọng time slot cho đợt xếp
@@ -472,6 +480,50 @@ class DataAccessLayer:
         result['all_khung_gio'] = DataAccessLayer.get_khung_gio_all()
         
         return result
+    
+    @staticmethod
+    def get_schedule_data_for_llm_by_ma_dot(ma_dot: str) -> dict:
+        """
+        Lấy TOÀN BỘ dữ liệu cần thiết cho LLM tạo lịch - THEO MÃ ĐỢT
+        
+        Args:
+            ma_dot: Mã đợt xếp (VD: DOT1_2025-2026_HK1)
+            
+        Returns:
+            Dict chứa tất cả dữ liệu scheduling cho đợt này
+        """
+        try:
+            # Lấy đợt xếp
+            dot = DotXep.objects.select_related('ma_du_kien_dt').get(ma_dot=ma_dot)
+            
+            result = {
+                'dot_xep_list': [dot],
+                'all_dot_data': {
+                    ma_dot: {
+                        'phan_cong': DataAccessLayer.get_phan_cong_with_mon_for_dot(ma_dot),
+                        'constraints': DataAccessLayer.get_rang_buoc_for_dot(ma_dot),
+                        'preferences': DataAccessLayer.get_nguyen_vong_for_dot(ma_dot),
+                        'tkb_hien_tai': DataAccessLayer.get_tkb_by_dot(ma_dot),
+                    }
+                }
+            }
+            
+            # Lấy dữ liệu chung (không phụ thuộc đợt)
+            result['all_rooms'] = DataAccessLayer.get_all_phong_hoc()
+            result['all_timeslots'] = DataAccessLayer.get_all_time_slot()
+            result['all_khung_gio'] = DataAccessLayer.get_khung_gio_all()
+            
+            return result
+            
+        except DotXep.DoesNotExist:
+            logger.error(f"DotXep {ma_dot} not found")
+            return {
+                'dot_xep_list': [],
+                'all_dot_data': {},
+                'all_rooms': [],
+                'all_timeslots': [],
+                'all_khung_gio': []
+            }
     
     @staticmethod
     def get_tkb_by_dot(ma_dot: str):

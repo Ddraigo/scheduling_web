@@ -9,6 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 import logging
 
+logger = logging.getLogger(__name__)
+
 from .models import (
     Khoa, BoMon, GiangVien, MonHoc, PhongHoc,
     LopMonHoc, DotXep, PhanCong, TimeSlot, ThoiKhoaBieu
@@ -392,3 +394,272 @@ class ScheduleGenerationViewSet(viewsets.ViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+
+from rest_framework.decorators import api_view
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from .services.schedule_generator_llm import ScheduleGeneratorLLM
+from .models import DotXep
+import traceback
+
+
+@require_http_methods(["GET"])
+def llm_scheduler_api(request):
+    """
+    API endpoint for LLM-based schedule generation steps
+    Query params:
+        - period_id: DotXep ma_dot (e.g., DOT1_2025-2026_HK1)
+        - step: fetch_data, prepare_compact, generate_schedule, etc.
+    """
+    ma_dot = request.GET.get('period_id')
+    step = request.GET.get('step', 'fetch_data')  # Default to fetch_data
+    
+    print(f"\n=== LLM API DEBUG ===")
+    print(f"period_id: {ma_dot}")
+    print(f"step: {step}")
+    
+    if not ma_dot:
+        return JsonResponse({'error': 'Missing period_id parameter'}, status=400)
+    
+    try:
+        # First check if DotXep exists
+        print(f"Checking if DotXep {ma_dot} exists...")
+        try:
+            dot = DotXep.objects.get(ma_dot=ma_dot)
+            print(f"✓ Found DotXep: {dot.ten_dot}")
+        except DotXep.DoesNotExist:
+            print(f"✗ DotXep {ma_dot} NOT FOUND")
+            return JsonResponse({'error': f'Period {ma_dot} not found'}, status=404)
+        
+        logger.info(f"LLM API called: ma_dot={ma_dot}, step={step}")
+        
+        generator = ScheduleGeneratorLLM()
+        
+        if step == 'fetch_data':
+            print(f"Executing fetch_data for {ma_dot}")
+            result = handle_fetch_data_helper(generator, ma_dot)
+            return JsonResponse(result, status=200 if result.get('success') else 400)
+        
+        elif step == 'prepare_compact':
+            print(f"Executing prepare_compact for {ma_dot}")
+            result = handle_prepare_compact_helper(generator, ma_dot)
+            return JsonResponse(result, status=200 if result.get('success') else 400)
+        
+        elif step == 'build_prompt':
+            print(f"Executing build_prompt for {ma_dot}")
+            result = handle_build_prompt_helper(generator, ma_dot)
+            return JsonResponse(result, status=200 if result.get('success') else 400)
+        
+        elif step == 'call_llm':
+            print(f"Executing call_llm for {ma_dot}")
+            result = handle_call_llm_helper(generator, ma_dot)
+            return JsonResponse(result, status=200 if result.get('success') else 400)
+        
+        elif step == 'validate_and_save':
+            print(f"Executing validate_and_save for {ma_dot}")
+            result = handle_validate_and_save_helper(generator, ma_dot)
+            return JsonResponse(result, status=200 if result.get('success') else 400)
+        
+        elif step == 'generate_schedule':
+            # Chạy toàn bộ pipeline
+            print(f"Executing full pipeline for {ma_dot}")
+            result = generator.create_schedule_llm_by_ma_dot(ma_dot)
+            return JsonResponse({'success': True, 'message': 'Schedule generated', 'result': str(result)})
+        
+        else:
+            print(f"Unknown step: {step}")
+            return JsonResponse({'error': f'Unknown step: {step}'}, status=400)
+    
+    except Exception as e:
+        error_trace = traceback.format_exc()
+        logger.error(f"LLM Scheduler API error:\n{error_trace}")
+        print(f"\n❌ EXCEPTION in API:\n{error_trace}\n")
+        return JsonResponse({'error': str(e)}, status=400)
+
+
+@api_view(['GET'])
+def debug_dotxep_api(request):
+    """Debug endpoint to check DotXep data"""
+    ma_dot = request.GET.get('ma_dot', 'DOT1_2025-2026_HK1')
+    
+    print(f"\n=== DEBUG DotXep ===")
+    
+    # List all DotXep
+    all_dots = DotXep.objects.all()
+    print(f"Total DotXep: {all_dots.count()}")
+    for dot in all_dots[:5]:
+        print(f"  - {dot.ma_dot}: {dot.ten_dot}")
+    
+    # Try to get specific DotXep
+    print(f"\nSearching for: {ma_dot}")
+    try:
+        dot = DotXep.objects.get(ma_dot=ma_dot)
+        print(f"✓ Found: {dot.ten_dot} (semester: {dot.ma_du_kien_dt_id})")
+        return JsonResponse({
+            'success': True,
+            'ma_dot': dot.ma_dot,
+            'ten_dot': dot.ten_dot,
+            'ma_du_kien_dt_id': dot.ma_du_kien_dt_id,
+            'trang_thai': dot.trang_thai
+        })
+    except DotXep.DoesNotExist:
+        print(f"✗ NOT FOUND")
+        all_dots_list = list(DotXep.objects.all().values('ma_dot', 'ten_dot'))
+        return JsonResponse({
+            'success': False,
+            'error': f'DotXep {ma_dot} not found',
+            'available': all_dots_list
+        }, status=404)
+
+
+# ======================== HELPER FUNCTIONS FOR LLM TEST ========================
+
+def json_serial(obj):
+    """Convert non-serializable objects to serializable format"""
+    if hasattr(obj, 'isoformat'):  # datetime
+        return obj.isoformat()
+    if hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)):  # QuerySet/list
+        try:
+            return list(obj)
+        except:
+            pass
+    return str(obj)
+
+
+def handle_fetch_data_helper(generator, ma_dot):
+    """Fetch schedule data from database"""
+    try:
+        logger.info(f"🔍 Fetching data for ma_dot={ma_dot}")
+        
+        # Use the new step method
+        result = generator.fetch_data_step(ma_dot)
+        
+        if result.get('success'):
+            logger.info(f"📊 Data fetched successfully")
+            return {
+                'success': True,
+                'message': 'Dữ liệu đã được tải thành công',
+                'stats': result.get('stats', {})
+            }
+        else:
+            logger.warning(f"⚠️ {result.get('error')}")
+            return {
+                'success': False,
+                'error': result.get('error', 'Failed to fetch data')
+            }
+    
+    except Exception as e:
+        logger.exception(f"❌ Fetch data error: {e}")
+        return {'success': False, 'error': str(e)}
+
+
+def handle_prepare_compact_helper(generator, ma_dot):
+    """Prepare compact data format"""
+    try:
+        logger.info(f"🔄 Preparing compact format for ma_dot={ma_dot}")
+        
+        result = generator.prepare_compact_step(ma_dot)
+        
+        if result.get('success'):
+            logger.info(f"📊 Compact format prepared")
+            return {
+                'success': True,
+                'message': 'Dữ liệu đã được chuẩn bị',
+                'stats': result.get('stats', {})
+            }
+        else:
+            logger.warning(f"⚠️ {result.get('error')}")
+            return {
+                'success': False,
+                'error': result.get('error', 'Failed to prepare compact format')
+            }
+    
+    except Exception as e:
+        logger.exception(f"❌ Prepare compact error: {e}")
+        return {'success': False, 'error': str(e)}
+
+
+def handle_build_prompt_helper(generator, ma_dot):
+    """Build LLM prompt"""
+    try:
+        logger.info(f"📝 Building prompt for ma_dot={ma_dot}")
+        
+        result = generator.build_prompt_step(ma_dot)
+        
+        if result.get('success'):
+            logger.info(f"✅ Prompt built successfully")
+            prompt_info = result.get('prompt', {})
+            return {
+                'success': True,
+                'message': 'Prompt đã được tạo',
+                'prompt': {
+                    'length': prompt_info.get('prompt_length', 0),
+                    'tokens': prompt_info.get('prompt_length', 0) // 4,
+                    'preview': prompt_info.get('prompt_preview', '')
+                }
+            }
+        else:
+            logger.warning(f"⚠️ {result.get('error')}")
+            return {
+                'success': False,
+                'error': result.get('error', 'Failed to build prompt')
+            }
+    
+    except Exception as e:
+        logger.exception(f"❌ Build prompt error: {e}")
+        return {'success': False, 'error': str(e)}
+
+
+def handle_call_llm_helper(generator, ma_dot):
+    """Call LLM for schedule generation"""
+    try:
+        logger.info(f"🧠 Calling LLM for ma_dot={ma_dot}")
+        
+        result = generator.call_llm_step(ma_dot)
+        
+        if result.get('success'):
+            logger.info(f"✅ LLM call successful")
+            return {
+                'success': True,
+                'message': 'LLM đã tạo lịch thành công',
+                'llm_result': {
+                    'schedule_count': result.get('schedule_count', 0),
+                    'has_errors': result.get('has_errors', False)
+                }
+            }
+        else:
+            logger.warning(f"⚠️ {result.get('error')}")
+            return {
+                'success': False,
+                'error': result.get('error', 'LLM call failed')
+            }
+    
+    except Exception as e:
+        logger.exception(f"❌ LLM call error: {e}")
+        return {'success': False, 'error': str(e)}
+
+
+def handle_validate_and_save_helper(generator, ma_dot):
+    """Validate and save schedule"""
+    try:
+        logger.info(f"✅ Validating and saving schedule for ma_dot={ma_dot}")
+        
+        result = generator.validate_and_save_step(ma_dot)
+        
+        if result.get('success'):
+            logger.info(f"✅ Schedule validated and saved")
+            return {
+                'success': True,
+                'message': 'Lịch đã được validate & lưu',
+                'result': result.get('result', '')
+            }
+        else:
+            logger.warning(f"⚠️ {result.get('error')}")
+            return {
+                'success': False,
+                'error': result.get('error', 'Failed to validate and save')
+            }
+    
+    except Exception as e:
+        logger.exception(f"❌ Validate and save error: {e}")
+        return {'success': False, 'error': str(e)}

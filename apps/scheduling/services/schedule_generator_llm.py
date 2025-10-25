@@ -50,6 +50,261 @@ class ScheduleGeneratorLLM:
         self.validator = ScheduleValidator()
         self.processor = LLMDataProcessor()
         self.builder = LLMPromptBuilder()
+        # Cache cho từng bước của pipeline
+        self._cache = {}
+    
+    def fetch_data_step(self, ma_dot: str) -> dict:
+        """
+        ✅ BƯỚC 1: Lấy dữ liệu từ database
+        
+        Returns:
+            Dict chứa dữ liệu thô từ DAL
+        """
+        logger.info(f"📥 BƯỚC 1: Lấy dữ liệu cho {ma_dot}")
+        try:
+            schedule_data = DataAccessLayer.get_schedule_data_for_llm_by_ma_dot(ma_dot)
+            
+            if not schedule_data.get('dot_xep_list') or len(schedule_data.get('dot_xep_list', [])) == 0:
+                return {'success': False, 'error': f'Không tìm thấy đợt xếp {ma_dot}'}
+            
+            self._cache['schedule_data'] = schedule_data
+            self._cache['ma_dot'] = ma_dot
+            self._cache['semester_code'] = schedule_data['dot_xep_list'][0].ma_du_kien_dt.ma_du_kien_dt
+            
+            # Lấy dữ liệu chi tiết từ all_dot_data
+            dot_data = schedule_data.get('all_dot_data', {}).get(ma_dot, {})
+            phan_cong_list = dot_data.get('phan_cong', [])
+            constraints_list = dot_data.get('constraints', [])
+            preferences_list = dot_data.get('preferences', [])
+            
+            # Đếm giảng viên unique
+            teachers = set()
+            for pc in phan_cong_list:
+                if hasattr(pc, 'ma_gv') and pc.ma_gv:
+                    teachers.add(pc.ma_gv.ma_gv)
+            
+            # Đếm phòng LT và TH
+            rooms_lt = 0
+            rooms_th = 0
+            for room in schedule_data.get('all_rooms', []):
+                loai_phong = room.loai_phong if room.loai_phong else ''
+                if 'Thực hành' in loai_phong or 'TH' in loai_phong or 'hành' in loai_phong:
+                    rooms_th += 1
+                else:
+                    rooms_lt += 1
+            
+            return {
+                'success': True,
+                'message': 'Dữ liệu đã được tải thành công',
+                'stats': {
+                    'phan_cong_count': len(phan_cong_list),
+                    'teachers_count': len(teachers),
+                    'rooms_count': len(schedule_data.get('all_rooms', [])),
+                    'rooms_lt': rooms_lt,
+                    'rooms_th': rooms_th,
+                    'timeslots_count': len(schedule_data.get('all_timeslots', [])),
+                    'constraints_custom': len(constraints_list),
+                    'preferences_count': len(preferences_list),
+                }
+            }
+        except Exception as e:
+            logger.error(f"❌ Lỗi BƯỚC 1: {e}", exc_info=True)
+            return {'success': False, 'error': str(e)}
+    
+    def prepare_compact_step(self, ma_dot: str) -> dict:
+        """
+        ✅ BƯỚC 2: Xử lý & tối ưu dữ liệu cho LLM (compact format)
+        
+        Returns:
+            Dict chứa dữ liệu đã được xử lý
+        """
+        logger.info(f"🔄 BƯỚC 2: Chuẩn bị dữ liệu compact cho {ma_dot}")
+        try:
+            # Nếu chưa fetch dữ liệu, gọi bước 1 trước
+            if 'schedule_data' not in self._cache:
+                result = self.fetch_data_step(ma_dot)
+                if not result['success']:
+                    return result
+            
+            schedule_data = self._cache['schedule_data']
+            semester_code = self._cache['semester_code']
+            
+            processed_data = self._prepare_data_for_llm(schedule_data, semester_code)
+            
+            self._cache['processed_data'] = processed_data
+            
+            return {
+                'success': True,
+                'message': 'Dữ liệu đã được chuẩn bị',
+                'stats': processed_data['stats']
+            }
+        except Exception as e:
+            logger.error(f"❌ Lỗi BƯỚC 2: {e}", exc_info=True)
+            return {'success': False, 'error': str(e)}
+    
+    def build_prompt_step(self, ma_dot: str) -> dict:
+        """
+        ✅ BƯỚC 3: Xây dựng prompt cho LLM
+        
+        Returns:
+            Dict chứa prompt đã được tạo
+        """
+        logger.info(f"📝 BƯỚC 3: Xây dựng prompt cho {ma_dot}")
+        try:
+            # Nếu chưa chuẩn bị dữ liệu, gọi bước 2 trước
+            if 'processed_data' not in self._cache:
+                result = self.prepare_compact_step(ma_dot)
+                if not result['success']:
+                    return result
+            
+            processed_data = self._cache['processed_data']
+            
+            # Detect conflicts
+            schedule_data = self._cache['schedule_data']
+            semester_code = self._cache['semester_code']
+            conflicts = self._detect_conflicts(schedule_data, semester_code)
+            
+            # Build prompt
+            prompt = self._build_llm_prompt(processed_data, conflicts)
+            
+            self._cache['prompt'] = prompt
+            self._cache['conflicts'] = conflicts
+            
+            prompt_preview = prompt[:500] + '...' if len(prompt) > 500 else prompt
+            
+            return {
+                'success': True,
+                'message': 'Prompt đã được tạo',
+                'prompt': {
+                    'prompt_length': len(prompt),
+                    'prompt_preview': prompt_preview
+                }
+            }
+        except Exception as e:
+            logger.error(f"❌ Lỗi BƯỚC 3: {e}", exc_info=True)
+            return {'success': False, 'error': str(e)}
+    
+    def call_llm_step(self, ma_dot: str) -> dict:
+        """
+        ✅ BƯỚC 4: Gọi LLM để tạo lịch
+        
+        Returns:
+            Dict chứa kết quả từ LLM
+        """
+        logger.info(f"🧠 BƯỚC 4: Gọi LLM cho {ma_dot}")
+        try:
+            # Nếu chưa xây dựng prompt, gọi bước 3 trước
+            if 'prompt' not in self._cache:
+                result = self.build_prompt_step(ma_dot)
+                if not result['success']:
+                    return result
+            
+            prompt = self._cache['prompt']
+            processed_data = self._cache['processed_data']
+            
+            schedule_json = self._call_llm_for_schedule(prompt, processed_data)
+            
+            self._cache['schedule_json'] = schedule_json
+            
+            schedule_dict = json.loads(schedule_json) if isinstance(schedule_json, str) else schedule_json
+            
+            return {
+                'success': True,
+                'message': 'LLM đã tạo lịch thành công',
+                'schedule_count': len(schedule_dict.get('schedule', [])),
+                'has_errors': len(schedule_dict.get('errors', [])) > 0
+            }
+        except Exception as e:
+            logger.error(f"❌ Lỗi BƯỚC 4: {e}", exc_info=True)
+            return {'success': False, 'error': str(e)}
+    
+    def validate_and_save_step(self, ma_dot: str) -> dict:
+        """
+        ✅ BƯỚC 5: Validate & lưu lịch
+        
+        Returns:
+            Dict chứa kết quả validation & lưu
+        """
+        logger.info(f"✅ BƯỚC 5: Validate & lưu lịch cho {ma_dot}")
+        try:
+            # Nếu chưa gọi LLM, gọi bước 4 trước
+            if 'schedule_json' not in self._cache:
+                result = self.call_llm_step(ma_dot)
+                if not result['success']:
+                    return result
+            
+            schedule_json = self._cache['schedule_json']
+            processed_data = self._cache['processed_data']
+            semester_code = self._cache['semester_code']
+            
+            result = self._validate_and_save_schedule(
+                schedule_json,
+                semester_code,
+                processed_data
+            )
+            
+            return {
+                'success': True,
+                'message': 'Lịch đã được validate & lưu',
+                'result': result
+            }
+        except Exception as e:
+            logger.error(f"❌ Lỗi BƯỚC 5: {e}", exc_info=True)
+            return {'success': False, 'error': str(e)}
+    
+    def create_schedule_llm_by_ma_dot(self, ma_dot: str) -> str:
+        """
+        Tạo thời khóa biểu dùng LLM - THEO MÃ ĐỢT
+        
+        Args:
+            ma_dot: Mã đợt xếp (VD: DOT1_2025-2026_HK1)
+            
+        Returns:
+            JSON string của thời khóa biểu
+        """
+        logger.info(f"🤖 Bắt đầu tạo lịch dùng LLM cho đợt: {ma_dot}")
+        
+        try:
+            # Bước 1: Lấy dữ liệu từ DAL theo ma_dot
+            logger.info("📊 Bước 1: Lấy dữ liệu từ database...")
+            schedule_data = DataAccessLayer.get_schedule_data_for_llm_by_ma_dot(ma_dot)
+            
+            if not schedule_data.get('dot_xep_list') or len(schedule_data.get('dot_xep_list', [])) == 0:
+                return f"❌ Không tìm thấy đợt xếp {ma_dot}"
+            
+            # Lấy semester_code từ đợt xếp
+            dot = schedule_data['dot_xep_list'][0]
+            semester_code = dot.ma_du_kien_dt.ma_du_kien_dt
+            
+            # Bước 2: Xử lý dữ liệu chuẩn bị cho LLM
+            logger.info("🔄 Bước 2: Xử lý dữ liệu...")
+            processed_data = self._prepare_data_for_llm(schedule_data, semester_code)
+            
+            # Bước 3: Phát hiện xung đột hiện tại
+            logger.info("🔍 Bước 3: Phát hiện xung đột...")
+            conflicts = self._detect_conflicts(schedule_data, semester_code)
+            
+            # Bước 4: Xây dựng prompt cho LLM
+            logger.info("📝 Bước 4: Xây dựng prompt...")
+            prompt = self._build_llm_prompt(processed_data, conflicts)
+            
+            # Bước 5: Gọi LLM
+            logger.info("🧠 Bước 5: Gọi LLM tạo lịch...")
+            schedule_json = self._call_llm_for_schedule(prompt, processed_data)
+            
+            # Bước 6: Validate & lưu
+            logger.info("✅ Bước 6: Validate & lưu lịch...")
+            result = self._validate_and_save_schedule(
+                schedule_json,
+                semester_code,
+                processed_data
+            )
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"❌ Lỗi tạo lịch: {e}", exc_info=True)
+            return f"❌ Lỗi: {str(e)}"
         
     def create_schedule_llm(self, semester_code: str) -> str:
         """

@@ -239,8 +239,8 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
         {"name": "Trang chủ", "url": "/", "permissions": ["auth.view_user"]},
         {"name": "Dữ liệu", "url": "/data_table/", "permissions": ["auth.view_user"]},
-        {"name": "Sắp lịch bằng LLM", "url": "admin:llm_scheduler", "permissions": ["auth.view_user"], "icon": "fas fa-robot"},
-        {"name": "Sắp lịch bằng thuật toán", "url": "admin:algo_scheduler", "permissions": ["auth.view_user"], "icon": "fas fa-cogs"},
+        {"name": "Sắp lịch bằng LLM", "url": "admin:sap_lich_llm_scheduler", "permissions": ["auth.view_user"], "icon": "fas fa-robot"},
+        {"name": "Sắp lịch bằng thuật toán", "url": "admin:sap_lich_algo_scheduler", "permissions": ["auth.view_user"], "icon": "fas fa-cogs"},
     ],
     "usermenu_links": [
         {"name": "Hồ sơ", "url": "/admin/auth/user/", "icon": "fas fa-cogs"},
@@ -256,12 +256,12 @@ JAZZMIN_SETTINGS = {
         "sap_lich": [
             {
                 "name": "Sắp lịch bằng LLM",
-                "url": "admin:llm_scheduler",
+                "url": "admin:sap_lich_llm_scheduler",
                 "icon": "fas fa-robot",
             },
             {
                 "name": "Sắp lịch bằng thuật toán",
-                "url": "admin:algo_scheduler",
+                "url": "admin:sap_lich_algo_scheduler",
                 "icon": "fas fa-cogs",
             }
         ]

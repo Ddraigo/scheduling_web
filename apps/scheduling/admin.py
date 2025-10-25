@@ -12,57 +12,6 @@ from .models import (
     DuKienDT, GVDayMon, KhungTG, RangBuocMem, RangBuocTrongDot, NguyenVong
 )
 
-# Small admin view to expose the LLM interactive tester under /admin/llm-scheduler/
-from django.urls import path
-from django.shortcuts import render
-
-
-def _llm_scheduler_admin_view(request):
-    """Admin view for LLM-based scheduler"""
-    try:
-        periods = list(DotXep.objects.all().values('ma_dot', 'ten_dot', 'trang_thai'))
-    except Exception:
-        periods = []
-    context = {
-        'periods': periods,
-        'title': 'Sắp lịch bằng LLM',
-        'site_title': 'Quản lý lịch dạy học',
-        'site_header': 'Hệ thống quản lý lịch dạy học',
-    }
-    return render(request, 'admin/llm_scheduler.html', context)
-
-
-def _algo_scheduler_admin_view(request):
-    """Admin view for algorithm-based scheduler"""
-    try:
-        periods = list(DotXep.objects.all().values('ma_dot', 'ten_dot', 'trang_thai'))
-    except Exception:
-        periods = []
-    context = {
-        'periods': periods,
-        'title': 'Sắp lịch bằng thuật toán',
-        'site_title': 'Quản lý lịch dạy học',
-        'site_header': 'Hệ thống quản lý lịch dạy học',
-    }
-    return render(request, 'admin/llm_scheduler.html', context)
-
-
-def _wrap_get_urls(original_get_urls):
-    def get_urls():
-        custom_urls = [
-            path('llm-scheduler/', admin.site.admin_view(_llm_scheduler_admin_view), name='llm_scheduler'),
-            path('algo-scheduler/', admin.site.admin_view(_algo_scheduler_admin_view), name='algo_scheduler'),
-        ]
-        return custom_urls + original_get_urls()
-    return get_urls
-
-
-# Patch admin.site.get_urls once (idempotent-ish)
-if not getattr(admin.site, '_llm_scheduler_hooked', False):
-    admin.site.get_urls = _wrap_get_urls(admin.site.get_urls)
-    admin.site._llm_scheduler_hooked = True
-
-
 # Rename "Scheduling System" app label to "Dữ liệu" in admin
 class CustomAdminSite(admin.AdminSite):
     pass

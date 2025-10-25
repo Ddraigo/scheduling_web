@@ -257,15 +257,57 @@ IMPORTANT:
         
         # Khi response_mime_type='application/json', response.text đã là JSON string
         import json
-        parsed = json.loads(response.text)
-        logger.info(f"🔍 Parsed JSON keys: {list(parsed.keys())}")
-        if 'schedule' in parsed:
-            logger.info(f"🔍 Schedule array length: {len(parsed['schedule'])}")
-            # Log sample assignments
-            if parsed['schedule']:
-                logger.info(f"🔍 Sample assignments: {parsed['schedule'][:3]}")
         
-        return parsed
+        # Try to parse JSON - nếu không thành công, try to extract JSON từ response
+        try:
+            parsed = json.loads(response.text)
+            logger.info(f"🔍 Parsed JSON keys: {list(parsed.keys())}")
+            return parsed
+        except json.JSONDecodeError as e:
+            logger.warning(f"⚠️ Failed to parse JSON directly at position {e.pos}: {e.msg}")
+            logger.info(f"🔍 Response text around error: ...{response.text[max(0, e.pos-100):e.pos+100]}...")
+            logger.info(f"🔍 Trying to extract JSON from response...")
+            
+            # Try to find JSON block in response - be more aggressive
+            import re
+            
+            # Try multiple patterns to extract JSON
+            patterns = [
+                r'\{[\s\S]*\}(?=\s*$)',  # JSON object at end
+                r'\{[\s\S]*\}',  # Any JSON object
+                r'\[\s*\{[\s\S]*\}\s*\]',  # JSON array of objects
+            ]
+            
+            for pattern in patterns:
+                json_match = re.search(pattern, response.text)
+                if json_match:
+                    try:
+                        json_str = json_match.group(0)
+                        logger.info(f"🔍 Found potential JSON ({len(json_str)} chars)")
+                        
+                        # Try to fix common JSON issues
+                        # Remove trailing comma before closing bracket
+                        json_str = re.sub(r',\s*}', '}', json_str)
+                        json_str = re.sub(r',\s*]', ']', json_str)
+                        
+                        parsed = json.loads(json_str)
+                        logger.info(f"✅ Successfully extracted and parsed JSON")
+                        return parsed
+                    except json.JSONDecodeError as e2:
+                        logger.warning(f"⚠️ Pattern {pattern} failed: {e2}")
+                        continue
+            
+            logger.error(f"❌ No valid JSON found in response")
+            # Fallback: create empty schedule structure
+            logger.warning(f"⚠️ Creating fallback schedule structure")
+            fallback = {
+                'schedule': [],
+                'validation': {'errors': []},
+                'metrics': {},
+                'errors': [f'Failed to parse LLM response - Invalid JSON at position {e.pos}']
+            }
+            logger.info(f"🔍 Using fallback response with {len(fallback['errors'])} errors")
+            return fallback
     
     def _extract_sql_from_response(self, response_text: str) -> List[str]:
         """Trích xuất các SQL queries từ response của AI"""

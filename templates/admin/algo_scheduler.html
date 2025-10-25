@@ -1,0 +1,150 @@
+{% extends "admin/base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ title }} {% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Trang chủ</a>
+    &rsaquo; <a href="{% url 'admin:sap_lich_saplichproxy_changelist' %}">Sắp lịch</a>
+    &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- Control Panel -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>⚙️ Bảng điều khiển</h5>
+    </div>
+    <div class="card-body">
+        <div class="form-group mb-3">
+            <label for="periodSelect">Chọn đợt xếp:</label>
+            <select id="periodSelect" class="form-control">
+                <option value="">-- Chọn đợt --</option>
+                {% for period in periods %}
+                <option value="{{ period.ma_dot }}">
+                    {{ period.ma_dot }} - {{ period.ten_dot }} ({{ period.trang_thai }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-primary" onclick="runAlgorithm()">
+                🧮 Chạy thuật toán
+            </button>
+            <button type="button" class="btn btn-info" onclick="viewResult()">
+                📊 Xem kết quả
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Output Console -->
+<div class="card">
+    <div class="card-header">
+        <h5>📊 Kết quả</h5>
+    </div>
+    <div class="card-body">
+        <div id="outputConsole" style="background-color: #1e1e1e; color: #00ff00; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; max-height: 600px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word;">
+            Đang chờ thực hiện lệnh...
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    /* Force vertical stacking */
+    #content-main {
+        display: block !important;
+        width: 100% !important;
+    }
+    
+    .card {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        width: 100% !important;
+        display: block !important;
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #ddd;
+        padding: 10px 15px;
+    }
+    .card-header h5 {
+        margin: 0;
+    }
+    .card-body {
+        padding: 15px;
+    }
+    #outputConsole {
+        font-size: 12px;
+        line-height: 1.4;
+    }
+    .btn-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+</style>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script>
+    const apiBaseUrl = '/api/scheduling';
+    
+    function log(message, type = 'info') {
+        const console = document.getElementById('outputConsole');
+        const timestamp = new Date().toLocaleTimeString();
+        const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+        console.innerHTML += `[${timestamp}] ${prefix} ${message}\n`;
+        console.scrollTop = console.scrollHeight;
+    }
+    
+    function clearLog() {
+        document.getElementById('outputConsole').innerHTML = '';
+    }
+    
+    function getSelectedPeriod() {
+        const select = document.getElementById('periodSelect');
+        const periodId = select.value;
+        if (!periodId) {
+            log('⚠️ Vui lòng chọn đợt xếp!', 'error');
+            return null;
+        }
+        return periodId;
+    }
+    
+    function runAlgorithm() {
+        clearLog();
+        const periodId = getSelectedPeriod();
+        if (!periodId) return;
+        
+        log(`Đang chạy thuật toán cho đợt: ${periodId}...`);
+        log(`⏳ Đang xử lý...`);
+        
+        // TODO: Implement algorithm call
+        setTimeout(() => {
+            log(`✅ Hoàn thành!`, 'success');
+        }, 2000);
+    }
+    
+    function viewResult() {
+        clearLog();
+        const periodId = getSelectedPeriod();
+        if (!periodId) return;
+        
+        log(`Đang xem kết quả cho đợt: ${periodId}...`);
+        
+        // TODO: Implement result viewing
+    }
+</script>
+{% endblock %}

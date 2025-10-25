@@ -1,166 +1,22 @@
 {
-  "timestamp": "2025-10-24T16:37:11.189173",
+  "timestamp": "2025-10-25T17:17:48.972347",
   "summary": {
     "total_classes": 216,
     "ok_classes": 210,
     "hard_violated_classes": 6,
-    "soft_violated_classes": 131,
+    "soft_violated_classes": 132,
     "ok_percentage": 97.22,
     "hard_violated_percentage": 2.78,
-    "soft_violated_percentage": 60.65
+    "soft_violated_percentage": 61.11
   },
   "hard_violation_stats": {
+    "HC-03": 2,
     "HC-04": 6
   },
   "soft_violation_stats": {
-    "RBM-NGUYEN-VONG": 131
+    "RBM-NGUYEN-VONG": 132
   },
   "hard_violated_classes": [
-    {
-      "MaLop": "LOP-00000160",
-      "info": {
-        "TenMonHoc": "Kiến tập công nghiệp",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 80,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Phạm Văn Khánh",
-      "teacher_id": "GV004",
-      "hard_violations": [
-        {
-          "constraint": "HC-04",
-          "name": "Phòng thiếu thiết bị yêu cầu",
-          "slot": "Thu7-Ca3",
-          "room": "F606",
-          "reason": "Phòng F606 thiếu: tv, máy chiếu (có: PC)"
-        }
-      ],
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca3",
-          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 7 Ca3 (có 13 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000160",
-          "MaPhong": "F606",
-          "MaSlot": "Thu7-Ca3",
-          "MaGV": "GV004",
-          "index": 128
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000166",
-      "info": {
-        "TenMonHoc": "Dự án Công nghệ thông tin 2",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Phạm Văn Khánh",
-      "teacher_id": "GV004",
-      "hard_violations": [
-        {
-          "constraint": "HC-04",
-          "name": "Phòng thiếu thiết bị yêu cầu",
-          "slot": "Thu2-Ca4",
-          "room": "F701",
-          "reason": "Phòng F701 thiếu: tv, máy chiếu (có: PC)"
-        }
-      ],
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca4",
-          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 2 Ca4 (có 13 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000166",
-          "MaPhong": "F701",
-          "MaSlot": "Thu2-Ca4",
-          "MaGV": "GV004",
-          "index": 133
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000187",
-      "info": {
-        "TenMonHoc": "Dự án Công nghệ thông tin",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Vũ Quang Hảo",
-      "teacher_id": "GV024",
-      "hard_violations": [
-        {
-          "constraint": "HC-04",
-          "name": "Phòng thiếu thiết bị yêu cầu",
-          "slot": "Thu6-Ca5",
-          "room": "A706",
-          "reason": "Phòng A706 thiếu: tv, máy chiếu (có: PC)"
-        }
-      ],
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca5",
-          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 6 Ca5 (có 16 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000187",
-          "MaPhong": "A706",
-          "MaSlot": "Thu6-Ca5",
-          "MaGV": "GV024",
-          "index": 151
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000190",
-      "info": {
-        "TenMonHoc": "Dự án Công nghệ thông tin",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Vũ Quang Hảo",
-      "teacher_id": "GV024",
-      "hard_violations": [
-        {
-          "constraint": "HC-04",
-          "name": "Phòng thiếu thiết bị yêu cầu",
-          "slot": "Thu7-Ca3",
-          "room": "A709",
-          "reason": "Phòng A709 thiếu: tv, máy chiếu (có: PC)"
-        }
-      ],
-      "soft_violations": [],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000190",
-          "MaPhong": "A709",
-          "MaSlot": "Thu7-Ca3",
-          "MaGV": "GV024",
-          "index": 154
-        }
-      ]
-    },
     {
       "MaLop": "LOP-00000157",
       "info": {
@@ -174,28 +30,73 @@
       "teacher_id": "GV004",
       "hard_violations": [
         {
+          "constraint": "HC-03",
+          "name": "Phòng không đủ chỗ ngồi",
+          "slot": "Thu3-Ca2",
+          "room": "F411",
+          "reason": "Lớp có 80 sinh viên, phòng F411 chỉ chứa 45"
+        },
+        {
           "constraint": "HC-04",
           "name": "Phòng thiếu thiết bị yêu cầu",
-          "slot": "T2-C1",
-          "room": "F601",
-          "reason": "Phòng F601 thiếu: tv, máy chiếu (có: PC)"
+          "slot": "Thu3-Ca2",
+          "room": "F411",
+          "reason": "Phòng F411 thiếu: tv, máy chiếu (có: PC)"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000157",
+          "MaPhong": "F411",
+          "MaSlot": "Thu3-Ca2",
+          "MaGV": "GV004",
+          "index": 137
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000160",
+      "info": {
+        "TenMonHoc": "Kiến tập công nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
+      "hard_violations": [
+        {
+          "constraint": "HC-03",
+          "name": "Phòng không đủ chỗ ngồi",
+          "slot": "Thu3-Ca5",
+          "room": "F504",
+          "reason": "Lớp có 80 sinh viên, phòng F504 chỉ chứa 45"
+        },
+        {
+          "constraint": "HC-04",
+          "name": "Phòng thiếu thiết bị yêu cầu",
+          "slot": "Thu3-Ca5",
+          "room": "F504",
+          "reason": "Phòng F504 thiếu: tv, máy chiếu (có: PC)"
         }
       ],
       "soft_violations": [
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C1",
-          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy N/A Ca? (có 13 slots mong muốn)"
+          "slot": "Thu3-Ca5",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 3 Ca5 (có 13 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000157",
-          "MaPhong": "F601",
-          "MaSlot": "T2-C1",
+          "MaLop": "LOP-00000160",
+          "MaPhong": "F504",
+          "MaSlot": "Thu3-Ca5",
           "MaGV": "GV004",
-          "index": 204
+          "index": 140
         }
       ]
     },
@@ -214,9 +115,109 @@
         {
           "constraint": "HC-04",
           "name": "Phòng thiếu thiết bị yêu cầu",
+          "slot": "Thu4-Ca3",
+          "room": "F511",
+          "reason": "Phòng F511 thiếu: tv, máy chiếu (có: PC)"
+        }
+      ],
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca3",
+          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 4 Ca3 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000163",
+          "MaPhong": "F511",
+          "MaSlot": "Thu4-Ca3",
+          "MaGV": "GV003",
+          "index": 142
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000166",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin 2",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
+      "hard_violations": [
+        {
+          "constraint": "HC-04",
+          "name": "Phòng thiếu thiết bị yêu cầu",
+          "slot": "Thu5-Ca1",
+          "room": "F604",
+          "reason": "Phòng F604 thiếu: tv, máy chiếu (có: PC)"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000166",
+          "MaPhong": "F604",
+          "MaSlot": "Thu5-Ca1",
+          "MaGV": "GV004",
+          "index": 144
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000187",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "hard_violations": [
+        {
+          "constraint": "HC-04",
+          "name": "Phòng thiếu thiết bị yêu cầu",
+          "slot": "Thu3-Ca2",
+          "room": "A405",
+          "reason": "Phòng A405 thiếu: tv, máy chiếu (có: PC)"
+        }
+      ],
+      "soft_violations": [],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000187",
+          "MaPhong": "A405",
+          "MaSlot": "Thu3-Ca2",
+          "MaGV": "GV024",
+          "index": 163
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000190",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "hard_violations": [
+        {
+          "constraint": "HC-04",
+          "name": "Phòng thiếu thiết bị yêu cầu",
           "slot": "T2-C4",
-          "room": "F607",
-          "reason": "Phòng F607 thiếu: tv, máy chiếu (có: PC)"
+          "room": "A408",
+          "reason": "Phòng A408 thiếu: tv, máy chiếu (có: PC)"
         }
       ],
       "soft_violations": [
@@ -224,16 +225,16 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "T2-C4",
-          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy N/A Ca? (có 10 slots mong muốn)"
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy N/A Ca? (có 17 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000163",
-          "MaPhong": "F607",
+          "MaLop": "LOP-00000190",
+          "MaPhong": "A408",
           "MaSlot": "T2-C4",
-          "MaGV": "GV003",
-          "index": 205
+          "MaGV": "GV024",
+          "index": 212
         }
       ]
     }
@@ -254,46 +255,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C2",
-          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy N/A Ca? (có 10 slots mong muốn)"
+          "slot": "Thu6-Ca3",
+          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 6 Ca3 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000002",
-          "MaPhong": "A401",
-          "MaSlot": "T2-C2",
+          "MaPhong": "F301",
+          "MaSlot": "Thu6-Ca3",
           "MaGV": "GV003",
-          "index": 189
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000003",
-      "info": {
-        "TenMonHoc": "Công nghệ phần mềm",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Ngô Văn Bình",
-      "teacher_id": "GV009",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu3-Ca1",
-          "reason": "GV Ngô Văn Bình KHÔNG mong muốn dạy Thứ 3 Ca1 (có 13 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000003",
-          "MaPhong": "A401",
-          "MaSlot": "Thu3-Ca1",
-          "MaGV": "GV009",
-          "index": 176
+          "index": 19
         }
       ]
     },
@@ -312,16 +284,103 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca2",
-          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 2 Ca2 (có 11 slots mong muốn)"
+          "slot": "T2-C1",
+          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy N/A Ca? (có 16 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000004",
           "MaPhong": "B206",
-          "MaSlot": "Thu2-Ca2",
+          "MaSlot": "T2-C1",
           "MaGV": "GV001",
+          "index": 188
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000005",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Lê Thị Mai",
+      "teacher_id": "GV003",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca5",
+          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 6 Ca5 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000005",
+          "MaPhong": "F307",
+          "MaSlot": "Thu6-Ca5",
+          "MaGV": "GV003",
+          "index": 21
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000006",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Ngô Văn Bình",
+      "teacher_id": "GV009",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca1",
+          "reason": "GV Ngô Văn Bình KHÔNG mong muốn dạy Thứ 7 Ca1 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000006",
+          "MaPhong": "F308",
+          "MaSlot": "Thu7-Ca1",
+          "MaGV": "GV009",
+          "index": 22
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000007",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Hoàng Đức Long",
+      "teacher_id": "GV005",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca3",
+          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy Thứ 2 Ca3 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000007",
+          "MaPhong": "B207",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV005",
           "index": 1
         }
       ]
@@ -341,17 +400,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca3",
-          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 2 Ca3 (có 13 slots mong muốn)"
+          "slot": "Thu7-Ca2",
+          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 7 Ca2 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000008",
-          "MaPhong": "A403",
-          "MaSlot": "Thu2-Ca3",
+          "MaPhong": "F309",
+          "MaSlot": "Thu7-Ca2",
           "MaGV": "GV006",
-          "index": 20
+          "index": 23
         }
       ]
     },
@@ -370,17 +429,75 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca4",
-          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy Thứ 2 Ca4 (có 15 slots mong muốn)"
+          "slot": "T2-C1",
+          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy N/A Ca? (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000010",
           "MaPhong": "B208",
-          "MaSlot": "Thu2-Ca4",
+          "MaSlot": "T2-C1",
           "MaGV": "GV005",
-          "index": 3
+          "index": 189
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000011",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Phan Ngọc Bích",
+      "teacher_id": "GV006",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca4",
+          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 7 Ca4 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000011",
+          "MaPhong": "F406",
+          "MaSlot": "Thu7-Ca4",
+          "MaGV": "GV006",
+          "index": 25
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000012",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Bùi Anh Tuấn",
+      "teacher_id": "GV010",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca5",
+          "reason": "GV Bùi Anh Tuấn KHÔNG mong muốn dạy Thứ 7 Ca5 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000012",
+          "MaPhong": "F407",
+          "MaSlot": "Thu7-Ca5",
+          "MaGV": "GV010",
+          "index": 26
         }
       ]
     },
@@ -399,75 +516,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C1",
-          "reason": "GV Vũ Minh Đức KHÔNG mong muốn dạy N/A Ca? (có 13 slots mong muốn)"
+          "slot": "Thu2-Ca5",
+          "reason": "GV Vũ Minh Đức KHÔNG mong muốn dạy Thứ 2 Ca5 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000013",
           "MaPhong": "B209",
-          "MaSlot": "T2-C1",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV016",
-          "index": 186
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000014",
-      "info": {
-        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Vũ Minh Đức",
-      "teacher_id": "GV016",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C2",
-          "reason": "GV Vũ Minh Đức KHÔNG mong muốn dạy N/A Ca? (có 13 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000014",
-          "MaPhong": "A405",
-          "MaSlot": "T2-C2",
-          "MaGV": "GV016",
-          "index": 190
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000015",
-      "info": {
-        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Hoàng Đức Long",
-      "teacher_id": "GV005",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu3-Ca5",
-          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy Thứ 3 Ca5 (có 15 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000015",
-          "MaPhong": "A405",
-          "MaSlot": "Thu3-Ca5",
-          "MaGV": "GV005",
-          "index": 180
+          "index": 2
         }
       ]
     },
@@ -487,7 +546,7 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "Thu3-Ca1",
-          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 3 Ca1 (có 13 slots mong muốn)"
+          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 3 Ca1 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
@@ -496,36 +555,7 @@
           "MaPhong": "B301",
           "MaSlot": "Thu3-Ca1",
           "MaGV": "GV006",
-          "index": 4
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000017",
-      "info": {
-        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Vũ Minh Đức",
-      "teacher_id": "GV016",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu3-Ca1",
-          "reason": "GV Vũ Minh Đức KHÔNG mong muốn dạy Thứ 3 Ca1 (có 13 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000017",
-          "MaPhong": "A406",
-          "MaSlot": "Thu3-Ca1",
-          "MaGV": "GV016",
-          "index": 22
+          "index": 3
         }
       ]
     },
@@ -544,46 +574,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca1",
-          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy Thứ 4 Ca1 (có 15 slots mong muốn)"
+          "slot": "T2-C2",
+          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy N/A Ca? (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000018",
-          "MaPhong": "A406",
-          "MaSlot": "Thu4-Ca1",
+          "MaPhong": "F506",
+          "MaSlot": "T2-C2",
           "MaGV": "GV005",
-          "index": 181
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000019",
-      "info": {
-        "TenMonHoc": "Nhập môn hệ điều hành",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 80,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Nguyễn Đức Cường",
-      "teacher_id": "GV030",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C1",
-          "reason": "GV Nguyễn Đức Cường KHÔNG mong muốn dạy N/A Ca? (có 12 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000019",
-          "MaPhong": "B306",
-          "MaSlot": "T2-C1",
-          "MaGV": "GV030",
-          "index": 187
+          "index": 191
         }
       ]
     },
@@ -602,17 +603,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C2",
-          "reason": "GV Nguyễn Đức Cường KHÔNG mong muốn dạy N/A Ca? (có 12 slots mong muốn)"
+          "slot": "Thu2-Ca5",
+          "reason": "GV Nguyễn Đức Cường KHÔNG mong muốn dạy Thứ 2 Ca5 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000020",
-          "MaPhong": "A407",
-          "MaSlot": "T2-C2",
+          "MaPhong": "F507",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV030",
-          "index": 191
+          "index": 30
         }
       ]
     },
@@ -631,17 +632,104 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu3-Ca3",
-          "reason": "GV Nguyễn Đức Cường KHÔNG mong muốn dạy Thứ 3 Ca3 (có 12 slots mong muốn)"
+          "slot": "T2-C1",
+          "reason": "GV Nguyễn Đức Cường KHÔNG mong muốn dạy N/A Ca? (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000022",
           "MaPhong": "B307",
-          "MaSlot": "Thu3-Ca3",
+          "MaSlot": "T2-C1",
           "MaGV": "GV030",
-          "index": 5
+          "index": 190
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000023",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Nguyễn Minh An",
+      "teacher_id": "GV001",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca2",
+          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 3 Ca2 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000023",
+          "MaPhong": "F509",
+          "MaSlot": "Thu3-Ca2",
+          "MaGV": "GV001",
+          "index": 32
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000024",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Nguyễn Đức Cường",
+      "teacher_id": "GV030",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "T2-C2",
+          "reason": "GV Nguyễn Đức Cường KHÔNG mong muốn dạy N/A Ca? (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000024",
+          "MaPhong": "F601",
+          "MaSlot": "T2-C2",
+          "MaGV": "GV030",
+          "index": 192
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000025",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "T2-C1",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy N/A Ca? (có 17 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000025",
+          "MaPhong": "C308",
+          "MaSlot": "T2-C1",
+          "MaGV": "GV024",
+          "index": 193
         }
       ]
     },
@@ -661,16 +749,16 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "T2-C2",
-          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy N/A Ca? (có 16 slots mong muốn)"
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy N/A Ca? (có 17 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000026",
-          "MaPhong": "D405",
+          "MaPhong": "C309",
           "MaSlot": "T2-C2",
           "MaGV": "GV024",
-          "index": 214
+          "index": 194
         }
       ]
     },
@@ -689,46 +777,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C2",
+          "slot": "T2-C1",
           "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy N/A Ca? (có 13 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000027",
-          "MaPhong": "D406",
-          "MaSlot": "T2-C2",
+          "MaPhong": "C310",
+          "MaSlot": "T2-C1",
           "MaGV": "GV004",
-          "index": 215
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000028",
-      "info": {
-        "TenMonHoc": "Phân tích và thiết kế yêu cầu",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Nguyễn Thuỳ Dương",
-      "teacher_id": "GV021",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca1",
-          "reason": "GV Nguyễn Thuỳ Dương KHÔNG mong muốn dạy Thứ 7 Ca1 (có 16 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000028",
-          "MaPhong": "D407",
-          "MaSlot": "Thu7-Ca1",
-          "MaGV": "GV021",
-          "index": 183
+          "index": 195
         }
       ]
     },
@@ -748,7 +807,7 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "Thu3-Ca4",
-          "reason": "GV Đỗ Phương Linh KHÔNG mong muốn dạy Thứ 3 Ca4 (có 12 slots mong muốn)"
+          "reason": "GV Đỗ Phương Linh KHÔNG mong muốn dạy Thứ 3 Ca4 (có 16 slots mong muốn)"
         }
       ],
       "assignments": [
@@ -757,12 +816,12 @@
           "MaPhong": "B308",
           "MaSlot": "Thu3-Ca4",
           "MaGV": "GV011",
-          "index": 6
+          "index": 5
         }
       ]
     },
     {
-      "MaLop": "LOP-00000030",
+      "MaLop": "LOP-00000031",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu",
         "SoCaTuan": 1,
@@ -770,52 +829,23 @@
         "SoSV": 40,
         "ThietBiYeuCau": "PC"
       },
-      "teacher": "Phạm Văn Khánh",
-      "teacher_id": "GV004",
+      "teacher": "Đỗ Phương Linh",
+      "teacher_id": "GV011",
       "soft_violations": [
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca1",
-          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 4 Ca1 (có 13 slots mong muốn)"
+          "slot": "Thu4-Ca4",
+          "reason": "GV Đỗ Phương Linh KHÔNG mong muốn dạy Thứ 4 Ca4 (có 16 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000030",
-          "MaPhong": "A502",
-          "MaSlot": "Thu4-Ca1",
-          "MaGV": "GV004",
-          "index": 26
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000032",
-      "info": {
-        "TenMonHoc": "Hệ cơ sở dữ liệu",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 80,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Lê Thị Mai",
-      "teacher_id": "GV003",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu3-Ca5",
-          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 3 Ca5 (có 10 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000032",
-          "MaPhong": "B309",
-          "MaSlot": "Thu3-Ca5",
-          "MaGV": "GV003",
-          "index": 7
+          "MaLop": "LOP-00000031",
+          "MaPhong": "F607",
+          "MaSlot": "Thu4-Ca4",
+          "MaGV": "GV011",
+          "index": 35
         }
       ]
     },
@@ -834,46 +864,75 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca3",
-          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 4 Ca3 (có 13 slots mong muốn)"
+          "slot": "T2-C2",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy N/A Ca? (có 13 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000033",
-          "MaPhong": "A504",
-          "MaSlot": "Thu4-Ca3",
+          "MaPhong": "F608",
+          "MaSlot": "T2-C2",
           "MaGV": "GV004",
-          "index": 28
+          "index": 196
         }
       ]
     },
     {
-      "MaLop": "LOP-00000038",
+      "MaLop": "LOP-00000034",
       "info": {
-        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
         "SoCaTuan": 1,
         "Nhom": 2,
-        "SoSV": 80,
-        "ThietBiYeuCau": "TV, Máy chiếu"
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
       },
-      "teacher": "Lê Thị Mai",
-      "teacher_id": "GV003",
+      "teacher": "Đỗ Phương Linh",
+      "teacher_id": "GV011",
       "soft_violations": [
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C1",
-          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy N/A Ca? (có 10 slots mong muốn)"
+          "slot": "Thu5-Ca1",
+          "reason": "GV Đỗ Phương Linh KHÔNG mong muốn dạy Thứ 5 Ca1 (có 16 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000038",
-          "MaPhong": "B406",
-          "MaSlot": "T2-C1",
-          "MaGV": "GV003",
-          "index": 188
+          "MaLop": "LOP-00000034",
+          "MaPhong": "F609",
+          "MaSlot": "Thu5-Ca1",
+          "MaGV": "GV011",
+          "index": 36
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000037",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Tạ Bảo Châu",
+      "teacher_id": "GV023",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca3",
+          "reason": "GV Tạ Bảo Châu KHÔNG mong muốn dạy Thứ 5 Ca3 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000037",
+          "MaPhong": "F706",
+          "MaSlot": "Thu5-Ca3",
+          "MaGV": "GV023",
+          "index": 38
         }
       ]
     },
@@ -892,17 +951,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca2",
-          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 5 Ca2 (có 13 slots mong muốn)"
+          "slot": "Thu5-Ca4",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 5 Ca4 (có 13 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000039",
-          "MaPhong": "A508",
-          "MaSlot": "Thu5-Ca2",
+          "MaPhong": "F707",
+          "MaSlot": "Thu5-Ca4",
           "MaGV": "GV004",
-          "index": 32
+          "index": 39
         }
       ]
     },
@@ -921,17 +980,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca3",
-          "reason": "GV Tạ Bảo Châu KHÔNG mong muốn dạy Thứ 5 Ca3 (có 14 slots mong muốn)"
+          "slot": "Thu5-Ca5",
+          "reason": "GV Tạ Bảo Châu KHÔNG mong muốn dạy Thứ 5 Ca5 (có 13 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000040",
-          "MaPhong": "A509",
-          "MaSlot": "Thu5-Ca3",
+          "MaPhong": "F708",
+          "MaSlot": "Thu5-Ca5",
           "MaGV": "GV023",
-          "index": 33
+          "index": 40
         }
       ]
     },
@@ -950,17 +1009,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca4",
-          "reason": "GV Nguyễn Thuỳ Dương KHÔNG mong muốn dạy Thứ 5 Ca4 (có 16 slots mong muốn)"
+          "slot": "Thu6-Ca2",
+          "reason": "GV Nguyễn Thuỳ Dương KHÔNG mong muốn dạy Thứ 6 Ca2 (có 12 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000042",
-          "MaPhong": "A601",
-          "MaSlot": "Thu5-Ca4",
+          "MaPhong": "A401",
+          "MaSlot": "Thu6-Ca2",
           "MaGV": "GV021",
-          "index": 34
+          "index": 42
         }
       ]
     },
@@ -979,46 +1038,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca5",
-          "reason": "GV Hoàng Minh Khang KHÔNG mong muốn dạy Thứ 5 Ca5 (có 15 slots mong muốn)"
+          "slot": "Thu6-Ca3",
+          "reason": "GV Hoàng Minh Khang KHÔNG mong muốn dạy Thứ 6 Ca3 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000043",
-          "MaPhong": "A602",
-          "MaSlot": "Thu5-Ca5",
+          "MaPhong": "A402",
+          "MaSlot": "Thu6-Ca3",
           "MaGV": "GV025",
-          "index": 35
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000044",
-      "info": {
-        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Nguyễn Thuỳ Dương",
-      "teacher_id": "GV021",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca3",
-          "reason": "GV Nguyễn Thuỳ Dương KHÔNG mong muốn dạy Thứ 7 Ca3 (có 16 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000044",
-          "MaPhong": "D410",
-          "MaSlot": "Thu7-Ca3",
-          "MaGV": "GV021",
-          "index": 185
+          "index": 43
         }
       ]
     },
@@ -1037,17 +1067,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca1",
-          "reason": "GV Hoàng Minh Khang KHÔNG mong muốn dạy Thứ 6 Ca1 (có 15 slots mong muốn)"
+          "slot": "Thu6-Ca5",
+          "reason": "GV Hoàng Minh Khang KHÔNG mong muốn dạy Thứ 6 Ca5 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000045",
-          "MaPhong": "A603",
-          "MaSlot": "Thu6-Ca1",
+          "MaPhong": "A403",
+          "MaSlot": "Thu6-Ca5",
           "MaGV": "GV025",
-          "index": 36
+          "index": 45
         }
       ]
     },
@@ -1067,7 +1097,7 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "Thu4-Ca3",
-          "reason": "GV Phạm Thu Hà KHÔNG mong muốn dạy Thứ 4 Ca3 (có 13 slots mong muốn)"
+          "reason": "GV Phạm Thu Hà KHÔNG mong muốn dạy Thứ 4 Ca3 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
@@ -1095,46 +1125,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca3",
-          "reason": "GV Nguyễn Ngọc Ánh KHÔNG mong muốn dạy Thứ 6 Ca3 (có 15 slots mong muốn)"
+          "slot": "Thu7-Ca2",
+          "reason": "GV Nguyễn Ngọc Ánh KHÔNG mong muốn dạy Thứ 7 Ca2 (có 12 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000048",
-          "MaPhong": "A605",
-          "MaSlot": "Thu6-Ca3",
+          "MaPhong": "A405",
+          "MaSlot": "Thu7-Ca2",
           "MaGV": "GV017",
-          "index": 38
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000049",
-      "info": {
-        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Lê Minh Hiếu",
-      "teacher_id": "GV031",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca4",
-          "reason": "GV Lê Minh Hiếu KHÔNG mong muốn dạy Thứ 6 Ca4 (có 12 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000049",
-          "MaPhong": "A606",
-          "MaSlot": "Thu6-Ca4",
-          "MaGV": "GV031",
-          "index": 39
+          "index": 47
         }
       ]
     },
@@ -1154,7 +1155,7 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "Thu4-Ca4",
-          "reason": "GV Phạm Thu Hà KHÔNG mong muốn dạy Thứ 4 Ca4 (có 13 slots mong muốn)"
+          "reason": "GV Phạm Thu Hà KHÔNG mong muốn dạy Thứ 4 Ca4 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
@@ -1168,40 +1169,40 @@
       ]
     },
     {
-      "MaLop": "LOP-00000053",
+      "MaLop": "LOP-00000051",
       "info": {
-        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
         "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 80,
-        "ThietBiYeuCau": "TV, Máy chiếu"
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
       },
-      "teacher": "Phạm Thu Hà",
-      "teacher_id": "GV015",
+      "teacher": "Nguyễn Ngọc Ánh",
+      "teacher_id": "GV017",
       "soft_violations": [
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca5",
-          "reason": "GV Phạm Thu Hà KHÔNG mong muốn dạy Thứ 4 Ca5 (có 13 slots mong muốn)"
+          "slot": "Thu7-Ca4",
+          "reason": "GV Nguyễn Ngọc Ánh KHÔNG mong muốn dạy Thứ 7 Ca4 (có 12 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000053",
-          "MaPhong": "B409",
-          "MaSlot": "Thu4-Ca5",
-          "MaGV": "GV015",
-          "index": 11
+          "MaLop": "LOP-00000051",
+          "MaPhong": "A407",
+          "MaSlot": "Thu7-Ca4",
+          "MaGV": "GV017",
+          "index": 49
         }
       ]
     },
     {
-      "MaLop": "LOP-00000055",
+      "MaLop": "LOP-00000052",
       "info": {
-        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
         "SoCaTuan": 1,
-        "Nhom": 1,
+        "Nhom": 2,
         "SoSV": 40,
         "ThietBiYeuCau": "PC"
       },
@@ -1211,17 +1212,46 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca3",
-          "reason": "GV Lê Minh Hiếu KHÔNG mong muốn dạy Thứ 7 Ca3 (có 12 slots mong muốn)"
+          "slot": "Thu7-Ca5",
+          "reason": "GV Lê Minh Hiếu KHÔNG mong muốn dạy Thứ 7 Ca5 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000055",
-          "MaPhong": "A701",
-          "MaSlot": "Thu7-Ca3",
+          "MaLop": "LOP-00000052",
+          "MaPhong": "A408",
+          "MaSlot": "Thu7-Ca5",
           "MaGV": "GV031",
-          "index": 43
+          "index": 50
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000056",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Phạm Thu Hà",
+      "teacher_id": "GV015",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca1",
+          "reason": "GV Phạm Thu Hà KHÔNG mong muốn dạy Thứ 5 Ca1 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000056",
+          "MaPhong": "C201",
+          "MaSlot": "Thu5-Ca1",
+          "MaGV": "GV015",
+          "index": 12
         }
       ]
     },
@@ -1240,17 +1270,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca4",
-          "reason": "GV Đặng Hoài Nam KHÔNG mong muốn dạy Thứ 6 Ca4 (có 15 slots mong muốn)"
+          "slot": "Thu3-Ca1",
+          "reason": "GV Đặng Hoài Nam KHÔNG mong muốn dạy Thứ 3 Ca1 (có 17 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000060",
-          "MaPhong": "B203",
-          "MaSlot": "Thu6-Ca4",
+          "MaPhong": "A504",
+          "MaSlot": "Thu3-Ca1",
           "MaGV": "GV020",
-          "index": 47
+          "index": 56
         }
       ]
     },
@@ -1269,17 +1299,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca5",
-          "reason": "GV Đặng Hoài Nam KHÔNG mong muốn dạy Thứ 6 Ca5 (có 15 slots mong muốn)"
+          "slot": "Thu3-Ca2",
+          "reason": "GV Đặng Hoài Nam KHÔNG mong muốn dạy Thứ 3 Ca2 (có 17 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000061",
-          "MaPhong": "B204",
-          "MaSlot": "Thu6-Ca5",
+          "MaPhong": "A505",
+          "MaSlot": "Thu3-Ca2",
           "MaGV": "GV020",
-          "index": 48
+          "index": 57
         }
       ]
     },
@@ -1298,17 +1328,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca1",
-          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 7 Ca1 (có 13 slots mong muốn)"
+          "slot": "Thu3-Ca3",
+          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 3 Ca3 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000062",
-          "MaPhong": "B210",
-          "MaSlot": "Thu7-Ca1",
+          "MaPhong": "C404",
+          "MaSlot": "Thu3-Ca3",
           "MaGV": "GV006",
-          "index": 49
+          "index": 58
         }
       ]
     },
@@ -1327,46 +1357,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca2",
-          "reason": "GV Đặng Hoài Nam KHÔNG mong muốn dạy Thứ 7 Ca2 (có 15 slots mong muốn)"
+          "slot": "Thu3-Ca4",
+          "reason": "GV Đặng Hoài Nam KHÔNG mong muốn dạy Thứ 3 Ca4 (có 17 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000063",
-          "MaPhong": "B205",
-          "MaSlot": "Thu7-Ca2",
+          "MaPhong": "A506",
+          "MaSlot": "Thu3-Ca4",
           "MaGV": "GV020",
-          "index": 50
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000064",
-      "info": {
-        "TenMonHoc": "Quản trị hệ thống mạng",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Hoàng Đức Long",
-      "teacher_id": "GV005",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca3",
-          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy Thứ 7 Ca3 (có 15 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000064",
-          "MaPhong": "A401",
-          "MaSlot": "Thu7-Ca3",
-          "MaGV": "GV005",
-          "index": 51
+          "index": 59
         }
       ]
     },
@@ -1385,17 +1386,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca5",
-          "reason": "GV Vũ Đức Thịnh KHÔNG mong muốn dạy Thứ 7 Ca5 (có 16 slots mong muốn)"
+          "slot": "Thu4-Ca2",
+          "reason": "GV Vũ Đức Thịnh KHÔNG mong muốn dạy Thứ 4 Ca2 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000066",
-          "MaPhong": "B303",
-          "MaSlot": "Thu7-Ca5",
+          "MaPhong": "A508",
+          "MaSlot": "Thu4-Ca2",
           "MaGV": "GV043",
-          "index": 53
+          "index": 62
         }
       ]
     },
@@ -1414,75 +1415,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca3",
-          "reason": "GV Vũ Đức Thịnh KHÔNG mong muốn dạy Thứ 2 Ca3 (có 16 slots mong muốn)"
+          "slot": "Thu4-Ca5",
+          "reason": "GV Vũ Đức Thịnh KHÔNG mong muốn dạy Thứ 4 Ca5 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000069",
-          "MaPhong": "B305",
-          "MaSlot": "Thu2-Ca3",
+          "MaPhong": "A601",
+          "MaSlot": "Thu4-Ca5",
           "MaGV": "GV043",
-          "index": 56
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000070",
-      "info": {
-        "TenMonHoc": "IoT cơ bản",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Trương Mạnh Hùng",
-      "teacher_id": "GV045",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca4",
-          "reason": "GV Trương Mạnh Hùng KHÔNG mong muốn dạy Thứ 2 Ca4 (có 17 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000070",
-          "MaPhong": "A401",
-          "MaSlot": "Thu2-Ca4",
-          "MaGV": "GV045",
-          "index": 57
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000071",
-      "info": {
-        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Ngô Thảo My",
-      "teacher_id": "GV013",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C1",
-          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000071",
-          "MaPhong": "B311",
-          "MaSlot": "T2-C1",
-          "MaGV": "GV013",
-          "index": 192
+          "index": 65
         }
       ]
     },
@@ -1502,16 +1445,16 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "T2-C1",
-          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy N/A Ca? (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000072",
-          "MaPhong": "B403",
+          "MaPhong": "A603",
           "MaSlot": "T2-C1",
           "MaGV": "GV047",
-          "index": 193
+          "index": 197
         }
       ]
     },
@@ -1530,17 +1473,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C2",
-          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
+          "slot": "T2-C1",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000073",
-          "MaPhong": "B404",
-          "MaSlot": "T2-C2",
+          "MaPhong": "A604",
+          "MaSlot": "T2-C1",
           "MaGV": "GV013",
-          "index": 194
+          "index": 198
         }
       ]
     },
@@ -1560,16 +1503,16 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "T2-C2",
-          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy N/A Ca? (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000074",
-          "MaPhong": "B410",
+          "MaPhong": "C408",
           "MaSlot": "T2-C2",
           "MaGV": "GV047",
-          "index": 195
+          "index": 199
         }
       ]
     },
@@ -1588,17 +1531,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C3",
-          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
+          "slot": "T2-C2",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000075",
-          "MaPhong": "B405",
-          "MaSlot": "T2-C3",
+          "MaPhong": "A605",
+          "MaSlot": "T2-C2",
           "MaGV": "GV013",
-          "index": 196
+          "index": 200
         }
       ]
     },
@@ -1618,16 +1561,45 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "T2-C3",
-          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy N/A Ca? (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000076",
-          "MaPhong": "A401",
+          "MaPhong": "A606",
           "MaSlot": "T2-C3",
           "MaGV": "GV047",
-          "index": 197
+          "index": 201
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000077",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Bùi Minh Châu",
+      "teacher_id": "GV037",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca3",
+          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy Thứ 6 Ca3 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000077",
+          "MaPhong": "C409",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV037",
+          "index": 68
         }
       ]
     },
@@ -1647,21 +1619,50 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "T2-C1",
-          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy N/A Ca? (có 14 slots mong muốn)"
+          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy N/A Ca? (có 16 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000079",
-          "MaPhong": "A401",
+          "MaPhong": "A608",
           "MaSlot": "T2-C1",
           "MaGV": "GV037",
-          "index": 198
+          "index": 202
         }
       ]
     },
     {
-      "MaLop": "LOP-00000081",
+      "MaLop": "LOP-00000080",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Bùi Minh Châu",
+      "teacher_id": "GV037",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca1",
+          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy Thứ 7 Ca1 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000080",
+          "MaPhong": "C410",
+          "MaSlot": "Thu7-Ca1",
+          "MaGV": "GV037",
+          "index": 70
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000082",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
         "SoCaTuan": 1,
@@ -1669,23 +1670,23 @@
         "SoSV": 40,
         "ThietBiYeuCau": "PC"
       },
-      "teacher": "Nguyễn Minh An",
-      "teacher_id": "GV001",
+      "teacher": "Lê Thị Mai",
+      "teacher_id": "GV003",
       "soft_violations": [
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca5",
-          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 4 Ca5 (có 11 slots mong muốn)"
+          "slot": "Thu7-Ca3",
+          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 7 Ca3 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000081",
-          "MaPhong": "A401",
-          "MaSlot": "Thu4-Ca5",
-          "MaGV": "GV001",
-          "index": 61
+          "MaLop": "LOP-00000082",
+          "MaPhong": "A701",
+          "MaSlot": "Thu7-Ca3",
+          "MaGV": "GV003",
+          "index": 72
         }
       ]
     },
@@ -1705,7 +1706,7 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "Thu5-Ca2",
-          "reason": "GV Đỗ Phương Linh KHÔNG mong muốn dạy Thứ 5 Ca2 (có 12 slots mong muốn)"
+          "reason": "GV Đỗ Phương Linh KHÔNG mong muốn dạy Thứ 5 Ca2 (có 16 slots mong muốn)"
         }
       ],
       "assignments": [
@@ -1733,46 +1734,46 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca4",
-          "reason": "GV Đỗ Phương Linh KHÔNG mong muốn dạy Thứ 5 Ca4 (có 12 slots mong muốn)"
+          "slot": "Thu2-Ca1",
+          "reason": "GV Đỗ Phương Linh KHÔNG mong muốn dạy Thứ 2 Ca1 (có 16 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000086",
-          "MaPhong": "A401",
-          "MaSlot": "Thu5-Ca4",
+          "MaPhong": "A702",
+          "MaSlot": "Thu2-Ca1",
           "MaGV": "GV011",
-          "index": 65
+          "index": 75
         }
       ]
     },
     {
-      "MaLop": "LOP-00000089",
+      "MaLop": "LOP-00000087",
       "info": {
         "TenMonHoc": "Lập trình hướng đối tượng",
         "SoCaTuan": 1,
-        "Nhom": 2,
+        "Nhom": 1,
         "SoSV": 40,
         "ThietBiYeuCau": "PC"
       },
-      "teacher": "Đỗ Phương Linh",
-      "teacher_id": "GV011",
+      "teacher": "Nguyễn Minh An",
+      "teacher_id": "GV001",
       "soft_violations": [
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca1",
-          "reason": "GV Đỗ Phương Linh KHÔNG mong muốn dạy Thứ 6 Ca1 (có 12 slots mong muốn)"
+          "slot": "T2-C2",
+          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy N/A Ca? (có 16 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000089",
-          "MaPhong": "A401",
-          "MaSlot": "Thu6-Ca1",
-          "MaGV": "GV011",
-          "index": 67
+          "MaLop": "LOP-00000087",
+          "MaPhong": "A703",
+          "MaSlot": "T2-C2",
+          "MaGV": "GV001",
+          "index": 203
         }
       ]
     },
@@ -1791,17 +1792,46 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca2",
-          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 6 Ca2 (có 11 slots mong muốn)"
+          "slot": "Thu2-Ca4",
+          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 2 Ca4 (có 16 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000090",
-          "MaPhong": "F301",
-          "MaSlot": "Thu6-Ca2",
+          "MaPhong": "A705",
+          "MaSlot": "Thu2-Ca4",
           "MaGV": "GV001",
-          "index": 68
+          "index": 77
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000091",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Ngô Văn Bình",
+      "teacher_id": "GV009",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca4",
+          "reason": "GV Ngô Văn Bình KHÔNG mong muốn dạy Thứ 5 Ca4 (có 11 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000091",
+          "MaPhong": "C209",
+          "MaSlot": "Thu5-Ca4",
+          "MaGV": "GV009",
+          "index": 15
         }
       ]
     },
@@ -1820,17 +1850,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca3",
-          "reason": "GV Ngô Văn Bình KHÔNG mong muốn dạy Thứ 6 Ca3 (có 13 slots mong muốn)"
+          "slot": "Thu2-Ca5",
+          "reason": "GV Ngô Văn Bình KHÔNG mong muốn dạy Thứ 2 Ca5 (có 11 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000092",
-          "MaPhong": "F302",
-          "MaSlot": "Thu6-Ca3",
+          "MaPhong": "A706",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV009",
-          "index": 69
+          "index": 78
         }
       ]
     },
@@ -1849,142 +1879,26 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca4",
-          "reason": "GV Ngô Văn Bình KHÔNG mong muốn dạy Thứ 6 Ca4 (có 13 slots mong muốn)"
+          "slot": "Thu3-Ca1",
+          "reason": "GV Ngô Văn Bình KHÔNG mong muốn dạy Thứ 3 Ca1 (có 11 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000093",
-          "MaPhong": "F303",
-          "MaSlot": "Thu6-Ca4",
+          "MaPhong": "A707",
+          "MaSlot": "Thu3-Ca1",
           "MaGV": "GV009",
-          "index": 70
+          "index": 79
         }
       ]
     },
     {
-      "MaLop": "LOP-00000094",
-      "info": {
-        "TenMonHoc": "Phân tích và thiết kế giải thuật",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 80,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Ngô Văn Bình",
-      "teacher_id": "GV009",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca5",
-          "reason": "GV Ngô Văn Bình KHÔNG mong muốn dạy Thứ 5 Ca5 (có 13 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000094",
-          "MaPhong": "C301",
-          "MaSlot": "Thu5-Ca5",
-          "MaGV": "GV009",
-          "index": 16
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000095",
-      "info": {
-        "TenMonHoc": "Phân tích và thiết kế giải thuật",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Lê Thị Mai",
-      "teacher_id": "GV003",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca5",
-          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 6 Ca5 (có 10 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000095",
-          "MaPhong": "F304",
-          "MaSlot": "Thu6-Ca5",
-          "MaGV": "GV003",
-          "index": 71
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000096",
-      "info": {
-        "TenMonHoc": "Phân tích và thiết kế giải thuật",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Ngô Văn Bình",
-      "teacher_id": "GV009",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca1",
-          "reason": "GV Ngô Văn Bình KHÔNG mong muốn dạy Thứ 7 Ca1 (có 13 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000096",
-          "MaPhong": "F305",
-          "MaSlot": "Thu7-Ca1",
-          "MaGV": "GV009",
-          "index": 72
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000097",
-      "info": {
-        "TenMonHoc": "Nhập môn Học máy",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Vũ Hải Nam",
-      "teacher_id": "GV007",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca2",
-          "reason": "GV Vũ Hải Nam KHÔNG mong muốn dạy Thứ 7 Ca2 (có 15 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000097",
-          "MaPhong": "C205",
-          "MaSlot": "Thu7-Ca2",
-          "MaGV": "GV007",
-          "index": 73
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000100",
+      "MaLop": "LOP-00000099",
       "info": {
         "TenMonHoc": "Hệ thống hoạch định nguồn lực doanh nghiệp",
         "SoCaTuan": 1,
-        "Nhom": 2,
+        "Nhom": 1,
         "SoSV": 40,
         "ThietBiYeuCau": "TV, Máy chiếu"
       },
@@ -1994,17 +1908,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca5",
-          "reason": "GV Đặng Thu Trang KHÔNG mong muốn dạy Thứ 7 Ca5 (có 13 slots mong muốn)"
+          "slot": "Thu4-Ca1",
+          "reason": "GV Đặng Thu Trang KHÔNG mong muốn dạy Thứ 4 Ca1 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000100",
-          "MaPhong": "C211",
-          "MaSlot": "Thu7-Ca5",
+          "MaLop": "LOP-00000099",
+          "MaPhong": "D104",
+          "MaSlot": "Thu4-Ca1",
           "MaGV": "GV008",
-          "index": 76
+          "index": 84
         }
       ]
     },
@@ -2023,22 +1937,22 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca1",
-          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy Thứ 2 Ca1 (có 14 slots mong muốn)"
+          "slot": "Thu4-Ca3",
+          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy Thứ 4 Ca3 (có 16 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000101",
-          "MaPhong": "C302",
-          "MaSlot": "Thu2-Ca1",
+          "MaPhong": "D106",
+          "MaSlot": "Thu4-Ca3",
           "MaGV": "GV037",
-          "index": 77
+          "index": 86
         }
       ]
     },
     {
-      "MaLop": "LOP-00000103",
+      "MaLop": "LOP-00000102",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động",
         "SoCaTuan": 1,
@@ -2052,46 +1966,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca3",
-          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy Thứ 2 Ca3 (có 14 slots mong muốn)"
+          "slot": "Thu4-Ca4",
+          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy Thứ 4 Ca4 (có 16 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000103",
-          "MaPhong": "F307",
-          "MaSlot": "Thu2-Ca3",
+          "MaLop": "LOP-00000102",
+          "MaPhong": "B203",
+          "MaSlot": "Thu4-Ca4",
           "MaGV": "GV037",
-          "index": 79
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000105",
-      "info": {
-        "TenMonHoc": "Phát triển ứng dụng di động",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Lê Thị Mai",
-      "teacher_id": "GV003",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca5",
-          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 2 Ca5 (có 10 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000105",
-          "MaPhong": "F308",
-          "MaSlot": "Thu2-Ca5",
-          "MaGV": "GV003",
-          "index": 81
+          "index": 87
         }
       ]
     },
@@ -2110,46 +1995,104 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu3-Ca2",
-          "reason": "GV Phan Quốc Việt KHÔNG mong muốn dạy Thứ 3 Ca2 (có 14 slots mong muốn)"
+          "slot": "Thu5-Ca4",
+          "reason": "GV Phan Quốc Việt KHÔNG mong muốn dạy Thứ 5 Ca4 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000107",
-          "MaPhong": "C304",
-          "MaSlot": "Thu3-Ca2",
+          "MaPhong": "D109",
+          "MaSlot": "Thu5-Ca4",
           "MaGV": "GV038",
-          "index": 83
+          "index": 92
         }
       ]
     },
     {
-      "MaLop": "LOP-00000110",
+      "MaLop": "LOP-00000108",
       "info": {
-        "TenMonHoc": "Nhập môn học máy",
+        "TenMonHoc": "Nhập môn thị giác máy tính",
         "SoCaTuan": 1,
         "Nhom": 2,
         "SoSV": 40,
         "ThietBiYeuCau": "TV, Máy chiếu"
       },
-      "teacher": "Nguyễn Trọng Tài",
-      "teacher_id": "GV036",
+      "teacher": "Vũ Hải Nam",
+      "teacher_id": "GV007",
       "soft_violations": [
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu3-Ca5",
-          "reason": "GV Nguyễn Trọng Tài KHÔNG mong muốn dạy Thứ 3 Ca5 (có 16 slots mong muốn)"
+          "slot": "Thu5-Ca5",
+          "reason": "GV Vũ Hải Nam KHÔNG mong muốn dạy Thứ 5 Ca5 (có 12 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000110",
-          "MaPhong": "C309",
-          "MaSlot": "Thu3-Ca5",
-          "MaGV": "GV036",
-          "index": 86
+          "MaLop": "LOP-00000108",
+          "MaPhong": "D110",
+          "MaSlot": "Thu5-Ca5",
+          "MaGV": "GV007",
+          "index": 93
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000109",
+      "info": {
+        "TenMonHoc": "Nhập môn học máy",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Đào Khánh Linh",
+      "teacher_id": "GV033",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca1",
+          "reason": "GV Đào Khánh Linh KHÔNG mong muốn dạy Thứ 6 Ca1 (có 12 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000109",
+          "MaPhong": "D201",
+          "MaSlot": "Thu6-Ca1",
+          "MaGV": "GV033",
+          "index": 94
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000111",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Nguyễn Minh An",
+      "teacher_id": "GV001",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca3",
+          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 6 Ca3 (có 16 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000111",
+          "MaPhong": "D203",
+          "MaSlot": "Thu6-Ca3",
+          "MaGV": "GV001",
+          "index": 96
         }
       ]
     },
@@ -2168,17 +2111,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C3",
-          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy N/A Ca? (có 10 slots mong muốn)"
+          "slot": "Thu6-Ca4",
+          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 6 Ca4 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000112",
-          "MaPhong": "F310",
-          "MaSlot": "T2-C3",
+          "MaPhong": "B304",
+          "MaSlot": "Thu6-Ca4",
           "MaGV": "GV003",
-          "index": 199
+          "index": 97
         }
       ]
     },
@@ -2198,16 +2141,16 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "T2-C2",
-          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy N/A Ca? (có 14 slots mong muốn)"
+          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy N/A Ca? (có 16 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000113",
-          "MaPhong": "F311",
+          "MaPhong": "B305",
           "MaSlot": "T2-C2",
           "MaGV": "GV037",
-          "index": 200
+          "index": 204
         }
       ]
     },
@@ -2226,17 +2169,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca4",
-          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 4 Ca4 (có 11 slots mong muốn)"
+          "slot": "Thu7-Ca1",
+          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 7 Ca1 (có 16 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000114",
-          "MaPhong": "C311",
-          "MaSlot": "Thu4-Ca4",
+          "MaPhong": "D204",
+          "MaSlot": "Thu7-Ca1",
           "MaGV": "GV001",
-          "index": 88
+          "index": 98
         }
       ]
     },
@@ -2255,46 +2198,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca5",
-          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 4 Ca5 (có 10 slots mong muốn)"
+          "slot": "Thu7-Ca2",
+          "reason": "GV Lê Thị Mai KHÔNG mong muốn dạy Thứ 7 Ca2 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000115",
-          "MaPhong": "F401",
-          "MaSlot": "Thu4-Ca5",
+          "MaPhong": "B403",
+          "MaSlot": "Thu7-Ca2",
           "MaGV": "GV003",
-          "index": 89
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000116",
-      "info": {
-        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Bùi Minh Châu",
-      "teacher_id": "GV037",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca1",
-          "reason": "GV Bùi Minh Châu KHÔNG mong muốn dạy Thứ 5 Ca1 (có 14 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000116",
-          "MaPhong": "F402",
-          "MaSlot": "Thu5-Ca1",
-          "MaGV": "GV037",
-          "index": 90
+          "index": 99
         }
       ]
     },
@@ -2313,104 +2227,75 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca2",
-          "reason": "GV Nguyễn Thị Hương KHÔNG mong muốn dạy Thứ 5 Ca2 (có 13 slots mong muốn)"
+          "slot": "Thu7-Ca4",
+          "reason": "GV Nguyễn Thị Hương KHÔNG mong muốn dạy Thứ 7 Ca4 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000117",
-          "MaPhong": "C401",
-          "MaSlot": "Thu5-Ca2",
+          "MaPhong": "D205",
+          "MaSlot": "Thu7-Ca4",
           "MaGV": "GV041",
-          "index": 91
+          "index": 101
         }
       ]
     },
     {
-      "MaLop": "LOP-00000118",
-      "info": {
-        "TenMonHoc": "Thiết kế giao diện người dùng",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Nguyễn Thị Hương",
-      "teacher_id": "GV041",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca3",
-          "reason": "GV Nguyễn Thị Hương KHÔNG mong muốn dạy Thứ 5 Ca3 (có 13 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000118",
-          "MaPhong": "F403",
-          "MaSlot": "Thu5-Ca3",
-          "MaGV": "GV041",
-          "index": 92
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000119",
-      "info": {
-        "TenMonHoc": "Thiết kế giao diện người dùng",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Nguyễn Thị Hương",
-      "teacher_id": "GV041",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca4",
-          "reason": "GV Nguyễn Thị Hương KHÔNG mong muốn dạy Thứ 5 Ca4 (có 13 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000119",
-          "MaPhong": "F404",
-          "MaSlot": "Thu5-Ca4",
-          "MaGV": "GV041",
-          "index": 93
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000120",
+      "MaLop": "LOP-00000121",
       "info": {
         "TenMonHoc": "Thiết kế giao diện người dùng",
         "SoCaTuan": 1,
         "Nhom": 2,
         "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu"
+        "ThietBiYeuCau": "PC"
       },
-      "teacher": "Ngô Thảo My",
-      "teacher_id": "GV013",
+      "teacher": "Nguyễn Thị Hương",
+      "teacher_id": "GV041",
       "soft_violations": [
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca5",
-          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 5 Ca5 (có 11 slots mong muốn)"
+          "slot": "Thu2-Ca3",
+          "reason": "GV Nguyễn Thị Hương KHÔNG mong muốn dạy Thứ 2 Ca3 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000120",
-          "MaPhong": "C402",
-          "MaSlot": "Thu5-Ca5",
-          "MaGV": "GV013",
-          "index": 94
+          "MaLop": "LOP-00000121",
+          "MaPhong": "A401",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV041",
+          "index": 105
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000123",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca5",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 2 Ca5 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000123",
+          "MaPhong": "D207",
+          "MaSlot": "Thu2-Ca5",
+          "MaGV": "GV004",
+          "index": 107
         }
       ]
     },
@@ -2429,17 +2314,75 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca4",
-          "reason": "GV Nguyễn Thuỳ Dương KHÔNG mong muốn dạy Thứ 6 Ca4 (có 16 slots mong muốn)"
+          "slot": "Thu3-Ca1",
+          "reason": "GV Nguyễn Thuỳ Dương KHÔNG mong muốn dạy Thứ 3 Ca1 (có 12 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000124",
-          "MaPhong": "C404",
-          "MaSlot": "Thu6-Ca4",
+          "MaPhong": "D209",
+          "MaSlot": "Thu3-Ca1",
           "MaGV": "GV021",
-          "index": 98
+          "index": 108
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000125",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Phan Ngọc Bích",
+      "teacher_id": "GV006",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca2",
+          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 3 Ca2 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000125",
+          "MaPhong": "D210",
+          "MaSlot": "Thu3-Ca2",
+          "MaGV": "GV006",
+          "index": 109
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000127",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Hoàng Đức Long",
+      "teacher_id": "GV005",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu3-Ca4",
+          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy Thứ 3 Ca4 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000127",
+          "MaPhong": "A401",
+          "MaSlot": "Thu3-Ca4",
+          "MaGV": "GV005",
+          "index": 111
         }
       ]
     },
@@ -2458,17 +2401,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca3",
-          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 7 Ca3 (có 13 slots mong muốn)"
+          "slot": "Thu3-Ca5",
+          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 3 Ca5 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000128",
-          "MaPhong": "C406",
-          "MaSlot": "Thu7-Ca3",
+          "MaPhong": "D301",
+          "MaSlot": "Thu3-Ca5",
           "MaGV": "GV006",
-          "index": 102
+          "index": 112
         }
       ]
     },
@@ -2487,17 +2430,75 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca4",
-          "reason": "GV Đặng Hoài Nam KHÔNG mong muốn dạy Thứ 7 Ca4 (có 15 slots mong muốn)"
+          "slot": "Thu4-Ca1",
+          "reason": "GV Đặng Hoài Nam KHÔNG mong muốn dạy Thứ 4 Ca1 (có 17 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000129",
-          "MaPhong": "F409",
-          "MaSlot": "Thu7-Ca4",
+          "MaPhong": "A401",
+          "MaSlot": "Thu4-Ca1",
           "MaGV": "GV020",
-          "index": 103
+          "index": 113
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000132",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Dương Quốc Khánh",
+      "teacher_id": "GV014",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca4",
+          "reason": "GV Dương Quốc Khánh KHÔNG mong muốn dạy Thứ 4 Ca4 (có 12 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000132",
+          "MaPhong": "A401",
+          "MaSlot": "Thu4-Ca4",
+          "MaGV": "GV014",
+          "index": 116
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000133",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Dương Quốc Khánh",
+      "teacher_id": "GV014",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca5",
+          "reason": "GV Dương Quốc Khánh KHÔNG mong muốn dạy Thứ 4 Ca5 (có 12 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000133",
+          "MaPhong": "F302",
+          "MaSlot": "Thu4-Ca5",
+          "MaGV": "GV014",
+          "index": 117
         }
       ]
     },
@@ -2516,17 +2517,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca4",
-          "reason": "GV Dương Quốc Khánh KHÔNG mong muốn dạy Thứ 2 Ca4 (có 14 slots mong muốn)"
+          "slot": "Thu5-Ca1",
+          "reason": "GV Dương Quốc Khánh KHÔNG mong muốn dạy Thứ 5 Ca1 (có 12 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000134",
-          "MaPhong": "C408",
-          "MaSlot": "Thu2-Ca4",
+          "MaPhong": "D303",
+          "MaSlot": "Thu5-Ca1",
           "MaGV": "GV014",
-          "index": 108
+          "index": 118
         }
       ]
     },
@@ -2545,17 +2546,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca5",
-          "reason": "GV Dương Quốc Khánh KHÔNG mong muốn dạy Thứ 2 Ca5 (có 14 slots mong muốn)"
+          "slot": "Thu5-Ca2",
+          "reason": "GV Dương Quốc Khánh KHÔNG mong muốn dạy Thứ 5 Ca2 (có 12 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000135",
-          "MaPhong": "F502",
-          "MaSlot": "Thu2-Ca5",
+          "MaPhong": "F303",
+          "MaSlot": "Thu5-Ca2",
           "MaGV": "GV014",
-          "index": 109
+          "index": 119
         }
       ]
     },
@@ -2575,27 +2576,56 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "T2-C4",
-          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy N/A Ca? (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000136",
-          "MaPhong": "F503",
+          "MaPhong": "F304",
           "MaSlot": "T2-C4",
           "MaGV": "GV047",
-          "index": 201
+          "index": 205
         }
       ]
     },
     {
-      "MaLop": "LOP-00000140",
+      "MaLop": "LOP-00000137",
       "info": {
         "TenMonHoc": "Công nghệ .Net",
         "SoCaTuan": 1,
-        "Nhom": 2,
+        "Nhom": 1,
         "SoSV": 40,
         "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Hồ Thanh Tùng",
+      "teacher_id": "GV012",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca4",
+          "reason": "GV Hồ Thanh Tùng KHÔNG mong muốn dạy Thứ 5 Ca4 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000137",
+          "MaPhong": "D304",
+          "MaSlot": "Thu5-Ca4",
+          "MaGV": "GV012",
+          "index": 120
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000138",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
       },
       "teacher": "Nguyễn Thảo Nguyên",
       "teacher_id": "GV048",
@@ -2603,17 +2633,46 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu3-Ca5",
-          "reason": "GV Nguyễn Thảo Nguyên KHÔNG mong muốn dạy Thứ 3 Ca5 (có 12 slots mong muốn)"
+          "slot": "Thu5-Ca5",
+          "reason": "GV Nguyễn Thảo Nguyên KHÔNG mong muốn dạy Thứ 5 Ca5 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000140",
-          "MaPhong": "C410",
-          "MaSlot": "Thu3-Ca5",
+          "MaLop": "LOP-00000138",
+          "MaPhong": "F305",
+          "MaSlot": "Thu5-Ca5",
           "MaGV": "GV048",
-          "index": 113
+          "index": 121
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000139",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Hồ Thanh Tùng",
+      "teacher_id": "GV012",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca1",
+          "reason": "GV Hồ Thanh Tùng KHÔNG mong muốn dạy Thứ 6 Ca1 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000139",
+          "MaPhong": "F310",
+          "MaSlot": "Thu6-Ca1",
+          "MaGV": "GV012",
+          "index": 122
         }
       ]
     },
@@ -2632,17 +2691,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca1",
-          "reason": "GV Hồ Thanh Tùng KHÔNG mong muốn dạy Thứ 4 Ca1 (có 14 slots mong muốn)"
+          "slot": "Thu6-Ca3",
+          "reason": "GV Hồ Thanh Tùng KHÔNG mong muốn dạy Thứ 6 Ca3 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000141",
-          "MaPhong": "F506",
-          "MaSlot": "Thu4-Ca1",
+          "MaPhong": "F311",
+          "MaSlot": "Thu6-Ca3",
           "MaGV": "GV012",
-          "index": 114
+          "index": 124
         }
       ]
     },
@@ -2661,17 +2720,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca2",
-          "reason": "GV Nguyễn Thảo Nguyên KHÔNG mong muốn dạy Thứ 4 Ca2 (có 12 slots mong muốn)"
+          "slot": "Thu6-Ca4",
+          "reason": "GV Nguyễn Thảo Nguyên KHÔNG mong muốn dạy Thứ 6 Ca4 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000142",
-          "MaPhong": "F507",
-          "MaSlot": "Thu4-Ca2",
+          "MaPhong": "F402",
+          "MaSlot": "Thu6-Ca4",
           "MaGV": "GV048",
-          "index": 115
+          "index": 125
         }
       ]
     },
@@ -2690,17 +2749,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C4",
-          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
+          "slot": "T2-C3",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000143",
-          "MaPhong": "C411",
-          "MaSlot": "T2-C4",
+          "MaPhong": "D306",
+          "MaSlot": "T2-C3",
           "MaGV": "GV013",
-          "index": 202
+          "index": 206
         }
       ]
     },
@@ -2719,17 +2778,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca4",
-          "reason": "GV Nguyễn Ngọc Ánh KHÔNG mong muốn dạy Thứ 4 Ca4 (có 15 slots mong muốn)"
+          "slot": "Thu7-Ca1",
+          "reason": "GV Nguyễn Ngọc Ánh KHÔNG mong muốn dạy Thứ 7 Ca1 (có 12 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000144",
-          "MaPhong": "D102",
-          "MaSlot": "Thu4-Ca4",
+          "MaPhong": "D307",
+          "MaSlot": "Thu7-Ca1",
           "MaGV": "GV017",
-          "index": 116
+          "index": 126
         }
       ]
     },
@@ -2749,7 +2808,7 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "Thu6-Ca1",
-          "reason": "GV Trần Quang Huy KHÔNG mong muốn dạy Thứ 6 Ca1 (có 16 slots mong muốn)"
+          "reason": "GV Trần Quang Huy KHÔNG mong muốn dạy Thứ 6 Ca1 (có 13 slots mong muốn)"
         }
       ],
       "assignments": [
@@ -2777,17 +2836,75 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca1",
-          "reason": "GV Trần Quang Huy KHÔNG mong muốn dạy Thứ 5 Ca1 (có 16 slots mong muốn)"
+          "slot": "Thu7-Ca3",
+          "reason": "GV Trần Quang Huy KHÔNG mong muốn dạy Thứ 7 Ca3 (có 13 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000147",
-          "MaPhong": "F509",
-          "MaSlot": "Thu5-Ca1",
+          "MaPhong": "F404",
+          "MaSlot": "Thu7-Ca3",
           "MaGV": "GV002",
-          "index": 118
+          "index": 128
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000148",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Trần Quang Huy",
+      "teacher_id": "GV002",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca2",
+          "reason": "GV Trần Quang Huy KHÔNG mong muốn dạy Thứ 6 Ca2 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000148",
+          "MaPhong": "C307",
+          "MaSlot": "Thu6-Ca2",
+          "MaGV": "GV002",
+          "index": 18
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000149",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Trần Quang Huy",
+      "teacher_id": "GV002",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca4",
+          "reason": "GV Trần Quang Huy KHÔNG mong muốn dạy Thứ 7 Ca4 (có 13 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000149",
+          "MaPhong": "F405",
+          "MaSlot": "Thu7-Ca4",
+          "MaGV": "GV002",
+          "index": 129
         }
       ]
     },
@@ -2806,75 +2923,46 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca3",
-          "reason": "GV Trần Quang Huy KHÔNG mong muốn dạy Thứ 5 Ca3 (có 16 slots mong muốn)"
+          "slot": "Thu7-Ca5",
+          "reason": "GV Trần Quang Huy KHÔNG mong muốn dạy Thứ 7 Ca5 (có 13 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000150",
-          "MaPhong": "F511",
-          "MaSlot": "Thu5-Ca3",
+          "MaPhong": "F410",
+          "MaSlot": "Thu7-Ca5",
           "MaGV": "GV002",
-          "index": 120
+          "index": 130
         }
       ]
     },
     {
-      "MaLop": "LOP-00000153",
+      "MaLop": "LOP-00000152",
       "info": {
-        "TenMonHoc": "Xử lý dữ liệu lớn",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Hoàng Gia Bảo",
-      "teacher_id": "GV035",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca1",
-          "reason": "GV Hoàng Gia Bảo KHÔNG mong muốn dạy Thứ 6 Ca1 (có 12 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000153",
-          "MaPhong": "D105",
-          "MaSlot": "Thu6-Ca1",
-          "MaGV": "GV035",
-          "index": 123
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000154",
-      "info": {
-        "TenMonHoc": "Xử lý dữ liệu lớn",
+        "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
         "SoCaTuan": 1,
         "Nhom": 2,
         "SoSV": 40,
         "ThietBiYeuCau": "TV, Máy chiếu"
       },
-      "teacher": "Hoàng Gia Bảo",
-      "teacher_id": "GV035",
+      "teacher": "Đào Khánh Linh",
+      "teacher_id": "GV033",
       "soft_violations": [
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C1",
-          "reason": "GV Hoàng Gia Bảo KHÔNG mong muốn dạy N/A Ca? (có 12 slots mong muốn)"
+          "slot": "Thu2-Ca2",
+          "reason": "GV Đào Khánh Linh KHÔNG mong muốn dạy Thứ 2 Ca2 (có 12 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000154",
-          "MaPhong": "D106",
-          "MaSlot": "T2-C1",
-          "MaGV": "GV035",
-          "index": 203
+          "MaLop": "LOP-00000152",
+          "MaPhong": "D310",
+          "MaSlot": "Thu2-Ca2",
+          "MaGV": "GV033",
+          "index": 132
         }
       ]
     },
@@ -2893,55 +2981,26 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca3",
-          "reason": "GV Vũ Đức Thịnh KHÔNG mong muốn dạy Thứ 6 Ca3 (có 16 slots mong muốn)"
+          "slot": "Thu2-Ca5",
+          "reason": "GV Vũ Đức Thịnh KHÔNG mong muốn dạy Thứ 2 Ca5 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000155",
-          "MaPhong": "D107",
-          "MaSlot": "Thu6-Ca3",
+          "MaPhong": "D403",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV043",
-          "index": 124
+          "index": 135
         }
       ]
     },
     {
-      "MaLop": "LOP-00000156",
-      "info": {
-        "TenMonHoc": "Hệ thống thương mại thông minh",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Trương Mạnh Hùng",
-      "teacher_id": "GV045",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca4",
-          "reason": "GV Trương Mạnh Hùng KHÔNG mong muốn dạy Thứ 6 Ca4 (có 17 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000156",
-          "MaPhong": "D109",
-          "MaSlot": "Thu6-Ca4",
-          "MaGV": "GV045",
-          "index": 125
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000159",
+      "MaLop": "LOP-00000161",
       "info": {
         "TenMonHoc": "Kiến tập công nghiệp",
         "SoCaTuan": 1,
-        "Nhom": 1,
+        "Nhom": 2,
         "SoSV": 40,
         "ThietBiYeuCau": "PC"
       },
@@ -2951,75 +3010,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca2",
-          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 7 Ca2 (có 13 slots mong muốn)"
+          "slot": "T2-C3",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy N/A Ca? (có 13 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000159",
-          "MaPhong": "F603",
-          "MaSlot": "Thu7-Ca2",
+          "MaLop": "LOP-00000161",
+          "MaPhong": "F505",
+          "MaSlot": "T2-C3",
           "MaGV": "GV004",
-          "index": 127
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000162",
-      "info": {
-        "TenMonHoc": "Kiến tập công nghiệp",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Nguyễn Minh An",
-      "teacher_id": "GV001",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca5",
-          "reason": "GV Nguyễn Minh An KHÔNG mong muốn dạy Thứ 7 Ca5 (có 11 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000162",
-          "MaPhong": "F605",
-          "MaSlot": "Thu7-Ca5",
-          "MaGV": "GV001",
-          "index": 130
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000164",
-      "info": {
-        "TenMonHoc": "Dự án Công nghệ thông tin 2",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Phạm Văn Khánh",
-      "teacher_id": "GV004",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca2",
-          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 2 Ca2 (có 13 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000164",
-          "MaPhong": "F608",
-          "MaSlot": "Thu2-Ca2",
-          "MaGV": "GV004",
-          "index": 131
+          "index": 207
         }
       ]
     },
@@ -3038,17 +3039,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca3",
-          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 2 Ca3 (có 13 slots mong muốn)"
+          "slot": "T2-C4",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy N/A Ca? (có 13 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000165",
-          "MaPhong": "F609",
-          "MaSlot": "Thu2-Ca3",
+          "MaPhong": "F603",
+          "MaSlot": "T2-C4",
           "MaGV": "GV004",
-          "index": 132
+          "index": 208
         }
       ]
     },
@@ -3067,46 +3068,46 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca5",
-          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 2 Ca5 (có 13 slots mong muốn)"
+          "slot": "Thu5-Ca2",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 5 Ca2 (có 13 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000167",
-          "MaPhong": "F610",
-          "MaSlot": "Thu2-Ca5",
+          "MaPhong": "F605",
+          "MaSlot": "Thu5-Ca2",
           "MaGV": "GV004",
-          "index": 134
+          "index": 145
         }
       ]
     },
     {
-      "MaLop": "LOP-00000169",
+      "MaLop": "LOP-00000168",
       "info": {
-        "TenMonHoc": "Phát triển trò chơi",
+        "TenMonHoc": "Dự án Công nghệ thông tin 2",
         "SoCaTuan": 1,
-        "Nhom": 1,
+        "Nhom": 2,
         "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu"
+        "ThietBiYeuCau": "PC"
       },
-      "teacher": "Trần Đức Long",
-      "teacher_id": "GV047",
+      "teacher": "Phạm Văn Khánh",
+      "teacher_id": "GV004",
       "soft_violations": [
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu3-Ca2",
-          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy Thứ 3 Ca2 (có 11 slots mong muốn)"
+          "slot": "Thu5-Ca3",
+          "reason": "GV Phạm Văn Khánh KHÔNG mong muốn dạy Thứ 5 Ca3 (có 13 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000169",
-          "MaPhong": "D110",
-          "MaSlot": "Thu3-Ca2",
-          "MaGV": "GV047",
-          "index": 136
+          "MaLop": "LOP-00000168",
+          "MaPhong": "F610",
+          "MaSlot": "Thu5-Ca3",
+          "MaGV": "GV004",
+          "index": 146
         }
       ]
     },
@@ -3126,16 +3127,45 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "T2-C5",
-          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy N/A Ca? (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000170",
-          "MaPhong": "F702",
+          "MaPhong": "F611",
           "MaSlot": "T2-C5",
           "MaGV": "GV047",
-          "index": 206
+          "index": 209
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000171",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Trần Đức Long",
+      "teacher_id": "GV047",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu6-Ca1",
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy Thứ 6 Ca1 (có 15 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000171",
+          "MaPhong": "F702",
+          "MaSlot": "Thu6-Ca1",
+          "MaGV": "GV047",
+          "index": 148
         }
       ]
     },
@@ -3155,45 +3185,45 @@
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
           "slot": "T3-C1",
-          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
+          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy N/A Ca? (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000172",
-          "MaPhong": "D201",
+          "MaPhong": "D406",
           "MaSlot": "T3-C1",
           "MaGV": "GV047",
-          "index": 207
+          "index": 210
         }
       ]
     },
     {
-      "MaLop": "LOP-00000174",
+      "MaLop": "LOP-00000175",
       "info": {
-        "TenMonHoc": "Phát triển trò chơi",
+        "TenMonHoc": "Điện toán đám mây",
         "SoCaTuan": 1,
-        "Nhom": 2,
+        "Nhom": 1,
         "SoSV": 40,
-        "ThietBiYeuCau": "PC"
+        "ThietBiYeuCau": "TV, Máy chiếu"
       },
-      "teacher": "Trần Đức Long",
-      "teacher_id": "GV047",
+      "teacher": "Tạ Minh Tuấn",
+      "teacher_id": "GV040",
       "soft_violations": [
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca2",
-          "reason": "GV Trần Đức Long KHÔNG mong muốn dạy Thứ 4 Ca2 (có 11 slots mong muốn)"
+          "slot": "Thu6-Ca5",
+          "reason": "GV Tạ Minh Tuấn KHÔNG mong muốn dạy Thứ 6 Ca5 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000174",
-          "MaPhong": "F705",
-          "MaSlot": "Thu4-Ca2",
-          "MaGV": "GV047",
-          "index": 139
+          "MaLop": "LOP-00000175",
+          "MaPhong": "D407",
+          "MaSlot": "Thu6-Ca5",
+          "MaGV": "GV040",
+          "index": 151
         }
       ]
     },
@@ -3212,17 +3242,46 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca4",
-          "reason": "GV Tạ Minh Tuấn KHÔNG mong muốn dạy Thứ 4 Ca4 (có 15 slots mong muốn)"
+          "slot": "Thu7-Ca1",
+          "reason": "GV Tạ Minh Tuấn KHÔNG mong muốn dạy Thứ 7 Ca1 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000176",
-          "MaPhong": "F706",
-          "MaSlot": "Thu4-Ca4",
+          "MaPhong": "F705",
+          "MaSlot": "Thu7-Ca1",
           "MaGV": "GV040",
-          "index": 141
+          "index": 152
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000177",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Tạ Minh Tuấn",
+      "teacher_id": "GV040",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca2",
+          "reason": "GV Tạ Minh Tuấn KHÔNG mong muốn dạy Thứ 7 Ca2 (có 14 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000177",
+          "MaPhong": "F709",
+          "MaSlot": "Thu7-Ca2",
+          "MaGV": "GV040",
+          "index": 153
         }
       ]
     },
@@ -3241,17 +3300,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca1",
-          "reason": "GV Tạ Minh Tuấn KHÔNG mong muốn dạy Thứ 5 Ca1 (có 15 slots mong muốn)"
+          "slot": "Thu7-Ca3",
+          "reason": "GV Tạ Minh Tuấn KHÔNG mong muốn dạy Thứ 7 Ca3 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000178",
-          "MaPhong": "D203",
-          "MaSlot": "Thu5-Ca1",
+          "MaPhong": "D409",
+          "MaSlot": "Thu7-Ca3",
           "MaGV": "GV040",
-          "index": 143
+          "index": 154
         }
       ]
     },
@@ -3270,17 +3329,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca2",
-          "reason": "GV Tạ Minh Tuấn KHÔNG mong muốn dạy Thứ 5 Ca2 (có 15 slots mong muốn)"
+          "slot": "Thu7-Ca4",
+          "reason": "GV Tạ Minh Tuấn KHÔNG mong muốn dạy Thứ 7 Ca4 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000179",
-          "MaPhong": "F708",
-          "MaSlot": "Thu5-Ca2",
+          "MaPhong": "F710",
+          "MaSlot": "Thu7-Ca4",
           "MaGV": "GV040",
-          "index": 144
+          "index": 155
         }
       ]
     },
@@ -3299,17 +3358,75 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca3",
-          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy Thứ 5 Ca3 (có 15 slots mong muốn)"
+          "slot": "Thu7-Ca5",
+          "reason": "GV Hoàng Đức Long KHÔNG mong muốn dạy Thứ 7 Ca5 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000180",
-          "MaPhong": "F709",
-          "MaSlot": "Thu5-Ca3",
+          "MaPhong": "F711",
+          "MaSlot": "Thu7-Ca5",
           "MaGV": "GV005",
-          "index": 145
+          "index": 156
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000182",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca2",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 2 Ca2 (có 17 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000182",
+          "MaPhong": "A401",
+          "MaSlot": "Thu2-Ca2",
+          "MaGV": "GV024",
+          "index": 158
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000183",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu2-Ca3",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 2 Ca3 (có 17 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000183",
+          "MaPhong": "A402",
+          "MaSlot": "Thu2-Ca3",
+          "MaGV": "GV024",
+          "index": 159
         }
       ]
     },
@@ -3328,17 +3445,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca2",
-          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 6 Ca2 (có 16 slots mong muốn)"
+          "slot": "Thu2-Ca4",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 2 Ca4 (có 17 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000184",
-          "MaPhong": "D205",
-          "MaSlot": "Thu6-Ca2",
+          "MaPhong": "B202",
+          "MaSlot": "Thu2-Ca4",
           "MaGV": "GV024",
-          "index": 149
+          "index": 160
         }
       ]
     },
@@ -3357,51 +3474,22 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca3",
-          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 6 Ca3 (có 13 slots mong muốn)"
+          "slot": "Thu2-Ca5",
+          "reason": "GV Phan Ngọc Bích KHÔNG mong muốn dạy Thứ 2 Ca5 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000185",
-          "MaPhong": "A704",
-          "MaSlot": "Thu6-Ca3",
+          "MaPhong": "A403",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV006",
-          "index": 150
+          "index": 161
         }
       ]
     },
     {
-      "MaLop": "LOP-00000186",
-      "info": {
-        "TenMonHoc": "Nhập môn Bảo mật máy tính",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC"
-      },
-      "teacher": "Vũ Quang Hảo",
-      "teacher_id": "GV024",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C1",
-          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy N/A Ca? (có 16 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000186",
-          "MaPhong": "A705",
-          "MaSlot": "T2-C1",
-          "MaGV": "GV024",
-          "index": 208
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000188",
+      "MaLop": "LOP-00000189",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin",
         "SoCaTuan": 1,
@@ -3415,17 +3503,46 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca1",
-          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 7 Ca1 (có 16 slots mong muốn)"
+          "slot": "T2-C3",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy N/A Ca? (có 17 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000188",
-          "MaPhong": "A707",
-          "MaSlot": "Thu7-Ca1",
+          "MaLop": "LOP-00000189",
+          "MaPhong": "A407",
+          "MaSlot": "T2-C3",
           "MaGV": "GV024",
-          "index": 152
+          "index": 211
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000192",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC"
+      },
+      "teacher": "Vũ Quang Hảo",
+      "teacher_id": "GV024",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca2",
+          "reason": "GV Vũ Quang Hảo KHÔNG mong muốn dạy Thứ 4 Ca2 (có 17 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000192",
+          "MaPhong": "A501",
+          "MaSlot": "Thu4-Ca2",
+          "MaGV": "GV024",
+          "index": 166
         }
       ]
     },
@@ -3444,17 +3561,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu7-Ca5",
-          "reason": "GV Hoàng Gia Bảo KHÔNG mong muốn dạy Thứ 7 Ca5 (có 12 slots mong muốn)"
+          "slot": "Thu4-Ca3",
+          "reason": "GV Hoàng Gia Bảo KHÔNG mong muốn dạy Thứ 4 Ca3 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000193",
-          "MaPhong": "D206",
-          "MaSlot": "Thu7-Ca5",
+          "MaPhong": "B210",
+          "MaSlot": "Thu4-Ca3",
           "MaGV": "GV035",
-          "index": 157
+          "index": 167
         }
       ]
     },
@@ -3473,17 +3590,46 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca1",
-          "reason": "GV Đào Khánh Linh KHÔNG mong muốn dạy Thứ 2 Ca1 (có 16 slots mong muốn)"
+          "slot": "Thu4-Ca4",
+          "reason": "GV Đào Khánh Linh KHÔNG mong muốn dạy Thứ 4 Ca4 (có 12 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000194",
-          "MaPhong": "D207",
-          "MaSlot": "Thu2-Ca1",
+          "MaPhong": "B211",
+          "MaSlot": "Thu4-Ca4",
           "MaGV": "GV033",
-          "index": 158
+          "index": 168
+        }
+      ]
+    },
+    {
+      "MaLop": "LOP-00000195",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu"
+      },
+      "teacher": "Đào Khánh Linh",
+      "teacher_id": "GV033",
+      "soft_violations": [
+        {
+          "constraint": "RBM-NGUYEN-VONG",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu4-Ca5",
+          "reason": "GV Đào Khánh Linh KHÔNG mong muốn dạy Thứ 4 Ca5 (có 12 slots mong muốn)"
+        }
+      ],
+      "assignments": [
+        {
+          "MaLop": "LOP-00000195",
+          "MaPhong": "B302",
+          "MaSlot": "Thu4-Ca5",
+          "MaGV": "GV033",
+          "index": 169
         }
       ]
     },
@@ -3502,46 +3648,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca3",
-          "reason": "GV Nguyễn Thị Hương KHÔNG mong muốn dạy Thứ 2 Ca3 (có 13 slots mong muốn)"
+          "slot": "Thu5-Ca1",
+          "reason": "GV Nguyễn Thị Hương KHÔNG mong muốn dạy Thứ 5 Ca1 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000196",
-          "MaPhong": "D210",
-          "MaSlot": "Thu2-Ca3",
+          "MaPhong": "B310",
+          "MaSlot": "Thu5-Ca1",
           "MaGV": "GV041",
-          "index": 160
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000197",
-      "info": {
-        "TenMonHoc": "Kỹ năng soạn thảo văn bản kỹ thuật",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Phạm Thu Hà",
-      "teacher_id": "GV015",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu2-Ca4",
-          "reason": "GV Phạm Thu Hà KHÔNG mong muốn dạy Thứ 2 Ca4 (có 13 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000197",
-          "MaPhong": "D301",
-          "MaSlot": "Thu2-Ca4",
-          "MaGV": "GV015",
-          "index": 161
+          "index": 170
         }
       ]
     },
@@ -3560,17 +3677,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C5",
-          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
+          "slot": "Thu5-Ca3",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 5 Ca3 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000198",
-          "MaPhong": "D302",
-          "MaSlot": "T2-C5",
+          "MaPhong": "B402",
+          "MaSlot": "Thu5-Ca3",
           "MaGV": "GV013",
-          "index": 209
+          "index": 172
         }
       ]
     },
@@ -3589,17 +3706,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu3-Ca1",
-          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 3 Ca1 (có 11 slots mong muốn)"
+          "slot": "T2-C4",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000199",
-          "MaPhong": "D303",
-          "MaSlot": "Thu3-Ca1",
+          "MaPhong": "B410",
+          "MaSlot": "T2-C4",
           "MaGV": "GV013",
-          "index": 162
+          "index": 213
         }
       ]
     },
@@ -3618,17 +3735,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T3-C1",
-          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
+          "slot": "Thu5-Ca5",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 5 Ca5 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000200",
-          "MaPhong": "B205",
-          "MaSlot": "T3-C1",
+          "MaPhong": "A502",
+          "MaSlot": "Thu5-Ca5",
           "MaGV": "GV013",
-          "index": 210
+          "index": 173
         }
       ]
     },
@@ -3647,17 +3764,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu3-Ca3",
-          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 3 Ca3 (có 11 slots mong muốn)"
+          "slot": "T2-C5",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000201",
-          "MaPhong": "B303",
-          "MaSlot": "Thu3-Ca3",
+          "MaPhong": "A503",
+          "MaSlot": "T2-C5",
           "MaGV": "GV013",
-          "index": 163
+          "index": 214
         }
       ]
     },
@@ -3676,22 +3793,22 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T3-C2",
-          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
+          "slot": "Thu6-Ca2",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 6 Ca2 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000202",
-          "MaPhong": "D304",
-          "MaSlot": "T3-C2",
+          "MaPhong": "B411",
+          "MaSlot": "Thu6-Ca2",
           "MaGV": "GV013",
-          "index": 211
+          "index": 174
         }
       ]
     },
     {
-      "MaLop": "LOP-00000204",
+      "MaLop": "LOP-00000203",
       "info": {
         "TenMonHoc": "Lập trình hàm",
         "SoCaTuan": 1,
@@ -3705,17 +3822,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca1",
-          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 4 Ca1 (có 11 slots mong muốn)"
+          "slot": "Thu6-Ca3",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 6 Ca3 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000204",
-          "MaPhong": "B305",
-          "MaSlot": "Thu4-Ca1",
+          "MaLop": "LOP-00000203",
+          "MaPhong": "A504",
+          "MaSlot": "Thu6-Ca3",
           "MaGV": "GV013",
-          "index": 165
+          "index": 175
         }
       ]
     },
@@ -3734,46 +3851,46 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu4-Ca2",
-          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy Thứ 4 Ca2 (có 11 slots mong muốn)"
+          "slot": "T3-C1",
+          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000205",
-          "MaPhong": "D305",
-          "MaSlot": "Thu4-Ca2",
+          "MaPhong": "C202",
+          "MaSlot": "T3-C1",
           "MaGV": "GV013",
-          "index": 166
+          "index": 215
         }
       ]
     },
     {
-      "MaLop": "LOP-00000206",
+      "MaLop": "LOP-00000207",
       "info": {
-        "TenMonHoc": "Nhập môn xử lý tiếng nói",
+        "TenMonHoc": "Khai thác dữ liệu và Khai phá tri thức",
         "SoCaTuan": 1,
-        "Nhom": 2,
+        "Nhom": 1,
         "SoSV": 40,
         "ThietBiYeuCau": "TV, Máy chiếu"
       },
-      "teacher": "Ngô Thảo My",
-      "teacher_id": "GV013",
+      "teacher": "Hoàng Gia Bảo",
+      "teacher_id": "GV035",
       "soft_violations": [
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "T3-C3",
-          "reason": "GV Ngô Thảo My KHÔNG mong muốn dạy N/A Ca? (có 11 slots mong muốn)"
+          "slot": "Thu7-Ca2",
+          "reason": "GV Hoàng Gia Bảo KHÔNG mong muốn dạy Thứ 7 Ca2 (có 14 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000206",
-          "MaPhong": "D306",
-          "MaSlot": "T3-C3",
-          "MaGV": "GV013",
-          "index": 212
+          "MaLop": "LOP-00000207",
+          "MaPhong": "C204",
+          "MaSlot": "Thu7-Ca2",
+          "MaGV": "GV035",
+          "index": 178
         }
       ]
     },
@@ -3792,22 +3909,22 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca1",
-          "reason": "GV Phan Quốc Việt KHÔNG mong muốn dạy Thứ 5 Ca1 (có 14 slots mong muốn)"
+          "slot": "Thu7-Ca4",
+          "reason": "GV Phan Quốc Việt KHÔNG mong muốn dạy Thứ 7 Ca4 (có 15 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000209",
-          "MaPhong": "D310",
-          "MaSlot": "Thu5-Ca1",
+          "MaPhong": "C208",
+          "MaSlot": "Thu7-Ca4",
           "MaGV": "GV038",
-          "index": 169
+          "index": 180
         }
       ]
     },
     {
-      "MaLop": "LOP-00000211",
+      "MaLop": "LOP-00000210",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
         "SoCaTuan": 1,
@@ -3815,23 +3932,23 @@
         "SoSV": 40,
         "ThietBiYeuCau": "PC"
       },
-      "teacher": "Phan Quốc Việt",
-      "teacher_id": "GV038",
+      "teacher": "Vũ Hải Nam",
+      "teacher_id": "GV007",
       "soft_violations": [
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu5-Ca3",
-          "reason": "GV Phan Quốc Việt KHÔNG mong muốn dạy Thứ 5 Ca3 (có 14 slots mong muốn)"
+          "slot": "Thu7-Ca5",
+          "reason": "GV Vũ Hải Nam KHÔNG mong muốn dạy Thứ 7 Ca5 (có 12 slots mong muốn)"
         }
       ],
       "assignments": [
         {
-          "MaLop": "LOP-00000211",
-          "MaPhong": "B404",
-          "MaSlot": "Thu5-Ca3",
-          "MaGV": "GV038",
-          "index": 171
+          "MaLop": "LOP-00000210",
+          "MaPhong": "A506",
+          "MaSlot": "Thu7-Ca5",
+          "MaGV": "GV007",
+          "index": 181
         }
       ]
     },
@@ -3850,46 +3967,17 @@
         {
           "constraint": "RBM-NGUYEN-VONG",
           "name": "Vi phạm nguyện vọng GV",
-          "slot": "Thu6-Ca1",
-          "reason": "GV Vũ Hải Nam KHÔNG mong muốn dạy Thứ 6 Ca1 (có 15 slots mong muốn)"
+          "slot": "Thu2-Ca5",
+          "reason": "GV Vũ Hải Nam KHÔNG mong muốn dạy Thứ 2 Ca5 (có 12 slots mong muốn)"
         }
       ],
       "assignments": [
         {
           "MaLop": "LOP-00000215",
-          "MaPhong": "D402",
-          "MaSlot": "Thu6-Ca1",
+          "MaPhong": "C211",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV007",
-          "index": 175
-        }
-      ]
-    },
-    {
-      "MaLop": "LOP-00000216",
-      "info": {
-        "TenMonHoc": "Nhập môn Xử lý ảnh số",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu"
-      },
-      "teacher": "Hoàng Gia Bảo",
-      "teacher_id": "GV035",
-      "soft_violations": [
-        {
-          "constraint": "RBM-NGUYEN-VONG",
-          "name": "Vi phạm nguyện vọng GV",
-          "slot": "T2-C2",
-          "reason": "GV Hoàng Gia Bảo KHÔNG mong muốn dạy N/A Ca? (có 12 slots mong muốn)"
-        }
-      ],
-      "assignments": [
-        {
-          "MaLop": "LOP-00000216",
-          "MaPhong": "D403",
-          "MaSlot": "T2-C2",
-          "MaGV": "GV035",
-          "index": 213
+          "index": 186
         }
       ]
     }
@@ -3928,10 +4016,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000002",
-          "MaPhong": "A401",
-          "MaSlot": "T2-C2",
+          "MaPhong": "F301",
+          "MaSlot": "Thu6-Ca3",
           "MaGV": "GV003",
-          "index": 189
+          "index": 19
         }
       ]
     },
@@ -3948,10 +4036,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000003",
-          "MaPhong": "A401",
-          "MaSlot": "Thu3-Ca1",
+          "MaPhong": "F306",
+          "MaSlot": "Thu6-Ca4",
           "MaGV": "GV009",
-          "index": 176
+          "index": 20
         }
       ]
     },
@@ -3969,9 +4057,9 @@
         {
           "MaLop": "LOP-00000004",
           "MaPhong": "B206",
-          "MaSlot": "Thu2-Ca2",
+          "MaSlot": "T2-C1",
           "MaGV": "GV001",
-          "index": 1
+          "index": 188
         }
       ]
     },
@@ -3988,10 +4076,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000005",
-          "MaPhong": "A402",
-          "MaSlot": "Thu2-Ca2",
+          "MaPhong": "F307",
+          "MaSlot": "Thu6-Ca5",
           "MaGV": "GV003",
-          "index": 19
+          "index": 21
         }
       ]
     },
@@ -4008,10 +4096,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000006",
-          "MaPhong": "A402",
-          "MaSlot": "Thu3-Ca2",
+          "MaPhong": "F308",
+          "MaSlot": "Thu7-Ca1",
           "MaGV": "GV009",
-          "index": 177
+          "index": 22
         }
       ]
     },
@@ -4031,7 +4119,7 @@
           "MaPhong": "B207",
           "MaSlot": "Thu2-Ca3",
           "MaGV": "GV005",
-          "index": 2
+          "index": 1
         }
       ]
     },
@@ -4048,10 +4136,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000008",
-          "MaPhong": "A403",
-          "MaSlot": "Thu2-Ca3",
+          "MaPhong": "F309",
+          "MaSlot": "Thu7-Ca2",
           "MaGV": "GV006",
-          "index": 20
+          "index": 23
         }
       ]
     },
@@ -4068,10 +4156,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000009",
-          "MaPhong": "A403",
-          "MaSlot": "Thu3-Ca3",
+          "MaPhong": "F401",
+          "MaSlot": "Thu7-Ca3",
           "MaGV": "GV010",
-          "index": 178
+          "index": 24
         }
       ]
     },
@@ -4089,9 +4177,9 @@
         {
           "MaLop": "LOP-00000010",
           "MaPhong": "B208",
-          "MaSlot": "Thu2-Ca4",
+          "MaSlot": "T2-C1",
           "MaGV": "GV005",
-          "index": 3
+          "index": 189
         }
       ]
     },
@@ -4108,10 +4196,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000011",
-          "MaPhong": "A404",
-          "MaSlot": "Thu2-Ca4",
+          "MaPhong": "F406",
+          "MaSlot": "Thu7-Ca4",
           "MaGV": "GV006",
-          "index": 21
+          "index": 25
         }
       ]
     },
@@ -4128,10 +4216,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000012",
-          "MaPhong": "A404",
-          "MaSlot": "Thu3-Ca4",
+          "MaPhong": "F407",
+          "MaSlot": "Thu7-Ca5",
           "MaGV": "GV010",
-          "index": 179
+          "index": 26
         }
       ]
     },
@@ -4149,9 +4237,9 @@
         {
           "MaLop": "LOP-00000013",
           "MaPhong": "B209",
-          "MaSlot": "T2-C1",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV016",
-          "index": 186
+          "index": 2
         }
       ]
     },
@@ -4168,10 +4256,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000014",
-          "MaPhong": "A405",
-          "MaSlot": "T2-C2",
+          "MaPhong": "F408",
+          "MaSlot": "Thu2-Ca1",
           "MaGV": "GV016",
-          "index": 190
+          "index": 27
         }
       ]
     },
@@ -4188,10 +4276,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000015",
-          "MaPhong": "A405",
-          "MaSlot": "Thu3-Ca5",
+          "MaPhong": "F409",
+          "MaSlot": "Thu2-Ca2",
           "MaGV": "GV005",
-          "index": 180
+          "index": 28
         }
       ]
     },
@@ -4211,7 +4299,7 @@
           "MaPhong": "B301",
           "MaSlot": "Thu3-Ca1",
           "MaGV": "GV006",
-          "index": 4
+          "index": 3
         }
       ]
     },
@@ -4228,10 +4316,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000017",
-          "MaPhong": "A406",
-          "MaSlot": "Thu3-Ca1",
+          "MaPhong": "F501",
+          "MaSlot": "Thu2-Ca3",
           "MaGV": "GV016",
-          "index": 22
+          "index": 29
         }
       ]
     },
@@ -4248,10 +4336,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000018",
-          "MaPhong": "A406",
-          "MaSlot": "Thu4-Ca1",
+          "MaPhong": "F506",
+          "MaSlot": "T2-C2",
           "MaGV": "GV005",
-          "index": 181
+          "index": 191
         }
       ]
     },
@@ -4269,9 +4357,9 @@
         {
           "MaLop": "LOP-00000019",
           "MaPhong": "B306",
-          "MaSlot": "T2-C1",
+          "MaSlot": "Thu3-Ca2",
           "MaGV": "GV030",
-          "index": 187
+          "index": 4
         }
       ]
     },
@@ -4288,10 +4376,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000020",
-          "MaPhong": "A407",
-          "MaSlot": "T2-C2",
+          "MaPhong": "F507",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV030",
-          "index": 191
+          "index": 30
         }
       ]
     },
@@ -4308,10 +4396,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000021",
-          "MaPhong": "A408",
-          "MaSlot": "Thu3-Ca3",
+          "MaPhong": "F508",
+          "MaSlot": "Thu3-Ca1",
           "MaGV": "GV001",
-          "index": 23
+          "index": 31
         }
       ]
     },
@@ -4329,9 +4417,9 @@
         {
           "MaLop": "LOP-00000022",
           "MaPhong": "B307",
-          "MaSlot": "Thu3-Ca3",
+          "MaSlot": "T2-C1",
           "MaGV": "GV030",
-          "index": 5
+          "index": 190
         }
       ]
     },
@@ -4348,10 +4436,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000023",
-          "MaPhong": "A409",
-          "MaSlot": "Thu3-Ca4",
+          "MaPhong": "F509",
+          "MaSlot": "Thu3-Ca2",
           "MaGV": "GV001",
-          "index": 24
+          "index": 32
         }
       ]
     },
@@ -4368,10 +4456,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000024",
-          "MaPhong": "A501",
-          "MaSlot": "Thu3-Ca5",
+          "MaPhong": "F601",
+          "MaSlot": "T2-C2",
           "MaGV": "GV030",
-          "index": 25
+          "index": 192
         }
       ]
     },
@@ -4388,10 +4476,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000025",
-          "MaPhong": "D404",
-          "MaSlot": "Thu6-Ca3",
+          "MaPhong": "C308",
+          "MaSlot": "T2-C1",
           "MaGV": "GV024",
-          "index": 182
+          "index": 193
         }
       ]
     },
@@ -4408,10 +4496,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000026",
-          "MaPhong": "D405",
+          "MaPhong": "C309",
           "MaSlot": "T2-C2",
           "MaGV": "GV024",
-          "index": 214
+          "index": 194
         }
       ]
     },
@@ -4428,10 +4516,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000027",
-          "MaPhong": "D406",
-          "MaSlot": "T2-C2",
+          "MaPhong": "C310",
+          "MaSlot": "T2-C1",
           "MaGV": "GV004",
-          "index": 215
+          "index": 195
         }
       ]
     },
@@ -4448,10 +4536,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000028",
-          "MaPhong": "D407",
-          "MaSlot": "Thu7-Ca1",
+          "MaPhong": "C311",
+          "MaSlot": "Thu4-Ca2",
           "MaGV": "GV021",
-          "index": 183
+          "index": 33
         }
       ]
     },
@@ -4471,7 +4559,7 @@
           "MaPhong": "B308",
           "MaSlot": "Thu3-Ca4",
           "MaGV": "GV011",
-          "index": 6
+          "index": 5
         }
       ]
     },
@@ -4488,10 +4576,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000030",
-          "MaPhong": "A502",
-          "MaSlot": "Thu4-Ca1",
+          "MaPhong": "F606",
+          "MaSlot": "Thu4-Ca3",
           "MaGV": "GV004",
-          "index": 26
+          "index": 34
         }
       ]
     },
@@ -4508,10 +4596,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000031",
-          "MaPhong": "A503",
-          "MaSlot": "Thu4-Ca2",
+          "MaPhong": "F607",
+          "MaSlot": "Thu4-Ca4",
           "MaGV": "GV011",
-          "index": 27
+          "index": 35
         }
       ]
     },
@@ -4531,7 +4619,7 @@
           "MaPhong": "B309",
           "MaSlot": "Thu3-Ca5",
           "MaGV": "GV003",
-          "index": 7
+          "index": 6
         }
       ]
     },
@@ -4548,10 +4636,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000033",
-          "MaPhong": "A504",
-          "MaSlot": "Thu4-Ca3",
+          "MaPhong": "F608",
+          "MaSlot": "T2-C2",
           "MaGV": "GV004",
-          "index": 28
+          "index": 196
         }
       ]
     },
@@ -4568,10 +4656,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000034",
-          "MaPhong": "A505",
-          "MaSlot": "Thu4-Ca4",
+          "MaPhong": "F609",
+          "MaSlot": "Thu5-Ca1",
           "MaGV": "GV011",
-          "index": 29
+          "index": 36
         }
       ]
     },
@@ -4591,7 +4679,7 @@
           "MaPhong": "B401",
           "MaSlot": "Thu4-Ca1",
           "MaGV": "GV023",
-          "index": 8
+          "index": 7
         }
       ]
     },
@@ -4608,10 +4696,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000036",
-          "MaPhong": "A506",
-          "MaSlot": "Thu4-Ca5",
+          "MaPhong": "F701",
+          "MaSlot": "Thu5-Ca2",
           "MaGV": "GV023",
-          "index": 30
+          "index": 37
         }
       ]
     },
@@ -4628,10 +4716,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000037",
-          "MaPhong": "A507",
-          "MaSlot": "Thu5-Ca1",
+          "MaPhong": "F706",
+          "MaSlot": "Thu5-Ca3",
           "MaGV": "GV023",
-          "index": 31
+          "index": 38
         }
       ]
     },
@@ -4649,9 +4737,9 @@
         {
           "MaLop": "LOP-00000038",
           "MaPhong": "B406",
-          "MaSlot": "T2-C1",
+          "MaSlot": "Thu4-Ca2",
           "MaGV": "GV003",
-          "index": 188
+          "index": 8
         }
       ]
     },
@@ -4668,10 +4756,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000039",
-          "MaPhong": "A508",
-          "MaSlot": "Thu5-Ca2",
+          "MaPhong": "F707",
+          "MaSlot": "Thu5-Ca4",
           "MaGV": "GV004",
-          "index": 32
+          "index": 39
         }
       ]
     },
@@ -4688,10 +4776,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000040",
-          "MaPhong": "A509",
-          "MaSlot": "Thu5-Ca3",
+          "MaPhong": "F708",
+          "MaSlot": "Thu5-Ca5",
           "MaGV": "GV023",
-          "index": 33
+          "index": 40
         }
       ]
     },
@@ -4708,10 +4796,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000041",
-          "MaPhong": "D409",
-          "MaSlot": "Thu7-Ca2",
+          "MaPhong": "C401",
+          "MaSlot": "Thu6-Ca1",
           "MaGV": "GV025",
-          "index": 184
+          "index": 41
         }
       ]
     },
@@ -4728,10 +4816,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000042",
-          "MaPhong": "A601",
-          "MaSlot": "Thu5-Ca4",
+          "MaPhong": "A401",
+          "MaSlot": "Thu6-Ca2",
           "MaGV": "GV021",
-          "index": 34
+          "index": 42
         }
       ]
     },
@@ -4748,10 +4836,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000043",
-          "MaPhong": "A602",
-          "MaSlot": "Thu5-Ca5",
+          "MaPhong": "A402",
+          "MaSlot": "Thu6-Ca3",
           "MaGV": "GV025",
-          "index": 35
+          "index": 43
         }
       ]
     },
@@ -4768,10 +4856,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000044",
-          "MaPhong": "D410",
-          "MaSlot": "Thu7-Ca3",
+          "MaPhong": "C402",
+          "MaSlot": "Thu6-Ca4",
           "MaGV": "GV021",
-          "index": 185
+          "index": 44
         }
       ]
     },
@@ -4788,10 +4876,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000045",
-          "MaPhong": "A603",
-          "MaSlot": "Thu6-Ca1",
+          "MaPhong": "A403",
+          "MaSlot": "Thu6-Ca5",
           "MaGV": "GV025",
-          "index": 36
+          "index": 45
         }
       ]
     },
@@ -4808,10 +4896,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000046",
-          "MaPhong": "A604",
-          "MaSlot": "Thu6-Ca2",
+          "MaPhong": "A404",
+          "MaSlot": "Thu7-Ca1",
           "MaGV": "GV021",
-          "index": 37
+          "index": 46
         }
       ]
     },
@@ -4848,10 +4936,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000048",
-          "MaPhong": "A605",
-          "MaSlot": "Thu6-Ca3",
+          "MaPhong": "A405",
+          "MaSlot": "Thu7-Ca2",
           "MaGV": "GV017",
-          "index": 38
+          "index": 47
         }
       ]
     },
@@ -4868,10 +4956,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000049",
-          "MaPhong": "A606",
-          "MaSlot": "Thu6-Ca4",
+          "MaPhong": "A406",
+          "MaSlot": "Thu7-Ca3",
           "MaGV": "GV031",
-          "index": 39
+          "index": 48
         }
       ]
     },
@@ -4908,10 +4996,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000051",
-          "MaPhong": "A607",
-          "MaSlot": "Thu6-Ca5",
+          "MaPhong": "A407",
+          "MaSlot": "Thu7-Ca4",
           "MaGV": "GV017",
-          "index": 40
+          "index": 49
         }
       ]
     },
@@ -4928,10 +5016,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000052",
-          "MaPhong": "A608",
-          "MaSlot": "Thu7-Ca1",
+          "MaPhong": "A408",
+          "MaSlot": "Thu7-Ca5",
           "MaGV": "GV031",
-          "index": 41
+          "index": 50
         }
       ]
     },
@@ -4968,10 +5056,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000054",
-          "MaPhong": "A609",
-          "MaSlot": "Thu7-Ca2",
+          "MaPhong": "A409",
+          "MaSlot": "Thu2-Ca1",
           "MaGV": "GV017",
-          "index": 42
+          "index": 51
         }
       ]
     },
@@ -4988,10 +5076,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000055",
-          "MaPhong": "A701",
-          "MaSlot": "Thu7-Ca3",
+          "MaPhong": "A501",
+          "MaSlot": "Thu2-Ca2",
           "MaGV": "GV031",
-          "index": 43
+          "index": 52
         }
       ]
     },
@@ -5028,10 +5116,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000057",
-          "MaPhong": "A702",
-          "MaSlot": "Thu7-Ca4",
+          "MaPhong": "A502",
+          "MaSlot": "Thu2-Ca3",
           "MaGV": "GV017",
-          "index": 44
+          "index": 53
         }
       ]
     },
@@ -5048,10 +5136,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000058",
-          "MaPhong": "A703",
-          "MaSlot": "Thu7-Ca5",
+          "MaPhong": "A503",
+          "MaSlot": "Thu2-Ca4",
           "MaGV": "GV031",
-          "index": 45
+          "index": 54
         }
       ]
     },
@@ -5068,10 +5156,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000059",
-          "MaPhong": "B202",
-          "MaSlot": "Thu6-Ca3",
+          "MaPhong": "C403",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV020",
-          "index": 46
+          "index": 55
         }
       ]
     },
@@ -5088,10 +5176,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000060",
-          "MaPhong": "B203",
-          "MaSlot": "Thu6-Ca4",
+          "MaPhong": "A504",
+          "MaSlot": "Thu3-Ca1",
           "MaGV": "GV020",
-          "index": 47
+          "index": 56
         }
       ]
     },
@@ -5108,10 +5196,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000061",
-          "MaPhong": "B204",
-          "MaSlot": "Thu6-Ca5",
+          "MaPhong": "A505",
+          "MaSlot": "Thu3-Ca2",
           "MaGV": "GV020",
-          "index": 48
+          "index": 57
         }
       ]
     },
@@ -5128,10 +5216,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000062",
-          "MaPhong": "B210",
-          "MaSlot": "Thu7-Ca1",
+          "MaPhong": "C404",
+          "MaSlot": "Thu3-Ca3",
           "MaGV": "GV006",
-          "index": 49
+          "index": 58
         }
       ]
     },
@@ -5148,10 +5236,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000063",
-          "MaPhong": "B205",
-          "MaSlot": "Thu7-Ca2",
+          "MaPhong": "A506",
+          "MaSlot": "Thu3-Ca4",
           "MaGV": "GV020",
-          "index": 50
+          "index": 59
         }
       ]
     },
@@ -5168,10 +5256,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000064",
-          "MaPhong": "A401",
-          "MaSlot": "Thu7-Ca3",
+          "MaPhong": "A507",
+          "MaSlot": "Thu3-Ca5",
           "MaGV": "GV005",
-          "index": 51
+          "index": 60
         }
       ]
     },
@@ -5188,10 +5276,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000065",
-          "MaPhong": "B211",
-          "MaSlot": "Thu7-Ca4",
+          "MaPhong": "C405",
+          "MaSlot": "Thu4-Ca1",
           "MaGV": "GV040",
-          "index": 52
+          "index": 61
         }
       ]
     },
@@ -5208,10 +5296,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000066",
-          "MaPhong": "B303",
-          "MaSlot": "Thu7-Ca5",
+          "MaPhong": "A508",
+          "MaSlot": "Thu4-Ca2",
           "MaGV": "GV043",
-          "index": 53
+          "index": 62
         }
       ]
     },
@@ -5228,10 +5316,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000067",
-          "MaPhong": "B304",
-          "MaSlot": "Thu2-Ca1",
+          "MaPhong": "A509",
+          "MaSlot": "Thu4-Ca3",
           "MaGV": "GV045",
-          "index": 54
+          "index": 63
         }
       ]
     },
@@ -5248,10 +5336,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000068",
-          "MaPhong": "B310",
-          "MaSlot": "Thu2-Ca2",
+          "MaPhong": "C406",
+          "MaSlot": "Thu4-Ca4",
           "MaGV": "GV040",
-          "index": 55
+          "index": 64
         }
       ]
     },
@@ -5268,10 +5356,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000069",
-          "MaPhong": "B305",
-          "MaSlot": "Thu2-Ca3",
+          "MaPhong": "A601",
+          "MaSlot": "Thu4-Ca5",
           "MaGV": "GV043",
-          "index": 56
+          "index": 65
         }
       ]
     },
@@ -5288,10 +5376,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000070",
-          "MaPhong": "A401",
-          "MaSlot": "Thu2-Ca4",
+          "MaPhong": "A602",
+          "MaSlot": "Thu5-Ca1",
           "MaGV": "GV045",
-          "index": 57
+          "index": 66
         }
       ]
     },
@@ -5308,10 +5396,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000071",
-          "MaPhong": "B311",
-          "MaSlot": "T2-C1",
+          "MaPhong": "C407",
+          "MaSlot": "Thu5-Ca2",
           "MaGV": "GV013",
-          "index": 192
+          "index": 67
         }
       ]
     },
@@ -5328,10 +5416,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000072",
-          "MaPhong": "B403",
+          "MaPhong": "A603",
           "MaSlot": "T2-C1",
           "MaGV": "GV047",
-          "index": 193
+          "index": 197
         }
       ]
     },
@@ -5348,10 +5436,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000073",
-          "MaPhong": "B404",
-          "MaSlot": "T2-C2",
+          "MaPhong": "A604",
+          "MaSlot": "T2-C1",
           "MaGV": "GV013",
-          "index": 194
+          "index": 198
         }
       ]
     },
@@ -5368,10 +5456,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000074",
-          "MaPhong": "B410",
+          "MaPhong": "C408",
           "MaSlot": "T2-C2",
           "MaGV": "GV047",
-          "index": 195
+          "index": 199
         }
       ]
     },
@@ -5388,10 +5476,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000075",
-          "MaPhong": "B405",
-          "MaSlot": "T2-C3",
+          "MaPhong": "A605",
+          "MaSlot": "T2-C2",
           "MaGV": "GV013",
-          "index": 196
+          "index": 200
         }
       ]
     },
@@ -5408,10 +5496,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000076",
-          "MaPhong": "A401",
+          "MaPhong": "A606",
           "MaSlot": "T2-C3",
           "MaGV": "GV047",
-          "index": 197
+          "index": 201
         }
       ]
     },
@@ -5428,10 +5516,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000077",
-          "MaPhong": "B411",
-          "MaSlot": "Thu4-Ca1",
+          "MaPhong": "C409",
+          "MaSlot": "Thu6-Ca3",
           "MaGV": "GV037",
-          "index": 58
+          "index": 68
         }
       ]
     },
@@ -5448,10 +5536,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000078",
-          "MaPhong": "A401",
-          "MaSlot": "Thu4-Ca2",
+          "MaPhong": "A607",
+          "MaSlot": "Thu6-Ca4",
           "MaGV": "GV037",
-          "index": 59
+          "index": 69
         }
       ]
     },
@@ -5468,10 +5556,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000079",
-          "MaPhong": "A401",
+          "MaPhong": "A608",
           "MaSlot": "T2-C1",
           "MaGV": "GV037",
-          "index": 198
+          "index": 202
         }
       ]
     },
@@ -5488,10 +5576,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000080",
-          "MaPhong": "C202",
-          "MaSlot": "Thu4-Ca4",
+          "MaPhong": "C410",
+          "MaSlot": "Thu7-Ca1",
           "MaGV": "GV037",
-          "index": 60
+          "index": 70
         }
       ]
     },
@@ -5508,10 +5596,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000081",
-          "MaPhong": "A401",
-          "MaSlot": "Thu4-Ca5",
+          "MaPhong": "A609",
+          "MaSlot": "Thu7-Ca2",
           "MaGV": "GV001",
-          "index": 61
+          "index": 71
         }
       ]
     },
@@ -5528,10 +5616,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000082",
-          "MaPhong": "A401",
-          "MaSlot": "Thu5-Ca1",
+          "MaPhong": "A701",
+          "MaSlot": "Thu7-Ca3",
           "MaGV": "GV003",
-          "index": 62
+          "index": 72
         }
       ]
     },
@@ -5548,10 +5636,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000083",
-          "MaPhong": "C203",
-          "MaSlot": "Thu5-Ca2",
+          "MaPhong": "C411",
+          "MaSlot": "Thu7-Ca4",
           "MaGV": "GV044",
-          "index": 63
+          "index": 73
         }
       ]
     },
@@ -5568,10 +5656,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000084",
-          "MaPhong": "C204",
-          "MaSlot": "Thu5-Ca3",
+          "MaPhong": "D101",
+          "MaSlot": "Thu7-Ca5",
           "MaGV": "GV044",
-          "index": 64
+          "index": 74
         }
       ]
     },
@@ -5608,10 +5696,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000086",
-          "MaPhong": "A401",
-          "MaSlot": "Thu5-Ca4",
+          "MaPhong": "A702",
+          "MaSlot": "Thu2-Ca1",
           "MaGV": "GV011",
-          "index": 65
+          "index": 75
         }
       ]
     },
@@ -5628,10 +5716,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000087",
-          "MaPhong": "A401",
-          "MaSlot": "Thu5-Ca5",
+          "MaPhong": "A703",
+          "MaSlot": "T2-C2",
           "MaGV": "GV001",
-          "index": 66
+          "index": 203
         }
       ]
     },
@@ -5668,10 +5756,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000089",
-          "MaPhong": "A401",
-          "MaSlot": "Thu6-Ca1",
+          "MaPhong": "A704",
+          "MaSlot": "Thu2-Ca3",
           "MaGV": "GV011",
-          "index": 67
+          "index": 76
         }
       ]
     },
@@ -5688,10 +5776,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000090",
-          "MaPhong": "F301",
-          "MaSlot": "Thu6-Ca2",
+          "MaPhong": "A705",
+          "MaSlot": "Thu2-Ca4",
           "MaGV": "GV001",
-          "index": 68
+          "index": 77
         }
       ]
     },
@@ -5728,10 +5816,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000092",
-          "MaPhong": "F302",
-          "MaSlot": "Thu6-Ca3",
+          "MaPhong": "A706",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV009",
-          "index": 69
+          "index": 78
         }
       ]
     },
@@ -5748,10 +5836,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000093",
-          "MaPhong": "F303",
-          "MaSlot": "Thu6-Ca4",
+          "MaPhong": "A707",
+          "MaSlot": "Thu3-Ca1",
           "MaGV": "GV009",
-          "index": 70
+          "index": 79
         }
       ]
     },
@@ -5788,10 +5876,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000095",
-          "MaPhong": "F304",
-          "MaSlot": "Thu6-Ca5",
+          "MaPhong": "A708",
+          "MaSlot": "Thu3-Ca2",
           "MaGV": "GV003",
-          "index": 71
+          "index": 80
         }
       ]
     },
@@ -5808,10 +5896,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000096",
-          "MaPhong": "F305",
-          "MaSlot": "Thu7-Ca1",
+          "MaPhong": "A709",
+          "MaSlot": "Thu3-Ca3",
           "MaGV": "GV009",
-          "index": 72
+          "index": 81
         }
       ]
     },
@@ -5828,10 +5916,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000097",
-          "MaPhong": "C205",
-          "MaSlot": "Thu7-Ca2",
+          "MaPhong": "D102",
+          "MaSlot": "Thu3-Ca4",
           "MaGV": "GV007",
-          "index": 73
+          "index": 82
         }
       ]
     },
@@ -5848,10 +5936,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000098",
-          "MaPhong": "C208",
-          "MaSlot": "Thu7-Ca3",
+          "MaPhong": "D103",
+          "MaSlot": "Thu3-Ca5",
           "MaGV": "GV008",
-          "index": 74
+          "index": 83
         }
       ]
     },
@@ -5868,10 +5956,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000099",
-          "MaPhong": "C210",
-          "MaSlot": "Thu7-Ca4",
+          "MaPhong": "D104",
+          "MaSlot": "Thu4-Ca1",
           "MaGV": "GV008",
-          "index": 75
+          "index": 84
         }
       ]
     },
@@ -5888,10 +5976,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000100",
-          "MaPhong": "C211",
-          "MaSlot": "Thu7-Ca5",
+          "MaPhong": "D105",
+          "MaSlot": "Thu4-Ca2",
           "MaGV": "GV008",
-          "index": 76
+          "index": 85
         }
       ]
     },
@@ -5908,10 +5996,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000101",
-          "MaPhong": "C302",
-          "MaSlot": "Thu2-Ca1",
+          "MaPhong": "D106",
+          "MaSlot": "Thu4-Ca3",
           "MaGV": "GV037",
-          "index": 77
+          "index": 86
         }
       ]
     },
@@ -5928,10 +6016,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000102",
-          "MaPhong": "F306",
-          "MaSlot": "Thu2-Ca2",
+          "MaPhong": "B203",
+          "MaSlot": "Thu4-Ca4",
           "MaGV": "GV037",
-          "index": 78
+          "index": 87
         }
       ]
     },
@@ -5948,10 +6036,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000103",
-          "MaPhong": "F307",
-          "MaSlot": "Thu2-Ca3",
+          "MaPhong": "B204",
+          "MaSlot": "Thu4-Ca5",
           "MaGV": "GV037",
-          "index": 79
+          "index": 88
         }
       ]
     },
@@ -5968,10 +6056,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000104",
-          "MaPhong": "C303",
-          "MaSlot": "Thu2-Ca4",
+          "MaPhong": "D107",
+          "MaSlot": "Thu5-Ca1",
           "MaGV": "GV001",
-          "index": 80
+          "index": 89
         }
       ]
     },
@@ -5988,10 +6076,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000105",
-          "MaPhong": "F308",
-          "MaSlot": "Thu2-Ca5",
+          "MaPhong": "B205",
+          "MaSlot": "Thu5-Ca2",
           "MaGV": "GV003",
-          "index": 81
+          "index": 90
         }
       ]
     },
@@ -6008,10 +6096,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000106",
-          "MaPhong": "F309",
-          "MaSlot": "Thu3-Ca1",
+          "MaPhong": "B303",
+          "MaSlot": "Thu5-Ca3",
           "MaGV": "GV037",
-          "index": 82
+          "index": 91
         }
       ]
     },
@@ -6028,10 +6116,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000107",
-          "MaPhong": "C304",
-          "MaSlot": "Thu3-Ca2",
+          "MaPhong": "D109",
+          "MaSlot": "Thu5-Ca4",
           "MaGV": "GV038",
-          "index": 83
+          "index": 92
         }
       ]
     },
@@ -6048,10 +6136,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000108",
-          "MaPhong": "C305",
-          "MaSlot": "Thu3-Ca3",
+          "MaPhong": "D110",
+          "MaSlot": "Thu5-Ca5",
           "MaGV": "GV007",
-          "index": 84
+          "index": 93
         }
       ]
     },
@@ -6068,10 +6156,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000109",
-          "MaPhong": "C308",
-          "MaSlot": "Thu3-Ca4",
+          "MaPhong": "D201",
+          "MaSlot": "Thu6-Ca1",
           "MaGV": "GV033",
-          "index": 85
+          "index": 94
         }
       ]
     },
@@ -6088,10 +6176,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000110",
-          "MaPhong": "C309",
-          "MaSlot": "Thu3-Ca5",
+          "MaPhong": "D202",
+          "MaSlot": "Thu6-Ca2",
           "MaGV": "GV036",
-          "index": 86
+          "index": 95
         }
       ]
     },
@@ -6108,10 +6196,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000111",
-          "MaPhong": "C310",
-          "MaSlot": "Thu4-Ca1",
+          "MaPhong": "D203",
+          "MaSlot": "Thu6-Ca3",
           "MaGV": "GV001",
-          "index": 87
+          "index": 96
         }
       ]
     },
@@ -6128,10 +6216,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000112",
-          "MaPhong": "F310",
-          "MaSlot": "T2-C3",
+          "MaPhong": "B304",
+          "MaSlot": "Thu6-Ca4",
           "MaGV": "GV003",
-          "index": 199
+          "index": 97
         }
       ]
     },
@@ -6148,10 +6236,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000113",
-          "MaPhong": "F311",
+          "MaPhong": "B305",
           "MaSlot": "T2-C2",
           "MaGV": "GV037",
-          "index": 200
+          "index": 204
         }
       ]
     },
@@ -6168,10 +6256,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000114",
-          "MaPhong": "C311",
-          "MaSlot": "Thu4-Ca4",
+          "MaPhong": "D204",
+          "MaSlot": "Thu7-Ca1",
           "MaGV": "GV001",
-          "index": 88
+          "index": 98
         }
       ]
     },
@@ -6188,10 +6276,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000115",
-          "MaPhong": "F401",
-          "MaSlot": "Thu4-Ca5",
+          "MaPhong": "B403",
+          "MaSlot": "Thu7-Ca2",
           "MaGV": "GV003",
-          "index": 89
+          "index": 99
         }
       ]
     },
@@ -6208,10 +6296,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000116",
-          "MaPhong": "F402",
-          "MaSlot": "Thu5-Ca1",
+          "MaPhong": "B404",
+          "MaSlot": "Thu7-Ca3",
           "MaGV": "GV037",
-          "index": 90
+          "index": 100
         }
       ]
     },
@@ -6228,10 +6316,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000117",
-          "MaPhong": "C401",
-          "MaSlot": "Thu5-Ca2",
+          "MaPhong": "D205",
+          "MaSlot": "Thu7-Ca4",
           "MaGV": "GV041",
-          "index": 91
+          "index": 101
         }
       ]
     },
@@ -6248,10 +6336,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000118",
-          "MaPhong": "F403",
-          "MaSlot": "Thu5-Ca3",
+          "MaPhong": "B405",
+          "MaSlot": "Thu7-Ca5",
           "MaGV": "GV041",
-          "index": 92
+          "index": 102
         }
       ]
     },
@@ -6268,10 +6356,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000119",
-          "MaPhong": "F404",
-          "MaSlot": "Thu5-Ca4",
+          "MaPhong": "A401",
+          "MaSlot": "Thu2-Ca1",
           "MaGV": "GV041",
-          "index": 93
+          "index": 103
         }
       ]
     },
@@ -6288,10 +6376,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000120",
-          "MaPhong": "C402",
-          "MaSlot": "Thu5-Ca5",
+          "MaPhong": "D206",
+          "MaSlot": "Thu2-Ca2",
           "MaGV": "GV013",
-          "index": 94
+          "index": 104
         }
       ]
     },
@@ -6308,10 +6396,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000121",
-          "MaPhong": "F405",
-          "MaSlot": "Thu6-Ca1",
+          "MaPhong": "A401",
+          "MaSlot": "Thu2-Ca3",
           "MaGV": "GV041",
-          "index": 95
+          "index": 105
         }
       ]
     },
@@ -6328,10 +6416,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000122",
-          "MaPhong": "F406",
-          "MaSlot": "Thu6-Ca2",
+          "MaPhong": "A401",
+          "MaSlot": "Thu2-Ca4",
           "MaGV": "GV047",
-          "index": 96
+          "index": 106
         }
       ]
     },
@@ -6348,10 +6436,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000123",
-          "MaPhong": "C403",
-          "MaSlot": "Thu6-Ca3",
+          "MaPhong": "D207",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV004",
-          "index": 97
+          "index": 107
         }
       ]
     },
@@ -6368,10 +6456,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000124",
-          "MaPhong": "C404",
-          "MaSlot": "Thu6-Ca4",
+          "MaPhong": "D209",
+          "MaSlot": "Thu3-Ca1",
           "MaGV": "GV021",
-          "index": 98
+          "index": 108
         }
       ]
     },
@@ -6388,10 +6476,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000125",
-          "MaPhong": "C405",
-          "MaSlot": "Thu6-Ca5",
+          "MaPhong": "D210",
+          "MaSlot": "Thu3-Ca2",
           "MaGV": "GV006",
-          "index": 99
+          "index": 109
         }
       ]
     },
@@ -6408,10 +6496,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000126",
-          "MaPhong": "F407",
-          "MaSlot": "Thu7-Ca1",
+          "MaPhong": "A401",
+          "MaSlot": "Thu3-Ca3",
           "MaGV": "GV020",
-          "index": 100
+          "index": 110
         }
       ]
     },
@@ -6428,10 +6516,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000127",
-          "MaPhong": "F408",
-          "MaSlot": "Thu7-Ca2",
+          "MaPhong": "A401",
+          "MaSlot": "Thu3-Ca4",
           "MaGV": "GV005",
-          "index": 101
+          "index": 111
         }
       ]
     },
@@ -6448,10 +6536,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000128",
-          "MaPhong": "C406",
-          "MaSlot": "Thu7-Ca3",
+          "MaPhong": "D301",
+          "MaSlot": "Thu3-Ca5",
           "MaGV": "GV006",
-          "index": 102
+          "index": 112
         }
       ]
     },
@@ -6468,10 +6556,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000129",
-          "MaPhong": "F409",
-          "MaSlot": "Thu7-Ca4",
+          "MaPhong": "A401",
+          "MaSlot": "Thu4-Ca1",
           "MaGV": "GV020",
-          "index": 103
+          "index": 113
         }
       ]
     },
@@ -6488,10 +6576,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000130",
-          "MaPhong": "F410",
-          "MaSlot": "Thu7-Ca5",
+          "MaPhong": "A401",
+          "MaSlot": "Thu4-Ca2",
           "MaGV": "GV005",
-          "index": 104
+          "index": 114
         }
       ]
     },
@@ -6508,10 +6596,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000131",
-          "MaPhong": "C407",
-          "MaSlot": "Thu2-Ca1",
+          "MaPhong": "D302",
+          "MaSlot": "Thu4-Ca3",
           "MaGV": "GV014",
-          "index": 105
+          "index": 115
         }
       ]
     },
@@ -6528,10 +6616,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000132",
-          "MaPhong": "F411",
-          "MaSlot": "Thu2-Ca2",
+          "MaPhong": "A401",
+          "MaSlot": "Thu4-Ca4",
           "MaGV": "GV014",
-          "index": 106
+          "index": 116
         }
       ]
     },
@@ -6548,10 +6636,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000133",
-          "MaPhong": "F501",
-          "MaSlot": "Thu2-Ca3",
+          "MaPhong": "F302",
+          "MaSlot": "Thu4-Ca5",
           "MaGV": "GV014",
-          "index": 107
+          "index": 117
         }
       ]
     },
@@ -6568,10 +6656,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000134",
-          "MaPhong": "C408",
-          "MaSlot": "Thu2-Ca4",
+          "MaPhong": "D303",
+          "MaSlot": "Thu5-Ca1",
           "MaGV": "GV014",
-          "index": 108
+          "index": 118
         }
       ]
     },
@@ -6588,10 +6676,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000135",
-          "MaPhong": "F502",
-          "MaSlot": "Thu2-Ca5",
+          "MaPhong": "F303",
+          "MaSlot": "Thu5-Ca2",
           "MaGV": "GV014",
-          "index": 109
+          "index": 119
         }
       ]
     },
@@ -6608,10 +6696,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000136",
-          "MaPhong": "F503",
+          "MaPhong": "F304",
           "MaSlot": "T2-C4",
           "MaGV": "GV047",
-          "index": 201
+          "index": 205
         }
       ]
     },
@@ -6628,10 +6716,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000137",
-          "MaPhong": "C409",
-          "MaSlot": "Thu3-Ca2",
+          "MaPhong": "D304",
+          "MaSlot": "Thu5-Ca4",
           "MaGV": "GV012",
-          "index": 110
+          "index": 120
         }
       ]
     },
@@ -6648,10 +6736,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000138",
-          "MaPhong": "F504",
-          "MaSlot": "Thu3-Ca3",
+          "MaPhong": "F305",
+          "MaSlot": "Thu5-Ca5",
           "MaGV": "GV048",
-          "index": 111
+          "index": 121
         }
       ]
     },
@@ -6668,10 +6756,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000139",
-          "MaPhong": "F505",
-          "MaSlot": "Thu3-Ca4",
+          "MaPhong": "F310",
+          "MaSlot": "Thu6-Ca1",
           "MaGV": "GV012",
-          "index": 112
+          "index": 122
         }
       ]
     },
@@ -6688,10 +6776,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000140",
-          "MaPhong": "C410",
-          "MaSlot": "Thu3-Ca5",
+          "MaPhong": "D305",
+          "MaSlot": "Thu6-Ca2",
           "MaGV": "GV048",
-          "index": 113
+          "index": 123
         }
       ]
     },
@@ -6708,10 +6796,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000141",
-          "MaPhong": "F506",
-          "MaSlot": "Thu4-Ca1",
+          "MaPhong": "F311",
+          "MaSlot": "Thu6-Ca3",
           "MaGV": "GV012",
-          "index": 114
+          "index": 124
         }
       ]
     },
@@ -6728,10 +6816,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000142",
-          "MaPhong": "F507",
-          "MaSlot": "Thu4-Ca2",
+          "MaPhong": "F402",
+          "MaSlot": "Thu6-Ca4",
           "MaGV": "GV048",
-          "index": 115
+          "index": 125
         }
       ]
     },
@@ -6748,10 +6836,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000143",
-          "MaPhong": "C411",
-          "MaSlot": "T2-C4",
+          "MaPhong": "D306",
+          "MaSlot": "T2-C3",
           "MaGV": "GV013",
-          "index": 202
+          "index": 206
         }
       ]
     },
@@ -6768,10 +6856,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000144",
-          "MaPhong": "D102",
-          "MaSlot": "Thu4-Ca4",
+          "MaPhong": "D307",
+          "MaSlot": "Thu7-Ca1",
           "MaGV": "GV017",
-          "index": 116
+          "index": 126
         }
       ]
     },
@@ -6808,10 +6896,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000146",
-          "MaPhong": "F508",
-          "MaSlot": "Thu4-Ca5",
+          "MaPhong": "F403",
+          "MaSlot": "Thu7-Ca2",
           "MaGV": "GV002",
-          "index": 117
+          "index": 127
         }
       ]
     },
@@ -6828,10 +6916,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000147",
-          "MaPhong": "F509",
-          "MaSlot": "Thu5-Ca1",
+          "MaPhong": "F404",
+          "MaSlot": "Thu7-Ca3",
           "MaGV": "GV002",
-          "index": 118
+          "index": 128
         }
       ]
     },
@@ -6868,10 +6956,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000149",
-          "MaPhong": "F510",
-          "MaSlot": "Thu5-Ca2",
+          "MaPhong": "F405",
+          "MaSlot": "Thu7-Ca4",
           "MaGV": "GV002",
-          "index": 119
+          "index": 129
         }
       ]
     },
@@ -6888,10 +6976,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000150",
-          "MaPhong": "F511",
-          "MaSlot": "Thu5-Ca3",
+          "MaPhong": "F410",
+          "MaSlot": "Thu7-Ca5",
           "MaGV": "GV002",
-          "index": 120
+          "index": 130
         }
       ]
     },
@@ -6908,10 +6996,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000151",
-          "MaPhong": "D103",
-          "MaSlot": "Thu5-Ca4",
+          "MaPhong": "D309",
+          "MaSlot": "Thu2-Ca1",
           "MaGV": "GV033",
-          "index": 121
+          "index": 131
         }
       ]
     },
@@ -6928,10 +7016,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000152",
-          "MaPhong": "D104",
-          "MaSlot": "Thu5-Ca5",
+          "MaPhong": "D310",
+          "MaSlot": "Thu2-Ca2",
           "MaGV": "GV033",
-          "index": 122
+          "index": 132
         }
       ]
     },
@@ -6948,10 +7036,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000153",
-          "MaPhong": "D105",
-          "MaSlot": "Thu6-Ca1",
+          "MaPhong": "D401",
+          "MaSlot": "Thu2-Ca3",
           "MaGV": "GV035",
-          "index": 123
+          "index": 133
         }
       ]
     },
@@ -6968,10 +7056,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000154",
-          "MaPhong": "D106",
-          "MaSlot": "T2-C1",
+          "MaPhong": "D402",
+          "MaSlot": "Thu2-Ca4",
           "MaGV": "GV035",
-          "index": 203
+          "index": 134
         }
       ]
     },
@@ -6988,10 +7076,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000155",
-          "MaPhong": "D107",
-          "MaSlot": "Thu6-Ca3",
+          "MaPhong": "D403",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV043",
-          "index": 124
+          "index": 135
         }
       ]
     },
@@ -7008,10 +7096,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000156",
-          "MaPhong": "D109",
-          "MaSlot": "Thu6-Ca4",
+          "MaPhong": "D404",
+          "MaSlot": "Thu3-Ca1",
           "MaGV": "GV045",
-          "index": 125
+          "index": 136
         }
       ]
     },
@@ -7028,10 +7116,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000158",
-          "MaPhong": "F602",
-          "MaSlot": "Thu7-Ca1",
+          "MaPhong": "F502",
+          "MaSlot": "Thu3-Ca3",
           "MaGV": "GV004",
-          "index": 126
+          "index": 138
         }
       ]
     },
@@ -7048,10 +7136,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000159",
-          "MaPhong": "F603",
-          "MaSlot": "Thu7-Ca2",
+          "MaPhong": "F503",
+          "MaSlot": "Thu3-Ca4",
           "MaGV": "GV004",
-          "index": 127
+          "index": 139
         }
       ]
     },
@@ -7068,10 +7156,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000161",
-          "MaPhong": "F604",
-          "MaSlot": "Thu7-Ca4",
+          "MaPhong": "F505",
+          "MaSlot": "T2-C3",
           "MaGV": "GV004",
-          "index": 129
+          "index": 207
         }
       ]
     },
@@ -7088,10 +7176,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000162",
-          "MaPhong": "F605",
-          "MaSlot": "Thu7-Ca5",
+          "MaPhong": "F510",
+          "MaSlot": "Thu4-Ca2",
           "MaGV": "GV001",
-          "index": 130
+          "index": 141
         }
       ]
     },
@@ -7108,10 +7196,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000164",
-          "MaPhong": "F608",
-          "MaSlot": "Thu2-Ca2",
+          "MaPhong": "F602",
+          "MaSlot": "Thu4-Ca4",
           "MaGV": "GV004",
-          "index": 131
+          "index": 143
         }
       ]
     },
@@ -7128,10 +7216,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000165",
-          "MaPhong": "F609",
-          "MaSlot": "Thu2-Ca3",
+          "MaPhong": "F603",
+          "MaSlot": "T2-C4",
           "MaGV": "GV004",
-          "index": 132
+          "index": 208
         }
       ]
     },
@@ -7148,10 +7236,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000167",
-          "MaPhong": "F610",
-          "MaSlot": "Thu2-Ca5",
+          "MaPhong": "F605",
+          "MaSlot": "Thu5-Ca2",
           "MaGV": "GV004",
-          "index": 134
+          "index": 145
         }
       ]
     },
@@ -7168,10 +7256,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000168",
-          "MaPhong": "F611",
-          "MaSlot": "Thu3-Ca1",
+          "MaPhong": "F610",
+          "MaSlot": "Thu5-Ca3",
           "MaGV": "GV004",
-          "index": 135
+          "index": 146
         }
       ]
     },
@@ -7188,10 +7276,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000169",
-          "MaPhong": "D110",
-          "MaSlot": "Thu3-Ca2",
+          "MaPhong": "D405",
+          "MaSlot": "Thu5-Ca4",
           "MaGV": "GV047",
-          "index": 136
+          "index": 147
         }
       ]
     },
@@ -7208,10 +7296,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000170",
-          "MaPhong": "F702",
+          "MaPhong": "F611",
           "MaSlot": "T2-C5",
           "MaGV": "GV047",
-          "index": 206
+          "index": 209
         }
       ]
     },
@@ -7228,10 +7316,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000171",
-          "MaPhong": "F703",
-          "MaSlot": "Thu3-Ca4",
+          "MaPhong": "F702",
+          "MaSlot": "Thu6-Ca1",
           "MaGV": "GV047",
-          "index": 137
+          "index": 148
         }
       ]
     },
@@ -7248,10 +7336,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000172",
-          "MaPhong": "D201",
+          "MaPhong": "D406",
           "MaSlot": "T3-C1",
           "MaGV": "GV047",
-          "index": 207
+          "index": 210
         }
       ]
     },
@@ -7268,10 +7356,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000173",
-          "MaPhong": "F704",
-          "MaSlot": "Thu4-Ca1",
+          "MaPhong": "F703",
+          "MaSlot": "Thu6-Ca3",
           "MaGV": "GV047",
-          "index": 138
+          "index": 149
         }
       ]
     },
@@ -7288,10 +7376,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000174",
-          "MaPhong": "F705",
-          "MaSlot": "Thu4-Ca2",
+          "MaPhong": "F704",
+          "MaSlot": "Thu6-Ca4",
           "MaGV": "GV047",
-          "index": 139
+          "index": 150
         }
       ]
     },
@@ -7308,10 +7396,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000175",
-          "MaPhong": "D202",
-          "MaSlot": "Thu4-Ca3",
+          "MaPhong": "D407",
+          "MaSlot": "Thu6-Ca5",
           "MaGV": "GV040",
-          "index": 140
+          "index": 151
         }
       ]
     },
@@ -7328,10 +7416,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000176",
-          "MaPhong": "F706",
-          "MaSlot": "Thu4-Ca4",
+          "MaPhong": "F705",
+          "MaSlot": "Thu7-Ca1",
           "MaGV": "GV040",
-          "index": 141
+          "index": 152
         }
       ]
     },
@@ -7348,10 +7436,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000177",
-          "MaPhong": "F707",
-          "MaSlot": "Thu4-Ca5",
+          "MaPhong": "F709",
+          "MaSlot": "Thu7-Ca2",
           "MaGV": "GV040",
-          "index": 142
+          "index": 153
         }
       ]
     },
@@ -7368,10 +7456,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000178",
-          "MaPhong": "D203",
-          "MaSlot": "Thu5-Ca1",
+          "MaPhong": "D409",
+          "MaSlot": "Thu7-Ca3",
           "MaGV": "GV040",
-          "index": 143
+          "index": 154
         }
       ]
     },
@@ -7388,10 +7476,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000179",
-          "MaPhong": "F708",
-          "MaSlot": "Thu5-Ca2",
+          "MaPhong": "F710",
+          "MaSlot": "Thu7-Ca4",
           "MaGV": "GV040",
-          "index": 144
+          "index": 155
         }
       ]
     },
@@ -7408,10 +7496,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000180",
-          "MaPhong": "F709",
-          "MaSlot": "Thu5-Ca3",
+          "MaPhong": "F711",
+          "MaSlot": "Thu7-Ca5",
           "MaGV": "GV005",
-          "index": 145
+          "index": 156
         }
       ]
     },
@@ -7428,10 +7516,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000181",
-          "MaPhong": "D204",
-          "MaSlot": "Thu5-Ca4",
+          "MaPhong": "D410",
+          "MaSlot": "Thu2-Ca1",
           "MaGV": "GV024",
-          "index": 146
+          "index": 157
         }
       ]
     },
@@ -7448,10 +7536,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000182",
-          "MaPhong": "F710",
-          "MaSlot": "Thu5-Ca5",
+          "MaPhong": "A401",
+          "MaSlot": "Thu2-Ca2",
           "MaGV": "GV024",
-          "index": 147
+          "index": 158
         }
       ]
     },
@@ -7468,10 +7556,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000183",
-          "MaPhong": "F711",
-          "MaSlot": "Thu6-Ca1",
+          "MaPhong": "A402",
+          "MaSlot": "Thu2-Ca3",
           "MaGV": "GV024",
-          "index": 148
+          "index": 159
         }
       ]
     },
@@ -7488,10 +7576,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000184",
-          "MaPhong": "D205",
-          "MaSlot": "Thu6-Ca2",
+          "MaPhong": "B202",
+          "MaSlot": "Thu2-Ca4",
           "MaGV": "GV024",
-          "index": 149
+          "index": 160
         }
       ]
     },
@@ -7508,10 +7596,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000185",
-          "MaPhong": "A704",
-          "MaSlot": "Thu6-Ca3",
+          "MaPhong": "A403",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV006",
-          "index": 150
+          "index": 161
         }
       ]
     },
@@ -7528,10 +7616,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000186",
-          "MaPhong": "A705",
-          "MaSlot": "T2-C1",
+          "MaPhong": "A404",
+          "MaSlot": "Thu3-Ca1",
           "MaGV": "GV024",
-          "index": 208
+          "index": 162
         }
       ]
     },
@@ -7548,10 +7636,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000188",
-          "MaPhong": "A707",
-          "MaSlot": "Thu7-Ca1",
+          "MaPhong": "A406",
+          "MaSlot": "Thu3-Ca3",
           "MaGV": "GV024",
-          "index": 152
+          "index": 164
         }
       ]
     },
@@ -7568,10 +7656,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000189",
-          "MaPhong": "A708",
-          "MaSlot": "Thu7-Ca2",
+          "MaPhong": "A407",
+          "MaSlot": "T2-C3",
           "MaGV": "GV024",
-          "index": 153
+          "index": 211
         }
       ]
     },
@@ -7588,10 +7676,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000191",
-          "MaPhong": "B203",
-          "MaSlot": "Thu7-Ca4",
+          "MaPhong": "A409",
+          "MaSlot": "Thu4-Ca1",
           "MaGV": "GV024",
-          "index": 155
+          "index": 165
         }
       ]
     },
@@ -7608,10 +7696,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000192",
-          "MaPhong": "B204",
-          "MaSlot": "Thu7-Ca5",
+          "MaPhong": "A501",
+          "MaSlot": "Thu4-Ca2",
           "MaGV": "GV024",
-          "index": 156
+          "index": 166
         }
       ]
     },
@@ -7628,10 +7716,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000193",
-          "MaPhong": "D206",
-          "MaSlot": "Thu7-Ca5",
+          "MaPhong": "B210",
+          "MaSlot": "Thu4-Ca3",
           "MaGV": "GV035",
-          "index": 157
+          "index": 167
         }
       ]
     },
@@ -7648,10 +7736,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000194",
-          "MaPhong": "D207",
-          "MaSlot": "Thu2-Ca1",
+          "MaPhong": "B211",
+          "MaSlot": "Thu4-Ca4",
           "MaGV": "GV033",
-          "index": 158
+          "index": 168
         }
       ]
     },
@@ -7668,10 +7756,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000195",
-          "MaPhong": "D209",
-          "MaSlot": "Thu2-Ca2",
+          "MaPhong": "B302",
+          "MaSlot": "Thu4-Ca5",
           "MaGV": "GV033",
-          "index": 159
+          "index": 169
         }
       ]
     },
@@ -7688,10 +7776,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000196",
-          "MaPhong": "D210",
-          "MaSlot": "Thu2-Ca3",
+          "MaPhong": "B310",
+          "MaSlot": "Thu5-Ca1",
           "MaGV": "GV041",
-          "index": 160
+          "index": 170
         }
       ]
     },
@@ -7708,10 +7796,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000197",
-          "MaPhong": "D301",
-          "MaSlot": "Thu2-Ca4",
+          "MaPhong": "B311",
+          "MaSlot": "Thu5-Ca2",
           "MaGV": "GV015",
-          "index": 161
+          "index": 171
         }
       ]
     },
@@ -7728,10 +7816,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000198",
-          "MaPhong": "D302",
-          "MaSlot": "T2-C5",
+          "MaPhong": "B402",
+          "MaSlot": "Thu5-Ca3",
           "MaGV": "GV013",
-          "index": 209
+          "index": 172
         }
       ]
     },
@@ -7748,10 +7836,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000199",
-          "MaPhong": "D303",
-          "MaSlot": "Thu3-Ca1",
+          "MaPhong": "B410",
+          "MaSlot": "T2-C4",
           "MaGV": "GV013",
-          "index": 162
+          "index": 213
         }
       ]
     },
@@ -7768,10 +7856,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000200",
-          "MaPhong": "B205",
-          "MaSlot": "T3-C1",
+          "MaPhong": "A502",
+          "MaSlot": "Thu5-Ca5",
           "MaGV": "GV013",
-          "index": 210
+          "index": 173
         }
       ]
     },
@@ -7788,10 +7876,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000201",
-          "MaPhong": "B303",
-          "MaSlot": "Thu3-Ca3",
+          "MaPhong": "A503",
+          "MaSlot": "T2-C5",
           "MaGV": "GV013",
-          "index": 163
+          "index": 214
         }
       ]
     },
@@ -7808,10 +7896,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000202",
-          "MaPhong": "D304",
-          "MaSlot": "T3-C2",
+          "MaPhong": "B411",
+          "MaSlot": "Thu6-Ca2",
           "MaGV": "GV013",
-          "index": 211
+          "index": 174
         }
       ]
     },
@@ -7828,10 +7916,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000203",
-          "MaPhong": "B304",
-          "MaSlot": "Thu3-Ca5",
+          "MaPhong": "A504",
+          "MaSlot": "Thu6-Ca3",
           "MaGV": "GV013",
-          "index": 164
+          "index": 175
         }
       ]
     },
@@ -7848,10 +7936,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000204",
-          "MaPhong": "B305",
-          "MaSlot": "Thu4-Ca1",
+          "MaPhong": "A505",
+          "MaSlot": "Thu6-Ca4",
           "MaGV": "GV013",
-          "index": 165
+          "index": 176
         }
       ]
     },
@@ -7868,10 +7956,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000205",
-          "MaPhong": "D305",
-          "MaSlot": "Thu4-Ca2",
+          "MaPhong": "C202",
+          "MaSlot": "T3-C1",
           "MaGV": "GV013",
-          "index": 166
+          "index": 215
         }
       ]
     },
@@ -7888,10 +7976,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000206",
-          "MaPhong": "D306",
-          "MaSlot": "T3-C3",
+          "MaPhong": "C203",
+          "MaSlot": "Thu7-Ca1",
           "MaGV": "GV013",
-          "index": 212
+          "index": 177
         }
       ]
     },
@@ -7908,10 +7996,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000207",
-          "MaPhong": "D307",
-          "MaSlot": "Thu4-Ca4",
+          "MaPhong": "C204",
+          "MaSlot": "Thu7-Ca2",
           "MaGV": "GV035",
-          "index": 167
+          "index": 178
         }
       ]
     },
@@ -7928,10 +8016,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000208",
-          "MaPhong": "D309",
-          "MaSlot": "Thu4-Ca5",
+          "MaPhong": "C205",
+          "MaSlot": "Thu7-Ca3",
           "MaGV": "GV043",
-          "index": 168
+          "index": 179
         }
       ]
     },
@@ -7948,10 +8036,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000209",
-          "MaPhong": "D310",
-          "MaSlot": "Thu5-Ca1",
+          "MaPhong": "C208",
+          "MaSlot": "Thu7-Ca4",
           "MaGV": "GV038",
-          "index": 169
+          "index": 180
         }
       ]
     },
@@ -7968,10 +8056,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000210",
-          "MaPhong": "B403",
-          "MaSlot": "Thu5-Ca2",
+          "MaPhong": "A506",
+          "MaSlot": "Thu7-Ca5",
           "MaGV": "GV007",
-          "index": 170
+          "index": 181
         }
       ]
     },
@@ -7988,10 +8076,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000211",
-          "MaPhong": "B404",
-          "MaSlot": "Thu5-Ca3",
+          "MaPhong": "A507",
+          "MaSlot": "Thu2-Ca1",
           "MaGV": "GV038",
-          "index": 171
+          "index": 182
         }
       ]
     },
@@ -8008,10 +8096,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000212",
-          "MaPhong": "D401",
-          "MaSlot": "Thu5-Ca4",
+          "MaPhong": "C210",
+          "MaSlot": "Thu2-Ca2",
           "MaGV": "GV007",
-          "index": 172
+          "index": 183
         }
       ]
     },
@@ -8028,10 +8116,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000213",
-          "MaPhong": "B405",
-          "MaSlot": "Thu5-Ca5",
+          "MaPhong": "A508",
+          "MaSlot": "Thu2-Ca3",
           "MaGV": "GV008",
-          "index": 173
+          "index": 184
         }
       ]
     },
@@ -8048,10 +8136,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000214",
-          "MaPhong": "A704",
-          "MaSlot": "Thu2-Ca1",
+          "MaPhong": "A509",
+          "MaSlot": "Thu2-Ca4",
           "MaGV": "GV038",
-          "index": 174
+          "index": 185
         }
       ]
     },
@@ -8068,10 +8156,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000215",
-          "MaPhong": "D402",
-          "MaSlot": "Thu6-Ca1",
+          "MaPhong": "C211",
+          "MaSlot": "Thu2-Ca5",
           "MaGV": "GV007",
-          "index": 175
+          "index": 186
         }
       ]
     },
@@ -8088,10 +8176,10 @@
       "assignments": [
         {
           "MaLop": "LOP-00000216",
-          "MaPhong": "D403",
-          "MaSlot": "T2-C2",
+          "MaPhong": "C302",
+          "MaSlot": "Thu3-Ca1",
           "MaGV": "GV035",
-          "index": 213
+          "index": 187
         }
       ]
     }
