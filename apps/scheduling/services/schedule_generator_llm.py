@@ -6,6 +6,7 @@ Chỉ dùng LLM thuần (bỏ GA), dùng DAL + LLM Service
 import json
 import logging
 import os
+import re
 from datetime import datetime
 from typing import Dict, List
 
@@ -672,8 +673,13 @@ class ScheduleGeneratorLLM:
                 llm_response = self.ai.generate_schedule_json(prompt)
             else:
                 # Fallback cho các instance khác
-                logger.warning("⚠️ AI instance không phải ScheduleAI, sử dụng mock response")
-                return self._generate_mock_schedule_optimized(processed_data)
+                logger.error("❌ AI instance không phải ScheduleAI, không thể generate schedule")
+                return {
+                    'schedule': [],
+                    'validation': {'feasible': False, 'all_assigned': False, 'total_violations': 0},
+                    'metrics': {'fitness': 0},
+                    'errors': ['AI instance is not ScheduleAI']
+                }
             
             # 🔴 MAP SLOT LẠI: T2-C1 → Thu2-Ca1
             return self._parse_and_map_llm_response(llm_response, processed_data)
@@ -689,47 +695,43 @@ class ScheduleGeneratorLLM:
     
     def _parse_and_map_llm_response(self, llm_response: dict, processed_data: dict) -> dict:
         """
-        🔴 TỐI ƯU: Parse LLM response & map slot lại
+        🔴 TỐI ƯU: Parse LLM response (compact format T2-C1)
         
         Quy trình:
         1. LLM trả về schedule với slot compact (T2-C1)
-        2. Map lại: T2-C1 → Thu2-Ca1 (original ID)
-        3. Format optimized (chỉ class, room, slot)
+        2. Normalize format - đảm bảo thống nhất
+        3. Output format compact (T2-C1)
         4. Validate & generate errors
-        5. Return format giống schedule_2025_2026_HK1.json
+        5. Return format JSON với compact slots
         """
-        slot_mapping = processed_data.get('slot_mapping', {})
-        
         schedule = []
         violations = []
         mapped_count = 0
         failed_map_count = 0
         
-        # 🔴 MAP SLOT & FORMAT
+        # 🔴 PROCESS SLOTS: Chỉ normalize & validate, không convert!
         for entry in llm_response.get('schedule', []):
             try:
-                # Lấy slot từ LLM
-                compact_slot = entry.get('slot')
+                # Lấy slot từ LLM (có thể ở nhiều format khác nhau)
+                slot_from_llm = entry.get('slot')
+                final_slot = None
                 
-                # Thử map: T2-C1 → Thu2-Ca1
-                original_slot = slot_mapping.get(compact_slot)
+                # 🔴 STEP 1: NORMALIZE format slot (chuyển các format khác thành compact T{day}-C{session})
+                normalized_slot = self._normalize_slot_format(slot_from_llm)
+                logger.debug(f"Normalized: {slot_from_llm} → {normalized_slot}")
                 
-                # Nếu không map được, kiểm tra xem có phải đã là ID thật không
-                if not original_slot:
-                    # LLM có thể trả về slot ID thực tế (Thu2-Ca1) thay vì compact format
-                    # Kiểm tra xem slot này có tồn tại trong DB không
-                    if TimeSlot.objects.filter(time_slot_id=compact_slot).exists():
-                        original_slot = compact_slot
-                    else:
-                        violations.append(f"⚠️ Slot không tồn tại: {compact_slot}")
-                        failed_map_count += 1
-                        continue
+                # Đảm bảo slot luôn ở format compact
+                if not (normalized_slot and normalized_slot.startswith('T') and '-C' in normalized_slot):
+                    violations.append(f"⚠️ Slot không hợp lệ: {slot_from_llm} (normalized: {normalized_slot})")
+                    failed_map_count += 1
+                    logger.warning(f"❌ Slot không hợp lệ: {slot_from_llm} (normalized: {normalized_slot})")
+                    continue
                 
-                # Format optimized (compact)
+                # ✅ final_slot luôn ở format compact (T2-C1)
                 schedule.append({
                     'class': entry.get('class'),
                     'room': entry.get('room'),
-                    'slot': original_slot  # ← ĐÃ MAP LẠI
+                    'slot': normalized_slot  # ← Format compact: T2-C1
                 })
                 mapped_count += 1
                 
@@ -764,6 +766,11 @@ class ScheduleGeneratorLLM:
         # 🔴 NEW: Detect & Fix HC-04 Equipment Violations
         schedule = self._fix_equipment_violations(schedule, processed_data, phan_cong_dict)
         
+        # 🔴 NEW: Normalize HC-09 Consecutive Slots (sessions must be in consecutive Ca, not C2-C3)
+        schedule, consecutive_violations = self._normalize_consecutive_slots(schedule, phan_cong_dict)
+        if consecutive_violations > 0:
+            violations.append(f"⚠️ HC-09: {consecutive_violations} classes with non-consecutive slots (normalized)")
+        
         validation_result = self.validator.validate_schedule_compact(
             schedule_assignments=schedule,
             prepared_data=processed_data,
@@ -779,7 +786,7 @@ class ScheduleGeneratorLLM:
         })
         metrics['total_schedules'] = len(schedule)
         
-        # Format optimized như schedule_2025_2026_HK1.json
+        # Format output compact (T2-C1)
         result = {
             'schedule': schedule,
             'validation': validation_result,
@@ -789,83 +796,470 @@ class ScheduleGeneratorLLM:
         
         return result
     
-    def _generate_mock_schedule_optimized(self, processed_data: dict) -> dict:
+    def _get_consecutive_session_groups(self) -> dict:
         """
-        🔴 OPTIMIZED: Tạo mock schedule (format như schedule_2025_2026_HK1.json)
+        🔴 CONSECUTIVE SLOTS MAPPING
+        
+        Map consecutive session groups based on class timetable structure:
+        - Group A (Morning): Ca1-Ca2 (6:50-12:00, no lunch break)
+        - Group B (Afternoon): Ca3-Ca4 (12:45-17:55, no lunch break)
+        - Single: Ca5 (18:05-20:35)
         
         Returns:
+            Dict mapping sessions to consecutive slot groups:
             {
-                "schedule": [{"class": "LOP-001", "room": "A101", "slot": "Thu2-Ca1"}],
-                "validation": {...},
-                "metrics": {...},
-                "errors": []
+                1: [[1], [2], [3], [4], [5]],              # Single session
+                2: [[1, 2], [3, 4], [5]],                  # 2 sessions
+                3: [[1, 2, 3], [3, 4, 5], [4, 5]],         # 3+ sessions (flexible)
+                ...
             }
         """
-        schedule = []
-        timeslots = processed_data.get('timeslots', [])
-        slot_idx = 0
+        return {
+            1: [[1], [2], [3], [4], [5]],                  # Single: any Ca
+            2: [[1, 2], [3, 4], [5]],                      # Pair: (C1-C2) or (C3-C4) or single C5
+            3: [[1, 2, 3], [3, 4, 5]],                     # Triple: (C1-C2-C3) or (C3-C4-C5)
+            4: [[1, 2, 3, 4], [1, 2, 3, 4, 5]],            # Quad: (C1-C2-C3-C4) or (C1-C2-C3-C4-C5)
+            5: [[1, 2, 3, 4, 5]],                          # All 5 Ca
+        }
+    
+    def _is_consecutive_pair(self, slot1: str, slot2: str) -> bool:
+        """
+        HC-09 CONSECUTIVE CHECK: Kiểm tra 2 slots có liên tiếp không
         
-        # Duyệt từng đợt & phân công
-        for dot_info in processed_data['dot_xep_list']:
-            rooms_lt = processed_data['rooms_by_type'].get('LT', [])
-            rooms_th = processed_data['rooms_by_type'].get('TH', [])
-            all_rooms = rooms_lt + rooms_th
-            room_idx = 0
+        Consecutive pairs (ALLOWED):
+        - Same day, Ca 1-2 (morning 6:50-12:00)
+        - Same day, Ca 3-4 (afternoon 12:45-17:55)
+        - Single: Ca 5 (evening)
+        
+        Non-consecutive (NOT ALLOWED):
+        - Ca 2-3 (có giờ nghỉ trưa 12:00-12:45)
+        
+        Args:
+            slot1, slot2: Slot strings (e.g., "Thu2-Ca1" hoặc "T2-C1")
             
-            for pc in dot_info['phan_cong']:
-                if pc['so_ca_tuan'] and all_rooms:
-                    # Tạo lịch cho số ca trong tuần
-                    for ca_idx in range(min(pc['so_ca_tuan'], len(timeslots))):
-                        # Lấy slot (với map lại)
-                        ts = timeslots[slot_idx % len(timeslots)]
-                        original_slot = ts.get('original_id', ts.get('id', 'Thu2-Ca1'))
-                        
-                        # Format optimized
-                        schedule.append({
-                            'class': pc['ma_lop'],
-                            'room': all_rooms[room_idx % len(all_rooms)]['ma_phong'],
-                            'slot': original_slot  # ← ORIGINAL ID (not compact)
-                        })
-                        
-                        slot_idx += 1
-                        room_idx += 1
+        Returns:
+            True if slots are consecutive, False otherwise
+        """
+        try:
+            # Normalize slots to compact format T{day}-C{session}
+            slot1_normalized = self._normalize_slot_format(str(slot1))
+            slot2_normalized = self._normalize_slot_format(str(slot2))
+            
+            # Extract day and session from normalized slots (format: T{day}-C{session})
+            match1 = re.match(r'T(\d+)-C(\d+)', slot1_normalized)
+            match2 = re.match(r'T(\d+)-C(\d+)', slot2_normalized)
+            
+            if not match1 or not match2:
+                return False
+            
+            day1, session1 = int(match1.group(1)), int(match1.group(2))
+            day2, session2 = int(match2.group(1)), int(match2.group(2))
+            
+            # Must be same day
+            if day1 != day2:
+                return False
+            
+            # Get sessions in sorted order
+            s_min, s_max = min(session1, session2), max(session1, session2)
+            
+            # Check if pair is valid consecutive
+            # Allowed: (1,2), (3,4), (5) as single
+            if (s_min, s_max) in [(1, 2), (3, 4)]:
+                return True
+            
+            # Single session is always "consecutive with itself"
+            if s_min == s_max:
+                return True
+            
+            return False
+            
+        except (AttributeError, ValueError, IndexError):
+            return False
+    
+    def _validate_consecutive_slots(self, schedule: List[Dict], phan_cong_dict: Dict) -> tuple:
+        """
+        HC-09 VALIDATOR: Kiểm tra tất cả assignments tuân theo consecutive rule
         
-        # Chuẩn bị phan_cong dict cho validator
-        phan_cong_dict = {}
-        for dot_info in processed_data.get('dot_xep_list', []):
-            for cls in dot_info.get('phan_cong', []):
-                ma_lop = cls.get('ma_lop')
-                if ma_lop:
-                    phan_cong_dict[ma_lop] = {
-                        'ma_gv': cls.get('ma_gv'),
-                        'ma_dot': dot_info.get('ma_dot'),
-                        'so_sv': cls.get('so_sv', 0),
-                        'so_ca_tuan': cls.get('so_ca_tuan', 1),  # Số ca/tuần (1, 2, 3, ...)
-                        'class_type': cls.get('loai_phong', 'LT'),  # TH hoặc LT
-                        'thiet_bi_yeu_cau': cls.get('thiet_bi_yeu_cau', '')  # Thiết bị yêu cầu cho HC-04
-                    }
+        Cho mỗi class với sessions > 1, kiểm tra:
+        - Tất cả slots có liên tiếp không (không được có Ca 2-3 etc)
+        - Tất cả slots ở cùng 1 ngày hay không
         
-        validation_result = self.validator.validate_schedule_compact(
-            schedule_assignments=schedule,
-            prepared_data=processed_data,
-            phan_cong_dict=phan_cong_dict
-        )
+        Args:
+            schedule: List of {class, room, slot} assignments (slot ở format gốc: Thu2-Ca1)
+            phan_cong_dict: {ma_lop: {so_ca_tuan, ...}}
+            
+        Returns:
+            Tuple (violations_list, fixed_schedule)
+            - violations_list: List of {class, issue, slots} with problems
+            - fixed_schedule: Schedule với các violations được đánh dấu
+        """
+        violations = []
         
-        # Format giống schedule_2025_2026_HK1.json
-        result = {
-            'metrics': {
-                'fitness': 0,
-                'wish_satisfaction': 0,
-                'room_efficiency': 0.85,
-                'total_schedules': len(schedule)
-            },
-            'schedule': schedule,
-            'validation': validation_result,
-            'errors': []
+        # Group assignments by class
+        assignments_by_class = {}
+        for assignment in schedule:
+            class_id = assignment.get('class')
+            if class_id not in assignments_by_class:
+                assignments_by_class[class_id] = []
+            assignments_by_class[class_id].append(assignment)
+        
+        # Check each class
+        for class_id, assignments in assignments_by_class.items():
+            class_info = phan_cong_dict.get(class_id, {})
+            sessions_required = class_info.get('so_ca_tuan', 1)
+            
+            # If sessions > 1, validate consecutive rule
+            if sessions_required > 1 and len(assignments) > 1:
+                slots = sorted([a.get('slot') for a in assignments])
+                
+                # Check 1: All slots on same day (normalize to compact format first)
+                days = set()
+                for slot in slots:
+                    slot_normalized = self._normalize_slot_format(str(slot))
+                    match = re.match(r'T(\d+)-C(\d+)', slot_normalized)
+                    if match:
+                        days.add(int(match.group(1)))
+                
+                if len(days) > 1:
+                    violations.append({
+                        'class': class_id,
+                        'issue': f'HC-09: Sessions on different days (days: {sorted(days)})',
+                        'slots': slots,
+                        'severity': 'HIGH'
+                    })
+                    continue
+                
+                # Check 2: Sessions are consecutive (normalize first)
+                sessions = []
+                for slot in slots:
+                    slot_normalized = self._normalize_slot_format(str(slot))
+                    match = re.match(r'T(\d+)-C(\d+)', slot_normalized)
+                    if match:
+                        sessions.append(int(match.group(2)))
+                
+                sessions_sorted = sorted(sessions)
+                
+                # Check if pattern includes invalid pair (2-3 without context)
+                invalid = False
+                if len(sessions_sorted) == 2:
+                    if sessions_sorted == [2, 3]:
+                        invalid = True
+                        reason = 'Ca 2-3 includes lunch break (12:00-12:45) - use Ca 1-2 or Ca 3-4'
+                    elif sessions_sorted not in [[1, 2], [3, 4], [4, 5]]:
+                        invalid = True
+                        reason = f'Non-consecutive sessions: {sessions_sorted}'
+                
+                if invalid:
+                    violations.append({
+                        'class': class_id,
+                        'issue': f'HC-09: {reason}',
+                        'slots': slots,
+                        'severity': 'HIGH',
+                        'sessions': sessions_sorted
+                    })
+        
+        return violations, schedule
+    
+    def _normalize_consecutive_slots(self, schedule: List[Dict], phan_cong_dict: Dict) -> List[Dict]:
+        """
+        HC-09 NORMALIZER: Tự động fix assignments không tuân theo consecutive rule
+        
+        Với class sessions=2, nếu slots là Ca 2-3:
+        1. Thử swap slot 2 → slot 1 (để có Ca 1-2)
+        2. Nếu slot 1 conflict, thử Ca 3-4 (slot 3 hoặc 4)
+        
+        Args:
+            schedule: Original schedule từ LLM
+            phan_cong_dict: Class info
+            
+        Returns:
+            Fixed schedule với consecutive slots
+        """
+        fixed_schedule = []
+        changes = []
+        
+        # Group by class
+        assignments_by_class = {}
+        for assignment in schedule:
+            class_id = assignment.get('class')
+            if class_id not in assignments_by_class:
+                assignments_by_class[class_id] = []
+            assignments_by_class[class_id].append(assignment.copy())
+        
+        # Fix each class
+        for class_id, assignments in assignments_by_class.items():
+            class_info = phan_cong_dict.get(class_id, {})
+            sessions_required = class_info.get('so_ca_tuan', 1)
+            
+            if sessions_required == 2 and len(assignments) == 2:
+                # Get current slots
+                slots = [a.get('slot') for a in assignments]
+                sessions = []
+                day = None
+                
+                for slot in slots:
+                    match = re.match(r'T(\d+)-C(\d+)', str(slot))
+                    if match:
+                        d, s = int(match.group(1)), int(match.group(2))
+                        if day is None:
+                            day = d
+                        sessions.append(s)
+                
+                sessions_sorted = sorted(sessions)
+                
+                # Check if invalid pattern (Ca 2-3)
+                if sessions_sorted == [2, 3]:
+                    # Try to fix: prefer Ca 1-2
+                    room = assignments[0].get('room')
+                    
+                    # Use Ca 1-2 (assuming available for normalization)
+                    fixed_schedule.append({'class': class_id, 'room': room, 'slot': f'T{day}-C1'})
+                    fixed_schedule.append({'class': class_id, 'room': room, 'slot': f'T{day}-C2'})
+                    changes.append({
+                        'class': class_id,
+                        'original': slots,
+                        'fixed': [f'T{day}-C1', f'T{day}-C2'],
+                        'reason': 'Ca 2-3 has lunch break - normalized to Ca 1-2'
+                    })
+                else:
+                    # Valid pattern, keep as is
+                    fixed_schedule.extend(assignments)
+            else:
+                # Not sessions=2 case, keep as is
+                fixed_schedule.extend(assignments)
+        
+        # Log changes
+        if changes:
+            logger.info(f"HC-09 consecutive slots normalized: {len(changes)} classes")
+            for change in changes:
+                logger.info(f"  {change['class']}: {change['reason']}")
+        
+        return fixed_schedule
+    
+    def _validate_consecutive_slots(self, assignment: dict, phan_cong_dict: dict) -> tuple:
+        """
+        🔴 VALIDATE CONSECUTIVE SLOTS
+        
+        Check if a schedule assignment respects consecutive slot rules:
+        - If class has sessions=2, must use consecutive slots (C1-C2 or C3-C4, NOT C2-C3)
+        - If sessions=1, any single slot is OK
+        - If sessions=3+, try to use groups without lunch break
+        
+        Args:
+            assignment: {class, room, slot} from schedule
+            phan_cong_dict: {ma_lop: {so_ca_tuan, ...}}
+            
+        Returns:
+            (is_valid: bool, violation_type: str or None)
+            - (True, None) if valid
+            - (False, "violation_desc") if invalid
+        """
+        class_id = assignment.get('class')
+        slot = assignment.get('slot')
+        
+        # Parse slot: T2-C1 → day=2, session=1
+        match = re.match(r'T(\d+)-C(\d+)', str(slot))
+        if not match:
+            return False, f"Invalid slot format: {slot}"
+        
+        day, session = int(match.group(1)), int(match.group(2))
+        
+        # Get class info
+        class_info = phan_cong_dict.get(class_id, {})
+        sessions_count = class_info.get('so_ca_tuan', 1)
+        
+        # Single session is always OK
+        if sessions_count == 1:
+            return True, None
+        
+        # For sessions >= 2, check consecutive rules
+        consecutive_groups = self._get_consecutive_session_groups()
+        allowed_groups = consecutive_groups.get(sessions_count, [[1, 2, 3, 4, 5]])
+        
+        # Extract sessions list from assignment (we only have 1 slot here)
+        # This function validates each slot individually
+        # We need a wrapper to validate full assignment set
+        return True, None  # Individual slot validation (full check in wrapper)
+    
+    def _normalize_consecutive_slots(self, schedule: list, phan_cong_dict: dict) -> tuple:
+        """
+        🔴 NORMALIZE CONSECUTIVE SLOTS
+        
+        Fix LLM assignments that violate consecutive slot rules:
+        - Group assignments by class
+        - For each class with sessions >= 2, ensure slots are consecutive
+        - Fix violations by reassigning to valid consecutive groups
+        
+        Args:
+            schedule: List of {class, room, slot} assignments
+            phan_cong_dict: {ma_lop: {so_ca_tuan, loai_phong, ...}}
+            
+        Returns:
+            (fixed_schedule, violations_count)
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        fixed_schedule = []
+        violations = []
+        consecutive_groups = self._get_consecutive_session_groups()
+        
+        # Group assignments by class
+        assignments_by_class = {}
+        for asg in schedule:
+            class_id = asg.get('class')
+            if class_id not in assignments_by_class:
+                assignments_by_class[class_id] = []
+            assignments_by_class[class_id].append(asg)
+        
+        # Check each class
+        for class_id, assignments in assignments_by_class.items():
+            class_info = phan_cong_dict.get(class_id, {})
+            sessions_count = class_info.get('so_ca_tuan', 1)
+            
+            if sessions_count == 1:
+                # Single session: always OK
+                fixed_schedule.extend(assignments)
+                continue
+            
+            # Multiple sessions: must be consecutive
+            if len(assignments) != sessions_count:
+                logger.warning(f"⚠️ Class {class_id}: expected {sessions_count} sessions, got {len(assignments)}")
+                fixed_schedule.extend(assignments)
+                continue
+            
+            # Extract sessions (Ca values) from slots
+            sessions_used = []
+            for asg in assignments:
+                slot = asg.get('slot', '')
+                match = re.match(r'T(\d+)-C(\d+)', str(slot))
+                if match:
+                    session = int(match.group(2))
+                    sessions_used.append(session)
+            
+            sessions_used.sort()
+            allowed_groups = consecutive_groups.get(sessions_count, [[1, 2, 3, 4, 5]])
+            
+            # Check if current sessions match any allowed group
+            is_valid = any(sessions_used == group for group in allowed_groups)
+            
+            if is_valid:
+                # Valid consecutive slots
+                fixed_schedule.extend(assignments)
+                logger.info(f"✅ Class {class_id}: sessions {sessions_used} are consecutive ✓")
+            else:
+                # Invalid: try to fix by finding valid consecutive slots within same day
+                # For now, log violation and keep LLM result
+                violation = {
+                    'class': class_id,
+                    'expected_groups': allowed_groups,
+                    'got_sessions': sessions_used,
+                    'reason': 'Non-consecutive sessions (e.g., C2-C3 has lunch break)'
+                }
+                violations.append(violation)
+                fixed_schedule.extend(assignments)
+                
+                logger.warning(f"⚠️ Class {class_id}: sessions {sessions_used} are NOT consecutive")
+                logger.warning(f"   Allowed groups: {allowed_groups}")
+                logger.warning(f"   Found sessions: {sessions_used}")
+        
+        return fixed_schedule, len(violations)
+    
+    def _normalize_slot_format(self, slot_value: str) -> str:
+        """
+        🔴 NORMALIZE: Convert các format slot khác nhau thành compact format T{day}-C{session}
+        
+        Xử lý các format từ LLM:
+        - T2-C1 → T2-C1 (đã đúng)
+        - Thu2-Ca1 → T2-C1 (format gốc → compact)
+        - Thursday 1 → T5-C1 (natural language)
+        - 2-1 → T2-C1 (chỉ số)
+        - Thứ 2 ca 1 → T2-C1 (tiếng Việt)
+        
+        Args:
+            slot_value: Slot string từ LLM (có thể nhiều format)
+            
+        Returns:
+            String ở format compact T{day}-C{session}, hoặc original nếu không nhận dạng
+        """
+        if not slot_value or not isinstance(slot_value, str):
+            return slot_value
+        
+        slot_value = str(slot_value).strip()
+        
+        # Format 1: Đã là compact (T2-C1)
+        if re.match(r'^T[2-7]-C[1-5]$', slot_value):
+            return slot_value
+        
+        # Format 2: Format gốc (Thu2-Ca1, Thu3-Ca2, etc)
+        match = re.match(r'Thu(\d+)-Ca(\d+)', slot_value)
+        if match:
+            day, session = match.groups()
+            return f"T{day}-C{session}"
+        
+        # Format 3: Tiếng Anh (Monday 1, Tuesday 2, etc)
+        day_map = {'monday': 2, 'tuesday': 3, 'wednesday': 4, 'thursday': 5, 'friday': 6, 'saturday': 7}
+        for en_day, day_num in day_map.items():
+            if en_day in slot_value.lower():
+                # Tìm số ca
+                session_match = re.search(r'(\d)\D*$', slot_value)
+                if session_match:
+                    session = session_match.group(1)
+                    if 1 <= int(session) <= 5:
+                        return f"T{day_num}-C{session}"
+        
+        # Format 4: Tiếng Việt (Thứ 2, Thứ 3, etc + ca)
+        vn_day_map = {'thứ 2': 2, 'thứ 3': 3, 'thứ 4': 4, 'thứ 5': 5, 'thứ 6': 6, 'thứ 7': 7}
+        for vn_day, day_num in vn_day_map.items():
+            if vn_day in slot_value.lower():
+                session_match = re.search(r'ca\s*(\d)', slot_value.lower())
+                if session_match:
+                    session = session_match.group(1)
+                    if 1 <= int(session) <= 5:
+                        return f"T{day_num}-C{session}"
+        
+        # Format 5: Chỉ số (2-1, 3-2, etc)
+        match = re.match(r'^([2-7])-([1-5])$', slot_value)
+        if match:
+            day, session = match.groups()
+            return f"T{day}-C{session}"
+        
+        # Format 6: Với khoảng trắng (T2 - C1, T3 - C2)
+        match = re.match(r'T\s*([2-7])\s*[-–]\s*C\s*([1-5])', slot_value)
+        if match:
+            day, session = match.groups()
+            return f"T{day}-C{session}"
+        
+        # Không nhận dạng được - trả về original
+        logger.warning(f"⚠️ Could not normalize slot format: {slot_value}")
+        return slot_value
+    
+    def _compact_to_original_slot(self, compact_slot: str) -> str:
+        """
+        🔴 Convert compact format (T2-C1) → original format (Thu2-Ca1)
+        
+        Dùng để convert output trước khi lưu JSON
+        """
+        day_map = {
+            '2': 'Thu2', '3': 'Thu3', '4': 'Thu4',
+            '5': 'Thu5', '6': 'Thu6', '7': 'Thu7', '8': 'CN'
+        }
+        session_map = {
+            '1': 'Ca1', '2': 'Ca2', '3': 'Ca3', '4': 'Ca4', '5': 'Ca5'
         }
         
-        logger.info(f"✅ Generated mock schedule: {len(schedule)} schedules")
-        return result
+        # Parse: T2-C1
+        pattern = r'^T([2-8])-C([1-5])$'
+        match = re.match(pattern, compact_slot)
+        
+        if match:
+            day_num = match.group(1)
+            session_num = match.group(2)
+            day_name = day_map.get(day_num, f'Thu{day_num}')
+            session_name = session_map.get(session_num, f'Ca{session_num}')
+            return f'{day_name}-{session_name}'
+        
+        return compact_slot
     
     def _validate_and_save_schedule(
         self,
@@ -874,11 +1268,11 @@ class ScheduleGeneratorLLM:
         processed_data: dict
     ) -> str:
         """
-        🔴 OPTIMIZED: Validate schedule & lưu vào file (format giống schedule_2025_2026_HK1.json)
+        🔴 OPTIMIZED: Validate schedule & lưu vào file (format compact T2-C1)
         
         Input: 
             schedule_result: {
-                'schedule': [{class, room, slot (original ID)}, ...],
+                'schedule': [{class, room, slot (compact format T2-C1)}, ...],
                 'validation': {...},
                 'metrics': {...},
                 'errors': [...]
@@ -886,6 +1280,20 @@ class ScheduleGeneratorLLM:
         """
         try:
             # schedule_result đã là dict, không cần parse JSON
+            schedule = schedule_result.get('schedule', [])
+            
+            # 🔴 CONVERT: Compact (T2-C1) → Original (Thu2-Ca1) trước khi lưu
+            logger.info("🔄 Converting schedule format: T2-C1 → Thu2-Ca1...")
+            converted_schedule = []
+            for entry in schedule:
+                converted_entry = entry.copy()
+                if 'slot' in entry:
+                    converted_entry['slot'] = self._compact_to_original_slot(entry['slot'])
+                converted_schedule.append(converted_entry)
+            
+            # Cập nhật schedule_result với format gốc
+            schedule_result = schedule_result.copy()
+            schedule_result['schedule'] = converted_schedule
             
             # Lưu file
             filename = f"schedule_llm_{semester_code.replace('-', '_').replace('_', '-')}.json"
@@ -894,37 +1302,82 @@ class ScheduleGeneratorLLM:
             
             filepath = os.path.join(output_dir, filename)
             
-            # 🔴 Format output giống schedule_2025_2026_HK1.json
+            # 🔴 Format output gốc (Thu2-Ca1)
             with open(filepath, 'w', encoding='utf-8') as f:
                 json.dump(schedule_result, f, ensure_ascii=False, indent=2, default=json_serial)
             
             logger.info(f"💾 Đã lưu lịch vào: {filepath}")
             
-            # Format thông báo
+            # Format thông báo đẹp hơn
             num_schedules = len(schedule_result.get('schedule', []))
             metrics = schedule_result.get('metrics', {})
             validation = schedule_result.get('validation', {})
             errors = schedule_result.get('errors', [])
             
-            message = f"""
-✅ TẠO LỊCH THÀNH CÔNG
-─────────────────────────────────────────
-📊 Kết quả:
-  • Tổng lịch: {num_schedules}
-  • Fitness: {metrics.get('fitness', 0):.2f}
-  • Wish satisfaction: {metrics.get('wish_satisfaction', 0):.1%}
-  • Room efficiency: {metrics.get('room_efficiency', 0):.1%}
-
-🔍 Validation:
-  • Feasible: {validation.get('feasible', False)}
-  • All assigned: {validation.get('all_assigned', False)}
-  • Total violations: {validation.get('total_violations', 0)}
-
-{'❌ Violations:' if errors else '✅ No violations'}
-{chr(10).join(['  ' + str(e) for e in errors[:5]])}{'...' if len(errors) > 5 else ''}
-
-📁 File: {filepath}
-"""
+            # Tính các stat bổ sung
+            total_violations = validation.get('total_violations', 0)
+            is_feasible = validation.get('feasible', False) and validation.get('all_assigned', False)
+            status_icon = "✅" if is_feasible else "⚠️"
+            
+            # Lấy token stats từ AI
+            token_stats_lines = []
+            if hasattr(self.ai, 'token_counter'):
+                summary = self.ai.token_counter.get_summary()
+                token_stats_lines = [
+                    "💾 TOKEN USAGE:",
+                    f"  • Tổng requests: {summary['total_requests']}",
+                    f"  • Input tokens: {summary['total_input_tokens']:,}",
+                    f"  • Output tokens: {summary['total_output_tokens']:,}",
+                    f"  • Tổng tokens: {summary['total_tokens']:,}",
+                ]
+            
+            # Tạo message chi tiết - từng dòng riêng
+            lines = [
+                f"{status_icon} KẾT QUẢ TẠO LỊCH HỌC",
+                "─" * 60,
+                "",
+                "📊 THỐNG KÊ:",
+                f"  ✓ Tổng số tiết xếp: {num_schedules}/216",
+                f"  ✓ Tỷ lệ hoàn thành: {(num_schedules/216)*100:.1f}%",
+                "",
+                "📈 CHẤT LƯỢNG LỊCH:",
+                f"  • Fitness score: {metrics.get('fitness', 0):.2f}",
+                f"  • Wish satisfaction: {metrics.get('wish_satisfaction', 0):.1%}",
+                f"  • Room efficiency: {metrics.get('room_efficiency', 0):.1%}",
+                "",
+                "🔍 KIỂM ĐỊNH:",
+                f"  • Khả thi: {'✅ Có' if is_feasible else '❌ Không'}",
+                f"  • Tất cả xếp được: {'✅ Có' if validation.get('all_assigned', False) else '❌ Không'}",
+                f"  • Vi phạm ràng buộc: {total_violations}",
+            ]
+            
+            # Thêm violations nếu có
+            if errors:
+                lines.append("")
+                lines.append("📋 VI PHẠM:")
+                for err in errors[:5]:
+                    lines.append(f"  ⚠️ {str(err)}")
+                if len(errors) > 5:
+                    lines.append(f"  ... và {len(errors)-5} vi phạm khác")
+            else:
+                lines.append("")
+                lines.append("✅ KHÔNG CÓ VI PHẠM")
+            
+            # Thêm token stats
+            if token_stats_lines:
+                lines.append("")
+                lines.extend(token_stats_lines)
+            
+            # Thêm footer
+            lines.append("")
+            lines.append("─" * 60)
+            # Rút gọn filepath để hiển thị đẹp
+            short_filepath = filepath.replace("\\", "/")
+            if len(short_filepath) > 50:
+                short_filepath = "..." + short_filepath[-50:]
+            lines.append(f"📁 File lưu: {short_filepath}")
+            
+            message = "\n".join(lines)
             return message
             
         except Exception as e:

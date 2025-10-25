@@ -2,12 +2,15 @@
 Views and ViewSets for Scheduling API
 """
 
+import os
+import logging
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
-import logging
+from django.http import JsonResponse
+import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -663,3 +666,45 @@ def handle_validate_and_save_helper(generator, ma_dot):
     except Exception as e:
         logger.exception(f"❌ Validate and save error: {e}")
         return {'success': False, 'error': str(e)}
+
+
+@api_view(['GET', 'POST'])
+def token_stats_api(request):
+    """
+    API endpoint để xem thống kê token usage
+    
+    Methods:
+        GET: Lấy thống kê token tóm tắt
+        POST: Export token report ra file markdown
+    """
+    try:
+        from .services.schedule_ai import ScheduleAI
+        
+        ai = ScheduleAI()
+        
+        if request.method == 'GET':
+            # Trả về JSON stats
+            summary = ai.get_token_summary()
+            return Response({
+                'success': True,
+                'message': 'Token usage statistics',
+                'data': summary
+            }, status=status.HTTP_200_OK)
+        
+        elif request.method == 'POST':
+            # Export report ra file
+            filepath = request.POST.get('filepath', None)
+            report = ai.export_token_report(filepath)
+            return Response({
+                'success': True,
+                'message': 'Token usage report exported',
+                'filepath': filepath or os.path.join(os.path.dirname(__file__), '../../output/token_usage_report.md'),
+                'report_preview': report[:500] + '...' if len(report) > 500 else report
+            }, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        logger.exception(f"❌ Token stats API error: {e}")
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_400_BAD_REQUEST)

@@ -4,9 +4,101 @@ LLM AI cho sắp xếp lịch học
 
 import os
 import re
+import logging
+import json
 from google import genai
 from google.genai import types
-from typing import List
+from typing import List, Dict, Any
+from datetime import datetime
+
+logger = logging.getLogger(__name__)
+
+
+class TokenCounter:
+    """Utility class để đếm tokens và thống kê sử dụng"""
+    
+    def __init__(self):
+        self.usage_history: List[Dict[str, Any]] = []
+        self.total_input_tokens = 0
+        self.total_output_tokens = 0
+    
+    def log_usage(self, prompt_len: int, context_len: int, max_output: int, response_len: int = 0, 
+                  timestamp: str = None, model: str = "gemini-2.5-flash"):
+        """
+        Log thống kê token usage
+        
+        Args:
+            prompt_len: Độ dài text của system instruction + user prompt (chars)
+            context_len: Độ dài dữ liệu context (chars)
+            max_output: Max output tokens được request
+            response_len: Độ dài response nhận được (chars)
+            timestamp: Thời gian request
+            model: Model name
+        """
+        # Ước tính token count (Google Gemini: ~1 token/4 chars cho text)
+        estimated_input_tokens = (prompt_len + context_len) // 4
+        estimated_output_tokens = response_len // 4 if response_len > 0 else max_output // 4
+        
+        usage_entry = {
+            'timestamp': timestamp or datetime.now().isoformat(),
+            'model': model,
+            'prompt_chars': prompt_len,
+            'context_chars': context_len,
+            'response_chars': response_len,
+            'estimated_input_tokens': estimated_input_tokens,
+            'estimated_output_tokens': estimated_output_tokens,
+            'max_output_tokens': max_output,
+            'total_estimated_tokens': estimated_input_tokens + estimated_output_tokens
+        }
+        
+        self.usage_history.append(usage_entry)
+        self.total_input_tokens += estimated_input_tokens
+        self.total_output_tokens += estimated_output_tokens
+        
+        return usage_entry
+    
+    def get_summary(self) -> Dict[str, Any]:
+        """Lấy thống kê tổng hợp"""
+        return {
+            'total_requests': len(self.usage_history),
+            'total_input_tokens': self.total_input_tokens,
+            'total_output_tokens': self.total_output_tokens,
+            'total_tokens': self.total_input_tokens + self.total_output_tokens,
+            'average_input_tokens': self.total_input_tokens // max(1, len(self.usage_history)),
+            'average_output_tokens': self.total_output_tokens // max(1, len(self.usage_history)),
+            'usage_history': self.usage_history
+        }
+    
+    def export_report(self, filepath: str = None) -> str:
+        """Export thống kê ra markdown file"""
+        summary = self.get_summary()
+        
+        report = f"""# 📊 LLM Token Usage Report
+Generated: {datetime.now().isoformat()}
+
+## Summary Statistics
+- **Total Requests**: {summary['total_requests']}
+- **Total Input Tokens**: {summary['total_input_tokens']:,}
+- **Total Output Tokens**: {summary['total_output_tokens']:,}
+- **Total Tokens**: {summary['total_tokens']:,}
+- **Average Input Tokens/Request**: {summary['average_input_tokens']:,}
+- **Average Output Tokens/Request**: {summary['average_output_tokens']:,}
+
+## Detailed Usage History
+| # | Timestamp | Model | Input (chars) | Context (chars) | Response (chars) | Est. Input Tokens | Est. Output Tokens | Total Est. Tokens |
+|---|-----------|-------|---------------|-----------------|------------------|-------------------|-------------------|-------------------|
+"""
+        for i, usage in enumerate(summary['usage_history'], 1):
+            report += f"| {i} | {usage['timestamp']} | {usage['model']} | {usage['prompt_chars']:,} | {usage['context_chars']:,} | {usage['response_chars']:,} | {usage['estimated_input_tokens']:,} | {usage['estimated_output_tokens']:,} | {usage['total_estimated_tokens']:,} |\n"
+        
+        report += f"\n## Token Estimation Notes\n- Using approximation: 1 token ≈ 4 characters (Gemini)\n- Actual token counts may vary\n- View Gemini API console for accurate counts\n"
+        
+        if filepath:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(report)
+            logger.info(f"📊 Token usage report exported to {filepath}")
+        
+        return report
 
 
 class ScheduleAI:
@@ -15,6 +107,7 @@ class ScheduleAI:
     def __init__(self):
         # Khởi tạo client theo tài liệu chính thức
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+        self.token_counter = TokenCounter()
         
         # System instruction cho SQL query generation
         self.sql_system_instruction = """Bạn là một chuyên gia về sắp xếp thời khóa biểu cho trường đại học với khả năng đọc và phân tích dữ liệu từ CSDL_TKB (Cơ sở dữ liệu Thời Khóa Biểu). 
@@ -58,144 +151,54 @@ class ScheduleAI:
 
 **Lưu ý:** Hệ thống sẽ tự động thực thi query và hiển thị kết quả thực tế."""
 
-        # System instruction cho schedule generation (compact, English)
-        self.schedule_system_instruction = """Assign classes to rooms + timeslots.
+        # System instruction cho schedule generation (hybrid optimized)
+        self.schedule_system_instruction = """Task: Generate Class Schedule (JSON Output)
+OUTPUT (JSON Only): {"schedule": [{"class": "...", "room": "...", "slot": "..."}]}
 
-INPUT:
-- classes: [{id, teacher, course, students, sessions, type: "LT"/"TH", credits, preferred_teachers, preferred_days}]
-- rooms: {LT: [...], TH: [...]}
-- timeslots: [...]
-- teacher_constraints: {teacher_id: {max_slots_per_week, max_slots_per_day, busy_slots, wishes}}
-- soft_constraints: [{name, description, weight}] (from tb_RANG_BUOC_MEM or tb_RANG_BUOC_TRONG_DOT)
+CRITICAL FORMATTING RULES
+JSON Only: Output ONLY the JSON object. No explanations.
+CLASS ID: Must be an EXACT COPY of the class.id (e.g., LOP-00000012).
+SLOT FORMAT: Must STRICTLY adhere to T[2-7]-C[1-5] (e.g., T2-C1, T7-C5). T8 (Sunday) is NOT allowed.
+COUNT: Total assignments in schedule MUST equal SUM(class.sessions).
 
-🔴 CRITICAL OUTPUT COUNT RULE:
-- EACH class appears EXACTLY `sessions` times in output
-- If class has sessions=1 → create 1 assignment
-- If class has sessions=2 → create 2 assignments (different slots)
-- TOTAL output count MUST = sum of all sessions
-- Example: 216 classes, each sessions=2 → output 432 assignments
-- DO NOT create more or fewer assignments than required
+INPUTS & CONTEXT
+Inputs: classes (with sessions, type, students, equipment_required), rooms (LT/TH), teacher_constraints, soft_constraints.
+Context: room_capacity[], room_type[], room_equipment[], teacher_preferences[].
 
-🔴 CRITICAL DISTRIBUTION RULES:
-- DISTRIBUTE classes EVENLY across ALL weekdays (Monday-Friday)
-- Target: ~30-40 classes per day MAXIMUM
-- DO NOT concentrate 70%+ classes on a single day
-- Use ALL available timeslots (35 total: 7 days × 5 slots)
-- Balance across Thu2, Thu3, Thu4, Thu5, Thu6 (Mon-Fri)
+SCHEDULING PRIORITIES (Strict Order)
+PRIORITY 1: HARD CONSTRAINTS (MANDATORY)
+Violation = Invalid Schedule.
 
-HARD CONSTRAINTS (MUST satisfy - violation = infeasible):
-HC-01 ⭐ CRITICAL - Teacher Conflicts:
-- One teacher CANNOT teach 2+ classes in same timeslot
-- BEFORE assigning a slot, CHECK if that teacher already teaches at that time
-- If conflict detected, IMMEDIATELY choose a DIFFERENT slot
-- Track: teacher_schedule = {teacher_id: [assigned_slots]}
+HC-01 (Teacher Conflict): One teacher, one slot.
+HC-02 (Room Conflict): One room, one slot.
+HC-03 (Room Type): class.type ("LT"/"TH") MUST match room_type.
+HC-04 (Capacity): room_capacity[room_id] MUST be >= class.students.
+HC-05 (Equipment): room_equipment[room_id] MUST contain ALL class.equipment_required.
+HC-06 (Teacher Busy): DO NOT schedule during teacher.busy_slots.
+HC-07 (Teacher Limits): Respect max_slots_per_day and max_slots_per_week.
+HC-08 (Session Rules - CRITICAL):
+A class must have EXACTLY sessions assignments.
+If sessions=2: MUST be a consecutive pair on the same day (e.g., T3-C1 & T3-C2, or T4-C3 & T4-C4).
+If sessions=3: MUST be a consecutive trio on the same day (e.g., T5-C1, T5-C2, T5-C3).
 
-HC-02 ⭐ CRITICAL - Room Conflicts:
-- One room CANNOT host 2+ classes at same timeslot
-- BEFORE assigning a slot, CHECK if that room already used at that time
-- If conflict detected, IMMEDIATELY choose a DIFFERENT slot
-- Track: room_schedule = {room_id: [assigned_slots]}
+Consecutive Rule: Valid groups are (C1,C2) and (C3,C4).
+FORBIDDEN: Do not schedule across lunch (e.g., T2-C2 & T2-C3 is INVALID).
 
-HC-03 ⭐ CRITICAL - Room Capacity:
-- Room capacity MUST be >= class size (students count)
-- Example: 80-student class → needs room with capacity >= 80
-- Check: context['room_capacity'][room_id] >= class['students']
-- DO NOT assign 80-student class to 45-capacity room
+PRIORITY 2: TEACHER PREFERENCES (Semi-Hard)
+Maximize assignments to teacher_preferences.preferred_slots.
+ONLY violate if it conflicts with Priority 1 (Hard Constraints).
+DO NOT violate preference to optimize Priority 3 or 4.
 
-HC-04 ⭐ CRITICAL - Room Equipment:
-- Room MUST have ALL required equipment from class
-- Example: Class needs "Máy chiếu, Micro" → room MUST have both
-- Check: context['room_equipment'][room_id] contains all items from class['equipment_required']
-- Equipment matching is case-insensitive and flexible (substring match)
-- DO NOT assign class to room missing required equipment
+PRIORITY 3: TEACHER COMPACTNESS (Optimize for Teacher)
+Goal: Minimize the number of days each teacher must come to campus.
+Rule: Try to group all classes for a single teacher into the fewest days possible.
+(Example: If a teacher has 3 classes, scheduling them on T2 and T3 is better than on T2, T4, and T5).
+This is secondary to P1 (Hard Constraints) and P2 (Preferences).
 
-HC-05 ⭐ CRITICAL - Room Type Matching (LT vs TH):
-- RULE: If class.type == "LT" → room MUST be in rooms['LT']
-- RULE: If class.type == "TH" → room MUST be in rooms['TH']
-- DO NOT ASSIGN: TH class to LT room (this is HC-05 violation)
-- DO NOT ASSIGN: LT class to TH room
-- Use context['room_type'][room_id] to verify room type
+PRIORITY 4: SCHOOL DISTRIBUTION & SOFT CONSTRAINTS (Low)
+School Distribution: Spread the total school schedule load EVENLY across T2-T7 (Mon-Sat). Avoid concentrating >70% of all classes on 1-2 days. (This balances the school's resources).
+Soft Constraints: After all above rules are met, optimize to minimize penalties based on soft_constraints weights (e.g., "Minimize Saturday")."""
 
-HC-06 - Theory Room Priority:
-- Large classes (full cohorts) should use theory rooms
-- Small practice groups use practice rooms
-- Check class.type field in input
-
-HC-07 - Teacher Weekly Limit:
-- Teacher max slots/week limit (if specified)
-- NEVER schedule any teacher on Sunday.
-
-HC-08 - Teacher Daily Limit:
-- Teacher max slots/day limit (if specified)
-
-HC-09 - Preferred Courses:
-- Respect teacher's preferred courses (if constraint enabled)
-
-HC-10 ⭐⭐ TEACHER PREFERENCE (NguyenVong) = SEMI-HARD CONSTRAINT:
-- Satisfy teacher preferences BEFORE soft constraints
-- Try best effort to schedule at preferred slots (from tb_NGUYEN_VONG)
-- Only violate IF conflict with HC-01 to HC-09 (hard constraints)
-- NEVER violate preference just to improve soft constraint score
-- Violation only = necessary compromise for hard constraint conflict (NOT a penalty)
-
-HC-11 - Busy Slots:
-- Do NOT schedule during teacher's busy slots
-
-HC-12 - Fixed Timeslots:
-- Some courses require specific timeslots
-
-HC-13 - Session-based Slot Assignment ⭐ CRITICAL:
-- Each class MUST have EXACTLY `sessions` number of assignments
-- sessions=1 → 1 assignment
-- sessions=2 → 2 assignments
-
-SOFT CONSTRAINTS (SHOULD satisfy - weighted score penalty):
-- Defined in context['soft_constraints'] with weight values
-- ONLY optimize AFTER all hard constraints + teacher preferences are satisfied
-- Violation = weight × count
-- Example: "Minimize Sunday classes" weight=0.5, violate 10 times → -5 points
-- Priority order: Hard Constraints > Teacher Preferences > Soft Constraints
-
-**NEW CONTEXT FIELDS (for better scheduling):**
-
-🔴 room_capacity: {"C201": 80, "F711": 45, ...}
-   Use: Check if room_capacity[room_id] >= class['students']
-
-🔴 room_type: {"C201": "LT", "Lab-01": "TH", ...}
-   Use: Verify room type matches class type
-
-🔴 class_capacity_requirements: {"LOP-00000001": 80, ...}
-   Use: Know which classes need large rooms
-
-🔴 teacher_preferences: [
-     {"teacher": "GV003", "preferred_slots": ["Thu2-Ca1", "Thu2-Ca2", ...], "total_preferences": 10}
-   ]
-   Use: Try to honor teacher wishes when possible
-
-**VERIFICATION CHECKLIST:**
-Before returning schedule:
-- ✅ Each class appears exactly `sessions` times
-- ✅ No teacher teaches 2+ classes in same slot (HC-01)
-- ✅ No room hosts 2+ classes in same slot (HC-02)
-- ✅ All rooms have capacity >= class size (HC-03)
-- ✅ All rooms have required equipment (HC-04)
-- ✅ All LT classes use LT rooms, all TH use TH rooms (HC-05/HC-06)
-- ✅ Teacher preferences honored when possible (HC-10)
-- ✅ Total output count = sum(sessions for all classes)
-
-OUTPUT FORMAT:
-{"schedule": [{"class": "LOP-xxx", "room": "Dxxx", "slot": "ThuX-CaY"}]}
-
-🔴 CRITICAL - CLASS ID FORMATTING:
-- COPY class IDs EXACTLY as provided in input
-- DO NOT remove leading zeros (e.g., LOP-00000012 → LOP-0000012 is WRONG)
-- DO NOT reformat or "simplify" IDs
-- Use EXACT string from input classes[i].id field
-
-IMPORTANT:
-- Each schedule item has 3 fields: class, room, slot (NO teacher field)
-- NO explanations, NO comments - Pure JSON only"""
-    
     def generate_sql_query(self, user_prompt: str) -> str:
         """
         Tạo SQL query từ user prompt - Sử dụng cho chat/query
@@ -234,11 +237,23 @@ IMPORTANT:
         Returns:
             Dict với format: {"schedule": [{"class": "ma_lop", "room": "ma_phong", "slot": "T2-C1"}, ...]}
         """
+        # 📊 Log token usage stats TRƯỚC request
+        prompt_len = len(self.schedule_system_instruction)
+        context_len = len(context_prompt)
+        max_output_tokens = 50000  
+        
+        logger.info(f"📊 === TOKEN STATS (BEFORE REQUEST) ===")
+        logger.info(f"   System Instruction: {prompt_len:,} chars (est. {prompt_len//4:,} tokens)")
+        logger.info(f"   User Context: {context_len:,} chars (est. {context_len//4:,} tokens)")
+        logger.info(f"   Combined Input: {prompt_len + context_len:,} chars (est. {(prompt_len + context_len)//4:,} tokens)")
+        logger.info(f"   Max Output Tokens Requested: {max_output_tokens:,}")
+        logger.warning(f"⚠️  IMPORTANT: If response is still truncated, consider reducing context size or max_output_tokens")
+        
         config = types.GenerateContentConfig(
             temperature=0.5,  # Cao hơn một chút để linh hoạt trong scheduling
             top_p=0.95,
             top_k=40,
-            max_output_tokens=100000,  # Tăng cao để chứa 216 schedules
+            max_output_tokens=max_output_tokens,  # Tăng cao để chứa 216 schedules
             response_mime_type="application/json",  # Yêu cầu trả về JSON
             system_instruction=self.schedule_system_instruction
         )
@@ -249,55 +264,192 @@ IMPORTANT:
             config=config
         )
         
-        # DEBUG: Log response details
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.info(f"🔍 AI raw response length: {len(response.text)} chars")
-        logger.info(f"🔍 AI response preview: {response.text[:500]}...")
+        # 🔴 CHECK: response.text is None?
+        if response.text is None:
+            logger.error(f"❌ CRITICAL: response.text is None!")
+            logger.error(f"   Response object: {response}")
+            logger.error(f"   Response candidates: {getattr(response, 'candidates', 'N/A')}")
+            
+            # Get finish_reason to understand why response is empty
+            finish_reason = None
+            try:
+                if hasattr(response, 'candidates') and response.candidates:
+                    candidate = response.candidates[0]
+                    finish_reason = getattr(candidate, 'finish_reason', None)
+                    finish_message = getattr(candidate, 'finish_message', None)
+                    content = getattr(candidate, 'content', None)
+                    
+                    logger.error(f"   Candidates count: {len(response.candidates)}")
+                    logger.error(f"   Finish reason: {finish_reason}")
+                    logger.error(f"   Finish message: {finish_message}")
+                    logger.error(f"   Content: {content}")
+                    
+                    if content:
+                        logger.error(f"   Content parts: {getattr(content, 'parts', [])}")
+            except Exception as e:
+                logger.warning(f"   Could not extract candidate info: {e}")
+            
+            # Return error response with finish reason
+            error_msg = f'LLM response.text is None'
+            if finish_reason:
+                error_msg += f' (finish_reason: {finish_reason})'
+            
+            fallback = {
+                'schedule': [],
+                'validation': {'errors': []},
+                'metrics': {},
+                'errors': [error_msg]
+            }
+            logger.warning(f"⚠️ Using fallback response due to None text")
+            return fallback
+            
+        # 🔴 CHECK: response.text is empty string?
+        if not response.text or response.text.strip() == '':
+            logger.error(f"❌ CRITICAL: response.text is empty!")
+            fallback = {
+                'schedule': [],
+                'validation': {'errors': []},
+                'metrics': {},
+                'errors': ['LLM response.text is empty']
+            }
+            logger.warning(f"⚠️ Using fallback response due to empty text")
+            return fallback
+            
         
-        # Khi response_mime_type='application/json', response.text đã là JSON string
-        import json
+        # �📊 Log token usage stats SAU khi nhận response
+        response_len = len(response.text)
+        usage_entry = self.token_counter.log_usage(
+            prompt_len=prompt_len,
+            context_len=context_len,
+            max_output=max_output_tokens,
+            response_len=response_len,
+            model='gemini-2.5-flash'
+        )
+        
+        logger.info(f"� === TOKEN STATS (AFTER RESPONSE) ===")
+        logger.info(f"   Response Length: {response_len:,} chars (est. {response_len//4:,} tokens)")
+        logger.info(f"   Total Input (Estimated): {usage_entry['estimated_input_tokens']:,} tokens")
+        logger.info(f"   Total Output (Estimated): {usage_entry['estimated_output_tokens']:,} tokens")
+        logger.info(f"   Total (Estimated): {usage_entry['total_estimated_tokens']:,} tokens")
+        
+        logger.info(f"🔍 AI raw response length: {len(response.text)} chars")
+        logger.info(f"🔍 AI response preview (first 500 chars): {response.text[:500]}...")
+        logger.info(f"🔍 AI response suffix (last 200 chars): ...{response.text[-200:]}")
+        
+        # Check if response looks truncated (ends with incomplete JSON)
+        if response.text.strip().endswith(',') or response.text.strip().endswith('[') or response.text.strip().endswith('{'):
+            logger.warning(f"⚠️ TRUNCATED: Response ends with incomplete character!")
+            logger.info(f"   Last 300 chars: {response.text[-300:]}")
+            
+            # Check finish_reason to confirm truncation
+            try:
+                if hasattr(response, 'candidates') and response.candidates:
+                    candidate = response.candidates[0]
+                    finish_reason = getattr(candidate, 'finish_reason', None)
+                    logger.error(f"❌ Response was truncated! finish_reason: {finish_reason}")
+                    logger.error(f"   Response length: {len(response.text)} chars (max was: 20000 tokens ≈ 80000 chars)")
+            except Exception as e:
+                logger.debug(f"Could not check finish_reason: {e}")
         
         # Try to parse JSON - nếu không thành công, try to extract JSON từ response
         try:
             parsed = json.loads(response.text)
-            logger.info(f"🔍 Parsed JSON keys: {list(parsed.keys())}")
+            logger.info(f"✅ Parsed JSON successfully. Keys: {list(parsed.keys())}")
             return parsed
         except json.JSONDecodeError as e:
             logger.warning(f"⚠️ Failed to parse JSON directly at position {e.pos}: {e.msg}")
-            logger.info(f"🔍 Response text around error: ...{response.text[max(0, e.pos-100):e.pos+100]}...")
+            logger.info(f"🔍 Response text around error (±100 chars): ...{response.text[max(0, e.pos-100):e.pos+100]}...")
+            logger.info(f"🔍 Response length: {len(response.text)} chars")
             logger.info(f"🔍 Trying to extract JSON from response...")
             
             # Try to find JSON block in response - be more aggressive
             import re
             
-            # Try multiple patterns to extract JSON
-            patterns = [
-                r'\{[\s\S]*\}(?=\s*$)',  # JSON object at end
-                r'\{[\s\S]*\}',  # Any JSON object
-                r'\[\s*\{[\s\S]*\}\s*\]',  # JSON array of objects
-            ]
+            # Strategy: Try to find the main JSON object by looking for key patterns
+            # 1. Try to find {"schedule": [...] as the main object start
+            # 2. Try to balance braces to find valid JSON
             
-            for pattern in patterns:
-                json_match = re.search(pattern, response.text)
-                if json_match:
+            extracted_json = None
+            
+            # Method 1: Look for JSON starting with "schedule" key
+            schedule_match = re.search(r'\{\s*"schedule"\s*:', response.text)
+            if schedule_match:
+                start_pos = schedule_match.start()
+                logger.info(f"🔍 Found 'schedule' key at position {start_pos}")
+                
+                # Try to extract from this position by counting braces
+                brace_count = 0
+                in_string = False
+                escape_next = False
+                end_pos = start_pos
+                
+                for i in range(start_pos, len(response.text)):
+                    char = response.text[i]
+                    
+                    if escape_next:
+                        escape_next = False
+                        continue
+                    
+                    if char == '\\':
+                        escape_next = True
+                        continue
+                    
+                    if char == '"' and not escape_next:
+                        in_string = not in_string
+                        continue
+                    
+                    if not in_string:
+                        if char == '{':
+                            brace_count += 1
+                        elif char == '}':
+                            brace_count -= 1
+                            if brace_count == 0:
+                                end_pos = i + 1
+                                break
+                
+                if brace_count == 0:
+                    json_str = response.text[start_pos:end_pos]
+                    logger.info(f"🔍 Extracted JSON by brace matching ({len(json_str)} chars)")
+                    
                     try:
-                        json_str = json_match.group(0)
-                        logger.info(f"🔍 Found potential JSON ({len(json_str)} chars)")
-                        
-                        # Try to fix common JSON issues
-                        # Remove trailing comma before closing bracket
+                        # Try to fix common JSON issues before parsing
+                        # 1. Fix unterminated strings by finding incomplete quotes
                         json_str = re.sub(r',\s*}', '}', json_str)
                         json_str = re.sub(r',\s*]', ']', json_str)
                         
                         parsed = json.loads(json_str)
-                        logger.info(f"✅ Successfully extracted and parsed JSON")
+                        logger.info(f"✅ Successfully extracted JSON via brace matching")
                         return parsed
                     except json.JSONDecodeError as e2:
-                        logger.warning(f"⚠️ Pattern {pattern} failed: {e2}")
+                        logger.warning(f"⚠️ Brace matching extraction failed: {e2}")
+                        extracted_json = None
+            
+            # Method 2: Try regex patterns if Method 1 failed
+            if not extracted_json:
+                patterns = [
+                    (r'\{\s*"schedule"[\s\S]*\}(?=\s*(?:,|}|]|$))', 'schedule key pattern'),
+                    (r'\{[^{}]*"schedule"[^{}]*\}', 'nested pattern'),
+                ]
+                
+                for pattern, desc in patterns:
+                    try:
+                        json_match = re.search(pattern, response.text)
+                        if json_match:
+                            json_str = json_match.group(0)
+                            logger.info(f"🔍 Found potential JSON via {desc} ({len(json_str)} chars)")
+                            
+                            # Try to fix common JSON issues
+                            json_str = re.sub(r',\s*}', '}', json_str)
+                            json_str = re.sub(r',\s*]', ']', json_str)
+                            
+                            parsed = json.loads(json_str)
+                            logger.info(f"✅ Successfully extracted JSON via {desc}")
+                            return parsed
+                    except json.JSONDecodeError as e2:
+                        logger.warning(f"⚠️ {desc} extraction failed: {e2}")
                         continue
             
-            logger.error(f"❌ No valid JSON found in response")
+            logger.error(f"❌ No valid JSON found in response after multiple extraction attempts")
             # Fallback: create empty schedule structure
             logger.warning(f"⚠️ Creating fallback schedule structure")
             fallback = {
@@ -543,3 +695,27 @@ IMPORTANT:
             lines.append("  Try to honor these when possible (soft constraint)")
         
         return "\n".join(lines)
+    
+    def export_token_report(self, filepath: str = None) -> str:
+        """
+        Export thống kê token usage ra markdown file
+        
+        Args:
+            filepath: Đường dẫn file output (nếu None, sẽ lưu vào output/token_usage_report.md)
+        
+        Returns:
+            Nội dung report dưới dạng string
+        """
+        if filepath is None:
+            filepath = os.path.join(os.path.dirname(__file__), '../../output/token_usage_report.md')
+        
+        # Tạo thư mục nếu chưa tồn tại
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        
+        report = self.token_counter.export_report(filepath)
+        logger.info(f"📊 Token usage report exported to {filepath}")
+        return report
+    
+    def get_token_summary(self) -> Dict[str, Any]:
+        """Lấy thống kê token tóm tắt"""
+        return self.token_counter.get_summary()
