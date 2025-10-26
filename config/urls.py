@@ -34,6 +34,9 @@ urlpatterns = [
     # Empty scheduling app include (all routes above)
     path('api/scheduling/', include('apps.scheduling.urls')),
     
+    # Sap Lich app (timetabling views)
+    path('', include('apps.sap_lich.urls')),
+    
     # DynAPI MUST BE LAST to prevent greedy matching of api/<model_name>/
     path('', include('apps.dyn_api.urls')),
     

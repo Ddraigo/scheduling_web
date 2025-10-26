@@ -131,10 +131,54 @@
         log(`Đang chạy thuật toán cho đợt: ${periodId}...`);
         log(`⏳ Đang xử lý...`);
         
-        // TODO: Implement algorithm call
-        setTimeout(() => {
-            log(`✅ Hoàn thành!`, 'success');
-        }, 2000);
+        const payload = {
+            ma_dot: periodId,
+            time_limit: 30,
+            seed: 42
+        };
+        
+        fetch("{% url 'sap_lich:algo_scheduler_run_api' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                log(`✅ Xếp lịch thành công!`, 'success');
+                log(`⏱️ Thời gian: ${data.elapsed_time.toFixed(2)}s`);
+                
+                if (data.ui_data) {
+                    const ui = data.ui_data;
+                    log(`📊 Kết quả:`);
+                    log(`  - Tổng buổi học: ${ui.total_lectures}`);
+                    log(`  - Chi phí quá tải phòng: ${ui.score_breakdown.room_capacity}`);
+                    log(`  - Chi phí ngày làm việc: ${ui.score_breakdown.min_working_days}`);
+                    log(`  - Chi phí compactness: ${ui.score_breakdown.curriculum_compactness}`);
+                    log(`  - Chi phí ổn định phòng: ${ui.score_breakdown.room_stability}`);
+                    log(`  - Tổng chi phí: ${ui.score_breakdown.total}`);
+                    
+                    if (ui.schedule_items.length > 0) {
+                        log(`Xem trước 10 item đầu:`);
+                        ui.schedule_items.forEach((item, idx) => {
+                            log(`  ${idx+1}. ${item.course_id} | GV: ${item.teacher} | Phòng: ${item.room} | Ngày ${item.day}, Ca ${item.slot}`);
+                        });
+                    }
+                }
+                
+                if (data.save_result) {
+                    log(`💾 Đã lưu ${data.save_result.created_count} buổi học vào DB`);
+                }
+            } else {
+                log(`❌ Lỗi: ${data.message || 'Lỗi không xác định'}`, 'error');
+            }
+        })
+        .catch(error => {
+            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
+        });
     }
     
     function viewResult() {
@@ -143,8 +187,22 @@
         if (!periodId) return;
         
         log(`Đang xem kết quả cho đợt: ${periodId}...`);
-        
-        // TODO: Implement result viewing
+        log(`ℹ️ Chạy "Chạy thuật toán" để tạo kết quả`);
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 </script>
 {% endblock %}

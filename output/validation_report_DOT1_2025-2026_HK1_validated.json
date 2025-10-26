@@ -1,0 +1,1604 @@
+{
+  "metadata": {
+    "file": "output/schedule_algorithm_DOT1_2025-2026_HK1.json",
+    "timestamp": "2025-10-26T12:53:35.417856",
+    "using_database": true
+  },
+  "summary": {
+    "total_assignments": 216,
+    "total_classes": 216,
+    "perfect_classes": 91,
+    "hard_violated_classes": 124,
+    "soft_violated_classes": 1
+  },
+  "hard_constraints": {
+    "violations_by_type": {
+      "HC-04": 96,
+      "HC-06": 18,
+      "HC-05": 70,
+      "RBM-PREF": 2
+    },
+    "violations_by_class": {
+      "LOP-00000157": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca2",
+          "detail": "Phòng F708 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000160": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca1",
+          "detail": "Phòng F406 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000027": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca3",
+          "detail": "Phòng A603 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu3-Ca3",
+          "detail": "Phòng A603 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000030": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca4",
+          "detail": "Phòng D105 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu3-Ca4",
+          "detail": "Phòng D105 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000033": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca3",
+          "detail": "Phòng D306 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu2-Ca3",
+          "detail": "Phòng D306 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000123": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca1",
+          "detail": "Phòng F706 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu7-Ca1",
+          "detail": "Phòng F706 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000159": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu4-Ca3",
+          "detail": "Phòng C308 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu4-Ca3",
+          "detail": "Phòng C308 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000161": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu4-Ca4",
+          "detail": "Phòng B207 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu4-Ca4",
+          "detail": "Phòng B207 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000166": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng A502 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000167": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu5-Ca2",
+          "detail": "Phòng C308 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu5-Ca2",
+          "detail": "Phòng C308 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000073": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca4",
+          "detail": "Phòng D407 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu6-Ca4",
+          "detail": "Phòng D407 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000075": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca5",
+          "detail": "Phòng B207 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu6-Ca5",
+          "detail": "Phòng B207 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000143": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca5",
+          "detail": "Phòng F403 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu7-Ca5",
+          "detail": "Phòng F403 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000199": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu5-Ca1",
+          "detail": "Phòng F301 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000200": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca2",
+          "detail": "Phòng B307 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca2",
+          "detail": "Phòng B307 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000202": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca1",
+          "detail": "Phòng F607 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000203": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca5",
+          "detail": "Phòng C308 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu3-Ca5",
+          "detail": "Phòng C308 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000181": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca4",
+          "detail": "Phòng B205 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000183": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu5-Ca5",
+          "detail": "Phòng D411 thiếu: pc"
+        }
+      ],
+      "LOP-00000187": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca3",
+          "detail": "Phòng F609 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000188": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca2",
+          "detail": "Phòng D306 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu3-Ca2",
+          "detail": "Phòng D306 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000190": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu4-Ca1",
+          "detail": "Phòng B203 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000004": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca1",
+          "detail": "Phòng F309 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000038": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng F308 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000088": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca5",
+          "detail": "Phòng F707 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000021": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu4-Ca4",
+          "detail": "Phòng C202 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu4-Ca4",
+          "detail": "Phòng C202 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000072": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca2",
+          "detail": "Phòng D102 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca2",
+          "detail": "Phòng D102 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000076": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu4-Ca1",
+          "detail": "Phòng D109 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu4-Ca1",
+          "detail": "Phòng D109 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000087": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca3",
+          "detail": "Phòng D301 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu3-Ca3",
+          "detail": "Phòng D301 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000090": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca5",
+          "detail": "Phòng D109 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca5",
+          "detail": "Phòng D109 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000104": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca5",
+          "detail": "Phòng A408 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000111": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca4",
+          "detail": "Phòng F607 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000112": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca3",
+          "detail": "Phòng D406 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu3-Ca3",
+          "detail": "Phòng D406 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000115": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca2",
+          "detail": "Phòng C204 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu3-Ca2",
+          "detail": "Phòng C204 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000122": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu5-Ca5",
+          "detail": "Phòng B308 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu5-Ca5",
+          "detail": "Phòng B308 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000136": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu5-Ca4",
+          "detail": "Phòng D404 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu5-Ca4",
+          "detail": "Phòng D404 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000163": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu4-Ca2",
+          "detail": "Phòng F405 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000170": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu5-Ca2",
+          "detail": "Phòng B211 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu5-Ca2",
+          "detail": "Phòng B211 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000172": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca3",
+          "detail": "Phòng D108 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000080": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca3",
+          "detail": "Phòng F506 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000101": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca2",
+          "detail": "Phòng D308 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000064": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu4-Ca4",
+          "detail": "Phòng D307 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu4-Ca4",
+          "detail": "Phòng D307 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000091": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca3",
+          "detail": "Phòng D208 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000006": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca2",
+          "detail": "Phòng D103 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca2",
+          "detail": "Phòng D103 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000062": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu4-Ca1",
+          "detail": "Phòng A708 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000068": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu4-Ca4",
+          "detail": "Phòng A709 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000092": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca3",
+          "detail": "Phòng B310 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu3-Ca3",
+          "detail": "Phòng B310 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000096": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca3",
+          "detail": "Phòng D303 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu6-Ca3",
+          "detail": "Phòng D303 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000125": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca1",
+          "detail": "Phòng D408 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000128": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca3",
+          "detail": "Phòng F502 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000176": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca5",
+          "detail": "Phòng D403 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca5",
+          "detail": "Phòng D403 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000177": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu4-Ca1",
+          "detail": "Phòng C405 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu4-Ca1",
+          "detail": "Phòng C405 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000185": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca4",
+          "detail": "Phòng D304 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu2-Ca4",
+          "detail": "Phòng D304 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000145": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca5",
+          "detail": "Phòng F706 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000059": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca2",
+          "detail": "Phòng A701 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000061": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca1",
+          "detail": "Phòng C302 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu2-Ca1",
+          "detail": "Phòng C302 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000063": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca3",
+          "detail": "Phòng C307 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu3-Ca3",
+          "detail": "Phòng C307 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000089": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca3",
+          "detail": "Phòng D209 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu6-Ca3",
+          "detail": "Phòng D209 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000126": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng C410 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng C410 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000047": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca3",
+          "detail": "Phòng F401 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000042": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca4",
+          "detail": "Phòng D108 thiếu: pc"
+        }
+      ],
+      "LOP-00000044": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca3",
+          "detail": "Phòng A709 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000051": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca2",
+          "detail": "Phòng B406 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu6-Ca2",
+          "detail": "Phòng B406 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000097": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng D311 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng D311 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000108": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca3",
+          "detail": "Phòng A404 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu7-Ca3",
+          "detail": "Phòng A404 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000124": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu4-Ca1",
+          "detail": "Phòng D108 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu4-Ca1",
+          "detail": "Phòng D108 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000131": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca1",
+          "detail": "Phòng F711 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000134": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca3",
+          "detail": "Phòng F309 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000135": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng C310 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng C310 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000144": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca5",
+          "detail": "Phòng D311 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu2-Ca5",
+          "detail": "Phòng D311 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000153": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca4",
+          "detail": "Phòng F408 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu2-Ca4",
+          "detail": "Phòng F408 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000154": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca3",
+          "detail": "Phòng F409 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu2-Ca3",
+          "detail": "Phòng F409 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000194": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca1",
+          "detail": "Phòng D208 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu7-Ca1",
+          "detail": "Phòng D208 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000195": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng F506 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng F506 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000197": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu5-Ca4",
+          "detail": "Phòng B205 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu5-Ca4",
+          "detail": "Phòng B205 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000207": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu5-Ca5",
+          "detail": "Phòng F505 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu5-Ca5",
+          "detail": "Phòng F505 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000216": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu5-Ca4",
+          "detail": "Phòng A703 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu5-Ca4",
+          "detail": "Phòng A703 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000020": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng D209 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng D209 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000058": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca2",
+          "detail": "Phòng D103 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu2-Ca2",
+          "detail": "Phòng D103 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000099": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca2",
+          "detail": "Phòng F702 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu3-Ca2",
+          "detail": "Phòng F702 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000100": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu4-Ca2",
+          "detail": "Phòng A506 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu4-Ca2",
+          "detail": "Phòng A506 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000155": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu2-Ca2",
+          "detail": "Phòng F608 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu2-Ca2",
+          "detail": "Phòng F608 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000209": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca3",
+          "detail": "Phòng A407 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000211": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca5",
+          "detail": "Phòng B302 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu6-Ca5",
+          "detail": "Phòng B302 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000213": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca5",
+          "detail": "Phòng D105 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu3-Ca5",
+          "detail": "Phòng D105 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000214": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu4-Ca2",
+          "detail": "Phòng D311 thiếu: pc"
+        }
+      ],
+      "LOP-00000041": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng F610 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000045": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca1",
+          "detail": "Phòng D108 thiếu: pc"
+        }
+      ],
+      "LOP-00000070": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca4",
+          "detail": "Phòng D205 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu3-Ca4",
+          "detail": "Phòng D205 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000137": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca2",
+          "detail": "Phòng F303 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000138": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca2",
+          "detail": "Phòng C403 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu6-Ca2",
+          "detail": "Phòng C403 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000139": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu7-Ca3",
+          "detail": "Phòng B408 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca3",
+          "detail": "Phòng B408 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000140": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu6-Ca1",
+          "detail": "Phòng A505 thiếu: tv, máy chiếu"
+        }
+      ],
+      "LOP-00000156": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu3-Ca3",
+          "detail": "Phòng B203 thiếu: tv, máy chiếu"
+        },
+        {
+          "type": "HC-06",
+          "name": "Lớp LT xếp phòng TH",
+          "slot": "Thu3-Ca3",
+          "detail": "Phòng B203 là TH (không phải LT)"
+        }
+      ],
+      "LOP-00000009": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu5-Ca4",
+          "detail": "Phòng C305 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu5-Ca4",
+          "detail": "Phòng C305 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000012": [
+        {
+          "type": "HC-04",
+          "name": "Thiếu thiết bị",
+          "slot": "Thu5-Ca5",
+          "detail": "Phòng C407 thiếu: pc"
+        },
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu5-Ca5",
+          "detail": "Phòng C407 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000071": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu4-Ca5",
+          "detail": "Phòng C407 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000120": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu2-Ca2",
+          "detail": "Phòng C205 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000184": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu5-Ca3",
+          "detail": "Phòng D402 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000001": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu2-Ca2",
+          "detail": "Phòng D209 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000032": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu2-Ca5",
+          "detail": "Phòng D309 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000074": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu4-Ca2",
+          "detail": "Phòng C409 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000114": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu5-Ca2",
+          "detail": "Phòng B401 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000169": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu5-Ca3",
+          "detail": "Phòng C305 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000077": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu6-Ca4",
+          "detail": "Phòng C303 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000007": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca2",
+          "detail": "Phòng D401 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000010": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng B406 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000016": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu4-Ca3",
+          "detail": "Phòng D101 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000094": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu5-Ca5",
+          "detail": "Phòng B207 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000065": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu4-Ca3",
+          "detail": "Phòng C209 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000175": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu4-Ca5",
+          "detail": "Phòng D201 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000178": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu6-Ca2",
+          "detail": "Phòng C301 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000029": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu4-Ca1",
+          "detail": "Phòng D406 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000085": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu4-Ca2",
+          "detail": "Phòng D301 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000148": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu2-Ca4",
+          "detail": "Phòng C306 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000050": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca4",
+          "detail": "Phòng B201 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000053": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca5",
+          "detail": "Phòng C301 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000056": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu5-Ca3",
+          "detail": "Phòng C409 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000117": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu2-Ca1",
+          "detail": "Phòng D103 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000212": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu6-Ca5",
+          "detail": "Phòng B301 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000019": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca3",
+          "detail": "Phòng C306 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000022": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu7-Ca2",
+          "detail": "Phòng B409 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000035": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu6-Ca5",
+          "detail": "Phòng C409 là LT (không phải TH)"
+        }
+      ],
+      "LOP-00000013": [
+        {
+          "type": "HC-05",
+          "name": "Lớp TH xếp phòng LT",
+          "slot": "Thu5-Ca5",
+          "detail": "Phòng D309 là LT (không phải TH)"
+        }
+      ]
+    }
+  },
+  "soft_constraints": {
+    "from_solver": {
+      "room_capacity_penalty": 0,
+      "min_working_days_penalty": 2592,
+      "curriculum_compactness_penalty": 138,
+      "room_stability_penalty": 0,
+      "lecture_clustering_penalty": 0,
+      "total_cost": 2732
+    },
+    "violations_by_class": {
+      "LOP-00000167": [
+        {
+          "type": "RBM-PREF",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu5-Ca2",
+          "detail": "GV Phạm Văn Khánh không mong muốn slot Thu5-Ca2"
+        }
+      ],
+      "LOP-00000168": [
+        {
+          "type": "RBM-PREF",
+          "name": "Vi phạm nguyện vọng GV",
+          "slot": "Thu7-Ca2",
+          "detail": "GV Phạm Văn Khánh không mong muốn slot Thu7-Ca2"
+        }
+      ]
+    }
+  },
+  "schedule_statistics": {
+    "total_assignments": 216,
+    "total_courses": 216,
+    "total_rooms_used": 137,
+    "total_teachers": 36,
+    "total_timeslots": 35,
+    "avg_teaching_days_per_teacher": 3.03,
+    "teacher_workload_distribution": {
+      "GV001": 11,
+      "GV002": 6,
+      "GV003": 11,
+      "GV004": 15,
+      "GV005": 8,
+      "GV006": 7,
+      "GV007": 5,
+      "GV008": 4,
+      "GV009": 7,
+      "GV010": 2,
+      "GV011": 6,
+      "GV012": 3,
+      "GV013": 14,
+      "GV014": 5,
+      "GV015": 5,
+      "GV016": 3,
+      "GV017": 5,
+      "GV020": 6,
+      "GV021": 5,
+      "GV023": 4,
+      "GV024": 13,
+      "GV025": 3,
+      "GV030": 4,
+      "GV031": 4,
+      "GV033": 5,
+      "GV035": 5,
+      "GV036": 1,
+      "GV037": 10,
+      "GV038": 4,
+      "GV040": 7,
+      "GV041": 5,
+      "GV043": 4,
+      "GV044": 2,
+      "GV045": 3,
+      "GV047": 11,
+      "GV048": 3
+    },
+    "room_usage_distribution": {
+      "A401": 2,
+      "A402": 1,
+      "A403": 1,
+      "A404": 1,
+      "A405": 1,
+      "A407": 2,
+      "A408": 1,
+      "A409": 1,
+      "A501": 2,
+      "A502": 2,
+      "A503": 1,
+      "A504": 1,
+      "A505": 2,
+      "A506": 1,
+      "A508": 2,
+      "A603": 1,
+      "A604": 1,
+      "A608": 1,
+      "A701": 1,
+      "A702": 1,
+      "A703": 2,
+      "A707": 1,
+      "A708": 2,
+      "A709": 2,
+      "B201": 1,
+      "B203": 2,
+      "B205": 2,
+      "B207": 3,
+      "B208": 1,
+      "B211": 1,
+      "B301": 1,
+      "B302": 1,
+      "B303": 1,
+      "B305": 2,
+      "B307": 1,
+      "B308": 1,
+      "B310": 1,
+      "B401": 1,
+      "B402": 1,
+      "B403": 4,
+      "B404": 2,
+      "B406": 3,
+      "B408": 3,
+      "B409": 1,
+      "C201": 1,
+      "C202": 1,
+      "C204": 1,
+      "C205": 1,
+      "C206": 1,
+      "C209": 1,
+      "C301": 2,
+      "C302": 1,
+      "C303": 1,
+      "C304": 1,
+      "C305": 2,
+      "C306": 2,
+      "C307": 1,
+      "C308": 3,
+      "C310": 1,
+      "C403": 1,
+      "C405": 1,
+      "C406": 1,
+      "C407": 2,
+      "C408": 1,
+      "C409": 3,
+      "C410": 1,
+      "D101": 1,
+      "D102": 1,
+      "D103": 3,
+      "D104": 2,
+      "D105": 2,
+      "D108": 4,
+      "D109": 2,
+      "D201": 3,
+      "D205": 1,
+      "D208": 2,
+      "D209": 4,
+      "D301": 2,
+      "D302": 1,
+      "D303": 1,
+      "D304": 1,
+      "D306": 2,
+      "D307": 2,
+      "D308": 1,
+      "D309": 2,
+      "D310": 1,
+      "D311": 3,
+      "D401": 1,
+      "D402": 1,
+      "D403": 1,
+      "D404": 1,
+      "D406": 2,
+      "D407": 1,
+      "D408": 1,
+      "D411": 1,
+      "F301": 1,
+      "F303": 2,
+      "F305": 2,
+      "F307": 2,
+      "F308": 1,
+      "F309": 4,
+      "F311": 1,
+      "F401": 3,
+      "F403": 1,
+      "F404": 1,
+      "F405": 1,
+      "F406": 1,
+      "F408": 2,
+      "F409": 2,
+      "F410": 1,
+      "F411": 1,
+      "F501": 1,
+      "F502": 1,
+      "F503": 1,
+      "F504": 2,
+      "F505": 2,
+      "F506": 2,
+      "F507": 2,
+      "F509": 1,
+      "F510": 1,
+      "F511": 1,
+      "F601": 1,
+      "F602": 1,
+      "F603": 1,
+      "F604": 2,
+      "F607": 4,
+      "F608": 2,
+      "F609": 1,
+      "F610": 1,
+      "F611": 1,
+      "F701": 2,
+      "F702": 4,
+      "F704": 2,
+      "F706": 2,
+      "F707": 2,
+      "F708": 2,
+      "F711": 2
+    }
+  },
+  "constraints_info": {
+    "hard_constraints": {
+      "no_room_conflict": true,
+      "no_teacher_conflict": true,
+      "no_curriculum_conflict": true,
+      "room_capacity_respected": "Soft constraint - có penalty nếu vượt"
+    },
+    "soft_constraints": {
+      "room_capacity": "0 violations",
+      "min_working_days": "2592 violations",
+      "curriculum_compactness": "138 violations",
+      "room_stability": "0 violations",
+      "lecture_clustering": "0 violations (tiết không liền nhau)"
+    }
+  }
+}

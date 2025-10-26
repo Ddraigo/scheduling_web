@@ -1,641 +1,6 @@
 {
   "schedule": [
     {
-      "class": "LOP-00000003",
-      "room": "A402",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000005",
-      "room": "A401",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000006",
-      "room": "A402",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000008",
-      "room": "A403",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000009",
-      "room": "A404",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000012",
-      "room": "A404",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000017",
-      "room": "A405",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000034",
-      "room": "A501",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000036",
-      "room": "A502",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000040",
-      "room": "A502",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000044",
-      "room": "B211",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000045",
-      "room": "A503",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000047",
-      "room": "B301",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000048",
-      "room": "A504",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000049",
-      "room": "A505",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000050",
-      "room": "B301",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000052",
-      "room": "A505",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000053",
-      "room": "B301",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000054",
-      "room": "A504",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000055",
-      "room": "A505",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000056",
-      "room": "B301",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000057",
-      "room": "A504",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000058",
-      "room": "A505",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000061",
-      "room": "A506",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000063",
-      "room": "A506",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000065",
-      "room": "B302",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000066",
-      "room": "A507",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000067",
-      "room": "A508",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000068",
-      "room": "B302",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000070",
-      "room": "A508",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000072",
-      "room": "A508",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000074",
-      "room": "B310",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000075",
-      "room": "A509",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000076",
-      "room": "A508",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000077",
-      "room": "B311",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000079",
-      "room": "A509",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000080",
-      "room": "B311",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000081",
-      "room": "A408",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000083",
-      "room": "B202",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000084",
-      "room": "B202",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000087",
-      "room": "A408",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000088",
-      "room": "B201",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000089",
-      "room": "A501",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000090",
-      "room": "A408",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000096",
-      "room": "A402",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000098",
-      "room": "B306",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000100",
-      "room": "B306",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000102",
-      "room": "A509",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000103",
-      "room": "A509",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000104",
-      "room": "B201",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000105",
-      "room": "A401",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000106",
-      "room": "A509",
-      "slot": "Thu3-Ca2"
-    },
-    {
-      "class": "LOP-00000108",
-      "room": "B306",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000109",
-      "room": "B307",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000110",
-      "room": "B307",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000111",
-      "room": "B201",
-      "slot": "Thu3-Ca2"
-    },
-    {
-      "class": "LOP-00000112",
-      "room": "A401",
-      "slot": "Thu3-Ca2"
-    },
-    {
-      "class": "LOP-00000113",
-      "room": "A509",
-      "slot": "Thu3-Ca3"
-    },
-    {
-      "class": "LOP-00000115",
-      "room": "A401",
-      "slot": "Thu3-Ca3"
-    },
-    {
-      "class": "LOP-00000116",
-      "room": "A509",
-      "slot": "Thu3-Ca4"
-    },
-    {
-      "class": "LOP-00000117",
-      "room": "B310",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000119",
-      "room": "A506",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000120",
-      "room": "B310",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000122",
-      "room": "A508",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000124",
-      "room": "B211",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000125",
-      "room": "B302",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000126",
-      "room": "A506",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000127",
-      "room": "A507",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000128",
-      "room": "B302",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000129",
-      "room": "A506",
-      "slot": "Thu3-Ca2"
-    },
-    {
-      "class": "LOP-00000130",
-      "room": "A507",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000135",
-      "room": "A601",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000137",
-      "room": "B309",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000138",
-      "room": "A602",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000139",
-      "room": "A602",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000140",
-      "room": "B309",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000141",
-      "room": "A602",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000142",
-      "room": "A602",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000143",
-      "room": "B310",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000149",
-      "room": "A603",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000150",
-      "room": "A603",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000151",
-      "room": "B307",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000152",
-      "room": "B307",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000153",
-      "room": "B402",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000154",
-      "room": "B402",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000156",
-      "room": "B402",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000158",
-      "room": "A409",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000159",
-      "room": "A409",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000161",
-      "room": "A409",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000164",
-      "room": "A409",
-      "slot": "Thu3-Ca2"
-    },
-    {
-      "class": "LOP-00000165",
-      "room": "A409",
-      "slot": "Thu3-Ca3"
-    },
-    {
-      "class": "LOP-00000167",
-      "room": "A409",
-      "slot": "Thu3-Ca4"
-    },
-    {
-      "class": "LOP-00000168",
-      "room": "A409",
-      "slot": "Thu3-Ca5"
-    },
-    {
-      "class": "LOP-00000171",
-      "room": "A508",
-      "slot": "Thu3-Ca3"
-    },
-    {
-      "class": "LOP-00000173",
-      "room": "A508",
-      "slot": "Thu3-Ca4"
-    },
-    {
-      "class": "LOP-00000174",
-      "room": "A508",
-      "slot": "Thu3-Ca5"
-    },
-    {
-      "class": "LOP-00000175",
-      "room": "B402",
-      "slot": "Thu2-Ca5"
-    },
-    {
-      "class": "LOP-00000176",
-      "room": "A507",
-      "slot": "Thu3-Ca2"
-    },
-    {
-      "class": "LOP-00000177",
-      "room": "A507",
-      "slot": "Thu3-Ca3"
-    },
-    {
-      "class": "LOP-00000178",
-      "room": "B402",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000179",
-      "room": "A507",
-      "slot": "Thu3-Ca4"
-    },
-    {
-      "class": "LOP-00000180",
-      "room": "A507",
-      "slot": "Thu3-Ca5"
-    },
-    {
-      "class": "LOP-00000182",
-      "room": "A407",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000183",
-      "room": "A407",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000185",
-      "room": "A403",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000189",
-      "room": "A407",
-      "slot": "Thu3-Ca2"
-    },
-    {
-      "class": "LOP-00000191",
-      "room": "A407",
-      "slot": "Thu3-Ca3"
-    },
-    {
-      "class": "LOP-00000192",
-      "room": "A407",
-      "slot": "Thu3-Ca4"
-    },
-    {
-      "class": "LOP-00000193",
-      "room": "B402",
-      "slot": "Thu3-Ca2"
-    },
-    {
-      "class": "LOP-00000194",
-      "room": "B307",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000195",
-      "room": "B307",
-      "slot": "Thu3-Ca2"
-    },
-    {
-      "class": "LOP-00000196",
-      "room": "B310",
-      "slot": "Thu3-Ca3"
-    },
-    {
-      "class": "LOP-00000197",
-      "room": "B301",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000198",
-      "room": "B310",
-      "slot": "Thu3-Ca4"
-    },
-    {
-      "class": "LOP-00000201",
-      "room": "A602",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000202",
-      "room": "B310",
-      "slot": "Thu4-Ca1"
-    },
-    {
-      "class": "LOP-00000203",
-      "room": "A602",
-      "slot": "Thu3-Ca2"
-    },
-    {
-      "class": "LOP-00000204",
-      "room": "A602",
-      "slot": "Thu3-Ca3"
-    },
-    {
-      "class": "LOP-00000205",
-      "room": "B310",
-      "slot": "Thu4-Ca2"
-    },
-    {
-      "class": "LOP-00000206",
-      "room": "B310",
-      "slot": "Thu4-Ca3"
-    },
-    {
-      "class": "LOP-00000207",
-      "room": "B402",
-      "slot": "Thu3-Ca3"
-    },
-    {
-      "class": "LOP-00000208",
-      "room": "B402",
-      "slot": "Thu3-Ca4"
-    },
-    {
-      "class": "LOP-00000209",
-      "room": "B311",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000211",
-      "room": "A604",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000212",
-      "room": "B306",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000215",
-      "room": "B306",
-      "slot": "Thu3-Ca2"
-    },
-    {
-      "class": "LOP-00000216",
-      "room": "B402",
-      "slot": "Thu3-Ca5"
-    },
-    {
       "class": "LOP-00000001",
       "room": "B201",
       "slot": "Thu2-Ca1"
@@ -647,78 +12,73 @@
     },
     {
       "class": "LOP-00000004",
-      "room": "B201",
+      "room": "B206",
       "slot": "Thu2-Ca2"
     },
     {
       "class": "LOP-00000007",
-      "room": "B206",
+      "room": "B207",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000008",
+      "room": "A405",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000009",
+      "room": "A406",
       "slot": "Thu2-Ca1"
     },
     {
       "class": "LOP-00000010",
-      "room": "B206",
+      "room": "B208",
       "slot": "Thu2-Ca2"
     },
     {
       "class": "LOP-00000011",
-      "room": "A403",
+      "room": "A407",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000012",
+      "room": "A408",
       "slot": "Thu2-Ca2"
     },
     {
       "class": "LOP-00000013",
-      "room": "B207",
+      "room": "B209",
       "slot": "Thu2-Ca1"
     },
     {
       "class": "LOP-00000014",
-      "room": "A405",
+      "room": "A409",
       "slot": "Thu2-Ca3"
     },
     {
       "class": "LOP-00000015",
-      "room": "A406",
+      "room": "A501",
       "slot": "Thu2-Ca3"
     },
     {
       "class": "LOP-00000016",
-      "room": "B207",
+      "room": "B301",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000017",
+      "room": "A502",
       "slot": "Thu2-Ca4"
     },
     {
       "class": "LOP-00000018",
-      "room": "A406",
+      "room": "A503",
       "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000019",
-      "room": "B208",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000020",
-      "room": "A407",
-      "slot": "Thu2-Ca2"
     },
     {
       "class": "LOP-00000021",
-      "room": "A408",
-      "slot": "Thu3-Ca3"
-    },
-    {
-      "class": "LOP-00000022",
-      "room": "B208",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000023",
-      "room": "A408",
-      "slot": "Thu3-Ca4"
-    },
-    {
-      "class": "LOP-00000024",
-      "room": "A407",
-      "slot": "Thu2-Ca4"
+      "room": "A505",
+      "slot": "Thu2-Ca5"
     },
     {
       "class": "LOP-00000025",
@@ -727,358 +87,998 @@
     },
     {
       "class": "LOP-00000026",
-      "room": "B202",
+      "room": "B210",
       "slot": "Thu2-Ca2"
     },
     {
-      "class": "LOP-00000027",
-      "room": "B210",
+      "class": "LOP-00000032",
+      "room": "B309",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000034",
+      "room": "A602",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000035",
+      "room": "B201",
       "slot": "Thu2-Ca1"
     },
     {
-      "class": "LOP-00000028",
+      "class": "LOP-00000036",
+      "room": "A603",
+      "slot": "Thu2-Ca5"
+    },
+    {
+      "class": "LOP-00000037",
+      "room": "A604",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000040",
+      "room": "A606",
+      "slot": "Thu3-Ca2"
+    },
+    {
+      "class": "LOP-00000041",
+      "room": "B401",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000043",
+      "room": "A608",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000044",
+      "room": "B402",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000045",
+      "room": "A609",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000046",
+      "room": "A701",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000047",
+      "room": "B406",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000048",
+      "room": "A702",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000049",
+      "room": "A703",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000050",
+      "room": "B407",
+      "slot": "Thu3-Ca2"
+    },
+    {
+      "class": "LOP-00000051",
+      "room": "A704",
+      "slot": "Thu3-Ca2"
+    },
+    {
+      "class": "LOP-00000052",
+      "room": "A705",
+      "slot": "Thu3-Ca2"
+    },
+    {
+      "class": "LOP-00000053",
+      "room": "B408",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000054",
+      "room": "A706",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000055",
+      "room": "A707",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000056",
+      "room": "B409",
+      "slot": "Thu3-Ca4"
+    },
+    {
+      "class": "LOP-00000057",
+      "room": "A708",
+      "slot": "Thu3-Ca4"
+    },
+    {
+      "class": "LOP-00000058",
+      "room": "A709",
+      "slot": "Thu3-Ca4"
+    },
+    {
+      "class": "LOP-00000060",
+      "room": "B203",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000061",
+      "room": "B204",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000062",
+      "room": "B411",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000064",
+      "room": "B303",
+      "slot": "Thu2-Ca5"
+    },
+    {
+      "class": "LOP-00000067",
+      "room": "B305",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000069",
+      "room": "B403",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000070",
+      "room": "B404",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000074",
+      "room": "C208",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000083",
+      "room": "C211",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000084",
+      "room": "C301",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000085",
+      "room": "C306",
+      "slot": "Thu2-Ca5"
+    },
+    {
+      "class": "LOP-00000086",
+      "room": "A602",
+      "slot": "Thu3-Ca2"
+    },
+    {
+      "class": "LOP-00000089",
+      "room": "A604",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000090",
+      "room": "A506",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000096",
+      "room": "F308",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000097",
+      "room": "C310",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000098",
+      "room": "C311",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000099",
+      "room": "C401",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000100",
+      "room": "C402",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000103",
+      "room": "F310",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000104",
+      "room": "C404",
+      "slot": "Thu3-Ca4"
+    },
+    {
+      "class": "LOP-00000105",
+      "room": "A601",
+      "slot": "Thu3-Ca2"
+    },
+    {
+      "class": "LOP-00000106",
+      "room": "F311",
+      "slot": "Thu2-Ca5"
+    },
+    {
+      "class": "LOP-00000107",
+      "room": "C405",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000108",
+      "room": "C406",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000110",
+      "room": "C408",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000111",
+      "room": "C409",
+      "slot": "Thu3-Ca5"
+    },
+    {
+      "class": "LOP-00000115",
+      "room": "A601",
+      "slot": "Thu3-Ca4"
+    },
+    {
+      "class": "LOP-00000121",
+      "room": "F405",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000124",
+      "room": "D103",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000125",
+      "room": "D104",
+      "slot": "Thu2-Ca5"
+    },
+    {
+      "class": "LOP-00000126",
+      "room": "B203",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000127",
+      "room": "B303",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000128",
+      "room": "D105",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000129",
+      "room": "B203",
+      "slot": "Thu2-Ca5"
+    },
+    {
+      "class": "LOP-00000130",
+      "room": "B303",
+      "slot": "Thu3-Ca2"
+    },
+    {
+      "class": "LOP-00000135",
+      "room": "F409",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000137",
+      "room": "D109",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000138",
+      "room": "F411",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000139",
+      "room": "F501",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000140",
+      "room": "D110",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000141",
+      "room": "F502",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000142",
+      "room": "F503",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000144",
+      "room": "D202",
+      "slot": "Thu3-Ca5"
+    },
+    {
+      "class": "LOP-00000149",
+      "room": "F506",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000150",
+      "room": "F507",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000152",
+      "room": "D206",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000154",
+      "room": "D209",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000156",
+      "room": "D301",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000158",
+      "room": "A401",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000163",
+      "room": "A601",
+      "slot": "Thu3-Ca5"
+    },
+    {
+      "class": "LOP-00000165",
+      "room": "A401",
+      "slot": "Thu3-Ca2"
+    },
+    {
+      "class": "LOP-00000166",
+      "room": "D411",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000174",
+      "room": "F602",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000179",
+      "room": "F605",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000180",
+      "room": "B303",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000181",
+      "room": "D306",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000183",
+      "room": "F607",
+      "slot": "Thu2-Ca5"
+    },
+    {
+      "class": "LOP-00000185",
+      "room": "B303",
+      "slot": "Thu3-Ca4"
+    },
+    {
+      "class": "LOP-00000186",
+      "room": "F608",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000187",
+      "room": "F609",
+      "slot": "Thu3-Ca2"
+    },
+    {
+      "class": "LOP-00000188",
+      "room": "F610",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000189",
+      "room": "F611",
+      "slot": "Thu3-Ca4"
+    },
+    {
+      "class": "LOP-00000190",
+      "room": "F701",
+      "slot": "Thu3-Ca5"
+    },
+    {
+      "class": "LOP-00000191",
+      "room": "F702",
+      "slot": "Thu4-Ca1"
+    },
+    {
+      "class": "LOP-00000192",
+      "room": "F703",
+      "slot": "Thu4-Ca2"
+    },
+    {
+      "class": "LOP-00000194",
+      "room": "D310",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000195",
+      "room": "D401",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000197",
+      "room": "D403",
+      "slot": "Thu3-Ca5"
+    },
+    {
+      "class": "LOP-00000198",
+      "room": "D404",
+      "slot": "Thu2-Ca5"
+    },
+    {
+      "class": "LOP-00000199",
+      "room": "D405",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000202",
+      "room": "D406",
+      "slot": "Thu3-Ca2"
+    },
+    {
+      "class": "LOP-00000205",
+      "room": "D407",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000206",
+      "room": "D409",
+      "slot": "Thu3-Ca4"
+    },
+    {
+      "class": "LOP-00000207",
+      "room": "D410",
+      "slot": "Thu3-Ca5"
+    },
+    {
+      "class": "LOP-00000208",
+      "room": "B201",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000209",
+      "room": "B202",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000210",
+      "room": "A401",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000211",
+      "room": "A402",
+      "slot": "Thu3-Ca2"
+    },
+    {
+      "class": "LOP-00000212",
+      "room": "B206",
+      "slot": "Thu3-Ca2"
+    },
+    {
+      "class": "LOP-00000213",
+      "room": "A403",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000214",
+      "room": "A404",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000215",
+      "room": "B207",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000216",
+      "room": "B208",
+      "slot": "Thu3-Ca4"
+    },
+    {
+      "class": "LOP-00000003",
+      "room": "A402",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000005",
+      "room": "A403",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000006",
+      "room": "A404",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000019",
+      "room": "B306",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000020",
+      "room": "A504",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000022",
+      "room": "B307",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000023",
+      "room": "A506",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000024",
+      "room": "A507",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000027",
       "room": "B211",
       "slot": "Thu2-Ca1"
     },
     {
+      "class": "LOP-00000028",
+      "room": "B302",
+      "slot": "Thu2-Ca1"
+    },
+    {
       "class": "LOP-00000029",
-      "room": "B209",
+      "room": "B308",
       "slot": "Thu2-Ca1"
     },
     {
       "class": "LOP-00000030",
-      "room": "A409",
-      "slot": "Thu2-Ca2"
+      "room": "A508",
+      "slot": "Thu2-Ca3"
     },
     {
       "class": "LOP-00000031",
-      "room": "A501",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000032",
-      "room": "B201",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000033",
-      "room": "A409",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000035",
-      "room": "B209",
+      "room": "A509",
       "slot": "Thu2-Ca2"
     },
     {
-      "class": "LOP-00000037",
-      "room": "A502",
+      "class": "LOP-00000033",
+      "room": "A601",
       "slot": "Thu2-Ca4"
     },
     {
       "class": "LOP-00000038",
       "room": "B201",
-      "slot": "Thu2-Ca4"
+      "slot": "Thu2-Ca3"
     },
     {
       "class": "LOP-00000039",
-      "room": "A409",
-      "slot": "Thu4-Ca1"
-    },
-    {
-      "class": "LOP-00000041",
-      "room": "B210",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000042",
-      "room": "A503",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000043",
-      "room": "A503",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000046",
-      "room": "A504",
+      "room": "A605",
       "slot": "Thu2-Ca5"
     },
     {
-      "class": "LOP-00000051",
-      "room": "A504",
-      "slot": "Thu2-Ca1"
+      "class": "LOP-00000042",
+      "room": "A607",
+      "slot": "Thu2-Ca5"
     },
     {
       "class": "LOP-00000059",
-      "room": "B302",
+      "room": "B410",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000063",
+      "room": "B205",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000065",
+      "room": "C201",
       "slot": "Thu2-Ca1"
     },
     {
-      "class": "LOP-00000060",
-      "room": "A506",
-      "slot": "Thu2-Ca4"
-    },
-    {
-      "class": "LOP-00000062",
-      "room": "B302",
-      "slot": "Thu3-Ca2"
-    },
-    {
-      "class": "LOP-00000064",
-      "room": "A507",
-      "slot": "Thu3-Ca2"
-    },
-    {
-      "class": "LOP-00000069",
-      "room": "A507",
+      "class": "LOP-00000066",
+      "room": "B304",
       "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000068",
+      "room": "C206",
+      "slot": "Thu2-Ca2"
     },
     {
       "class": "LOP-00000071",
-      "room": "B310",
+      "room": "C207",
+      "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000072",
+      "room": "B405",
       "slot": "Thu2-Ca1"
     },
     {
       "class": "LOP-00000073",
-      "room": "A509",
+      "room": "F301",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000075",
+      "room": "F302",
       "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000076",
+      "room": "F303",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000077",
+      "room": "C209",
+      "slot": "Thu2-Ca1"
     },
     {
       "class": "LOP-00000078",
-      "room": "A509",
+      "room": "F304",
+      "slot": "Thu2-Ca2"
+    },
+    {
+      "class": "LOP-00000079",
+      "room": "F305",
       "slot": "Thu2-Ca3"
     },
     {
-      "class": "LOP-00000082",
-      "room": "A401",
-      "slot": "Thu3-Ca4"
+      "class": "LOP-00000080",
+      "room": "C210",
+      "slot": "Thu3-Ca1"
     },
     {
-      "class": "LOP-00000085",
-      "room": "B209",
+      "class": "LOP-00000081",
+      "room": "A506",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000082",
+      "room": "A601",
       "slot": "Thu2-Ca5"
     },
     {
-      "class": "LOP-00000086",
-      "room": "A501",
+      "class": "LOP-00000087",
+      "room": "A505",
+      "slot": "Thu3-Ca1"
+    },
+    {
+      "class": "LOP-00000088",
+      "room": "C307",
       "slot": "Thu3-Ca1"
     },
     {
       "class": "LOP-00000091",
-      "room": "B206",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000092",
-      "room": "A402",
+      "room": "B201",
       "slot": "Thu2-Ca4"
     },
     {
+      "class": "LOP-00000092",
+      "room": "F306",
+      "slot": "Thu2-Ca5"
+    },
+    {
       "class": "LOP-00000093",
-      "room": "A402",
+      "room": "F307",
       "slot": "Thu3-Ca1"
     },
     {
       "class": "LOP-00000094",
-      "room": "B206",
+      "room": "C309",
       "slot": "Thu3-Ca2"
     },
     {
       "class": "LOP-00000095",
-      "room": "A401",
-      "slot": "Thu3-Ca5"
-    },
-    {
-      "class": "LOP-00000097",
-      "room": "B306",
-      "slot": "Thu2-Ca1"
-    },
-    {
-      "class": "LOP-00000099",
-      "room": "B306",
-      "slot": "Thu2-Ca1"
+      "room": "A605",
+      "slot": "Thu3-Ca3"
     },
     {
       "class": "LOP-00000101",
-      "room": "B311",
-      "slot": "Thu3-Ca5"
+      "room": "C403",
+      "slot": "Thu3-Ca2"
     },
     {
-      "class": "LOP-00000107",
-      "room": "B311",
+      "class": "LOP-00000102",
+      "room": "F309",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000109",
+      "room": "C407",
       "slot": "Thu2-Ca1"
+    },
+    {
+      "class": "LOP-00000112",
+      "room": "A601",
+      "slot": "Thu4-Ca1"
+    },
+    {
+      "class": "LOP-00000113",
+      "room": "F401",
+      "slot": "Thu3-Ca4"
     },
     {
       "class": "LOP-00000114",
-      "room": "B201",
+      "room": "C410",
+      "slot": "Thu3-Ca2"
+    },
+    {
+      "class": "LOP-00000116",
+      "room": "F402",
       "slot": "Thu3-Ca5"
     },
     {
-      "class": "LOP-00000118",
-      "room": "A506",
+      "class": "LOP-00000117",
+      "room": "C411",
       "slot": "Thu2-Ca1"
     },
     {
-      "class": "LOP-00000121",
-      "room": "A507",
+      "class": "LOP-00000118",
+      "room": "F403",
       "slot": "Thu2-Ca2"
     },
     {
+      "class": "LOP-00000119",
+      "room": "F404",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000120",
+      "room": "D101",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000122",
+      "room": "F406",
+      "slot": "Thu2-Ca4"
+    },
+    {
       "class": "LOP-00000123",
-      "room": "B210",
-      "slot": "Thu4-Ca2"
+      "room": "D102",
+      "slot": "Thu3-Ca1"
     },
     {
       "class": "LOP-00000131",
-      "room": "B308",
+      "room": "D106",
       "slot": "Thu2-Ca1"
     },
     {
       "class": "LOP-00000132",
-      "room": "A601",
+      "room": "F407",
       "slot": "Thu2-Ca2"
     },
     {
       "class": "LOP-00000133",
-      "room": "A601",
+      "room": "F408",
       "slot": "Thu2-Ca4"
     },
     {
       "class": "LOP-00000134",
-      "room": "B308",
+      "room": "D107",
       "slot": "Thu2-Ca5"
     },
     {
       "class": "LOP-00000136",
-      "room": "A508",
-      "slot": "Thu2-Ca1"
+      "room": "F410",
+      "slot": "Thu2-Ca5"
     },
     {
-      "class": "LOP-00000144",
-      "room": "B307",
-      "slot": "Thu2-Ca3"
+      "class": "LOP-00000143",
+      "room": "D201",
+      "slot": "Thu3-Ca5"
     },
     {
       "class": "LOP-00000145",
-      "room": "B401",
+      "room": "B201",
       "slot": "Thu2-Ca1"
     },
     {
       "class": "LOP-00000146",
-      "room": "A603",
+      "room": "F504",
       "slot": "Thu2-Ca2"
     },
     {
       "class": "LOP-00000147",
-      "room": "A603",
+      "room": "F505",
       "slot": "Thu2-Ca5"
     },
     {
       "class": "LOP-00000148",
-      "room": "B401",
+      "room": "B201",
       "slot": "Thu3-Ca1"
     },
     {
+      "class": "LOP-00000151",
+      "room": "D205",
+      "slot": "Thu2-Ca5"
+    },
+    {
+      "class": "LOP-00000153",
+      "room": "D207",
+      "slot": "Thu2-Ca1"
+    },
+    {
       "class": "LOP-00000155",
-      "room": "B402",
-      "slot": "Thu2-Ca3"
+      "room": "D210",
+      "slot": "Thu2-Ca2"
     },
     {
       "class": "LOP-00000157",
-      "room": "F301",
-      "slot": "Thu4-Ca3"
+      "room": "D108",
+      "slot": "Thu3-Ca4"
+    },
+    {
+      "class": "LOP-00000159",
+      "room": "A401",
+      "slot": "Thu3-Ca5"
     },
     {
       "class": "LOP-00000160",
-      "room": "F301",
-      "slot": "Thu4-Ca4"
+      "room": "D211",
+      "slot": "Thu4-Ca1"
+    },
+    {
+      "class": "LOP-00000161",
+      "room": "A401",
+      "slot": "Thu4-Ca2"
     },
     {
       "class": "LOP-00000162",
-      "room": "A408",
+      "room": "A505",
       "slot": "Thu4-Ca1"
     },
     {
-      "class": "LOP-00000163",
-      "room": "F302",
-      "slot": "Thu4-Ca1"
+      "class": "LOP-00000164",
+      "room": "A401",
+      "slot": "Thu4-Ca3"
     },
     {
-      "class": "LOP-00000166",
-      "room": "F302",
+      "class": "LOP-00000167",
+      "room": "F508",
+      "slot": "Thu4-Ca4"
+    },
+    {
+      "class": "LOP-00000168",
+      "room": "F509",
       "slot": "Thu4-Ca5"
     },
     {
       "class": "LOP-00000169",
-      "room": "B310",
-      "slot": "Thu3-Ca1"
-    },
-    {
-      "class": "LOP-00000170",
-      "room": "A508",
+      "room": "D302",
       "slot": "Thu3-Ca2"
     },
     {
+      "class": "LOP-00000170",
+      "room": "F510",
+      "slot": "Thu3-Ca3"
+    },
+    {
+      "class": "LOP-00000171",
+      "room": "F511",
+      "slot": "Thu3-Ca4"
+    },
+    {
       "class": "LOP-00000172",
-      "room": "B310",
+      "room": "D303",
+      "slot": "Thu3-Ca5"
+    },
+    {
+      "class": "LOP-00000173",
+      "room": "F601",
       "slot": "Thu4-Ca1"
     },
     {
-      "class": "LOP-00000181",
-      "room": "B202",
+      "class": "LOP-00000175",
+      "room": "D304",
+      "slot": "Thu2-Ca4"
+    },
+    {
+      "class": "LOP-00000176",
+      "room": "F603",
       "slot": "Thu2-Ca5"
     },
     {
-      "class": "LOP-00000184",
-      "room": "B202",
+      "class": "LOP-00000177",
+      "room": "F604",
       "slot": "Thu3-Ca1"
     },
     {
-      "class": "LOP-00000186",
-      "room": "A407",
-      "slot": "Thu3-Ca5"
+      "class": "LOP-00000178",
+      "room": "D305",
+      "slot": "Thu3-Ca2"
     },
     {
-      "class": "LOP-00000187",
-      "room": "F303",
-      "slot": "Thu4-Ca1"
+      "class": "LOP-00000182",
+      "room": "F606",
+      "slot": "Thu2-Ca4"
     },
     {
-      "class": "LOP-00000188",
-      "room": "A407",
-      "slot": "Thu4-Ca2"
-    },
-    {
-      "class": "LOP-00000190",
-      "room": "F303",
+      "class": "LOP-00000184",
+      "room": "D307",
       "slot": "Thu4-Ca3"
     },
     {
-      "class": "LOP-00000199",
-      "room": "B310",
-      "slot": "Thu3-Ca5"
+      "class": "LOP-00000193",
+      "room": "D309",
+      "slot": "Thu2-Ca3"
+    },
+    {
+      "class": "LOP-00000196",
+      "room": "D402",
+      "slot": "Thu2-Ca5"
     },
     {
       "class": "LOP-00000200",
-      "room": "A509",
+      "room": "F704",
+      "slot": "Thu4-Ca1"
+    },
+    {
+      "class": "LOP-00000201",
+      "room": "F705",
+      "slot": "Thu4-Ca2"
+    },
+    {
+      "class": "LOP-00000203",
+      "room": "F706",
+      "slot": "Thu4-Ca3"
+    },
+    {
+      "class": "LOP-00000204",
+      "room": "F707",
       "slot": "Thu4-Ca4"
-    },
-    {
-      "class": "LOP-00000210",
-      "room": "A604",
-      "slot": "Thu2-Ca2"
-    },
-    {
-      "class": "LOP-00000213",
-      "room": "A604",
-      "slot": "Thu2-Ca3"
-    },
-    {
-      "class": "LOP-00000214",
-      "room": "A604",
-      "slot": "Thu2-Ca3"
     }
   ],
   "validation": {
@@ -1087,120 +1087,80 @@
     "assigned_classes": 216,
     "total_assignments": 216,
     "actual_assignments": 216,
-    "hard_violations": 18,
+    "hard_violations": 10,
     "soft_violations": [],
     "violations": [
       {
         "code": "HC-02",
-        "message": "Phòng A407 có 2 lớp cùng slot T2-C4",
-        "class": "LOP-00000024"
-      },
-      {
-        "code": "HC-02",
-        "message": "Phòng B210 có 2 lớp cùng slot T2-C1",
-        "class": "LOP-00000041"
-      },
-      {
-        "code": "HC-02",
-        "message": "Phòng A504 có 2 lớp cùng slot T2-C5",
-        "class": "LOP-00000046"
-      },
-      {
-        "code": "HC-02",
-        "message": "Phòng A507 có 2 lớp cùng slot T3-C2",
-        "class": "LOP-00000064"
-      },
-      {
-        "code": "HC-02",
-        "message": "Phòng A509 có 2 lớp cùng slot T2-C3",
-        "class": "LOP-00000078"
-      },
-      {
-        "code": "HC-02",
-        "message": "Phòng B306 có 2 lớp cùng slot T2-C1",
-        "class": "LOP-00000099"
-      },
-      {
-        "code": "HC-02",
-        "message": "Phòng B311 có 2 lớp cùng slot T2-C1",
-        "class": "LOP-00000107"
-      },
-      {
-        "code": "HC-02",
-        "message": "Phòng A507 có 2 lớp cùng slot T2-C2",
-        "class": "LOP-00000121"
-      },
-      {
-        "code": "HC-02",
-        "message": "Phòng A508 có 2 lớp cùng slot T2-C1",
-        "class": "LOP-00000136"
+        "message": "Phòng B201 có 2 lớp cùng slot T2-C1",
+        "class": "LOP-00000035"
       },
       {
         "code": "HC-04",
-        "message": "Phòng F301 thiếu thiết bị: tv, máy chiếu",
-        "class": "LOP-00000157"
-      },
-      {
-        "code": "HC-04",
-        "message": "Phòng F301 thiếu thiết bị: tv, máy chiếu",
-        "class": "LOP-00000160"
-      },
-      {
-        "code": "HC-04",
-        "message": "Phòng F302 thiếu thiết bị: tv, máy chiếu",
+        "message": "Phòng A601 thiếu thiết bị: tv, máy chiếu",
         "class": "LOP-00000163"
       },
       {
         "code": "HC-04",
-        "message": "Phòng F302 thiếu thiết bị: tv, máy chiếu",
+        "message": "Phòng D411 thiếu thiết bị: tv, máy chiếu",
         "class": "LOP-00000166"
       },
       {
-        "code": "HC-02",
-        "message": "Phòng B310 có 2 lớp cùng slot T4-C1",
-        "class": "LOP-00000172"
-      },
-      {
         "code": "HC-04",
-        "message": "Phòng F303 thiếu thiết bị: tv, máy chiếu",
+        "message": "Phòng F609 thiếu thiết bị: tv, máy chiếu",
         "class": "LOP-00000187"
       },
       {
         "code": "HC-04",
-        "message": "Phòng F303 thiếu thiết bị: tv, máy chiếu",
+        "message": "Phòng F701 thiếu thiết bị: tv, máy chiếu",
         "class": "LOP-00000190"
       },
       {
         "code": "HC-02",
-        "message": "Phòng A604 có 2 lớp cùng slot T2-C2",
-        "class": "LOP-00000210"
+        "message": "Phòng B201 có 2 lớp cùng slot T2-C1",
+        "class": "LOP-00000145"
       },
       {
         "code": "HC-02",
-        "message": "Phòng A604 có 2 lớp cùng slot T2-C3",
-        "class": "LOP-00000214"
+        "message": "Phòng B201 có 2 lớp cùng slot T3-C1",
+        "class": "LOP-00000148"
+      },
+      {
+        "code": "HC-04",
+        "message": "Phòng D108 thiếu thiết bị: tv, máy chiếu",
+        "class": "LOP-00000157"
+      },
+      {
+        "code": "HC-03",
+        "message": "Phòng D211 không đủ sức chứa (80 > 45)",
+        "class": "LOP-00000160"
+      },
+      {
+        "code": "HC-04",
+        "message": "Phòng D211 thiếu thiết bị: tv, máy chiếu",
+        "class": "LOP-00000160"
       }
     ],
     "metrics": {
       "total_assignments": 216,
       "total_teachers": 36,
-      "avg_teaching_days_per_teacher": 1.75,
+      "avg_teaching_days_per_teacher": 1.72,
       "teacher_workload_distribution": {
-        "GV009": 2,
+        "GV001": 3,
         "GV003": 3,
+        "GV005": 2,
         "GV006": 2,
         "GV010": 1,
         "GV016": 1,
+        "GV024": 3,
         "GV011": 2,
-        "GV023": 1,
-        "GV021": 1,
-        "GV025": 1,
-        "GV015": 2
+        "GV023": 2,
+        "GV025": 1
       }
     },
     "summary": {
-      "ok_classes": 198,
-      "conflicted_classes": 18,
+      "ok_classes": 207,
+      "conflicted_classes": 9,
       "preference_satisfaction": 100.0
     }
   },
