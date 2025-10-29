@@ -224,13 +224,13 @@ class MetricsCalculator:
         Returns:
             int: Số lần vi phạm (0 = tuân thủ)
         """
-        method_name = f'_check_{constraint_id.lower()}'
+        method_name = f'_check_{constraint_id.lower().replace("-", "_")}'
         
         # Gọi method tương ứng với constraint
         if hasattr(self, method_name):
             return getattr(self, method_name)()
         else:
-            logger.warning(f"⚠️ Constraint checker not implemented: {constraint_id}")
+            logger.warning(f"Constraint checker not implemented: {constraint_id}")
             return 0
     
     # ============ CONSTRAINT CHECKERS ============

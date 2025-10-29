@@ -79,10 +79,15 @@ class AlgorithmsDataAdapter:
         rooms: List[Room] = []
         room_by_id: Dict[str, int] = {}
         for idx, phong in enumerate(phong_hocs):
+            # Xác định loại phòng: "TH" (Thực hành) hoặc "LT" (Lý thuyết - mặc định)
+            room_type = "TH" if ("Thực hành" in (phong.loai_phong or "") or "TH" in (phong.loai_phong or "")) else "LT"
+            
             room = Room(
                 id=phong.ma_phong,
                 capacity=phong.suc_chua,
-                index=idx
+                index=idx,
+                equipment=phong.thiet_bi or "",  # Thiết bị của phòng
+                room_type=room_type  # Loại phòng
             )
             rooms.append(room)
             room_by_id[phong.ma_phong] = idx
@@ -115,6 +120,26 @@ class AlgorithmsDataAdapter:
             # Mặc định = 4 (theo yêu cầu để tăng tính phân tán)
             min_working_days_default = 5
             
+            # Xác định loại lớp: "TH" (Thực hành) hoặc "LT" (Lý thuyết)
+            # Logic SQL:
+            #   IF SoTietTH = 0 THEN 'LT'
+            #   ELSE IF SoTietLT = 0 AND SoTietTH > 0 THEN 'TH'
+            #   ELSE IF SoTietLT > 0 AND SoTietTH > 0 AND To_MH = 0 THEN 'LT'
+            #   ELSE 'TH'
+            mon_hoc = lop_mh.ma_mon_hoc
+            so_tiet_lt = mon_hoc.so_tiet_lt or 0
+            so_tiet_th = mon_hoc.so_tiet_th or 0
+            to_mh = lop_mh.to_mh or 0
+            
+            if so_tiet_th == 0:
+                course_type = "LT"
+            elif so_tiet_lt == 0 and so_tiet_th > 0:
+                course_type = "TH"
+            elif so_tiet_lt > 0 and so_tiet_th > 0 and to_mh == 0:
+                course_type = "LT"
+            else:
+                course_type = "TH"
+            
             course = Course(
                 id=lop_mh.ma_lop,
                 teacher=teacher_id,
@@ -123,7 +148,9 @@ class AlgorithmsDataAdapter:
                 students=lop_mh.so_luong_sv or 0,
                 index=idx,
                 teacher_index=teacher_by_id[teacher_id],
-                so_ca_tuan=lop_mh.so_ca_tuan  # Số ca/tuần từ database
+                so_ca_tuan=lop_mh.so_ca_tuan,  # Số ca/tuần từ database
+                equipment=lop_mh.thiet_bi_yeu_cau or "",  # Thiết bị yêu cầu
+                course_type=course_type  # Loại lớp
             )
             courses.append(course)
             course_by_id[lop_mh.ma_lop] = idx
@@ -279,18 +306,29 @@ class AlgorithmsDataAdapter:
             feasible_periods.append(available)
             unavailability.append(sunday_slots.copy())  # Block Chủ Nhật cho tất cả courses
 
-        # Xây dựng course_room_preference (sắp xếp phòng theo khả năng chứa sinh viên)
+        # Xây dựng course_room_preference (sắp xếp phòng theo: equipment match → room type match → capacity)
         course_room_preference: List[List[int]] = []
         for course in courses:
             students = course.students
-            room_order = sorted(
-                range(len(rooms)),
-                key=lambda r: (
-                    0 if rooms[r].capacity >= students else 1,
-                    abs(rooms[r].capacity - students),
-                    rooms[r].capacity,
-                ),
-            )
+            course_equip = course.equipment or ""
+            course_type = course.course_type
+            
+            def room_sort_key(r_idx):
+                room = rooms[r_idx]
+                # Priority 1: Equipment match (0 = match, 1 = no match)
+                equip_match = 0 if course_equip == "" or course_equip in room.equipment else 1
+                # Priority 2: Room type match (0 = match, 1 = no match)
+                type_match = 0 if room.room_type == course_type else 1
+                # Priority 3: Capacity (0 = adequate, 1 = undersized)
+                capacity_ok = 0 if room.capacity >= students else 1
+                # Priority 4: Capacity difference
+                capacity_diff = abs(room.capacity - students)
+                # Priority 5: Room capacity
+                capacity = room.capacity
+                
+                return (equip_match, type_match, capacity_ok, capacity_diff, capacity)
+            
+            room_order = sorted(range(len(rooms)), key=room_sort_key)
             course_room_preference.append(room_order)
 
         # Xây dựng lecture_neighbors (từ teacher và curriculum)

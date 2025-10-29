@@ -220,4 +220,3 @@ __marimo__/
 !requirements.txt
 !README.md
 src/
-*.sql

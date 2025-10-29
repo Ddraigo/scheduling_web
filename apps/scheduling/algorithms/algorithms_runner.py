@@ -8,7 +8,8 @@ import logging
 from typing import Dict, Tuple, Optional
 
 from .algorithms_core import (
-    build_initial_solution, rebuild_state, TimetableState, ScoreBreakdown
+    build_initial_solution, rebuild_state, TimetableState, ScoreBreakdown,
+    run_metaheuristic, ProgressLogger
 )
 from .algorithms_data_adapter import AlgorithmsDataAdapter
 
@@ -109,12 +110,22 @@ class AlgorithmsRunner:
                     'elapsed_time': time.time() - self.start_time,
                 }
 
-            # 4. Sử dụng trực tiếp lời giải khởi tạo (hoặc có thể thêm local search ở đây)
-            # Tạm thời không chạy metaheuristic để đơn giản, chỉ lấy kết quả khởi tạo
-            best_assignments = state.clone_assignments()
-            best_breakdown = state.score_breakdown()
+            # 4. Chạy metaheuristic optimization (Tabu Search hoặc Simulated Annealing)
+            logger.info("Đang chạy metaheuristic optimization...")
+            opt_start = time.time()
+            opt_budget = max(5.0, self.time_limit - (opt_start - self.start_time))
             
-            logger.info(f"✅ Lời giải cuối cùng, cost={best_breakdown.total}")
+            with ProgressLogger() as progress_logger:
+                best_assignments, best_breakdown = run_metaheuristic(
+                    state,
+                    meta="SA",  # Simulated Annealing
+                    rng=self.rng,
+                    logger=progress_logger,
+                    remaining_time=opt_budget
+                )
+            
+            opt_elapsed = time.time() - opt_start
+            logger.info(f"✅ Metaheuristic hoàn thành trong {opt_elapsed:.2f}s, cost={best_breakdown.total}")
             logger.info(f"   - Room capacity: {best_breakdown.room_capacity}")
             logger.info(f"   - Min working days: {best_breakdown.min_working_days}")
             logger.info(f"   - Curriculum compactness: {best_breakdown.curriculum_compactness}")

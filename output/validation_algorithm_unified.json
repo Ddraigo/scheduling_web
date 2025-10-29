@@ -1,0 +1,2659 @@
+{
+  "timestamp": "2025-10-30T00:03:06.271317",
+  "source": "Algorithm",
+  "ma_dot": "DOT1_2025-2026_HK1",
+  "summary": {
+    "total_classes": 216,
+    "ok_classes": 201,
+    "violated_classes": 15,
+    "hard_violated_classes": 15,
+    "soft_violated_classes": 1,
+    "ok_percentage": 93.06,
+    "violated_percentage": 6.94,
+    "hard_violated_percentage": 6.94,
+    "soft_violated_percentage": 0.46
+  },
+  "constraint_stats": {
+    "hard_constraints": {
+      "HC-04_EQUIPMENT_MISMATCH": 15
+    },
+    "soft_constraints": {
+      "RBM-NGUYEN-VONG": 1
+    }
+  },
+  "fitness": {
+    "hard_fitness": 0.0,
+    "soft_fitness": 0.0,
+    "combined_fitness": 0.9652777777777778,
+    "status": "INFEASIBLE"
+  },
+  "hard_violations": [
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000157",
+      "room": "F509",
+      "required": "TV, Máy chiếu",
+      "available": "PC",
+      "message": "Room F509 missing equipment: TV, Máy chiếu"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000160",
+      "room": "F608",
+      "required": "TV, Máy chiếu",
+      "available": "PC",
+      "message": "Room F608 missing equipment: TV, Máy chiếu"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000166",
+      "room": "B405",
+      "required": "TV, Máy chiếu",
+      "available": "PC",
+      "message": "Room B405 missing equipment: TV, Máy chiếu"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000187",
+      "room": "F408",
+      "required": "TV, Máy chiếu",
+      "available": "PC",
+      "message": "Room F408 missing equipment: TV, Máy chiếu"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000188",
+      "room": "D211",
+      "required": "PC",
+      "available": "Thiết bị về điện",
+      "message": "Room D211 missing equipment: PC"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000190",
+      "room": "F611",
+      "required": "TV, Máy chiếu",
+      "available": "PC",
+      "message": "Room F611 missing equipment: TV, Máy chiếu"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000005",
+      "room": "D411",
+      "required": "PC",
+      "available": "Thiết bị về điện",
+      "message": "Room D411 missing equipment: PC"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000081",
+      "room": "D411",
+      "required": "PC",
+      "available": "Thiết bị về điện",
+      "message": "Room D411 missing equipment: PC"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000082",
+      "room": "D108",
+      "required": "PC",
+      "available": "Thiết bị về điện",
+      "message": "Room D108 missing equipment: PC"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000095",
+      "room": "D111",
+      "required": "PC",
+      "available": "Thiết bị về điện",
+      "message": "Room D111 missing equipment: PC"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000163",
+      "room": "F411",
+      "required": "TV, Máy chiếu",
+      "available": "PC",
+      "message": "Room F411 missing equipment: TV, Máy chiếu"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000092",
+      "room": "D308",
+      "required": "PC",
+      "available": "Thiết bị về điện",
+      "message": "Room D308 missing equipment: PC"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000129",
+      "room": "D408",
+      "required": "PC",
+      "available": "Thiết bị về điện",
+      "message": "Room D408 missing equipment: PC"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000046",
+      "room": "D111",
+      "required": "PC",
+      "available": "Thiết bị về điện",
+      "message": "Room D111 missing equipment: PC"
+    },
+    {
+      "type": "HC-04_EQUIPMENT_MISMATCH",
+      "class": "LOP-00000049",
+      "room": "D111",
+      "required": "PC",
+      "available": "Thiết bị về điện",
+      "message": "Room D111 missing equipment: PC"
+    }
+  ],
+  "soft_violations": [
+    {
+      "type": "RBM-NGUYEN-VONG",
+      "class": "LOP-00000206",
+      "slot": "Thu6-Ca2",
+      "teacher": "GV013",
+      "message": "Class LOP-00000206 assigned to non-preferred slot Thu6-Ca2 for teacher GV013"
+    }
+  ],
+  "violations_by_class": {
+    "LOP-00000005": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000005",
+        "room": "D411",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D411 missing equipment: PC"
+      }
+    ],
+    "LOP-00000046": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000046",
+        "room": "D111",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D111 missing equipment: PC"
+      }
+    ],
+    "LOP-00000049": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000049",
+        "room": "D111",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D111 missing equipment: PC"
+      }
+    ],
+    "LOP-00000081": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000081",
+        "room": "D411",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D411 missing equipment: PC"
+      }
+    ],
+    "LOP-00000082": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000082",
+        "room": "D108",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D108 missing equipment: PC"
+      }
+    ],
+    "LOP-00000092": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000092",
+        "room": "D308",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D308 missing equipment: PC"
+      }
+    ],
+    "LOP-00000095": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000095",
+        "room": "D111",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D111 missing equipment: PC"
+      }
+    ],
+    "LOP-00000129": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000129",
+        "room": "D408",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D408 missing equipment: PC"
+      }
+    ],
+    "LOP-00000157": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000157",
+        "room": "F509",
+        "required": "TV, Máy chiếu",
+        "available": "PC",
+        "message": "Room F509 missing equipment: TV, Máy chiếu"
+      }
+    ],
+    "LOP-00000160": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000160",
+        "room": "F608",
+        "required": "TV, Máy chiếu",
+        "available": "PC",
+        "message": "Room F608 missing equipment: TV, Máy chiếu"
+      }
+    ],
+    "LOP-00000163": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000163",
+        "room": "F411",
+        "required": "TV, Máy chiếu",
+        "available": "PC",
+        "message": "Room F411 missing equipment: TV, Máy chiếu"
+      }
+    ],
+    "LOP-00000166": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000166",
+        "room": "B405",
+        "required": "TV, Máy chiếu",
+        "available": "PC",
+        "message": "Room B405 missing equipment: TV, Máy chiếu"
+      }
+    ],
+    "LOP-00000187": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000187",
+        "room": "F408",
+        "required": "TV, Máy chiếu",
+        "available": "PC",
+        "message": "Room F408 missing equipment: TV, Máy chiếu"
+      }
+    ],
+    "LOP-00000188": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000188",
+        "room": "D211",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D211 missing equipment: PC"
+      }
+    ],
+    "LOP-00000190": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000190",
+        "room": "F611",
+        "required": "TV, Máy chiếu",
+        "available": "PC",
+        "message": "Room F611 missing equipment: TV, Máy chiếu"
+      }
+    ]
+  },
+  "violations_by_type": {
+    "HC-04_EQUIPMENT_MISMATCH": [
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000157",
+        "room": "F509",
+        "required": "TV, Máy chiếu",
+        "available": "PC",
+        "message": "Room F509 missing equipment: TV, Máy chiếu"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000160",
+        "room": "F608",
+        "required": "TV, Máy chiếu",
+        "available": "PC",
+        "message": "Room F608 missing equipment: TV, Máy chiếu"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000166",
+        "room": "B405",
+        "required": "TV, Máy chiếu",
+        "available": "PC",
+        "message": "Room B405 missing equipment: TV, Máy chiếu"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000187",
+        "room": "F408",
+        "required": "TV, Máy chiếu",
+        "available": "PC",
+        "message": "Room F408 missing equipment: TV, Máy chiếu"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000188",
+        "room": "D211",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D211 missing equipment: PC"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000190",
+        "room": "F611",
+        "required": "TV, Máy chiếu",
+        "available": "PC",
+        "message": "Room F611 missing equipment: TV, Máy chiếu"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000005",
+        "room": "D411",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D411 missing equipment: PC"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000081",
+        "room": "D411",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D411 missing equipment: PC"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000082",
+        "room": "D108",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D108 missing equipment: PC"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000095",
+        "room": "D111",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D111 missing equipment: PC"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000163",
+        "room": "F411",
+        "required": "TV, Máy chiếu",
+        "available": "PC",
+        "message": "Room F411 missing equipment: TV, Máy chiếu"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000092",
+        "room": "D308",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D308 missing equipment: PC"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000129",
+        "room": "D408",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D408 missing equipment: PC"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000046",
+        "room": "D111",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D111 missing equipment: PC"
+      },
+      {
+        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "class": "LOP-00000049",
+        "room": "D111",
+        "required": "PC",
+        "available": "Thiết bị về điện",
+        "message": "Room D111 missing equipment: PC"
+      }
+    ],
+    "RBM-NGUYEN-VONG": [
+      {
+        "type": "RBM-NGUYEN-VONG",
+        "class": "LOP-00000206",
+        "slot": "Thu6-Ca2",
+        "teacher": "GV013",
+        "message": "Class LOP-00000206 assigned to non-preferred slot Thu6-Ca2 for teacher GV013"
+      }
+    ]
+  },
+  "ok_classes": [
+    {
+      "MaLop": "LOP-00000001",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000002",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000003",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000004",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000006",
+      "info": {
+        "TenMonHoc": "Công nghệ phần mềm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000007",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000008",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000009",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000010",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000011",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000012",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000013",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000014",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000015",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000016",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000017",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000018",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000019",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000020",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000021",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000022",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000023",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000024",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000025",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000026",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000027",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế yêu cầu",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000028",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế yêu cầu",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000029",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000030",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000031",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000032",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000033",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000034",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000035",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000036",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000037",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000038",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000039",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000040",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000041",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000042",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000043",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000044",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000045",
+      "info": {
+        "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000047",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000048",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000050",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000051",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000052",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000053",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000054",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000055",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000056",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000057",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000058",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000059",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000060",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000061",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000062",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000063",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000064",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000065",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000066",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000067",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000068",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000069",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000070",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000071",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000072",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000073",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000074",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000075",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000076",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000077",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000078",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000079",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000080",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000083",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000084",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000085",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000086",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000087",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000088",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000089",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000090",
+      "info": {
+        "TenMonHoc": "Lập trình hướng đối tượng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000091",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000093",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000094",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000096",
+      "info": {
+        "TenMonHoc": "Phân tích và thiết kế giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000097",
+      "info": {
+        "TenMonHoc": "Nhập môn Học máy",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000098",
+      "info": {
+        "TenMonHoc": "Nhập môn Học máy",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000099",
+      "info": {
+        "TenMonHoc": "Hệ thống hoạch định nguồn lực doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000100",
+      "info": {
+        "TenMonHoc": "Hệ thống hoạch định nguồn lực doanh nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000101",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000102",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000103",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000104",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000105",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000106",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000107",
+      "info": {
+        "TenMonHoc": "Nhập môn thị giác máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000108",
+      "info": {
+        "TenMonHoc": "Nhập môn thị giác máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000109",
+      "info": {
+        "TenMonHoc": "Nhập môn học máy",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000110",
+      "info": {
+        "TenMonHoc": "Nhập môn học máy",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000111",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000112",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000113",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000114",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000115",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000116",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000117",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000118",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000119",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000120",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000121",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000122",
+      "info": {
+        "TenMonHoc": "Thiết kế giao diện người dùng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000123",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000124",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000125",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000126",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000127",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000128",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000130",
+      "info": {
+        "TenMonHoc": "Thiết kế mạng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000131",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000132",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000133",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000134",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000135",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000136",
+      "info": {
+        "TenMonHoc": "Công nghệ Java",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000137",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000138",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000139",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000140",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000141",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000142",
+      "info": {
+        "TenMonHoc": "Công nghệ .Net",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000143",
+      "info": {
+        "TenMonHoc": "Nhập môn Tư duy Logic",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000144",
+      "info": {
+        "TenMonHoc": "Nhập môn Tư duy Logic",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000145",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000146",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000147",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000148",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 80,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000149",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000150",
+      "info": {
+        "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000151",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000152",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000153",
+      "info": {
+        "TenMonHoc": "Xử lý dữ liệu lớn",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000154",
+      "info": {
+        "TenMonHoc": "Xử lý dữ liệu lớn",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000155",
+      "info": {
+        "TenMonHoc": "Hệ thống thương mại thông minh",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000156",
+      "info": {
+        "TenMonHoc": "Hệ thống thương mại thông minh",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000158",
+      "info": {
+        "TenMonHoc": "Kiến tập công nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000159",
+      "info": {
+        "TenMonHoc": "Kiến tập công nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000161",
+      "info": {
+        "TenMonHoc": "Kiến tập công nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000162",
+      "info": {
+        "TenMonHoc": "Kiến tập công nghiệp",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000164",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin 2",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000165",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin 2",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000167",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin 2",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000168",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin 2",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000169",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000170",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000171",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000172",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000173",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000174",
+      "info": {
+        "TenMonHoc": "Phát triển trò chơi",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000175",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000176",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000177",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000178",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000179",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000180",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000181",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000182",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000183",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000184",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000185",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000186",
+      "info": {
+        "TenMonHoc": "Nhập môn Bảo mật máy tính",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000189",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000191",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000192",
+      "info": {
+        "TenMonHoc": "Dự án Công nghệ thông tin",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000193",
+      "info": {
+        "TenMonHoc": "Xử lý dữ liệu lớn",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000194",
+      "info": {
+        "TenMonHoc": "Xử lý dữ liệu lớn",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000195",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000196",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000197",
+      "info": {
+        "TenMonHoc": "Kỹ năng soạn thảo văn bản kỹ thuật",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 1
+      }
+    },
+    {
+      "MaLop": "LOP-00000198",
+      "info": {
+        "TenMonHoc": "Kỹ năng soạn thảo văn bản kỹ thuật",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 1
+      }
+    },
+    {
+      "MaLop": "LOP-00000199",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000200",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000201",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000202",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000203",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000204",
+      "info": {
+        "TenMonHoc": "Lập trình hàm",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000205",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý tiếng nói",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000206",
+      "info": {
+        "TenMonHoc": "Nhập môn xử lý tiếng nói",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000207",
+      "info": {
+        "TenMonHoc": "Khai thác dữ liệu và Khai phá tri thức",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000208",
+      "info": {
+        "TenMonHoc": "Khai thác dữ liệu và Khai phá tri thức",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000209",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000210",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000211",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000212",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000213",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000214",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000215",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000216",
+      "info": {
+        "TenMonHoc": "Nhập môn Xử lý ảnh số",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 3
+      }
+    }
+  ]
+}
