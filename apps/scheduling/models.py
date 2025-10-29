@@ -6,6 +6,7 @@ UPDATED: Sync với csdl_tkb.sql thật
 
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
 
 
 class Khoa(models.Model):
@@ -280,7 +281,10 @@ class DotXep(models.Model):
 
 class PhanCong(models.Model):
     """Phân công giảng dạy - Teaching Assignment - tb_PHAN_CONG
-    Updated: Now has auto-increment id as PK, composite key is UNIQUE constraint"""
+    Updated: Now has auto-increment id as PK, composite key is UNIQUE constraint
+    Thêm: TuanBD, TuanKT để xác định phạm vi tuần dạy của từng lớp
+    - TuanBD: 1-15 (tuần bắt đầu)
+    - TuanKT: >= TuanBD, không vượt quá 15 (tuần kết thúc)"""
     id = models.AutoField(primary_key=True)
     ma_dot = models.ForeignKey(DotXep, on_delete=models.CASCADE, db_column='MaDot',
                               related_name='phan_cong_list', verbose_name="Đợt xếp")
@@ -289,6 +293,20 @@ class PhanCong(models.Model):
     ma_gv = models.ForeignKey(GiangVien, on_delete=models.CASCADE, null=True, blank=True,
                              db_column='MaGV', related_name='phan_cong_list', 
                              verbose_name="Giảng viên")
+    tuan_bd = models.SmallIntegerField(db_column='TuanBD', 
+                                       validators=[MinValueValidator(1), MaxValueValidator(20)],
+                                       verbose_name="Tuần bắt đầu (1-20)")
+    tuan_kt = models.SmallIntegerField(db_column='TuanKT',
+                                       validators=[MinValueValidator(1), MaxValueValidator(20)],
+                                       verbose_name="Tuần kết thúc (>= TuanBD, ≤ 20)")
+
+    def clean(self):
+        """Validate: tuan_kt >= tuan_bd"""
+        super().clean()
+        if self.tuan_bd and self.tuan_kt and self.tuan_bd > self.tuan_kt:
+            raise ValidationError({
+                'tuan_kt': f'Tuần kết thúc ({self.tuan_kt}) phải ≥ tuần bắt đầu ({self.tuan_bd})'
+            })
     
     class Meta:
         db_table = 'tb_PHAN_CONG'
@@ -299,11 +317,68 @@ class PhanCong(models.Model):
             models.Index(fields=['ma_gv'], name='IX_PC_MaGV'),
             models.Index(fields=['ma_lop'], name='IX_PC_MaLop'),
             models.Index(fields=['ma_dot'], name='IX_PC_MaDot'),
+            models.Index(fields=['ma_dot', 'ma_gv'], name='IX_PC_MaDot_MaGV'),
         ]
     
     def __str__(self):
         gv_name = self.ma_gv.ten_gv if self.ma_gv else 'Chưa phân'
-        return f"{gv_name} -> {self.ma_lop.ma_lop}"
+        return f"{gv_name} -> {self.ma_lop.ma_lop} (T{self.tuan_bd}-{self.tuan_kt})"
+
+
+class NgayNghiCoDinh(models.Model):
+    """Ngày nghỉ cố định - tb_NGAY_NGHI_CO_DINH
+    Lưu danh sách ngày nghỉ cố định (lặp lại mỗi năm): Tết, 30/4, 1/5, 2/9, v.v.
+    Dùng làm gợi ý mặc định khi tạo đợt mới"""
+    id = models.AutoField(primary_key=True)
+    ten_ngay_nghi = models.CharField(max_length=100, db_column='TenNgayNghi', 
+                                    verbose_name="Tên ngày nghỉ")
+    ngay = models.CharField(max_length=5, db_column='Ngay',
+                           verbose_name="Ngày (MM-DD)")  # Định dạng MM-DD, VD: "09-02"
+    ghi_chu = models.CharField(max_length=200, null=True, blank=True, db_column='GhiChu',
+                              verbose_name="Ghi chú")
+    
+    class Meta:
+        db_table = 'tb_NGAY_NGHI_CO_DINH'
+        verbose_name = "Ngày nghỉ cố định"
+        verbose_name_plural = "Ngày nghỉ cố định"
+        ordering = ['ngay']
+    
+    def __str__(self):
+        return f"{self.ten_ngay_nghi} ({self.ngay})"
+
+
+class NgayNghiDot(models.Model):
+    """Ngày nghỉ theo đợt xếp lịch - tb_NGAY_NGHI_DOT
+    Lưu các khoảng ngày/tuần nghỉ cho từng đợt (tết, thi, v.v.)"""
+    id = models.AutoField(primary_key=True)
+    ma_dot = models.ForeignKey(DotXep, on_delete=models.CASCADE, db_column='MaDot',
+                              related_name='ngay_nghi_list', verbose_name="Đợt xếp")
+    ngay_bd = models.DateField(db_column='NgayBD', verbose_name="Ngày bắt đầu nghỉ")
+    so_ngay_nghi = models.SmallIntegerField(db_column='SoNgayNghi',
+                                           validators=[MinValueValidator(1)],
+                                           verbose_name="Số ngày nghỉ")
+    tuan_bd = models.SmallIntegerField(null=True, blank=True, db_column='TuanBD',
+                                      validators=[MinValueValidator(1), MaxValueValidator(15)],
+                                      verbose_name="Tuần bắt đầu (tham khảo)")
+    tuan_kt = models.SmallIntegerField(null=True, blank=True, db_column='TuanKT',
+                                      validators=[MinValueValidator(1), MaxValueValidator(15)],
+                                      verbose_name="Tuần kết thúc (tham khảo)")
+    ten_ngay_nghi = models.CharField(max_length=100, null=True, blank=True, db_column='TenNgayNghi',
+                                    verbose_name="Tên khoảng nghỉ")
+    ghi_chu = models.CharField(max_length=200, null=True, blank=True, db_column='GhiChu',
+                              verbose_name="Ghi chú")
+    
+    class Meta:
+        db_table = 'tb_NGAY_NGHI_DOT'
+        verbose_name = "Ngày nghỉ theo đợt"
+        verbose_name_plural = "Ngày nghỉ theo đợt"
+        unique_together = [['ma_dot', 'ngay_bd', 'so_ngay_nghi']]
+        indexes = [
+            models.Index(fields=['ma_dot'], name='IX_NGAYNGHI_MaDot'),
+        ]
+    
+    def __str__(self):
+        return f"{self.ma_dot.ma_dot} - {self.ten_ngay_nghi or f'{self.ngay_bd} ({self.so_ngay_nghi} ngày)'}"
 
 
 class RangBuocTrongDot(models.Model):
@@ -347,20 +422,30 @@ class NguyenVong(models.Model):
 
 
 class ThoiKhoaBieu(models.Model):
-    """Thời khóa biểu - Schedule/Timetable - tb_TKB"""
+    """Thời khóa biểu - Schedule/Timetable - tb_TKB
+    Lưu lịch dạy cụ thể cho mỗi buổi học
+    - TuanHoc: Pattern tuần học (VD: "1111010100000000" = tuần 1-4, 6-8 học)
+    - NgayBD, NgayKT: Ngày bắt đầu/kết thúc toàn bộ khoá học (không phải từng buổi)"""
     ma_tkb = models.CharField(max_length=15, primary_key=True, db_column='MaTKB', verbose_name="Mã TKB")
     ma_dot = models.ForeignKey(DotXep, on_delete=models.CASCADE, db_column='MaDot',
                               related_name='tkb_list', verbose_name="Đợt xếp")
     ma_lop = models.ForeignKey(LopMonHoc, on_delete=models.CASCADE, db_column='MaLop',
                               related_name='tkb_list', verbose_name="Lớp môn học")
-    ma_phong = models.ForeignKey(PhongHoc, on_delete=models.CASCADE, db_column='MaPhong',
-                                related_name='tkb_list', verbose_name="Phòng học")
+    ma_phong = models.ForeignKey(PhongHoc, on_delete=models.CASCADE, null=True, blank=True,
+                                db_column='MaPhong', related_name='tkb_list',
+                                verbose_name="Phòng học")  # Nullable: có thể chưa sắp xếp phòng
     time_slot_id = models.ForeignKey(TimeSlot, on_delete=models.CASCADE, db_column='TimeSlotID',
                                     related_name='tkb_list', verbose_name="Time slot")
-    tuan_hoc = models.CharField(max_length=64, null=True, blank=True, db_column='TuanHoc',
-                               verbose_name="Tuần học")  # VD: 2345678-01234567...
-    ngay_bd = models.DateTimeField(null=True, blank=True, db_column='NgayBD', verbose_name="Ngày bắt đầu")
-    ngay_kt = models.DateTimeField(null=True, blank=True, db_column='NgayKT', verbose_name="Ngày kết thúc")
+    tuan_hoc = models.CharField(max_length=64, db_column='TuanHoc',
+                               verbose_name="Pattern tuần học")  # VD: "1111111000000000"
+    ngay_bd = models.DateField(db_column='NgayBD',
+                              verbose_name="Ngày bắt đầu khoá học")  # Ngày bắt đầu toàn bộ môn
+    ngay_kt = models.DateField(db_column='NgayKT',
+                              verbose_name="Ngày kết thúc khoá học")  # Ngày kết thúc toàn bộ môn
+    ngay_tao = models.DateTimeField(auto_now_add=True, db_column='NgayTao',
+                                   verbose_name="Ngày tạo")
+    ghi_chu = models.CharField(max_length=200, null=True, blank=True, db_column='GhiChu',
+                              verbose_name="Ghi chú")
     
     class Meta:
         db_table = 'tb_TKB'
@@ -372,7 +457,10 @@ class ThoiKhoaBieu(models.Model):
             models.Index(fields=['ma_dot'], name='IX_TKB_MaDot'),
             models.Index(fields=['ma_lop'], name='IX_TKB_MaLop'),
             models.Index(fields=['time_slot_id'], name='IX_TKB_TimeSlotID'),
+            models.Index(fields=['ngay_bd'], name='IX_TKB_NgayBD'),
+            models.Index(fields=['ma_dot', 'ma_lop'], name='IX_TKB_MaDot_MaLop'),
         ]
     
     def __str__(self):
-        return f"{self.ma_lop.ma_lop} - {self.ma_phong.ma_phong} - {self.time_slot_id}"
+        phong = self.ma_phong.ma_phong if self.ma_phong else "Chưa xác định"
+        return f"{self.ma_lop.ma_lop} - {phong} - {self.time_slot_id}"

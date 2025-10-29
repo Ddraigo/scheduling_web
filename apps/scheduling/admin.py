@@ -9,7 +9,8 @@ from django.utils.html import format_html
 from .models import (
     Khoa, BoMon, GiangVien, MonHoc, PhongHoc,
     LopMonHoc, DotXep, PhanCong, TimeSlot, ThoiKhoaBieu,
-    DuKienDT, GVDayMon, KhungTG, RangBuocMem, RangBuocTrongDot, NguyenVong
+    DuKienDT, GVDayMon, KhungTG, RangBuocMem, RangBuocTrongDot, NguyenVong,
+    NgayNghiCoDinh, NgayNghiDot
 )
 
 # Rename "Scheduling System" app label to "Dữ liệu" in admin
@@ -211,15 +212,28 @@ class GVDayMonAdmin(admin.ModelAdmin):
 
 @admin.register(PhanCong)
 class PhanCongAdmin(BaseAdmin):
-    list_display = ['id', 'ma_dot', 'ma_lop', 'ma_gv', 'gv_name']
+    list_display = ['id', 'ma_dot', 'ma_lop', 'ma_gv', 'gv_name', 'tuan_range']
     list_filter = ['ma_dot']
     search_fields = ['ma_gv__ten_gv', 'ma_lop__ma_lop']
     raw_id_fields = ['ma_gv', 'ma_lop']
     list_per_page = 100
+    fieldsets = (
+        ('Thông tin cơ bản', {
+            'fields': ('ma_dot', 'ma_lop', 'ma_gv')
+        }),
+        ('Phạm vi tuần dạy', {
+            'fields': ('tuan_bd', 'tuan_kt')
+        }),
+    )
     
     def gv_name(self, obj):
         return obj.ma_gv.ten_gv if obj.ma_gv else 'Chưa phân công'
     gv_name.short_description = 'Tên Giảng viên'
+    
+    def tuan_range(self, obj):
+        """Hiển thị khoảng tuần dạy"""
+        return f"Tuần {obj.tuan_bd}-{obj.tuan_kt}"
+    tuan_range.short_description = 'Khoảng tuần'
 
 
 @admin.register(RangBuocTrongDot)
@@ -246,3 +260,54 @@ class KhungTGAdmin(admin.ModelAdmin):
 class RangBuocMemAdmin(admin.ModelAdmin):
     list_display = ['ma_rang_buoc', 'ten_rang_buoc', 'trong_so']
     search_fields = ['ma_rang_buoc', 'ten_rang_buoc']
+
+
+@admin.register(NgayNghiCoDinh)
+class NgayNghiCoDinhAdmin(admin.ModelAdmin):
+    """Ngày nghỉ cố định (lặp lại hằng năm)"""
+    list_display = ['id', 'ten_ngay_nghi', 'ngay', 'ghi_chu']
+    search_fields = ['ten_ngay_nghi', 'ngay']
+    ordering = ['ngay']
+    list_per_page = 30
+    fieldsets = (
+        ('Thông tin ngày nghỉ', {
+            'fields': ('ten_ngay_nghi', 'ngay')
+        }),
+        ('Ghi chú', {
+            'fields': ('ghi_chu',),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(NgayNghiDot)
+class NgayNghiDotAdmin(admin.ModelAdmin):
+    """Ngày nghỉ theo đợt xếp lịch (riêng cho mỗi đợt)"""
+    list_display = ['id', 'ma_dot', 'ten_ngay_nghi', 'ngay_bd', 'so_ngay_nghi', 'tuan_info']
+    list_filter = ['ma_dot', 'ngay_bd']
+    search_fields = ['ma_dot__ma_dot', 'ten_ngay_nghi']
+    date_hierarchy = 'ngay_bd'
+    list_per_page = 50
+    fieldsets = (
+        ('Thông tin đợt', {
+            'fields': ('ma_dot',)
+        }),
+        ('Khoảng nghỉ', {
+            'fields': ('ngay_bd', 'so_ngay_nghi', 'ten_ngay_nghi')
+        }),
+        ('Tuần tham khảo', {
+            'fields': ('tuan_bd', 'tuan_kt'),
+            'classes': ('collapse',)
+        }),
+        ('Ghi chú', {
+            'fields': ('ghi_chu',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def tuan_info(self, obj):
+        """Hiển thị thông tin tuần tham khảo"""
+        if obj.tuan_bd and obj.tuan_kt:
+            return f"Tuần {obj.tuan_bd}-{obj.tuan_kt}"
+        return "N/A"
+    tuan_info.short_description = 'Tuần (tham khảo)'
