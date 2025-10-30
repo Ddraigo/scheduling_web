@@ -189,34 +189,7 @@ def save_detailed_report(result: dict, schedule_data, validator, output_file: st
         all_classes = LopMonHoc.objects.all()
         for lop in all_classes:
             if lop.ma_lop not in violated_classes:
-                # Get teacher assignment
-                ma_gv = None
-                phan_cong = PhanCong.objects.filter(ma_lop=lop).first()
-                if phan_cong and phan_cong.ma_gv:
-                    ma_gv = phan_cong.ma_gv.ma_gv
-                
-                # Get room assigned to this class (all sessions use same room)
-                ma_phong = None
-                ma_slot = None
-                class_assignments = schedule_data.get_assignments_for_class(lop.ma_lop)
-                if class_assignments:
-                    ma_phong = class_assignments[0].get('room')  # All sessions have same room
-                    ma_slot = class_assignments[0].get('slot')   # TimeSlotID (e.g., "Thu2-Ca4")
-                
-                ok_class_info = {
-                    'MaLop': lop.ma_lop,
-                    'MaGV': ma_gv,
-                    'MaPhong': ma_phong,
-                    'MaSlot': ma_slot,
-                    'info': {
-                        'TenMonHoc': lop.ma_mon_hoc.ten_mon_hoc if lop.ma_mon_hoc else 'N/A',
-                        'SoCaTuan': lop.so_ca_tuan or 1,
-                        'Nhom': lop.nhom_mh or '?',
-                        'SoSV': lop.so_luong_sv or 0,
-                        'ThietBiYeuCau': lop.thiet_bi_yeu_cau or '',
-                        'SoTinChi': lop.ma_mon_hoc.so_tin_chi if lop.ma_mon_hoc else 0,
-                    }
-                }
+                ok_class_info = UnifiedValidationOutput.format_ok_class_info(lop, schedule_data)
                 unified_output_obj.add_ok_class(ok_class_info)
     except Exception as e:
         logger.warning(f"Error adding ok_class_info: {e}")

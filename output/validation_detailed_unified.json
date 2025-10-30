@@ -1,514 +1,486 @@
 {
-  "timestamp": "2025-10-30T16:18:16.694393",
+  "timestamp": "2025-10-31T00:00:08.031272",
   "source": "LLM",
   "ma_dot": "DOT1_2025-2026_HK1",
   "summary": {
     "total_classes": 216,
-    "ok_classes": 200,
-    "violated_classes": 16,
-    "hard_violated_classes": 16,
-    "soft_violated_classes": 6,
-    "ok_percentage": 92.59,
-    "violated_percentage": 7.41,
-    "hard_violated_percentage": 7.41,
-    "soft_violated_percentage": 2.78
+    "ok_classes": 204,
+    "violated_classes": 12,
+    "hard_violated_classes": 12,
+    "soft_violated_classes": 5,
+    "ok_percentage": 94.44,
+    "violated_percentage": 5.56,
+    "hard_violated_percentage": 5.56,
+    "soft_violated_percentage": 2.31
   },
   "constraint_stats": {
     "hard_constraints": {
-      "HC-02_ROOM_CONFLICT": 10,
+      "HC-01_TEACHER_CONFLICT": 4,
+      "HC-02_ROOM_CONFLICT": 2,
+      "HC-03_INSUFFICIENT_CAPACITY": 2,
       "HC-04_EQUIPMENT_MISMATCH": 6
     },
     "soft_constraints": {
-      "RBM-NGUYEN-VONG": 6
+      "RBM-001": 1,
+      "RBM-002": 1,
+      "RBM-NGUYEN-VONG": 4
     }
   },
   "fitness": {
     "hard_fitness": 0.0,
     "soft_fitness": 0.0,
-    "combined_fitness": 0.962962962962963,
+    "combined_fitness": 0.9675925925925926,
     "status": "INFEASIBLE"
   },
   "hard_violations": [
     {
-      "type": "HC-02_ROOM_CONFLICT",
-      "class": "LOP-00000017",
-      "room": "A502",
-      "slot": "Thu2-Ca3",
-      "message": "Room A502 booked 2 times at slot Thu2-Ca3"
+      "type": "HC-01_TEACHER_CONFLICT",
+      "class": "LOP-00000070",
+      "teacher": "GV045",
+      "slot": "Thu3-Ca1",
+      "room": "B404",
+      "message": "Teacher GV045 teaching 2 classes at same slot Thu3-Ca1"
+    },
+    {
+      "type": "HC-01_TEACHER_CONFLICT",
+      "class": "LOP-00000156",
+      "teacher": "GV045",
+      "slot": "Thu3-Ca1",
+      "room": "D402",
+      "message": "Teacher GV045 teaching 2 classes at same slot Thu3-Ca1"
+    },
+    {
+      "type": "HC-01_TEACHER_CONFLICT",
+      "class": "LOP-00000071",
+      "teacher": "GV013",
+      "slot": "Thu2-Ca1",
+      "room": "C203",
+      "message": "Teacher GV013 teaching 2 classes at same slot Thu2-Ca1"
+    },
+    {
+      "type": "HC-01_TEACHER_CONFLICT",
+      "class": "LOP-00000206",
+      "teacher": "GV013",
+      "slot": "Thu2-Ca1",
+      "room": "D209",
+      "message": "Teacher GV013 teaching 2 classes at same slot Thu2-Ca1"
     },
     {
       "type": "HC-02_ROOM_CONFLICT",
-      "class": "LOP-00000075",
-      "room": "A502",
-      "slot": "Thu2-Ca3",
-      "message": "Room A502 booked 2 times at slot Thu2-Ca3"
+      "class": "LOP-00000040",
+      "room": "A606",
+      "slot": "Thu2-Ca5",
+      "message": "Room A606 booked 2 times at slot Thu2-Ca5"
     },
     {
       "type": "HC-02_ROOM_CONFLICT",
-      "class": "LOP-00000024",
-      "room": "A507",
-      "slot": "Thu4-Ca1",
-      "message": "Room A507 booked 2 times at slot Thu4-Ca1"
+      "class": "LOP-00000211",
+      "room": "A606",
+      "slot": "Thu2-Ca5",
+      "message": "Room A606 booked 2 times at slot Thu2-Ca5"
     },
     {
-      "type": "HC-02_ROOM_CONFLICT",
-      "class": "LOP-00000082",
-      "room": "A507",
-      "slot": "Thu4-Ca1",
-      "message": "Room A507 booked 2 times at slot Thu4-Ca1"
-    },
-    {
-      "type": "HC-02_ROOM_CONFLICT",
-      "class": "LOP-00000030",
-      "room": "A401",
-      "slot": "Thu2-Ca3",
-      "message": "Room A401 booked 2 times at slot Thu2-Ca3"
-    },
-    {
-      "type": "HC-02_ROOM_CONFLICT",
-      "class": "LOP-00000060",
-      "room": "A401",
-      "slot": "Thu2-Ca3",
-      "message": "Room A401 booked 2 times at slot Thu2-Ca3"
-    },
-    {
-      "type": "HC-02_ROOM_CONFLICT",
-      "class": "LOP-00000036",
-      "room": "A405",
-      "slot": "Thu2-Ca2",
-      "message": "Room A405 booked 2 times at slot Thu2-Ca2"
-    },
-    {
-      "type": "HC-02_ROOM_CONFLICT",
-      "class": "LOP-00000066",
-      "room": "A405",
-      "slot": "Thu2-Ca2",
-      "message": "Room A405 booked 2 times at slot Thu2-Ca2"
-    },
-    {
-      "type": "HC-02_ROOM_CONFLICT",
-      "class": "LOP-00000055",
-      "room": "A509",
-      "slot": "Thu3-Ca2",
-      "message": "Room A509 booked 2 times at slot Thu3-Ca2"
-    },
-    {
-      "type": "HC-02_ROOM_CONFLICT",
-      "class": "LOP-00000177",
-      "room": "A509",
-      "slot": "Thu3-Ca2",
-      "message": "Room A509 booked 2 times at slot Thu3-Ca2"
+      "type": "HC-03_INSUFFICIENT_CAPACITY",
+      "class": "LOP-00000157",
+      "room": "F611",
+      "message": "Class LOP-00000157 (80 students) > Room capacity (45)"
     },
     {
       "type": "HC-04_EQUIPMENT_MISMATCH",
       "class": "LOP-00000157",
-      "room": "F301",
+      "room": "F611",
       "required": "TV, Máy chiếu",
       "available": "PC",
-      "message": "Room F301 missing equipment: TV, Máy chiếu"
+      "message": "Room F611 missing equipment: TV, Máy chiếu"
+    },
+    {
+      "type": "HC-03_INSUFFICIENT_CAPACITY",
+      "class": "LOP-00000160",
+      "room": "F703",
+      "message": "Class LOP-00000160 (80 students) > Room capacity (45)"
     },
     {
       "type": "HC-04_EQUIPMENT_MISMATCH",
       "class": "LOP-00000160",
-      "room": "F306",
+      "room": "F703",
       "required": "TV, Máy chiếu",
       "available": "PC",
-      "message": "Room F306 missing equipment: TV, Máy chiếu"
+      "message": "Room F703 missing equipment: TV, Máy chiếu"
     },
     {
       "type": "HC-04_EQUIPMENT_MISMATCH",
       "class": "LOP-00000163",
-      "room": "F307",
+      "room": "F706",
       "required": "TV, Máy chiếu",
       "available": "PC",
-      "message": "Room F307 missing equipment: TV, Máy chiếu"
+      "message": "Room F706 missing equipment: TV, Máy chiếu"
     },
     {
       "type": "HC-04_EQUIPMENT_MISMATCH",
       "class": "LOP-00000166",
-      "room": "F308",
+      "room": "F709",
       "required": "TV, Máy chiếu",
       "available": "PC",
-      "message": "Room F308 missing equipment: TV, Máy chiếu"
+      "message": "Room F709 missing equipment: TV, Máy chiếu"
     },
     {
       "type": "HC-04_EQUIPMENT_MISMATCH",
       "class": "LOP-00000187",
-      "room": "F309",
+      "room": "A504",
       "required": "TV, Máy chiếu",
       "available": "PC",
-      "message": "Room F309 missing equipment: TV, Máy chiếu"
+      "message": "Room A504 missing equipment: TV, Máy chiếu"
     },
     {
       "type": "HC-04_EQUIPMENT_MISMATCH",
       "class": "LOP-00000190",
-      "room": "F401",
+      "room": "A507",
       "required": "TV, Máy chiếu",
       "available": "PC",
-      "message": "Room F401 missing equipment: TV, Máy chiếu"
+      "message": "Room A507 missing equipment: TV, Máy chiếu"
     }
   ],
   "soft_violations": [
     {
       "type": "RBM-NGUYEN-VONG",
-      "class": "LOP-00000192",
-      "slot": "Thu4-Ca4",
+      "class": "LOP-00000032",
+      "slot": "Thu2-Ca5",
+      "teacher": "GV003",
+      "message": "Class LOP-00000032 assigned to non-preferred slot Thu2-Ca5 for teacher GV003"
+    },
+    {
+      "type": "RBM-NGUYEN-VONG",
+      "class": "LOP-00000191",
+      "slot": "Thu4-Ca2",
       "teacher": "GV024",
-      "message": "Class LOP-00000192 assigned to non-preferred slot Thu4-Ca4 for teacher GV024"
+      "message": "Class LOP-00000191 assigned to non-preferred slot Thu4-Ca2 for teacher GV024"
     },
     {
       "type": "RBM-NGUYEN-VONG",
-      "class": "LOP-00000069",
-      "slot": "Thu2-Ca1",
-      "teacher": "GV043",
-      "message": "Class LOP-00000069 assigned to non-preferred slot Thu2-Ca1 for teacher GV043"
+      "class": "LOP-00000192",
+      "slot": "Thu4-Ca3",
+      "teacher": "GV024",
+      "message": "Class LOP-00000192 assigned to non-preferred slot Thu4-Ca3 for teacher GV024"
     },
     {
       "type": "RBM-NGUYEN-VONG",
-      "class": "LOP-00000075",
-      "slot": "Thu2-Ca3",
-      "teacher": "GV013",
-      "message": "Class LOP-00000075 assigned to non-preferred slot Thu2-Ca3 for teacher GV013"
+      "class": "LOP-00000211",
+      "slot": "Thu2-Ca5",
+      "teacher": "GV038",
+      "message": "Class LOP-00000211 assigned to non-preferred slot Thu2-Ca5 for teacher GV038"
     },
     {
-      "type": "RBM-NGUYEN-VONG",
-      "class": "LOP-00000076",
-      "slot": "Thu2-Ca2",
-      "teacher": "GV047",
-      "message": "Class LOP-00000076 assigned to non-preferred slot Thu2-Ca2 for teacher GV047"
+      "type": "RBM-001",
+      "constraint_name": "Giới hạn số ca/ngày cho giảng viên",
+      "violation_count": 1,
+      "weight": 0.9,
+      "penalty": 0.9,
+      "message": "Giới hạn số ca/ngày cho giảng viên: 1 violations × 0.9 = 0.90 penalty"
     },
     {
-      "type": "RBM-NGUYEN-VONG",
-      "class": "LOP-00000120",
-      "slot": "Thu2-Ca4",
-      "teacher": "GV013",
-      "message": "Class LOP-00000120 assigned to non-preferred slot Thu2-Ca4 for teacher GV013"
-    },
-    {
-      "type": "RBM-NGUYEN-VONG",
-      "class": "LOP-00000155",
-      "slot": "Thu2-Ca3",
-      "teacher": "GV043",
-      "message": "Class LOP-00000155 assigned to non-preferred slot Thu2-Ca3 for teacher GV043"
+      "type": "RBM-002",
+      "constraint_name": "Giảm số ngày lên trường của giảng viên",
+      "violation_count": 14,
+      "weight": 0.7,
+      "penalty": 9.799999999999999,
+      "message": "Giảm số ngày lên trường của giảng viên: 14 violations × 0.7 = 9.80 penalty"
     }
   ],
   "violations_by_class": {
-    "LOP-00000017": [
+    "LOP-00000040": [
       {
         "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000017",
-        "room": "A502",
-        "slot": "Thu2-Ca3",
-        "message": "Room A502 booked 2 times at slot Thu2-Ca3"
+        "class": "LOP-00000040",
+        "room": "A606",
+        "slot": "Thu2-Ca5",
+        "message": "Room A606 booked 2 times at slot Thu2-Ca5"
       }
     ],
-    "LOP-00000024": [
+    "LOP-00000070": [
       {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000024",
-        "room": "A507",
-        "slot": "Thu4-Ca1",
-        "message": "Room A507 booked 2 times at slot Thu4-Ca1"
+        "type": "HC-01_TEACHER_CONFLICT",
+        "class": "LOP-00000070",
+        "teacher": "GV045",
+        "slot": "Thu3-Ca1",
+        "room": "B404",
+        "message": "Teacher GV045 teaching 2 classes at same slot Thu3-Ca1"
       }
     ],
-    "LOP-00000030": [
+    "LOP-00000071": [
       {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000030",
-        "room": "A401",
-        "slot": "Thu2-Ca3",
-        "message": "Room A401 booked 2 times at slot Thu2-Ca3"
+        "type": "HC-01_TEACHER_CONFLICT",
+        "class": "LOP-00000071",
+        "teacher": "GV013",
+        "slot": "Thu2-Ca1",
+        "room": "C203",
+        "message": "Teacher GV013 teaching 2 classes at same slot Thu2-Ca1"
       }
     ],
-    "LOP-00000036": [
+    "LOP-00000156": [
       {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000036",
-        "room": "A405",
-        "slot": "Thu2-Ca2",
-        "message": "Room A405 booked 2 times at slot Thu2-Ca2"
-      }
-    ],
-    "LOP-00000055": [
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000055",
-        "room": "A509",
-        "slot": "Thu3-Ca2",
-        "message": "Room A509 booked 2 times at slot Thu3-Ca2"
-      }
-    ],
-    "LOP-00000060": [
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000060",
-        "room": "A401",
-        "slot": "Thu2-Ca3",
-        "message": "Room A401 booked 2 times at slot Thu2-Ca3"
-      }
-    ],
-    "LOP-00000066": [
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000066",
-        "room": "A405",
-        "slot": "Thu2-Ca2",
-        "message": "Room A405 booked 2 times at slot Thu2-Ca2"
-      }
-    ],
-    "LOP-00000075": [
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000075",
-        "room": "A502",
-        "slot": "Thu2-Ca3",
-        "message": "Room A502 booked 2 times at slot Thu2-Ca3"
-      }
-    ],
-    "LOP-00000082": [
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000082",
-        "room": "A507",
-        "slot": "Thu4-Ca1",
-        "message": "Room A507 booked 2 times at slot Thu4-Ca1"
+        "type": "HC-01_TEACHER_CONFLICT",
+        "class": "LOP-00000156",
+        "teacher": "GV045",
+        "slot": "Thu3-Ca1",
+        "room": "D402",
+        "message": "Teacher GV045 teaching 2 classes at same slot Thu3-Ca1"
       }
     ],
     "LOP-00000157": [
       {
+        "type": "HC-03_INSUFFICIENT_CAPACITY",
+        "class": "LOP-00000157",
+        "room": "F611",
+        "message": "Class LOP-00000157 (80 students) > Room capacity (45)"
+      },
+      {
         "type": "HC-04_EQUIPMENT_MISMATCH",
         "class": "LOP-00000157",
-        "room": "F301",
+        "room": "F611",
         "required": "TV, Máy chiếu",
         "available": "PC",
-        "message": "Room F301 missing equipment: TV, Máy chiếu"
+        "message": "Room F611 missing equipment: TV, Máy chiếu"
       }
     ],
     "LOP-00000160": [
       {
+        "type": "HC-03_INSUFFICIENT_CAPACITY",
+        "class": "LOP-00000160",
+        "room": "F703",
+        "message": "Class LOP-00000160 (80 students) > Room capacity (45)"
+      },
+      {
         "type": "HC-04_EQUIPMENT_MISMATCH",
         "class": "LOP-00000160",
-        "room": "F306",
+        "room": "F703",
         "required": "TV, Máy chiếu",
         "available": "PC",
-        "message": "Room F306 missing equipment: TV, Máy chiếu"
+        "message": "Room F703 missing equipment: TV, Máy chiếu"
       }
     ],
     "LOP-00000163": [
       {
         "type": "HC-04_EQUIPMENT_MISMATCH",
         "class": "LOP-00000163",
-        "room": "F307",
+        "room": "F706",
         "required": "TV, Máy chiếu",
         "available": "PC",
-        "message": "Room F307 missing equipment: TV, Máy chiếu"
+        "message": "Room F706 missing equipment: TV, Máy chiếu"
       }
     ],
     "LOP-00000166": [
       {
         "type": "HC-04_EQUIPMENT_MISMATCH",
         "class": "LOP-00000166",
-        "room": "F308",
+        "room": "F709",
         "required": "TV, Máy chiếu",
         "available": "PC",
-        "message": "Room F308 missing equipment: TV, Máy chiếu"
-      }
-    ],
-    "LOP-00000177": [
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000177",
-        "room": "A509",
-        "slot": "Thu3-Ca2",
-        "message": "Room A509 booked 2 times at slot Thu3-Ca2"
+        "message": "Room F709 missing equipment: TV, Máy chiếu"
       }
     ],
     "LOP-00000187": [
       {
         "type": "HC-04_EQUIPMENT_MISMATCH",
         "class": "LOP-00000187",
-        "room": "F309",
+        "room": "A504",
         "required": "TV, Máy chiếu",
         "available": "PC",
-        "message": "Room F309 missing equipment: TV, Máy chiếu"
+        "message": "Room A504 missing equipment: TV, Máy chiếu"
       }
     ],
     "LOP-00000190": [
       {
         "type": "HC-04_EQUIPMENT_MISMATCH",
         "class": "LOP-00000190",
-        "room": "F401",
+        "room": "A507",
         "required": "TV, Máy chiếu",
         "available": "PC",
-        "message": "Room F401 missing equipment: TV, Máy chiếu"
+        "message": "Room A507 missing equipment: TV, Máy chiếu"
+      }
+    ],
+    "LOP-00000206": [
+      {
+        "type": "HC-01_TEACHER_CONFLICT",
+        "class": "LOP-00000206",
+        "teacher": "GV013",
+        "slot": "Thu2-Ca1",
+        "room": "D209",
+        "message": "Teacher GV013 teaching 2 classes at same slot Thu2-Ca1"
+      }
+    ],
+    "LOP-00000211": [
+      {
+        "type": "HC-02_ROOM_CONFLICT",
+        "class": "LOP-00000211",
+        "room": "A606",
+        "slot": "Thu2-Ca5",
+        "message": "Room A606 booked 2 times at slot Thu2-Ca5"
       }
     ]
   },
   "violations_by_type": {
+    "HC-01_TEACHER_CONFLICT": [
+      {
+        "type": "HC-01_TEACHER_CONFLICT",
+        "class": "LOP-00000070",
+        "teacher": "GV045",
+        "slot": "Thu3-Ca1",
+        "room": "B404",
+        "message": "Teacher GV045 teaching 2 classes at same slot Thu3-Ca1"
+      },
+      {
+        "type": "HC-01_TEACHER_CONFLICT",
+        "class": "LOP-00000156",
+        "teacher": "GV045",
+        "slot": "Thu3-Ca1",
+        "room": "D402",
+        "message": "Teacher GV045 teaching 2 classes at same slot Thu3-Ca1"
+      },
+      {
+        "type": "HC-01_TEACHER_CONFLICT",
+        "class": "LOP-00000071",
+        "teacher": "GV013",
+        "slot": "Thu2-Ca1",
+        "room": "C203",
+        "message": "Teacher GV013 teaching 2 classes at same slot Thu2-Ca1"
+      },
+      {
+        "type": "HC-01_TEACHER_CONFLICT",
+        "class": "LOP-00000206",
+        "teacher": "GV013",
+        "slot": "Thu2-Ca1",
+        "room": "D209",
+        "message": "Teacher GV013 teaching 2 classes at same slot Thu2-Ca1"
+      }
+    ],
     "HC-02_ROOM_CONFLICT": [
       {
         "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000017",
-        "room": "A502",
-        "slot": "Thu2-Ca3",
-        "message": "Room A502 booked 2 times at slot Thu2-Ca3"
+        "class": "LOP-00000040",
+        "room": "A606",
+        "slot": "Thu2-Ca5",
+        "message": "Room A606 booked 2 times at slot Thu2-Ca5"
       },
       {
         "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000075",
-        "room": "A502",
-        "slot": "Thu2-Ca3",
-        "message": "Room A502 booked 2 times at slot Thu2-Ca3"
+        "class": "LOP-00000211",
+        "room": "A606",
+        "slot": "Thu2-Ca5",
+        "message": "Room A606 booked 2 times at slot Thu2-Ca5"
+      }
+    ],
+    "HC-03_INSUFFICIENT_CAPACITY": [
+      {
+        "type": "HC-03_INSUFFICIENT_CAPACITY",
+        "class": "LOP-00000157",
+        "room": "F611",
+        "message": "Class LOP-00000157 (80 students) > Room capacity (45)"
       },
       {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000024",
-        "room": "A507",
-        "slot": "Thu4-Ca1",
-        "message": "Room A507 booked 2 times at slot Thu4-Ca1"
-      },
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000082",
-        "room": "A507",
-        "slot": "Thu4-Ca1",
-        "message": "Room A507 booked 2 times at slot Thu4-Ca1"
-      },
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000030",
-        "room": "A401",
-        "slot": "Thu2-Ca3",
-        "message": "Room A401 booked 2 times at slot Thu2-Ca3"
-      },
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000060",
-        "room": "A401",
-        "slot": "Thu2-Ca3",
-        "message": "Room A401 booked 2 times at slot Thu2-Ca3"
-      },
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000036",
-        "room": "A405",
-        "slot": "Thu2-Ca2",
-        "message": "Room A405 booked 2 times at slot Thu2-Ca2"
-      },
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000066",
-        "room": "A405",
-        "slot": "Thu2-Ca2",
-        "message": "Room A405 booked 2 times at slot Thu2-Ca2"
-      },
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000055",
-        "room": "A509",
-        "slot": "Thu3-Ca2",
-        "message": "Room A509 booked 2 times at slot Thu3-Ca2"
-      },
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000177",
-        "room": "A509",
-        "slot": "Thu3-Ca2",
-        "message": "Room A509 booked 2 times at slot Thu3-Ca2"
+        "type": "HC-03_INSUFFICIENT_CAPACITY",
+        "class": "LOP-00000160",
+        "room": "F703",
+        "message": "Class LOP-00000160 (80 students) > Room capacity (45)"
       }
     ],
     "HC-04_EQUIPMENT_MISMATCH": [
       {
         "type": "HC-04_EQUIPMENT_MISMATCH",
         "class": "LOP-00000157",
-        "room": "F301",
+        "room": "F611",
         "required": "TV, Máy chiếu",
         "available": "PC",
-        "message": "Room F301 missing equipment: TV, Máy chiếu"
+        "message": "Room F611 missing equipment: TV, Máy chiếu"
       },
       {
         "type": "HC-04_EQUIPMENT_MISMATCH",
         "class": "LOP-00000160",
-        "room": "F306",
+        "room": "F703",
         "required": "TV, Máy chiếu",
         "available": "PC",
-        "message": "Room F306 missing equipment: TV, Máy chiếu"
+        "message": "Room F703 missing equipment: TV, Máy chiếu"
       },
       {
         "type": "HC-04_EQUIPMENT_MISMATCH",
         "class": "LOP-00000163",
-        "room": "F307",
+        "room": "F706",
         "required": "TV, Máy chiếu",
         "available": "PC",
-        "message": "Room F307 missing equipment: TV, Máy chiếu"
+        "message": "Room F706 missing equipment: TV, Máy chiếu"
       },
       {
         "type": "HC-04_EQUIPMENT_MISMATCH",
         "class": "LOP-00000166",
-        "room": "F308",
+        "room": "F709",
         "required": "TV, Máy chiếu",
         "available": "PC",
-        "message": "Room F308 missing equipment: TV, Máy chiếu"
+        "message": "Room F709 missing equipment: TV, Máy chiếu"
       },
       {
         "type": "HC-04_EQUIPMENT_MISMATCH",
         "class": "LOP-00000187",
-        "room": "F309",
+        "room": "A504",
         "required": "TV, Máy chiếu",
         "available": "PC",
-        "message": "Room F309 missing equipment: TV, Máy chiếu"
+        "message": "Room A504 missing equipment: TV, Máy chiếu"
       },
       {
         "type": "HC-04_EQUIPMENT_MISMATCH",
         "class": "LOP-00000190",
-        "room": "F401",
+        "room": "A507",
         "required": "TV, Máy chiếu",
         "available": "PC",
-        "message": "Room F401 missing equipment: TV, Máy chiếu"
+        "message": "Room A507 missing equipment: TV, Máy chiếu"
+      }
+    ],
+    "RBM-001": [
+      {
+        "type": "RBM-001",
+        "constraint_name": "Giới hạn số ca/ngày cho giảng viên",
+        "violation_count": 1,
+        "weight": 0.9,
+        "penalty": 0.9,
+        "message": "Giới hạn số ca/ngày cho giảng viên: 1 violations × 0.9 = 0.90 penalty"
+      }
+    ],
+    "RBM-002": [
+      {
+        "type": "RBM-002",
+        "constraint_name": "Giảm số ngày lên trường của giảng viên",
+        "violation_count": 14,
+        "weight": 0.7,
+        "penalty": 9.799999999999999,
+        "message": "Giảm số ngày lên trường của giảng viên: 14 violations × 0.7 = 9.80 penalty"
       }
     ],
     "RBM-NGUYEN-VONG": [
       {
         "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000192",
-        "slot": "Thu4-Ca4",
+        "class": "LOP-00000032",
+        "slot": "Thu2-Ca5",
+        "teacher": "GV003",
+        "message": "Class LOP-00000032 assigned to non-preferred slot Thu2-Ca5 for teacher GV003"
+      },
+      {
+        "type": "RBM-NGUYEN-VONG",
+        "class": "LOP-00000191",
+        "slot": "Thu4-Ca2",
         "teacher": "GV024",
-        "message": "Class LOP-00000192 assigned to non-preferred slot Thu4-Ca4 for teacher GV024"
+        "message": "Class LOP-00000191 assigned to non-preferred slot Thu4-Ca2 for teacher GV024"
       },
       {
         "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000069",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV043",
-        "message": "Class LOP-00000069 assigned to non-preferred slot Thu2-Ca1 for teacher GV043"
+        "class": "LOP-00000192",
+        "slot": "Thu4-Ca3",
+        "teacher": "GV024",
+        "message": "Class LOP-00000192 assigned to non-preferred slot Thu4-Ca3 for teacher GV024"
       },
       {
         "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000075",
-        "slot": "Thu2-Ca3",
-        "teacher": "GV013",
-        "message": "Class LOP-00000075 assigned to non-preferred slot Thu2-Ca3 for teacher GV013"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000076",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV047",
-        "message": "Class LOP-00000076 assigned to non-preferred slot Thu2-Ca2 for teacher GV047"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000120",
-        "slot": "Thu2-Ca4",
-        "teacher": "GV013",
-        "message": "Class LOP-00000120 assigned to non-preferred slot Thu2-Ca4 for teacher GV013"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000155",
-        "slot": "Thu2-Ca3",
-        "teacher": "GV043",
-        "message": "Class LOP-00000155 assigned to non-preferred slot Thu2-Ca3 for teacher GV043"
+        "class": "LOP-00000211",
+        "slot": "Thu2-Ca5",
+        "teacher": "GV038",
+        "message": "Class LOP-00000211 assigned to non-preferred slot Thu2-Ca5 for teacher GV038"
       }
     ]
   },
@@ -587,7 +559,7 @@
       "MaLop": "LOP-00000006",
       "MaGV": "GV009",
       "MaPhong": "A404",
-      "MaSlot": "Thu2-Ca5",
+      "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Công nghệ phần mềm",
         "SoCaTuan": 1,
@@ -615,7 +587,7 @@
       "MaLop": "LOP-00000008",
       "MaGV": "GV006",
       "MaPhong": "A405",
-      "MaSlot": "Thu3-Ca1",
+      "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính",
         "SoCaTuan": 1,
@@ -657,7 +629,7 @@
       "MaLop": "LOP-00000011",
       "MaGV": "GV006",
       "MaPhong": "A407",
-      "MaSlot": "Thu3-Ca2",
+      "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính",
         "SoCaTuan": 1,
@@ -685,7 +657,7 @@
       "MaLop": "LOP-00000013",
       "MaGV": "GV016",
       "MaPhong": "B209",
-      "MaSlot": "Thu3-Ca1",
+      "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
         "SoCaTuan": 1,
@@ -699,7 +671,7 @@
       "MaLop": "LOP-00000014",
       "MaGV": "GV016",
       "MaPhong": "A409",
-      "MaSlot": "Thu2-Ca2",
+      "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
         "SoCaTuan": 1,
@@ -727,13 +699,27 @@
       "MaLop": "LOP-00000016",
       "MaGV": "GV006",
       "MaPhong": "B301",
-      "MaSlot": "Thu4-Ca1",
+      "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
         "SoCaTuan": 1,
         "Nhom": 2,
         "SoSV": 80,
         "ThietBiYeuCau": "TV, Máy chiếu",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000017",
+      "MaGV": "GV016",
+      "MaPhong": "A502",
+      "MaSlot": "Thu3-Ca5",
+      "info": {
+        "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
         "SoTinChi": 4
       }
     },
@@ -811,7 +797,21 @@
       "MaLop": "LOP-00000023",
       "MaGV": "GV001",
       "MaPhong": "A506",
-      "MaSlot": "Thu4-Ca2",
+      "MaSlot": "Thu3-Ca5",
+      "info": {
+        "TenMonHoc": "Nhập môn hệ điều hành",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000024",
+      "MaGV": "GV030",
+      "MaPhong": "A507",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn hệ điều hành",
         "SoCaTuan": 1,
@@ -892,9 +892,23 @@
       }
     },
     {
+      "MaLop": "LOP-00000030",
+      "MaGV": "GV004",
+      "MaPhong": "A508",
+      "MaSlot": "Thu2-Ca3",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
       "MaLop": "LOP-00000031",
       "MaGV": "GV011",
-      "MaPhong": "A402",
+      "MaPhong": "A509",
       "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu",
@@ -909,7 +923,7 @@
       "MaLop": "LOP-00000032",
       "MaGV": "GV003",
       "MaPhong": "B309",
-      "MaSlot": "Thu3-Ca3",
+      "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu",
         "SoCaTuan": 1,
@@ -922,7 +936,7 @@
     {
       "MaLop": "LOP-00000033",
       "MaGV": "GV004",
-      "MaPhong": "A403",
+      "MaPhong": "A601",
       "MaSlot": "Thu2-Ca4",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu",
@@ -936,7 +950,7 @@
     {
       "MaLop": "LOP-00000034",
       "MaGV": "GV011",
-      "MaPhong": "A404",
+      "MaPhong": "A602",
       "MaSlot": "Thu2-Ca4",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu",
@@ -950,7 +964,7 @@
     {
       "MaLop": "LOP-00000035",
       "MaGV": "GV023",
-      "MaPhong": "B201",
+      "MaPhong": "B401",
       "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
@@ -962,9 +976,23 @@
       }
     },
     {
+      "MaLop": "LOP-00000036",
+      "MaGV": "GV023",
+      "MaPhong": "A603",
+      "MaSlot": "Thu2-Ca2",
+      "info": {
+        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
       "MaLop": "LOP-00000037",
       "MaGV": "GV023",
-      "MaPhong": "A406",
+      "MaPhong": "A604",
       "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
@@ -978,8 +1006,8 @@
     {
       "MaLop": "LOP-00000038",
       "MaGV": "GV003",
-      "MaPhong": "B401",
-      "MaSlot": "Thu3-Ca5",
+      "MaPhong": "B406",
+      "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
         "SoCaTuan": 1,
@@ -992,22 +1020,8 @@
     {
       "MaLop": "LOP-00000039",
       "MaGV": "GV004",
-      "MaPhong": "A407",
+      "MaPhong": "A605",
       "MaSlot": "Thu3-Ca1",
-      "info": {
-        "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC",
-        "SoTinChi": 4
-      }
-    },
-    {
-      "MaLop": "LOP-00000040",
-      "MaGV": "GV023",
-      "MaPhong": "A408",
-      "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
         "SoCaTuan": 1,
@@ -1020,7 +1034,7 @@
     {
       "MaLop": "LOP-00000041",
       "MaGV": "GV025",
-      "MaPhong": "B311",
+      "MaPhong": "B310",
       "MaSlot": "Thu2-Ca4",
       "info": {
         "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
@@ -1034,7 +1048,7 @@
     {
       "MaLop": "LOP-00000042",
       "MaGV": "GV021",
-      "MaPhong": "A409",
+      "MaPhong": "A607",
       "MaSlot": "Thu2-Ca4",
       "info": {
         "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
@@ -1048,8 +1062,8 @@
     {
       "MaLop": "LOP-00000043",
       "MaGV": "GV025",
-      "MaPhong": "A501",
-      "MaSlot": "Thu2-Ca5",
+      "MaPhong": "A608",
+      "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
         "SoCaTuan": 1,
@@ -1062,8 +1076,8 @@
     {
       "MaLop": "LOP-00000044",
       "MaGV": "GV021",
-      "MaPhong": "B402",
-      "MaSlot": "Thu3-Ca3",
+      "MaPhong": "B311",
+      "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
         "SoCaTuan": 1,
@@ -1076,8 +1090,8 @@
     {
       "MaLop": "LOP-00000045",
       "MaGV": "GV025",
-      "MaPhong": "A502",
-      "MaSlot": "Thu3-Ca2",
+      "MaPhong": "A609",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
         "SoCaTuan": 1,
@@ -1090,8 +1104,8 @@
     {
       "MaLop": "LOP-00000046",
       "MaGV": "GV021",
-      "MaPhong": "A503",
-      "MaSlot": "Thu3-Ca4",
+      "MaPhong": "A701",
+      "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
         "SoCaTuan": 1,
@@ -1104,7 +1118,7 @@
     {
       "MaLop": "LOP-00000047",
       "MaGV": "GV015",
-      "MaPhong": "B406",
+      "MaPhong": "B407",
       "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
@@ -1118,7 +1132,7 @@
     {
       "MaLop": "LOP-00000048",
       "MaGV": "GV017",
-      "MaPhong": "A504",
+      "MaPhong": "A702",
       "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
@@ -1132,7 +1146,7 @@
     {
       "MaLop": "LOP-00000049",
       "MaGV": "GV031",
-      "MaPhong": "A505",
+      "MaPhong": "A703",
       "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
@@ -1146,7 +1160,7 @@
     {
       "MaLop": "LOP-00000050",
       "MaGV": "GV015",
-      "MaPhong": "B407",
+      "MaPhong": "B408",
       "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
@@ -1160,7 +1174,7 @@
     {
       "MaLop": "LOP-00000051",
       "MaGV": "GV017",
-      "MaPhong": "A506",
+      "MaPhong": "A704",
       "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
@@ -1174,7 +1188,7 @@
     {
       "MaLop": "LOP-00000052",
       "MaGV": "GV031",
-      "MaPhong": "A507",
+      "MaPhong": "A705",
       "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
@@ -1188,8 +1202,8 @@
     {
       "MaLop": "LOP-00000053",
       "MaGV": "GV015",
-      "MaPhong": "B408",
-      "MaSlot": "Thu3-Ca2",
+      "MaPhong": "B409",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
         "SoCaTuan": 1,
@@ -1202,8 +1216,22 @@
     {
       "MaLop": "LOP-00000054",
       "MaGV": "GV017",
-      "MaPhong": "A508",
-      "MaSlot": "Thu4-Ca2",
+      "MaPhong": "A706",
+      "MaSlot": "Thu2-Ca3",
+      "info": {
+        "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 4
+      }
+    },
+    {
+      "MaLop": "LOP-00000055",
+      "MaGV": "GV031",
+      "MaPhong": "A707",
+      "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
         "SoCaTuan": 1,
@@ -1216,8 +1244,8 @@
     {
       "MaLop": "LOP-00000056",
       "MaGV": "GV015",
-      "MaPhong": "B409",
-      "MaSlot": "Thu4-Ca1",
+      "MaPhong": "C201",
+      "MaSlot": "Thu5-Ca3",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
         "SoCaTuan": 1,
@@ -1230,8 +1258,8 @@
     {
       "MaLop": "LOP-00000057",
       "MaGV": "GV017",
-      "MaPhong": "A601",
-      "MaSlot": "Thu4-Ca3",
+      "MaPhong": "A708",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
         "SoCaTuan": 1,
@@ -1244,8 +1272,8 @@
     {
       "MaLop": "LOP-00000058",
       "MaGV": "GV031",
-      "MaPhong": "A602",
-      "MaSlot": "Thu3-Ca3",
+      "MaPhong": "A709",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
         "SoCaTuan": 1,
@@ -1258,7 +1286,7 @@
     {
       "MaLop": "LOP-00000059",
       "MaGV": "GV020",
-      "MaPhong": "B410",
+      "MaPhong": "B402",
       "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "Quản trị hệ thống mạng",
@@ -1270,10 +1298,24 @@
       }
     },
     {
+      "MaLop": "LOP-00000060",
+      "MaGV": "GV020",
+      "MaPhong": "B203",
+      "MaSlot": "Thu2-Ca3",
+      "info": {
+        "TenMonHoc": "Quản trị hệ thống mạng",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
       "MaLop": "LOP-00000061",
       "MaGV": "GV020",
-      "MaPhong": "A402",
-      "MaSlot": "Thu2-Ca4",
+      "MaPhong": "B204",
+      "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Quản trị hệ thống mạng",
         "SoCaTuan": 1,
@@ -1286,7 +1328,7 @@
     {
       "MaLop": "LOP-00000062",
       "MaGV": "GV006",
-      "MaPhong": "B411",
+      "MaPhong": "B410",
       "MaSlot": "Thu3-Ca4",
       "info": {
         "TenMonHoc": "Quản trị hệ thống mạng",
@@ -1300,8 +1342,8 @@
     {
       "MaLop": "LOP-00000063",
       "MaGV": "GV020",
-      "MaPhong": "A403",
-      "MaSlot": "Thu3-Ca1",
+      "MaPhong": "B205",
+      "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Quản trị hệ thống mạng",
         "SoCaTuan": 1,
@@ -1314,7 +1356,7 @@
     {
       "MaLop": "LOP-00000064",
       "MaGV": "GV005",
-      "MaPhong": "A404",
+      "MaPhong": "B303",
       "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Quản trị hệ thống mạng",
@@ -1328,7 +1370,7 @@
     {
       "MaLop": "LOP-00000065",
       "MaGV": "GV040",
-      "MaPhong": "C201",
+      "MaPhong": "B411",
       "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "IoT cơ bản",
@@ -1340,10 +1382,24 @@
       }
     },
     {
+      "MaLop": "LOP-00000066",
+      "MaGV": "GV043",
+      "MaPhong": "B304",
+      "MaSlot": "Thu2-Ca2",
+      "info": {
+        "TenMonHoc": "IoT cơ bản",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
       "MaLop": "LOP-00000067",
       "MaGV": "GV045",
-      "MaPhong": "A406",
-      "MaSlot": "Thu2-Ca4",
+      "MaPhong": "B305",
+      "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "IoT cơ bản",
         "SoCaTuan": 1,
@@ -1370,49 +1426,21 @@
     {
       "MaLop": "LOP-00000069",
       "MaGV": "GV043",
-      "MaPhong": "A407",
-      "MaSlot": "Thu2-Ca1",
+      "MaPhong": "B403",
+      "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "IoT cơ bản",
         "SoCaTuan": 1,
         "Nhom": 2,
         "SoSV": 40,
         "ThietBiYeuCau": "PC",
-        "SoTinChi": 3
-      }
-    },
-    {
-      "MaLop": "LOP-00000070",
-      "MaGV": "GV045",
-      "MaPhong": "A408",
-      "MaSlot": "Thu3-Ca1",
-      "info": {
-        "TenMonHoc": "IoT cơ bản",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC",
-        "SoTinChi": 3
-      }
-    },
-    {
-      "MaLop": "LOP-00000071",
-      "MaGV": "GV013",
-      "MaPhong": "C203",
-      "MaSlot": "Thu2-Ca1",
-      "info": {
-        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu",
         "SoTinChi": 3
       }
     },
     {
       "MaLop": "LOP-00000072",
       "MaGV": "GV047",
-      "MaPhong": "A409",
+      "MaPhong": "B405",
       "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
@@ -1426,7 +1454,7 @@
     {
       "MaLop": "LOP-00000073",
       "MaGV": "GV013",
-      "MaPhong": "A501",
+      "MaPhong": "F301",
       "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
@@ -1452,10 +1480,24 @@
       }
     },
     {
+      "MaLop": "LOP-00000075",
+      "MaGV": "GV013",
+      "MaPhong": "F302",
+      "MaSlot": "Thu3-Ca1",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
       "MaLop": "LOP-00000076",
       "MaGV": "GV047",
-      "MaPhong": "A503",
-      "MaSlot": "Thu2-Ca2",
+      "MaPhong": "F303",
+      "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
         "SoCaTuan": 1,
@@ -1482,7 +1524,7 @@
     {
       "MaLop": "LOP-00000078",
       "MaGV": "GV037",
-      "MaPhong": "A504",
+      "MaPhong": "F304",
       "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
@@ -1496,7 +1538,7 @@
     {
       "MaLop": "LOP-00000079",
       "MaGV": "GV037",
-      "MaPhong": "A505",
+      "MaPhong": "F305",
       "MaSlot": "Thu3-Ca4",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
@@ -1510,7 +1552,7 @@
     {
       "MaLop": "LOP-00000080",
       "MaGV": "GV037",
-      "MaPhong": "C206",
+      "MaPhong": "C208",
       "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
@@ -1524,8 +1566,22 @@
     {
       "MaLop": "LOP-00000081",
       "MaGV": "GV001",
-      "MaPhong": "A506",
-      "MaSlot": "Thu4-Ca3",
+      "MaPhong": "F306",
+      "MaSlot": "Thu4-Ca2",
+      "info": {
+        "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
+        "SoCaTuan": 1,
+        "Nhom": 2,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000082",
+      "MaGV": "GV003",
+      "MaPhong": "F307",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
         "SoCaTuan": 1,
@@ -1538,7 +1594,7 @@
     {
       "MaLop": "LOP-00000083",
       "MaGV": "GV044",
-      "MaPhong": "C208",
+      "MaPhong": "C210",
       "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật thông tin",
@@ -1552,7 +1608,7 @@
     {
       "MaLop": "LOP-00000084",
       "MaGV": "GV044",
-      "MaPhong": "C210",
+      "MaPhong": "C211",
       "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật thông tin",
@@ -1566,7 +1622,7 @@
     {
       "MaLop": "LOP-00000085",
       "MaGV": "GV011",
-      "MaPhong": "B201",
+      "MaPhong": "C206",
       "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Lập trình hướng đối tượng",
@@ -1580,7 +1636,7 @@
     {
       "MaLop": "LOP-00000086",
       "MaGV": "GV011",
-      "MaPhong": "A508",
+      "MaPhong": "F308",
       "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Lập trình hướng đối tượng",
@@ -1594,8 +1650,8 @@
     {
       "MaLop": "LOP-00000087",
       "MaGV": "GV001",
-      "MaPhong": "A509",
-      "MaSlot": "Thu4-Ca4",
+      "MaPhong": "F309",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Lập trình hướng đối tượng",
         "SoCaTuan": 1,
@@ -1608,7 +1664,7 @@
     {
       "MaLop": "LOP-00000088",
       "MaGV": "GV003",
-      "MaPhong": "B206",
+      "MaPhong": "C207",
       "MaSlot": "Thu4-Ca4",
       "info": {
         "TenMonHoc": "Lập trình hướng đối tượng",
@@ -1622,7 +1678,7 @@
     {
       "MaLop": "LOP-00000089",
       "MaGV": "GV011",
-      "MaPhong": "A601",
+      "MaPhong": "F310",
       "MaSlot": "Thu3-Ca5",
       "info": {
         "TenMonHoc": "Lập trình hướng đối tượng",
@@ -1636,8 +1692,8 @@
     {
       "MaLop": "LOP-00000090",
       "MaGV": "GV001",
-      "MaPhong": "A602",
-      "MaSlot": "Thu5-Ca1",
+      "MaPhong": "F311",
+      "MaSlot": "Thu4-Ca4",
       "info": {
         "TenMonHoc": "Lập trình hướng đối tượng",
         "SoCaTuan": 1,
@@ -1650,8 +1706,8 @@
     {
       "MaLop": "LOP-00000091",
       "MaGV": "GV009",
-      "MaPhong": "B207",
-      "MaSlot": "Thu5-Ca1",
+      "MaPhong": "C209",
+      "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Phân tích và thiết kế giải thuật",
         "SoCaTuan": 1,
@@ -1664,8 +1720,8 @@
     {
       "MaLop": "LOP-00000092",
       "MaGV": "GV009",
-      "MaPhong": "A603",
-      "MaSlot": "Thu5-Ca2",
+      "MaPhong": "F401",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Phân tích và thiết kế giải thuật",
         "SoCaTuan": 1,
@@ -1678,8 +1734,8 @@
     {
       "MaLop": "LOP-00000093",
       "MaGV": "GV009",
-      "MaPhong": "A604",
-      "MaSlot": "Thu6-Ca1",
+      "MaPhong": "F402",
+      "MaSlot": "Thu4-Ca4",
       "info": {
         "TenMonHoc": "Phân tích và thiết kế giải thuật",
         "SoCaTuan": 1,
@@ -1692,8 +1748,8 @@
     {
       "MaLop": "LOP-00000094",
       "MaGV": "GV009",
-      "MaPhong": "B208",
-      "MaSlot": "Thu6-Ca2",
+      "MaPhong": "C301",
+      "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Phân tích và thiết kế giải thuật",
         "SoCaTuan": 1,
@@ -1706,7 +1762,7 @@
     {
       "MaLop": "LOP-00000095",
       "MaGV": "GV003",
-      "MaPhong": "A605",
+      "MaPhong": "F403",
       "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Phân tích và thiết kế giải thuật",
@@ -1720,8 +1776,8 @@
     {
       "MaLop": "LOP-00000096",
       "MaGV": "GV009",
-      "MaPhong": "A606",
-      "MaSlot": "Thu6-Ca4",
+      "MaPhong": "F404",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Phân tích và thiết kế giải thuật",
         "SoCaTuan": 1,
@@ -1734,7 +1790,7 @@
     {
       "MaLop": "LOP-00000097",
       "MaGV": "GV007",
-      "MaPhong": "C211",
+      "MaPhong": "C302",
       "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Học máy",
@@ -1748,7 +1804,7 @@
     {
       "MaLop": "LOP-00000098",
       "MaGV": "GV008",
-      "MaPhong": "C302",
+      "MaPhong": "C303",
       "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn Học máy",
@@ -1762,8 +1818,8 @@
     {
       "MaLop": "LOP-00000099",
       "MaGV": "GV008",
-      "MaPhong": "C303",
-      "MaSlot": "Thu4-Ca1",
+      "MaPhong": "C304",
+      "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Hệ thống hoạch định nguồn lực doanh nghiệp",
         "SoCaTuan": 1,
@@ -1776,8 +1832,8 @@
     {
       "MaLop": "LOP-00000100",
       "MaGV": "GV008",
-      "MaPhong": "C304",
-      "MaSlot": "Thu4-Ca2",
+      "MaPhong": "C305",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Hệ thống hoạch định nguồn lực doanh nghiệp",
         "SoCaTuan": 1,
@@ -1790,7 +1846,7 @@
     {
       "MaLop": "LOP-00000101",
       "MaGV": "GV037",
-      "MaPhong": "C305",
+      "MaPhong": "C308",
       "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động",
@@ -1804,8 +1860,8 @@
     {
       "MaLop": "LOP-00000102",
       "MaGV": "GV037",
-      "MaPhong": "A607",
-      "MaSlot": "Thu4-Ca4",
+      "MaPhong": "F405",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động",
         "SoCaTuan": 1,
@@ -1818,8 +1874,8 @@
     {
       "MaLop": "LOP-00000103",
       "MaGV": "GV037",
-      "MaPhong": "A608",
-      "MaSlot": "Thu5-Ca2",
+      "MaPhong": "F406",
+      "MaSlot": "Thu5-Ca3",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động",
         "SoCaTuan": 1,
@@ -1832,8 +1888,8 @@
     {
       "MaLop": "LOP-00000104",
       "MaGV": "GV001",
-      "MaPhong": "B202",
-      "MaSlot": "Thu5-Ca2",
+      "MaPhong": "C310",
+      "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động",
         "SoCaTuan": 1,
@@ -1846,7 +1902,7 @@
     {
       "MaLop": "LOP-00000105",
       "MaGV": "GV003",
-      "MaPhong": "A609",
+      "MaPhong": "F407",
       "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động",
@@ -1860,8 +1916,8 @@
     {
       "MaLop": "LOP-00000106",
       "MaGV": "GV037",
-      "MaPhong": "A701",
-      "MaSlot": "Thu5-Ca3",
+      "MaPhong": "F408",
+      "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động",
         "SoCaTuan": 1,
@@ -1874,7 +1930,7 @@
     {
       "MaLop": "LOP-00000107",
       "MaGV": "GV038",
-      "MaPhong": "C308",
+      "MaPhong": "C311",
       "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn thị giác máy tính",
@@ -1888,8 +1944,8 @@
     {
       "MaLop": "LOP-00000108",
       "MaGV": "GV007",
-      "MaPhong": "C310",
-      "MaSlot": "Thu2-Ca4",
+      "MaPhong": "C402",
+      "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn thị giác máy tính",
         "SoCaTuan": 1,
@@ -1902,7 +1958,7 @@
     {
       "MaLop": "LOP-00000109",
       "MaGV": "GV033",
-      "MaPhong": "C311",
+      "MaPhong": "C403",
       "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn học máy",
@@ -1916,8 +1972,8 @@
     {
       "MaLop": "LOP-00000110",
       "MaGV": "GV036",
-      "MaPhong": "C402",
-      "MaSlot": "Thu2-Ca2",
+      "MaPhong": "C404",
+      "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn học máy",
         "SoCaTuan": 1,
@@ -1930,8 +1986,8 @@
     {
       "MaLop": "LOP-00000111",
       "MaGV": "GV001",
-      "MaPhong": "B210",
-      "MaSlot": "Thu6-Ca2",
+      "MaPhong": "C405",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
         "SoCaTuan": 1,
@@ -1944,7 +2000,7 @@
     {
       "MaLop": "LOP-00000112",
       "MaGV": "GV003",
-      "MaPhong": "A702",
+      "MaPhong": "F409",
       "MaSlot": "Thu6-Ca5",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
@@ -1958,8 +2014,8 @@
     {
       "MaLop": "LOP-00000113",
       "MaGV": "GV037",
-      "MaPhong": "A703",
-      "MaSlot": "Thu6-Ca3",
+      "MaPhong": "F410",
+      "MaSlot": "Thu7-Ca3",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
         "SoCaTuan": 1,
@@ -1972,8 +2028,8 @@
     {
       "MaLop": "LOP-00000114",
       "MaGV": "GV001",
-      "MaPhong": "B211",
-      "MaSlot": "Thu6-Ca4",
+      "MaPhong": "C408",
+      "MaSlot": "Thu6-Ca2",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
         "SoCaTuan": 1,
@@ -1986,7 +2042,7 @@
     {
       "MaLop": "LOP-00000115",
       "MaGV": "GV003",
-      "MaPhong": "A704",
+      "MaPhong": "F411",
       "MaSlot": "Thu7-Ca1",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
@@ -2000,8 +2056,8 @@
     {
       "MaLop": "LOP-00000116",
       "MaGV": "GV037",
-      "MaPhong": "A705",
-      "MaSlot": "Thu7-Ca3",
+      "MaPhong": "F501",
+      "MaSlot": "Thu7-Ca4",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
         "SoCaTuan": 1,
@@ -2014,7 +2070,7 @@
     {
       "MaLop": "LOP-00000117",
       "MaGV": "GV041",
-      "MaPhong": "C403",
+      "MaPhong": "C410",
       "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "Thiết kế giao diện người dùng",
@@ -2028,7 +2084,7 @@
     {
       "MaLop": "LOP-00000118",
       "MaGV": "GV041",
-      "MaPhong": "A706",
+      "MaPhong": "F502",
       "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Thiết kế giao diện người dùng",
@@ -2042,7 +2098,7 @@
     {
       "MaLop": "LOP-00000119",
       "MaGV": "GV041",
-      "MaPhong": "A707",
+      "MaPhong": "F503",
       "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Thiết kế giao diện người dùng",
@@ -2056,8 +2112,8 @@
     {
       "MaLop": "LOP-00000120",
       "MaGV": "GV013",
-      "MaPhong": "C404",
-      "MaSlot": "Thu2-Ca4",
+      "MaPhong": "C411",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Thiết kế giao diện người dùng",
         "SoCaTuan": 1,
@@ -2070,8 +2126,8 @@
     {
       "MaLop": "LOP-00000121",
       "MaGV": "GV041",
-      "MaPhong": "A708",
-      "MaSlot": "Thu4-Ca2",
+      "MaPhong": "F504",
+      "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Thiết kế giao diện người dùng",
         "SoCaTuan": 1,
@@ -2084,8 +2140,8 @@
     {
       "MaLop": "LOP-00000122",
       "MaGV": "GV047",
-      "MaPhong": "A709",
-      "MaSlot": "Thu2-Ca3",
+      "MaPhong": "F505",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Thiết kế giao diện người dùng",
         "SoCaTuan": 1,
@@ -2098,7 +2154,7 @@
     {
       "MaLop": "LOP-00000123",
       "MaGV": "GV004",
-      "MaPhong": "C405",
+      "MaPhong": "D102",
       "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Quản trị hệ thống thông tin",
@@ -2112,8 +2168,8 @@
     {
       "MaLop": "LOP-00000124",
       "MaGV": "GV021",
-      "MaPhong": "C408",
-      "MaSlot": "Thu4-Ca1",
+      "MaPhong": "D103",
+      "MaSlot": "Thu3-Ca4",
       "info": {
         "TenMonHoc": "Quản trị hệ thống thông tin",
         "SoCaTuan": 1,
@@ -2126,8 +2182,8 @@
     {
       "MaLop": "LOP-00000125",
       "MaGV": "GV006",
-      "MaPhong": "C410",
-      "MaSlot": "Thu4-Ca2",
+      "MaPhong": "D104",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Thiết kế mạng",
         "SoCaTuan": 1,
@@ -2140,8 +2196,8 @@
     {
       "MaLop": "LOP-00000126",
       "MaGV": "GV020",
-      "MaPhong": "B203",
-      "MaSlot": "Thu3-Ca2",
+      "MaPhong": "F506",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Thiết kế mạng",
         "SoCaTuan": 1,
@@ -2154,8 +2210,8 @@
     {
       "MaLop": "LOP-00000127",
       "MaGV": "GV005",
-      "MaPhong": "B204",
-      "MaSlot": "Thu4-Ca4",
+      "MaPhong": "F507",
+      "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Thiết kế mạng",
         "SoCaTuan": 1,
@@ -2168,8 +2224,8 @@
     {
       "MaLop": "LOP-00000128",
       "MaGV": "GV006",
-      "MaPhong": "C411",
-      "MaSlot": "Thu4-Ca3",
+      "MaPhong": "D105",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Thiết kế mạng",
         "SoCaTuan": 1,
@@ -2182,7 +2238,7 @@
     {
       "MaLop": "LOP-00000129",
       "MaGV": "GV020",
-      "MaPhong": "B205",
+      "MaPhong": "F508",
       "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Thiết kế mạng",
@@ -2196,7 +2252,7 @@
     {
       "MaLop": "LOP-00000130",
       "MaGV": "GV005",
-      "MaPhong": "B303",
+      "MaPhong": "F509",
       "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Thiết kế mạng",
@@ -2210,7 +2266,7 @@
     {
       "MaLop": "LOP-00000131",
       "MaGV": "GV014",
-      "MaPhong": "D102",
+      "MaPhong": "D110",
       "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Công nghệ Java",
@@ -2224,7 +2280,7 @@
     {
       "MaLop": "LOP-00000132",
       "MaGV": "GV014",
-      "MaPhong": "B304",
+      "MaPhong": "F510",
       "MaSlot": "Thu2-Ca4",
       "info": {
         "TenMonHoc": "Công nghệ Java",
@@ -2238,7 +2294,7 @@
     {
       "MaLop": "LOP-00000133",
       "MaGV": "GV014",
-      "MaPhong": "B305",
+      "MaPhong": "F511",
       "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Công nghệ Java",
@@ -2252,7 +2308,7 @@
     {
       "MaLop": "LOP-00000134",
       "MaGV": "GV014",
-      "MaPhong": "D103",
+      "MaPhong": "D202",
       "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Công nghệ Java",
@@ -2266,7 +2322,7 @@
     {
       "MaLop": "LOP-00000135",
       "MaGV": "GV014",
-      "MaPhong": "B403",
+      "MaPhong": "F601",
       "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Công nghệ Java",
@@ -2280,8 +2336,8 @@
     {
       "MaLop": "LOP-00000136",
       "MaGV": "GV047",
-      "MaPhong": "B404",
-      "MaSlot": "Thu4-Ca2",
+      "MaPhong": "F602",
+      "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Công nghệ Java",
         "SoCaTuan": 1,
@@ -2294,8 +2350,8 @@
     {
       "MaLop": "LOP-00000137",
       "MaGV": "GV012",
-      "MaPhong": "D104",
-      "MaSlot": "Thu3-Ca1",
+      "MaPhong": "D203",
+      "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Công nghệ .Net",
         "SoCaTuan": 1,
@@ -2308,7 +2364,7 @@
     {
       "MaLop": "LOP-00000138",
       "MaGV": "GV048",
-      "MaPhong": "B405",
+      "MaPhong": "F603",
       "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Công nghệ .Net",
@@ -2322,8 +2378,8 @@
     {
       "MaLop": "LOP-00000139",
       "MaGV": "GV012",
-      "MaPhong": "F302",
-      "MaSlot": "Thu4-Ca1",
+      "MaPhong": "F604",
+      "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Công nghệ .Net",
         "SoCaTuan": 1,
@@ -2336,8 +2392,8 @@
     {
       "MaLop": "LOP-00000140",
       "MaGV": "GV048",
-      "MaPhong": "D105",
-      "MaSlot": "Thu3-Ca3",
+      "MaPhong": "D204",
+      "MaSlot": "Thu4-Ca4",
       "info": {
         "TenMonHoc": "Công nghệ .Net",
         "SoCaTuan": 1,
@@ -2350,8 +2406,8 @@
     {
       "MaLop": "LOP-00000141",
       "MaGV": "GV012",
-      "MaPhong": "F303",
-      "MaSlot": "Thu4-Ca3",
+      "MaPhong": "F605",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Công nghệ .Net",
         "SoCaTuan": 1,
@@ -2364,8 +2420,8 @@
     {
       "MaLop": "LOP-00000142",
       "MaGV": "GV048",
-      "MaPhong": "F304",
-      "MaSlot": "Thu4-Ca4",
+      "MaPhong": "F606",
+      "MaSlot": "Thu5-Ca4",
       "info": {
         "TenMonHoc": "Công nghệ .Net",
         "SoCaTuan": 1,
@@ -2378,8 +2434,8 @@
     {
       "MaLop": "LOP-00000143",
       "MaGV": "GV013",
-      "MaPhong": "D110",
-      "MaSlot": "Thu4-Ca2",
+      "MaPhong": "D205",
+      "MaSlot": "Thu4-Ca4",
       "info": {
         "TenMonHoc": "Nhập môn Tư duy Logic",
         "SoCaTuan": 1,
@@ -2392,8 +2448,8 @@
     {
       "MaLop": "LOP-00000144",
       "MaGV": "GV017",
-      "MaPhong": "D202",
-      "MaSlot": "Thu4-Ca4",
+      "MaPhong": "D210",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn Tư duy Logic",
         "SoCaTuan": 1,
@@ -2406,7 +2462,7 @@
     {
       "MaLop": "LOP-00000145",
       "MaGV": "GV002",
-      "MaPhong": "B201",
+      "MaPhong": "C306",
       "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
@@ -2420,7 +2476,7 @@
     {
       "MaLop": "LOP-00000146",
       "MaGV": "GV002",
-      "MaPhong": "A401",
+      "MaPhong": "F607",
       "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
@@ -2434,7 +2490,7 @@
     {
       "MaLop": "LOP-00000147",
       "MaGV": "GV002",
-      "MaPhong": "A402",
+      "MaPhong": "F608",
       "MaSlot": "Thu3-Ca4",
       "info": {
         "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
@@ -2448,7 +2504,7 @@
     {
       "MaLop": "LOP-00000148",
       "MaGV": "GV002",
-      "MaPhong": "B206",
+      "MaPhong": "C307",
       "MaSlot": "Thu3-Ca5",
       "info": {
         "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
@@ -2462,7 +2518,7 @@
     {
       "MaLop": "LOP-00000149",
       "MaGV": "GV002",
-      "MaPhong": "A403",
+      "MaPhong": "F609",
       "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
@@ -2476,7 +2532,7 @@
     {
       "MaLop": "LOP-00000150",
       "MaGV": "GV002",
-      "MaPhong": "A404",
+      "MaPhong": "F610",
       "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
@@ -2490,7 +2546,7 @@
     {
       "MaLop": "LOP-00000151",
       "MaGV": "GV033",
-      "MaPhong": "D203",
+      "MaPhong": "D302",
       "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
@@ -2504,7 +2560,7 @@
     {
       "MaLop": "LOP-00000152",
       "MaGV": "GV033",
-      "MaPhong": "D204",
+      "MaPhong": "D303",
       "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
@@ -2518,7 +2574,7 @@
     {
       "MaLop": "LOP-00000153",
       "MaGV": "GV035",
-      "MaPhong": "D205",
+      "MaPhong": "D304",
       "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Xử lý dữ liệu lớn",
@@ -2532,7 +2588,7 @@
     {
       "MaLop": "LOP-00000154",
       "MaGV": "GV035",
-      "MaPhong": "D210",
+      "MaPhong": "D305",
       "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Xử lý dữ liệu lớn",
@@ -2546,8 +2602,8 @@
     {
       "MaLop": "LOP-00000155",
       "MaGV": "GV043",
-      "MaPhong": "D302",
-      "MaSlot": "Thu2-Ca3",
+      "MaPhong": "D310",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Hệ thống thương mại thông minh",
         "SoCaTuan": 1,
@@ -2558,23 +2614,9 @@
       }
     },
     {
-      "MaLop": "LOP-00000156",
-      "MaGV": "GV045",
-      "MaPhong": "D303",
-      "MaSlot": "Thu3-Ca2",
-      "info": {
-        "TenMonHoc": "Hệ thống thương mại thông minh",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu",
-        "SoTinChi": 3
-      }
-    },
-    {
       "MaLop": "LOP-00000158",
       "MaGV": "GV004",
-      "MaPhong": "A405",
+      "MaPhong": "F701",
       "MaSlot": "Thu3-Ca4",
       "info": {
         "TenMonHoc": "Kiến tập công nghiệp",
@@ -2588,7 +2630,7 @@
     {
       "MaLop": "LOP-00000159",
       "MaGV": "GV004",
-      "MaPhong": "A406",
+      "MaPhong": "F702",
       "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Kiến tập công nghiệp",
@@ -2602,7 +2644,7 @@
     {
       "MaLop": "LOP-00000161",
       "MaGV": "GV004",
-      "MaPhong": "A407",
+      "MaPhong": "F704",
       "MaSlot": "Thu5-Ca4",
       "info": {
         "TenMonHoc": "Kiến tập công nghiệp",
@@ -2616,8 +2658,8 @@
     {
       "MaLop": "LOP-00000162",
       "MaGV": "GV001",
-      "MaPhong": "A408",
-      "MaSlot": "Thu7-Ca2",
+      "MaPhong": "F705",
+      "MaSlot": "Thu6-Ca4",
       "info": {
         "TenMonHoc": "Kiến tập công nghiệp",
         "SoCaTuan": 1,
@@ -2630,7 +2672,7 @@
     {
       "MaLop": "LOP-00000164",
       "MaGV": "GV004",
-      "MaPhong": "A409",
+      "MaPhong": "F707",
       "MaSlot": "Thu6-Ca2",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin 2",
@@ -2644,7 +2686,7 @@
     {
       "MaLop": "LOP-00000165",
       "MaGV": "GV004",
-      "MaPhong": "A501",
+      "MaPhong": "F708",
       "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin 2",
@@ -2658,7 +2700,7 @@
     {
       "MaLop": "LOP-00000167",
       "MaGV": "GV004",
-      "MaPhong": "A502",
+      "MaPhong": "F710",
       "MaSlot": "Thu7-Ca1",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin 2",
@@ -2672,7 +2714,7 @@
     {
       "MaLop": "LOP-00000168",
       "MaGV": "GV004",
-      "MaPhong": "A503",
+      "MaPhong": "F711",
       "MaSlot": "Thu7-Ca4",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin 2",
@@ -2686,8 +2728,8 @@
     {
       "MaLop": "LOP-00000169",
       "MaGV": "GV047",
-      "MaPhong": "D304",
-      "MaSlot": "Thu5-Ca1",
+      "MaPhong": "D403",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Phát triển trò chơi",
         "SoCaTuan": 1,
@@ -2700,8 +2742,8 @@
     {
       "MaLop": "LOP-00000170",
       "MaGV": "GV047",
-      "MaPhong": "A504",
-      "MaSlot": "Thu5-Ca2",
+      "MaPhong": "A401",
+      "MaSlot": "Thu5-Ca3",
       "info": {
         "TenMonHoc": "Phát triển trò chơi",
         "SoCaTuan": 1,
@@ -2714,8 +2756,8 @@
     {
       "MaLop": "LOP-00000171",
       "MaGV": "GV047",
-      "MaPhong": "A505",
-      "MaSlot": "Thu5-Ca3",
+      "MaPhong": "A402",
+      "MaSlot": "Thu5-Ca4",
       "info": {
         "TenMonHoc": "Phát triển trò chơi",
         "SoCaTuan": 1,
@@ -2728,8 +2770,8 @@
     {
       "MaLop": "LOP-00000172",
       "MaGV": "GV047",
-      "MaPhong": "D305",
-      "MaSlot": "Thu5-Ca4",
+      "MaPhong": "D404",
+      "MaSlot": "Thu5-Ca5",
       "info": {
         "TenMonHoc": "Phát triển trò chơi",
         "SoCaTuan": 1,
@@ -2742,8 +2784,8 @@
     {
       "MaLop": "LOP-00000173",
       "MaGV": "GV047",
-      "MaPhong": "A506",
-      "MaSlot": "Thu5-Ca5",
+      "MaPhong": "A403",
+      "MaSlot": "Thu6-Ca2",
       "info": {
         "TenMonHoc": "Phát triển trò chơi",
         "SoCaTuan": 1,
@@ -2756,8 +2798,8 @@
     {
       "MaLop": "LOP-00000174",
       "MaGV": "GV047",
-      "MaPhong": "A507",
-      "MaSlot": "Thu6-Ca2",
+      "MaPhong": "A404",
+      "MaSlot": "Thu7-Ca3",
       "info": {
         "TenMonHoc": "Phát triển trò chơi",
         "SoCaTuan": 1,
@@ -2770,8 +2812,8 @@
     {
       "MaLop": "LOP-00000175",
       "MaGV": "GV040",
-      "MaPhong": "D402",
-      "MaSlot": "Thu2-Ca3",
+      "MaPhong": "D405",
+      "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Điện toán đám mây",
         "SoCaTuan": 1,
@@ -2784,8 +2826,22 @@
     {
       "MaLop": "LOP-00000176",
       "MaGV": "GV040",
-      "MaPhong": "A508",
-      "MaSlot": "Thu2-Ca5",
+      "MaPhong": "A405",
+      "MaSlot": "Thu3-Ca3",
+      "info": {
+        "TenMonHoc": "Điện toán đám mây",
+        "SoCaTuan": 1,
+        "Nhom": 1,
+        "SoSV": 40,
+        "ThietBiYeuCau": "PC",
+        "SoTinChi": 3
+      }
+    },
+    {
+      "MaLop": "LOP-00000177",
+      "MaGV": "GV040",
+      "MaPhong": "A406",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Điện toán đám mây",
         "SoCaTuan": 1,
@@ -2798,8 +2854,8 @@
     {
       "MaLop": "LOP-00000178",
       "MaGV": "GV040",
-      "MaPhong": "D403",
-      "MaSlot": "Thu3-Ca3",
+      "MaPhong": "D410",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Điện toán đám mây",
         "SoCaTuan": 1,
@@ -2812,8 +2868,8 @@
     {
       "MaLop": "LOP-00000179",
       "MaGV": "GV040",
-      "MaPhong": "A601",
-      "MaSlot": "Thu4-Ca1",
+      "MaPhong": "A407",
+      "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Điện toán đám mây",
         "SoCaTuan": 1,
@@ -2826,8 +2882,8 @@
     {
       "MaLop": "LOP-00000180",
       "MaGV": "GV005",
-      "MaPhong": "A602",
-      "MaSlot": "Thu5-Ca4",
+      "MaPhong": "A408",
+      "MaSlot": "Thu6-Ca1",
       "info": {
         "TenMonHoc": "Điện toán đám mây",
         "SoCaTuan": 1,
@@ -2840,7 +2896,7 @@
     {
       "MaLop": "LOP-00000181",
       "MaGV": "GV024",
-      "MaPhong": "D404",
+      "MaPhong": "C309",
       "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật máy tính",
@@ -2854,7 +2910,7 @@
     {
       "MaLop": "LOP-00000182",
       "MaGV": "GV024",
-      "MaPhong": "A603",
+      "MaPhong": "A409",
       "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật máy tính",
@@ -2868,7 +2924,7 @@
     {
       "MaLop": "LOP-00000183",
       "MaGV": "GV024",
-      "MaPhong": "A604",
+      "MaPhong": "A501",
       "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật máy tính",
@@ -2882,7 +2938,7 @@
     {
       "MaLop": "LOP-00000184",
       "MaGV": "GV024",
-      "MaPhong": "D405",
+      "MaPhong": "C406",
       "MaSlot": "Thu3-Ca5",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật máy tính",
@@ -2896,8 +2952,8 @@
     {
       "MaLop": "LOP-00000185",
       "MaGV": "GV006",
-      "MaPhong": "A605",
-      "MaSlot": "Thu5-Ca2",
+      "MaPhong": "A502",
+      "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật máy tính",
         "SoCaTuan": 1,
@@ -2910,7 +2966,7 @@
     {
       "MaLop": "LOP-00000186",
       "MaGV": "GV024",
-      "MaPhong": "A606",
+      "MaPhong": "A503",
       "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật máy tính",
@@ -2924,8 +2980,8 @@
     {
       "MaLop": "LOP-00000188",
       "MaGV": "GV024",
-      "MaPhong": "A607",
-      "MaSlot": "Thu7-Ca4",
+      "MaPhong": "A505",
+      "MaSlot": "Thu7-Ca2",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin",
         "SoCaTuan": 1,
@@ -2938,8 +2994,8 @@
     {
       "MaLop": "LOP-00000189",
       "MaGV": "GV024",
-      "MaPhong": "A608",
-      "MaSlot": "Thu7-Ca5",
+      "MaPhong": "A506",
+      "MaSlot": "Thu7-Ca4",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin",
         "SoCaTuan": 1,
@@ -2952,8 +3008,8 @@
     {
       "MaLop": "LOP-00000191",
       "MaGV": "GV024",
-      "MaPhong": "A609",
-      "MaSlot": "Thu2-Ca5",
+      "MaPhong": "A508",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin",
         "SoCaTuan": 1,
@@ -2966,8 +3022,8 @@
     {
       "MaLop": "LOP-00000192",
       "MaGV": "GV024",
-      "MaPhong": "A701",
-      "MaSlot": "Thu4-Ca4",
+      "MaPhong": "A509",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin",
         "SoCaTuan": 1,
@@ -2980,7 +3036,7 @@
     {
       "MaLop": "LOP-00000193",
       "MaGV": "GV035",
-      "MaPhong": "D410",
+      "MaPhong": "C407",
       "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Xử lý dữ liệu lớn",
@@ -2994,7 +3050,7 @@
     {
       "MaLop": "LOP-00000194",
       "MaGV": "GV033",
-      "MaPhong": "B202",
+      "MaPhong": "C409",
       "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Xử lý dữ liệu lớn",
@@ -3008,7 +3064,7 @@
     {
       "MaLop": "LOP-00000195",
       "MaGV": "GV033",
-      "MaPhong": "B210",
+      "MaPhong": "D101",
       "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
@@ -3022,8 +3078,8 @@
     {
       "MaLop": "LOP-00000196",
       "MaGV": "GV041",
-      "MaPhong": "B211",
-      "MaSlot": "Thu5-Ca1",
+      "MaPhong": "D106",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
         "SoCaTuan": 1,
@@ -3036,8 +3092,8 @@
     {
       "MaLop": "LOP-00000197",
       "MaGV": "GV015",
-      "MaPhong": "B302",
-      "MaSlot": "Thu4-Ca2",
+      "MaPhong": "D107",
+      "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Kỹ năng soạn thảo văn bản kỹ thuật",
         "SoCaTuan": 1,
@@ -3050,8 +3106,8 @@
     {
       "MaLop": "LOP-00000198",
       "MaGV": "GV013",
-      "MaPhong": "B310",
-      "MaSlot": "Thu4-Ca4",
+      "MaPhong": "D109",
+      "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Kỹ năng soạn thảo văn bản kỹ thuật",
         "SoCaTuan": 1,
@@ -3064,8 +3120,8 @@
     {
       "MaLop": "LOP-00000199",
       "MaGV": "GV013",
-      "MaPhong": "B311",
-      "MaSlot": "Thu4-Ca5",
+      "MaPhong": "D201",
+      "MaSlot": "Thu6-Ca1",
       "info": {
         "TenMonHoc": "Lập trình hàm",
         "SoCaTuan": 1,
@@ -3078,8 +3134,8 @@
     {
       "MaLop": "LOP-00000200",
       "MaGV": "GV013",
-      "MaPhong": "A702",
-      "MaSlot": "Thu5-Ca1",
+      "MaPhong": "A601",
+      "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Lập trình hàm",
         "SoCaTuan": 1,
@@ -3092,8 +3148,8 @@
     {
       "MaLop": "LOP-00000201",
       "MaGV": "GV013",
-      "MaPhong": "A703",
-      "MaSlot": "Thu5-Ca5",
+      "MaPhong": "A602",
+      "MaSlot": "Thu7-Ca2",
       "info": {
         "TenMonHoc": "Lập trình hàm",
         "SoCaTuan": 1,
@@ -3106,8 +3162,8 @@
     {
       "MaLop": "LOP-00000202",
       "MaGV": "GV013",
-      "MaPhong": "B402",
-      "MaSlot": "Thu6-Ca1",
+      "MaPhong": "D206",
+      "MaSlot": "Thu7-Ca3",
       "info": {
         "TenMonHoc": "Lập trình hàm",
         "SoCaTuan": 1,
@@ -3120,8 +3176,8 @@
     {
       "MaLop": "LOP-00000203",
       "MaGV": "GV013",
-      "MaPhong": "A704",
-      "MaSlot": "Thu6-Ca3",
+      "MaPhong": "A603",
+      "MaSlot": "Thu7-Ca5",
       "info": {
         "TenMonHoc": "Lập trình hàm",
         "SoCaTuan": 1,
@@ -3134,8 +3190,8 @@
     {
       "MaLop": "LOP-00000204",
       "MaGV": "GV013",
-      "MaPhong": "A705",
-      "MaSlot": "Thu7-Ca2",
+      "MaPhong": "A604",
+      "MaSlot": "Thu4-Ca5",
       "info": {
         "TenMonHoc": "Lập trình hàm",
         "SoCaTuan": 1,
@@ -3148,8 +3204,8 @@
     {
       "MaLop": "LOP-00000205",
       "MaGV": "GV013",
-      "MaPhong": "C202",
-      "MaSlot": "Thu7-Ca3",
+      "MaPhong": "D207",
+      "MaSlot": "Thu5-Ca5",
       "info": {
         "TenMonHoc": "Nhập môn xử lý tiếng nói",
         "SoCaTuan": 1,
@@ -3160,24 +3216,10 @@
       }
     },
     {
-      "MaLop": "LOP-00000206",
-      "MaGV": "GV013",
-      "MaPhong": "C203",
-      "MaSlot": "Thu7-Ca5",
-      "info": {
-        "TenMonHoc": "Nhập môn xử lý tiếng nói",
-        "SoCaTuan": 1,
-        "Nhom": 2,
-        "SoSV": 40,
-        "ThietBiYeuCau": "TV, Máy chiếu",
-        "SoTinChi": 3
-      }
-    },
-    {
       "MaLop": "LOP-00000207",
       "MaGV": "GV035",
-      "MaPhong": "C204",
-      "MaSlot": "Thu3-Ca4",
+      "MaPhong": "D301",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Khai thác dữ liệu và Khai phá tri thức",
         "SoCaTuan": 1,
@@ -3190,8 +3232,8 @@
     {
       "MaLop": "LOP-00000208",
       "MaGV": "GV043",
-      "MaPhong": "C205",
-      "MaSlot": "Thu4-Ca1",
+      "MaPhong": "D306",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Khai thác dữ liệu và Khai phá tri thức",
         "SoCaTuan": 1,
@@ -3204,7 +3246,7 @@
     {
       "MaLop": "LOP-00000209",
       "MaGV": "GV038",
-      "MaPhong": "C208",
+      "MaPhong": "D307",
       "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
@@ -3218,22 +3260,8 @@
     {
       "MaLop": "LOP-00000210",
       "MaGV": "GV007",
-      "MaPhong": "A706",
-      "MaSlot": "Thu3-Ca1",
-      "info": {
-        "TenMonHoc": "Nhập môn Xử lý ảnh số",
-        "SoCaTuan": 1,
-        "Nhom": 1,
-        "SoSV": 40,
-        "ThietBiYeuCau": "PC",
-        "SoTinChi": 3
-      }
-    },
-    {
-      "MaLop": "LOP-00000211",
-      "MaGV": "GV038",
-      "MaPhong": "A707",
-      "MaSlot": "Thu4-Ca3",
+      "MaPhong": "A605",
+      "MaSlot": "Thu2-Ca4",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
         "SoCaTuan": 1,
@@ -3246,7 +3274,7 @@
     {
       "MaLop": "LOP-00000212",
       "MaGV": "GV007",
-      "MaPhong": "C210",
+      "MaPhong": "D309",
       "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
@@ -3260,8 +3288,8 @@
     {
       "MaLop": "LOP-00000213",
       "MaGV": "GV008",
-      "MaPhong": "A708",
-      "MaSlot": "Thu5-Ca1",
+      "MaPhong": "A607",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
         "SoCaTuan": 1,
@@ -3274,8 +3302,8 @@
     {
       "MaLop": "LOP-00000214",
       "MaGV": "GV038",
-      "MaPhong": "A709",
-      "MaSlot": "Thu5-Ca2",
+      "MaPhong": "A608",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
         "SoCaTuan": 1,
@@ -3288,7 +3316,7 @@
     {
       "MaLop": "LOP-00000215",
       "MaGV": "GV007",
-      "MaPhong": "C211",
+      "MaPhong": "D401",
       "MaSlot": "Thu3-Ca5",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
@@ -3302,8 +3330,8 @@
     {
       "MaLop": "LOP-00000216",
       "MaGV": "GV035",
-      "MaPhong": "C302",
-      "MaSlot": "Thu4-Ca3",
+      "MaPhong": "D406",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
         "SoCaTuan": 1,

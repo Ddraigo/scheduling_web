@@ -39,6 +39,7 @@ UNIFIED_OUTPUT_SCHEMA = {
             "HC-05": "int - count",
             "HC-06": "int - count",
             "HC-08": "int - count",
+            "HC-13": "int - count",
         },
         "soft_constraints": {
             "RBM-001": "int - count",
@@ -111,11 +112,14 @@ UNIFIED_OUTPUT_SCHEMA = {
 class UnifiedValidationOutput:
     """Generate unified validation output"""
     
-    def __init__(self, source: str, ma_dot: str, total_classes: int):
+    def __init__(self, source: str, ma_dot: str, total_classes: int, fitness_data: Dict = None):
         self.source = source  # "LLM" or "Algorithm"
         self.ma_dot = ma_dot
         self.total_classes = total_classes
         self.timestamp = datetime.now().isoformat()
+        
+        # 🔥 NEW: Store fitness data từ validator (hard_fitness, soft_fitness, combined_fitness)
+        self.fitness_data = fitness_data or {}
         
         self.hard_violations = []
         self.soft_violations = []  # NEW: Store soft violations separately
@@ -125,6 +129,64 @@ class UnifiedValidationOutput:
         
         self.hard_constraint_counts = {}
         self.soft_constraint_counts = {}
+    
+    @staticmethod
+    def format_ok_class_info(lop_mon_hoc, schedule_data=None) -> Dict[str, Any]:
+        """
+        Static method: Format thông tin class thành unified format cho ok_class_info
+        
+        Args:
+            lop_mon_hoc: LopMonHoc model instance
+            schedule_data: Schedule data object để lấy room/slot assignments (optional)
+        
+        Returns:
+            Dict với cấu trúc:
+            {
+                'MaLop': str,
+                'MaGV': str (hoặc None),
+                'MaPhong': str (hoặc None),
+                'MaSlot': str (hoặc None),
+                'info': {
+                    'TenMonHoc': str,
+                    'SoCaTuan': int,
+                    'Nhom': str,
+                    'SoSV': int,
+                    'ThietBiYeuCau': str,
+                    'SoTinChi': int,
+                }
+            }
+        """
+        from apps.scheduling.models import PhanCong
+        
+        # Get teacher assignment
+        ma_gv = None
+        phan_cong = PhanCong.objects.filter(ma_lop=lop_mon_hoc).first()
+        if phan_cong and phan_cong.ma_gv:
+            ma_gv = phan_cong.ma_gv.ma_gv
+        
+        # Get room assigned to this class (all sessions use same room)
+        ma_phong = None
+        ma_slot = None
+        if schedule_data:
+            class_assignments = schedule_data.get_assignments_for_class(lop_mon_hoc.ma_lop)
+            if class_assignments:
+                ma_phong = class_assignments[0].get('room')  # All sessions have same room
+                ma_slot = class_assignments[0].get('slot')   # TimeSlotID (e.g., "Thu2-Ca4")
+        
+        return {
+            'MaLop': lop_mon_hoc.ma_lop,
+            'MaGV': ma_gv,
+            'MaPhong': ma_phong,
+            'MaSlot': ma_slot,
+            'info': {
+                'TenMonHoc': lop_mon_hoc.ma_mon_hoc.ten_mon_hoc if lop_mon_hoc.ma_mon_hoc else 'N/A',
+                'SoCaTuan': lop_mon_hoc.so_ca_tuan or 1,
+                'Nhom': lop_mon_hoc.nhom_mh or '?',
+                'SoSV': lop_mon_hoc.so_luong_sv or 0,
+                'ThietBiYeuCau': lop_mon_hoc.thiet_bi_yeu_cau or '',
+                'SoTinChi': lop_mon_hoc.ma_mon_hoc.so_tin_chi if lop_mon_hoc.ma_mon_hoc else 0,
+            }
+        }
     
     def add_hard_violation(self, violation: Dict[str, Any]):
         """Thêm hard constraint violation"""
@@ -186,17 +248,24 @@ class UnifiedValidationOutput:
         hard_violated_percentage = (len(set(v.get('class') for v in self.hard_violations)) / self.total_classes * 100) if self.total_classes > 0 else 0
         soft_violated_percentage = (len(set(v.get('class') for v in self.soft_violations)) / self.total_classes * 100) if self.total_classes > 0 else 0
         
-        # Calculate fitness scores
-        # Nếu có hard violations → Lịch không khả thi → Fitness = 0.0
-        if hard_violations_count > 0:
-            hard_fitness = 0.0
-            soft_fitness = 0.0
-            combined_fitness = 0.0
+        # 🔥 Calculate fitness scores từ fitness_data (nếu có từ validator)
+        # Nếu validator pass fitness_data → Dùng đó (chính xác hơn)
+        # Nếu không → Tính lại (backward compatibility)
+        if self.fitness_data:
+            hard_fitness = self.fitness_data.get('hard_fitness', 0.0)
+            soft_fitness = self.fitness_data.get('soft_fitness', 0.0)
+            combined_fitness = self.fitness_data.get('combined_fitness', 0.0)
         else:
-            # Không có hard violations → Tính từ soft constraints
-            hard_fitness = 1.0 - (soft_violations_count / self.total_classes) if self.total_classes > 0 else 1.0
-            soft_fitness = 1.0  # Không vi phạm hard constraints
-            combined_fitness = (hard_fitness + soft_fitness) / 2.0
+            # Fallback: Tính lại (cũ cách tính)
+            if hard_violations_count > 0:
+                hard_fitness = 0.0
+                soft_fitness = 0.0
+                combined_fitness = 0.0
+            else:
+                # Không có hard violations → Tính từ soft constraints
+                hard_fitness = 1.0 - (soft_violations_count / self.total_classes) if self.total_classes > 0 else 1.0
+                soft_fitness = 1.0  # Không vi phạm hard constraints
+                combined_fitness = (hard_fitness + soft_fitness) / 2.0
         
         # Determine status
         if combined_fitness <= 0.0:

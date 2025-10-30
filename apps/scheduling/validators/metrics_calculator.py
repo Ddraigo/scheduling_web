@@ -99,14 +99,17 @@ class MetricsCalculator:
         'RBM-007': 'Ưu tiên xếp môn ≤ 2 tín chỉ vào buổi chiều/tối',
     }
     
-    def __init__(self, ma_dot: str):
+    def __init__(self, ma_dot: str, schedule_data=None):
         """
         Khởi tạo calculator
         
         Args:
             ma_dot: Mã đợt xếp (VD: 'DOT1_2025-2026_HK1')
+            schedule_data: ScheduleData object chứa schedule JSON (nếu validate lịch mới từ LLM/Algorithm)
+                          Nếu None → Lấy từ ThoiKhoaBieu database
         """
         self.ma_dot = ma_dot
+        self.schedule_data = schedule_data  # NEW: Schedule data from JSON (if provided)
         self.dot_xep = None
         self.active_constraints = {}  # {RBM_ID: weight}
         self.violations = []  # List[SoftConstraintViolation]
@@ -115,7 +118,7 @@ class MetricsCalculator:
         # Load dữ liệu
         self._load_dot_xep()
         self._load_active_constraints()
-        self._load_tkb_assignments()
+        self._load_tkb_assignments()  # Load từ schedule_data hoặc database
     
     def _load_dot_xep(self):
         """Load đợt xếp từ database"""
@@ -157,13 +160,28 @@ class MetricsCalculator:
             logger.info(f"✅ Loaded {len(self.active_constraints)} default constraints from tb_RANG_BUOC_MEM")
     
     def _load_tkb_assignments(self):
-        """Load lịch xếp (ThoiKhoaBieu) cho đợt này"""
-        self.tkb_assignments = list(
-            ThoiKhoaBieu.objects.filter(ma_dot=self.dot_xep).select_related(
-                'ma_lop', 'ma_phong', 'time_slot_id', 'ma_dot'
+        """
+        Load lịch xếp (ThoiKhoaBieu) cho đợt này
+        
+        Ưu tiên:
+        1. Nếu self.schedule_data được cung cấp → Lấy từ schedule JSON (validate lịch mới)
+        2. Nếu None → Lấy từ ThoiKhoaBieu database (validate lịch cũ)
+        """
+        if self.schedule_data:
+            # NEW: Lấy từ schedule JSON (từ LLM hoặc Algorithm)
+            logger.info(f"✅ Using schedule data from parameter (validate mode)")
+            # Schedule data sẽ được xử lý trong _check_constraint()
+            # Tạm để tkb_assignments = [] để không lỗi
+            self.tkb_assignments = []
+        else:
+            # OLD: Lấy từ database (legacy mode)
+            logger.info(f"⚠️ Loading TKB from database (legacy mode)")
+            self.tkb_assignments = list(
+                ThoiKhoaBieu.objects.filter(ma_dot=self.dot_xep).select_related(
+                    'ma_lop', 'ma_phong', 'time_slot_id', 'ma_dot'
+                )
             )
-        )
-        logger.info(f"✅ Loaded {len(self.tkb_assignments)} TKB assignments for {self.ma_dot}")
+            logger.info(f"✅ Loaded {len(self.tkb_assignments)} TKB assignments for {self.ma_dot}")
     
     def calculate_fitness(self) -> float:
         """
@@ -238,34 +256,56 @@ class MetricsCalculator:
     def _check_rbm_001(self) -> int:
         """
         RBM-001: Giới hạn số ca/ngày cho giảng viên
-        Vi phạm: Giảng viên dạy > 4 ca trong 1 ngày
+        Vi phạm: Giảng viên dạy > 4 ca trong 1 ngày (cùng thứ)
+        
+        Note: Dữ liệu là lịch 1 tuần, không phải từng ngày cụ thể
+        → Chỉ kiểm tra TimeSlot.thu (thứ) + đếm số ca cùng thứ đó
         """
         violations = 0
         
-        # Group TKB by (GiangVien, Ngày)
-        gv_day_slots = {}  # {(ma_gv, ngay_bd): [time_slot_list]}
+        # NEW: Nếu có schedule_data từ validate → Dùng đó
+        if self.schedule_data:
+            assignments = self.schedule_data.get_all_assignments()
+            logger.debug(f"RBM-001: Checking {len(assignments)} assignments from schedule_data")
+            
+            # Group by (teacher, slot_day)
+            # Từ schedule JSON: slot format "T2-C1" → T2 = thứ 2
+            gv_day_slots = {}  # {(ma_gv, thu): count}
+            
+            for assign in assignments:
+                teacher = assign.get('teacher') or self._get_teacher_for_class(assign.get('class'))
+                if not teacher:
+                    continue
+                
+                slot = assign.get('slot')  # "T2-C1" format
+                thu = self._extract_thu_from_slot(slot)  # Extract thứ từ slot
+                
+                key = (teacher, thu)
+                gv_day_slots[key] = gv_day_slots.get(key, 0) + 1
+        else:
+            # OLD: Lấy từ database
+            # Group by (teacher, thứ trong tuần)
+            gv_day_slots = {}  # {(ma_gv, thu): count}
+            
+            for tkb in self.tkb_assignments:
+                if not tkb.ma_lop or not tkb.ma_lop.phan_cong_list.exists():
+                    continue
+                
+                pc = tkb.ma_lop.phan_cong_list.first()
+                if not pc or not pc.ma_gv:
+                    continue
+                
+                ma_gv = pc.ma_gv.ma_gv
+                thu = tkb.time_slot_id.thu  # Thứ trong tuần (2-8)
+                
+                key = (ma_gv, thu)
+                gv_day_slots[key] = gv_day_slots.get(key, 0) + 1
         
-        for tkb in self.tkb_assignments:
-            if not tkb.ma_lop or not tkb.ma_lop.phan_cong_list.exists():
-                continue
-            
-            pc = tkb.ma_lop.phan_cong_list.first()  # Giảng viên dạy
-            if not pc or not pc.ma_gv:
-                continue
-            
-            ma_gv = pc.ma_gv.ma_gv
-            ngay_bd = tkb.ngay_bd
-            key = (ma_gv, ngay_bd)
-            
-            if key not in gv_day_slots:
-                gv_day_slots[key] = []
-            gv_day_slots[key].append(tkb.time_slot_id)
-        
-        # Kiểm tra: nếu > 4 ca/ngày → vi phạm
-        for (ma_gv, ngay), slots in gv_day_slots.items():
-            if len(slots) > 4:
-                violations += len(slots) - 4  # Mỗi ca vượt quá 2 là 1 vi phạm
-                logger.debug(f"RBM-001 violation: {ma_gv} has {len(slots)} slots on {ngay}")
+        # Kiểm tra: nếu > 4 ca/ngày (cùng thứ) → vi phạm
+        for (ma_gv, thu), count in gv_day_slots.items():
+            if count > 4:
+                violations += count - 4
+                logger.debug(f"RBM-001 violation: {ma_gv} has {count} sessions on day {thu}")
         
         return violations
     
@@ -273,38 +313,55 @@ class MetricsCalculator:
         """
         RBM-002: Giảm số ngày lên trường của giảng viên
         Vi phạm: Giảng viên dạy trên > 4 ngày/tuần
+        
+        Note: Dữ liệu là lịch 1 tuần, không phải từng ngày cụ thể
+        → Chỉ đếm số ngày (thứ) khác nhau mà GV dạy trong tuần
         """
         violations = 0
         
-        # Group TKB by (GiangVien, Tuần)
-        gv_week_days = {}  # {(ma_gv, week_num): set(ngay_dow)}
-        
-        for tkb in self.tkb_assignments:
-            if not tkb.ma_lop or not tkb.ma_lop.phan_cong_list.exists():
-                continue
+        # NEW: Nếu có schedule_data từ validate → Dùng đó
+        if self.schedule_data:
+            assignments = self.schedule_data.get_all_assignments()
             
-            pc = tkb.ma_lop.phan_cong_list.first()
-            if not pc or not pc.ma_gv:
-                continue
+            # Group by teacher, collect all distinct days (thứ)
+            gv_days = {}  # {ma_gv: set(thu)}
             
-            ma_gv = pc.ma_gv.ma_gv
-            ngay_dow = tkb.time_slot_id.thu  # Thứ trong tuần (2-8)
+            for assign in assignments:
+                teacher = assign.get('teacher') or self._get_teacher_for_class(assign.get('class'))
+                if not teacher:
+                    continue
+                
+                slot = assign.get('slot')  # "T2-C1" format
+                thu = self._extract_thu_from_slot(slot)
+                
+                if teacher not in gv_days:
+                    gv_days[teacher] = set()
+                gv_days[teacher].add(thu)
+        else:
+            # OLD: Lấy từ database
+            gv_days = {}  # {ma_gv: set(thu)}
             
-            # Giả sử tuần 1 từ ngay_bd
-            from datetime import timedelta
-            days_diff = (tkb.ngay_bd - self.dot_xep.ma_du_kien_dt.ngay_bd).days
-            week_num = days_diff // 7 + 1
-            
-            key = (ma_gv, week_num)
-            if key not in gv_week_days:
-                gv_week_days[key] = set()
-            gv_week_days[key].add(ngay_dow)
+            for tkb in self.tkb_assignments:
+                if not tkb.ma_lop or not tkb.ma_lop.phan_cong_list.exists():
+                    continue
+                
+                pc = tkb.ma_lop.phan_cong_list.first()
+                if not pc or not pc.ma_gv:
+                    continue
+                
+                ma_gv = pc.ma_gv.ma_gv
+                thu = tkb.time_slot_id.thu  # Thứ trong tuần (2-8)
+                
+                if ma_gv not in gv_days:
+                    gv_days[ma_gv] = set()
+                gv_days[ma_gv].add(thu)
         
         # Kiểm tra: nếu > 4 ngày/tuần → vi phạm
-        for (ma_gv, week), days in gv_week_days.items():
-            if len(days) > 4:
-                violations += len(days) - 4
-                logger.debug(f"RBM-002 violation: {ma_gv} teaches {len(days)} days on week {week}")
+        for ma_gv, days in gv_days.items():
+            num_days = len(days)
+            if num_days > 4:
+                violations += num_days - 4
+                logger.debug(f"RBM-002 violation: {ma_gv} teaches {num_days} days/week (days: {days})")
         
         return violations
     
@@ -511,3 +568,57 @@ class MetricsCalculator:
             print("   ✅ No violations!")
         
         print("\n" + "="*80 + "\n")
+    
+    # NEW: Helper methods for schedule_data validation
+    def _get_teacher_for_class(self, ma_lop: str) -> Optional[str]:
+        """Lấy giảng viên dạy lớp từ database (PhanCong)"""
+        from apps.scheduling.models import PhanCong, LopMonHoc
+        try:
+            lop = LopMonHoc.objects.get(ma_lop=ma_lop)
+            pc = PhanCong.objects.filter(ma_lop=lop).first()
+            if pc and pc.ma_gv:
+                return pc.ma_gv.ma_gv
+        except:
+            pass
+        return None
+    
+    def _extract_thu_from_slot(self, slot_str: str) -> Optional[int]:
+        """
+        Extract thứ (day of week) từ slot string
+        
+        Format: "T2-C1" hoặc "Thu2-Ca1"
+        Return: int (2-8 = thứ 2 - chủ nhật)
+        """
+        if not slot_str:
+            return None
+        
+        try:
+            # Format "T2-C1" → Extract "2"
+            if '-' in slot_str:
+                day_part = slot_str.split('-')[0]  # "T2" hoặc "Thu2"
+            else:
+                day_part = slot_str
+            
+            # Remove text, keep only number
+            # "T2" → "2", "Thu2" → "2"
+            day_num_str = ''.join(c for c in day_part if c.isdigit())
+            
+            if day_num_str:
+                return int(day_num_str)
+        except:
+            pass
+        
+        return None
+    
+    def _get_date_from_slot(self, slot_str: str) -> Optional[str]:
+        """
+        Lấy ngày từ slot string
+        Format slot: "Thu2-Ca1" hoặc "T2-C1"
+        Return: Ngày hôm đó (sẽ tính từ ngày bắt đầu + thứ)
+        
+        NOTE: Deprecated - không cần dùng vì chỉ kiểm tra thứ, không ngày tháng
+        """
+        # TODO: Implement if needed
+        # Hiện tại return None để tạm, cần parse slot format
+        return None
+

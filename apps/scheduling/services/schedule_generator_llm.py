@@ -53,6 +53,8 @@ class ScheduleGeneratorLLM:
         self.builder = LLMPromptBuilder()
         # Cache cho từng bước của pipeline
         self._cache = {}
+        # Flag để lưu kết quả "nguyên bản" từ LLM mà không sửa lỗi
+        self.save_raw_llm_output = True
     
     def fetch_data_step(self, ma_dot: str) -> dict:
         """
@@ -755,7 +757,6 @@ CONSTRAINTS:
                     'errors': ['AI instance is not ScheduleAI']
                 }
             
-            # 🔴 MAP SLOT LẠI: T2-C1 → Thu2-Ca1
             return self._parse_and_map_llm_response(llm_response, processed_data)
             
         except Exception as e:
@@ -777,6 +778,11 @@ CONSTRAINTS:
         3. Output format compact (T2-C1)
         4. Validate & generate errors
         5. Return format JSON với compact slots
+        
+        Nếu self.save_raw_llm_output = True:
+            - Không sửa lỗi tự động (HC-01, HC-04, HC-09)
+            - Chỉ normalize format slot
+            - Trả về kết quả "nguyên bản" từ LLM
         """
         schedule = []
         violations = []
@@ -834,16 +840,21 @@ CONSTRAINTS:
                         'thiet_bi_yeu_cau': cls.get('thiet_bi_yeu_cau', '')  # Thiết bị yêu cầu cho HC-04
                     }
         
-        # 🔴 NEW: Detect & Fix HC-01 Teacher Conflicts
-        schedule = self._fix_teacher_conflicts(schedule, processed_data, phan_cong_dict)
-        
-        # 🔴 NEW: Detect & Fix HC-04 Equipment Violations
-        schedule = self._fix_equipment_violations(schedule, processed_data, phan_cong_dict)
-        
-        # 🔴 NEW: Normalize HC-09 Consecutive Slots (sessions must be in consecutive Ca, not C2-C3)
-        schedule, consecutive_violations = self._normalize_consecutive_slots(schedule, phan_cong_dict)
-        if consecutive_violations > 0:
-            violations.append(f"⚠️ HC-09: {consecutive_violations} classes with non-consecutive slots (normalized)")
+        # 🔴 CONDITIONAL: Nếu save_raw_llm_output = True, bỏ qua mọi sửa lỗi tự động
+        if not self.save_raw_llm_output:
+            logger.info("🔧 Áp dụng các sửa lỗi tự động...")
+            #  NEW: Detect & Fix HC-01 Teacher Conflicts
+            schedule = self._fix_teacher_conflicts(schedule, processed_data, phan_cong_dict)
+            
+            #  NEW: Detect & Fix HC-04 Equipment Violations
+            schedule = self._fix_equipment_violations(schedule, processed_data, phan_cong_dict)
+            
+            #  NEW: Normalize HC-09 Consecutive Slots (sessions must be in consecutive Ca, not C2-C3)
+            schedule, consecutive_violations = self._normalize_consecutive_slots(schedule, phan_cong_dict)
+            if consecutive_violations > 0:
+                violations.append(f"⚠️ HC-09: {consecutive_violations} classes with non-consecutive slots (normalized)")
+        else:
+            logger.info("⚠️ CHỈNH ĐỘC: Bỏ qua mọi sửa lỗi tự động - lưu kết quả nguyên bản từ LLM")
         
         validation_result = self.validator.validate_schedule_compact(
             schedule_assignments=schedule,
