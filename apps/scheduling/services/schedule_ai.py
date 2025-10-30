@@ -155,6 +155,10 @@ class ScheduleAI:
         self.schedule_system_instruction = """Task: Generate Class Schedule (JSON Output)
 OUTPUT (JSON Only): {"schedule": [{"class": "...", "room": "...", "slot": "..."}]}
 
+🔴 CRITICAL SUCCESS RULE:
+If you violate ANY hard constraint (HC-01 to HC-08), the schedule is INVALID.
+⭐ MOST CRITICAL: HC-02 (Room Conflicts) and HC-01 (Teacher Conflicts) MUST be 100% respected!
+
 CRITICAL FORMATTING RULES
 JSON Only: Output ONLY the JSON object. No explanations.
 CLASS ID: Must be an EXACT COPY of the class.id (e.g., LOP-00000012).
@@ -162,32 +166,39 @@ SLOT FORMAT: Must STRICTLY adhere to T[2-7]-C[1-5] (e.g., T2-C1, T7-C5). T8 (Sun
 COUNT: Total assignments in schedule MUST equal SUM(class.sessions).
 
 INPUTS & CONTEXT
-Inputs: classes (with sessions, type, students, equipment_required), rooms (LT/TH), teacher_constraints, soft_constraints.
-Context: room_capacity[], room_type[], room_equipment[], teacher_preferences[].
+Inputs: classes (with sessions, type, students, equipment_required), rooms (LT/TH), teacher_constraints, soft_constraints, teacher_preferences.
+Context: room_capacity[], room_type[], room_equipment[], teacher_preferences[], teacher_preferred_slots[].
 
 SCHEDULING PRIORITIES (Strict Order)
-PRIORITY 1: HARD CONSTRAINTS (MANDATORY)
-Violation = Invalid Schedule.
+PRIORITY 1: HARD CONSTRAINTS (MANDATORY - NON-NEGOTIABLE)
+⚠️ Violation = Invalid Schedule. MUST be 100% satisfied.
 
-HC-01 (Teacher Conflict): One teacher, one slot.
-HC-02 (Room Conflict): One room, one slot.
+HC-01 (Teacher Conflict): One teacher, one slot ONLY.
+  Rule: A teacher CANNOT teach 2 classes at the same timeslot.
+  Check: For each assignment, verify teacher is not already scheduled in that slot.
+
+HC-02 (Room Conflict) ⭐ MOST CRITICAL:
+  Rule: A room CANNOT be booked 2 times at the same timeslot.
+  Check: For each room+slot combination, verify no duplicate assignments.
+  ERROR: If two classes are assigned to same room+slot = INVALID SCHEDULE!
+
 HC-03 (Room Type): class.type ("LT"/"TH") MUST match room_type.
 HC-04 (Capacity): room_capacity[room_id] MUST be >= class.students.
 HC-05 (Equipment): room_equipment[room_id] MUST contain ALL class.equipment_required.
 HC-06 (Teacher Busy): DO NOT schedule during teacher.busy_slots.
 HC-07 (Teacher Limits): Respect max_slots_per_day and max_slots_per_week.
 HC-08 (Session Rules - CRITICAL):
-A class must have EXACTLY sessions assignments.
-If sessions=2: MUST be a consecutive pair on the same day (e.g., T3-C1 & T3-C2, or T4-C3 & T4-C4).
-If sessions=3: MUST be a consecutive trio on the same day (e.g., T5-C1, T5-C2, T5-C3).
+  A class must have EXACTLY sessions assignments.
+  If sessions=2: MUST be a consecutive pair on the same day (e.g., T3-C1 & T3-C2, or T4-C3 & T4-C4).
+  If sessions=3: MUST be a consecutive trio on the same day (e.g., T5-C1, T5-C2, T5-C3).
+  Consecutive Rule: Valid groups are (C1,C2) and (C3,C4).
+  FORBIDDEN: Do not schedule across lunch (e.g., T2-C2 & T2-C3 is INVALID).
 
-Consecutive Rule: Valid groups are (C1,C2) and (C3,C4).
-FORBIDDEN: Do not schedule across lunch (e.g., T2-C2 & T2-C3 is INVALID).
-
-PRIORITY 2: TEACHER PREFERENCES (Semi-Hard)
-Maximize assignments to teacher_preferences.preferred_slots.
+PRIORITY 2: TEACHER PREFERENCES (IMPORTANT - Treat as High Priority)
+⭐ Maximize assignments to teacher_preferences (teacher → preferred_slots mapping).
 ONLY violate if it conflicts with Priority 1 (Hard Constraints).
 DO NOT violate preference to optimize Priority 3 or 4.
+Why: Teacher satisfaction depends on getting preferred timeslots.
 
 PRIORITY 3: TEACHER COMPACTNESS (Optimize for Teacher)
 Goal: Minimize the number of days each teacher must come to campus.
@@ -240,7 +251,7 @@ Soft Constraints: After all above rules are met, optimize to minimize penalties 
         # 📊 Log token usage stats TRƯỚC request
         prompt_len = len(self.schedule_system_instruction)
         context_len = len(context_prompt)
-        max_output_tokens = 50000  
+        max_output_tokens = 50000  # Giảm từ 50000 - đủ cho 216 schedules
         
         logger.info(f"📊 === TOKEN STATS (BEFORE REQUEST) ===")
         logger.info(f"   System Instruction: {prompt_len:,} chars (est. {prompt_len//4:,} tokens)")
@@ -259,7 +270,7 @@ Soft Constraints: After all above rules are met, optimize to minimize penalties 
         )
         
         response = self.client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-2.5-pro',
             contents=context_prompt,
             config=config
         )

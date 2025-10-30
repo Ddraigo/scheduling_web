@@ -568,19 +568,35 @@ class ScheduleGeneratorLLM:
         """
         🔴 TỐI ƯU: Format nguyên vọng - CHỈ MÃ GV & SLOT (bitmask)
         Loại bỏ: ten_gv, thu, ca
+        Extract string từ TimeSlot object để serialize thành JSON
         """
         result = []
         for nv in preferences_list:
-            if hasattr(nv, 'ma_gv') and hasattr(nv, 'time_slot_id'):
-                result.append({
-                    'gv': nv.ma_gv.ma_gv,
-                    'slot': nv.time_slot_id,
-                })
-            else:
-                result.append({
-                    'gv': nv.get('ma_gv', nv.get('gv')),
-                    'slot': nv.get('time_slot_id', nv.get('slot')),
-                })
+            try:
+                if hasattr(nv, 'ma_gv') and hasattr(nv, 'time_slot_id'):
+                    # Extract TimeSlot ID string
+                    slot_id = nv.time_slot_id
+                    if hasattr(slot_id, 'time_slot_id'):  # It's a TimeSlot object
+                        slot_id = slot_id.time_slot_id
+                    
+                    result.append({
+                        'gv': nv.ma_gv.ma_gv,
+                        'slot': str(slot_id),  # Convert to string
+                    })
+                else:
+                    # Dictionary format
+                    slot_val = nv.get('time_slot_id', nv.get('slot'))
+                    if hasattr(slot_val, 'time_slot_id'):
+                        slot_val = slot_val.time_slot_id
+                    
+                    result.append({
+                        'gv': nv.get('ma_gv', nv.get('gv')),
+                        'slot': str(slot_val),
+                    })
+            except Exception as e:
+                logger.warning(f"Error formatting preference: {e}")
+                continue
+        
         return result
     
     def _detect_conflicts(self, schedule_data: dict, semester_code: str) -> dict:
@@ -609,38 +625,96 @@ class ScheduleGeneratorLLM:
         # 1. Format context dữ liệu bằng ScheduleAI utilities
         context_part = self.ai.format_schedule_context_for_ai(processed_data)
         
-        # 2. Thêm stats mở rộng
+        # 2. Thêm stats + mapping table
         stats = processed_data['stats']
+        mapping = """KEY MAPPING (for compact JSON):
+c=class_id, s=students, sl=sessions, t=type(LT/TH), e=equipment, g=teacher_id
+r=room_id, cap=capacity, p=preferences"""
+        
         extended_context = f"""SCHEDULING CONTEXT:
 
-📊 THỐNG KÊ:
-- Tổng lớp: {stats['total_classes']}
-- Tiết cần xếp: {stats['total_schedules_needed']}
-- Phòng: {stats['total_rooms']}
-- Time slot: {stats['total_timeslots']}
+STATS:
+- Classes: {stats['total_classes']}
+- Sessions: {stats['total_schedules_needed']}
+- Rooms: {stats['total_rooms']}
+- Slots: {stats['total_timeslots']}
 
 {context_part}
 
-� CONSTRAINTS APPLIED:
+{mapping}
+
+CONSTRAINTS:
 """
         
-        # 3. Thêm constraints nếu có
-        for dot_info in processed_data['dot_xep_list']:
-            if dot_info.get('constraints'):
-                for const_id, const_info in dot_info['constraints'].items():
-                    extended_context += f"- {const_id}: {const_info.get('mo_ta', '')}\n"
+        # 3. Thêm constraints
+        if any(dot.get('constraints') for dot in processed_data['dot_xep_list']):
+            for dot_info in processed_data['dot_xep_list']:
+                if dot_info.get('constraints'):
+                    for const_id, const_info in dot_info['constraints'].items():
+                        extended_context += f"- {const_id}: {const_info.get('mo_ta', '')}\n"
         
-        # 4. Data JSON (compact)
-        data_str = json.dumps({
-            'classes': [pc for dot in processed_data['dot_xep_list'] for pc in dot['phan_cong']],
-            'rooms': processed_data['rooms_by_type'],
-            'timeslots': processed_data['timeslots'],
-            'constraints': {dot['ma_dot']: dot['constraints'] for dot in processed_data['dot_xep_list']},
-            'preferences_count': len([p for dot in processed_data['dot_xep_list'] for p in dot['preferences']]),
-        }, ensure_ascii=False, indent=2)
+        # 4. Teacher preferences text (top 15)
+        for dot_info in processed_data['dot_xep_list']:
+            prefs = dot_info.get('preferences', [])
+            if prefs:
+                extended_context += f"\nTEACHER PREFERENCES (Top {min(15, len(prefs))}/{len(prefs)}):\n"
+                for pref in prefs[:15]:
+                    gv_id = pref.get('gv')
+                    slot_id = pref.get('slot')
+                    extended_context += f"  - {gv_id}: {slot_id}\n"
+        
+        # 5. DATA JSON - COMPACT KEYS để giảm token
+        # Classes: {c, s, sl, t, e, g}
+        classes_data = []
+        for dot in processed_data['dot_xep_list']:
+            for pc in dot['phan_cong']:
+                classes_data.append({
+                    'c': pc.get('ma_lop'),
+                    's': pc.get('so_sv'),
+                    'sl': pc.get('so_ca_tuan'),
+                    't': pc.get('loai_phong'),
+                    'e': pc.get('thiet_bi_yeu_cau', ''),
+                    'g': pc.get('ma_gv'),
+                })
+        
+        # Rooms: {r, cap, t, e}
+        rooms_data = {}
+        for room_type, rooms in processed_data['rooms_by_type'].items():
+            rooms_data[room_type] = [
+                {
+                    'r': r['ma_phong'],
+                    'cap': r['suc_chua'],
+                    't': r.get('loai_phong', room_type),
+                    'e': r.get('thiet_bi', ''),
+                }
+                for r in rooms
+            ]
+        
+        # Timeslots
+        slots_data = [ts['id'] for ts in processed_data['timeslots']]
+        
+        # Preferences: {t, s} only
+        prefs_data = {}
+        total_prefs = 0
+        for dot_info in processed_data['dot_xep_list']:
+            prefs = dot_info.get('preferences', [])
+            if prefs:
+                prefs_compact = [{'t': p.get('gv'), 's': p.get('slot')} for p in prefs]
+                prefs_data[dot_info['ma_dot']] = prefs_compact
+                total_prefs += len(prefs)
+        
+        # JSON ultra-compact: separators=(',', ':')
+        data_dict = {
+            'c': classes_data,
+            'r': rooms_data,
+            's': slots_data,
+            'p': prefs_data,
+        }
+        
+        data_str = json.dumps(data_dict, ensure_ascii=False, separators=(',', ':'))
         
         total_size = len(extended_context) + len(data_str)
-        logger.info(f"📊 LLM Prompt size: {len(extended_context)} (context) + {len(data_str)} (data) = {total_size} chars")
+        logger.info(f"OPTIMIZED Prompt: {len(extended_context)} context + {len(data_str)} data = {total_size}")
         
         return extended_context + "\n\nDATA:\n" + data_str
     

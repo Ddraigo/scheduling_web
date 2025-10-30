@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-30T00:03:06.271317",
+  "timestamp": "2025-10-30T15:32:17.530874",
   "source": "Algorithm",
   "ma_dot": "DOT1_2025-2026_HK1",
   "summary": {
@@ -446,6 +446,9 @@
   "ok_classes": [
     {
       "MaLop": "LOP-00000001",
+      "MaGV": "GV001",
+      "MaPhong": "B209",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Công nghệ phần mềm",
         "SoCaTuan": 1,
@@ -457,6 +460,9 @@
     },
     {
       "MaLop": "LOP-00000002",
+      "MaGV": "GV003",
+      "MaPhong": "A705",
+      "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Công nghệ phần mềm",
         "SoCaTuan": 1,
@@ -468,6 +474,9 @@
     },
     {
       "MaLop": "LOP-00000003",
+      "MaGV": "GV009",
+      "MaPhong": "F701",
+      "MaSlot": "Thu3-Ca4",
       "info": {
         "TenMonHoc": "Công nghệ phần mềm",
         "SoCaTuan": 1,
@@ -479,6 +488,9 @@
     },
     {
       "MaLop": "LOP-00000004",
+      "MaGV": "GV001",
+      "MaPhong": "B306",
+      "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Công nghệ phần mềm",
         "SoCaTuan": 1,
@@ -490,6 +502,9 @@
     },
     {
       "MaLop": "LOP-00000006",
+      "MaGV": "GV009",
+      "MaPhong": "A405",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Công nghệ phần mềm",
         "SoCaTuan": 1,
@@ -501,6 +516,9 @@
     },
     {
       "MaLop": "LOP-00000007",
+      "MaGV": "GV005",
+      "MaPhong": "D406",
+      "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính",
         "SoCaTuan": 1,
@@ -512,6 +530,9 @@
     },
     {
       "MaLop": "LOP-00000008",
+      "MaGV": "GV006",
+      "MaPhong": "F610",
+      "MaSlot": "Thu4-Ca5",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính",
         "SoCaTuan": 1,
@@ -523,6 +544,9 @@
     },
     {
       "MaLop": "LOP-00000009",
+      "MaGV": "GV010",
+      "MaPhong": "F601",
+      "MaSlot": "Thu6-Ca5",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính",
         "SoCaTuan": 1,
@@ -534,6 +558,9 @@
     },
     {
       "MaLop": "LOP-00000010",
+      "MaGV": "GV005",
+      "MaPhong": "B306",
+      "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính",
         "SoCaTuan": 1,
@@ -545,6 +572,9 @@
     },
     {
       "MaLop": "LOP-00000011",
+      "MaGV": "GV006",
+      "MaPhong": "F705",
+      "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính",
         "SoCaTuan": 1,
@@ -556,6 +586,9 @@
     },
     {
       "MaLop": "LOP-00000012",
+      "MaGV": "GV010",
+      "MaPhong": "A403",
+      "MaSlot": "Thu7-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính",
         "SoCaTuan": 1,
@@ -567,6 +600,9 @@
     },
     {
       "MaLop": "LOP-00000013",
+      "MaGV": "GV016",
+      "MaPhong": "B408",
+      "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
         "SoCaTuan": 1,
@@ -578,6 +614,9 @@
     },
     {
       "MaLop": "LOP-00000014",
+      "MaGV": "GV016",
+      "MaPhong": "A504",
+      "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
         "SoCaTuan": 1,
@@ -589,6 +628,9 @@
     },
     {
       "MaLop": "LOP-00000015",
+      "MaGV": "GV005",
+      "MaPhong": "F306",
+      "MaSlot": "Thu6-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
         "SoCaTuan": 1,
@@ -600,6 +642,9 @@
     },
     {
       "MaLop": "LOP-00000016",
+      "MaGV": "GV006",
+      "MaPhong": "C307",
+      "MaSlot": "Thu7-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
         "SoCaTuan": 1,
@@ -611,6 +656,9 @@
     },
     {
       "MaLop": "LOP-00000017",
+      "MaGV": "GV016",
+      "MaPhong": "A709",
+      "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
         "SoCaTuan": 1,
@@ -622,6 +670,9 @@
     },
     {
       "MaLop": "LOP-00000018",
+      "MaGV": "GV005",
+      "MaPhong": "A605",
+      "MaSlot": "Thu6-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Mạng máy tính (Eng)",
         "SoCaTuan": 1,
@@ -633,6 +684,9 @@
     },
     {
       "MaLop": "LOP-00000019",
+      "MaGV": "GV030",
+      "MaPhong": "D207",
+      "MaSlot": "Thu7-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn hệ điều hành",
         "SoCaTuan": 1,
@@ -644,6 +698,9 @@
     },
     {
       "MaLop": "LOP-00000020",
+      "MaGV": "GV030",
+      "MaPhong": "F508",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn hệ điều hành",
         "SoCaTuan": 1,
@@ -655,6 +712,9 @@
     },
     {
       "MaLop": "LOP-00000021",
+      "MaGV": "GV001",
+      "MaPhong": "F311",
+      "MaSlot": "Thu6-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn hệ điều hành",
         "SoCaTuan": 1,
@@ -666,6 +726,9 @@
     },
     {
       "MaLop": "LOP-00000022",
+      "MaGV": "GV030",
+      "MaPhong": "D101",
+      "MaSlot": "Thu7-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn hệ điều hành",
         "SoCaTuan": 1,
@@ -677,6 +740,9 @@
     },
     {
       "MaLop": "LOP-00000023",
+      "MaGV": "GV001",
+      "MaPhong": "F603",
+      "MaSlot": "Thu6-Ca4",
       "info": {
         "TenMonHoc": "Nhập môn hệ điều hành",
         "SoCaTuan": 1,
@@ -688,6 +754,9 @@
     },
     {
       "MaLop": "LOP-00000024",
+      "MaGV": "GV030",
+      "MaPhong": "F701",
+      "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn hệ điều hành",
         "SoCaTuan": 1,
@@ -699,6 +768,9 @@
     },
     {
       "MaLop": "LOP-00000025",
+      "MaGV": "GV024",
+      "MaPhong": "D404",
+      "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật thông tin",
         "SoCaTuan": 1,
@@ -710,6 +782,9 @@
     },
     {
       "MaLop": "LOP-00000026",
+      "MaGV": "GV024",
+      "MaPhong": "C306",
+      "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật thông tin",
         "SoCaTuan": 1,
@@ -721,6 +796,9 @@
     },
     {
       "MaLop": "LOP-00000027",
+      "MaGV": "GV004",
+      "MaPhong": "D307",
+      "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Phân tích và thiết kế yêu cầu",
         "SoCaTuan": 1,
@@ -732,6 +810,9 @@
     },
     {
       "MaLop": "LOP-00000028",
+      "MaGV": "GV021",
+      "MaPhong": "D310",
+      "MaSlot": "Thu6-Ca5",
       "info": {
         "TenMonHoc": "Phân tích và thiết kế yêu cầu",
         "SoCaTuan": 1,
@@ -743,6 +824,9 @@
     },
     {
       "MaLop": "LOP-00000029",
+      "MaGV": "GV011",
+      "MaPhong": "B308",
+      "MaSlot": "Thu7-Ca2",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu",
         "SoCaTuan": 1,
@@ -754,6 +838,9 @@
     },
     {
       "MaLop": "LOP-00000030",
+      "MaGV": "GV004",
+      "MaPhong": "F602",
+      "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu",
         "SoCaTuan": 1,
@@ -765,6 +852,9 @@
     },
     {
       "MaLop": "LOP-00000031",
+      "MaGV": "GV011",
+      "MaPhong": "F305",
+      "MaSlot": "Thu5-Ca5",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu",
         "SoCaTuan": 1,
@@ -776,6 +866,9 @@
     },
     {
       "MaLop": "LOP-00000032",
+      "MaGV": "GV003",
+      "MaPhong": "B307",
+      "MaSlot": "Thu4-Ca4",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu",
         "SoCaTuan": 1,
@@ -787,6 +880,9 @@
     },
     {
       "MaLop": "LOP-00000033",
+      "MaGV": "GV004",
+      "MaPhong": "F509",
+      "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu",
         "SoCaTuan": 1,
@@ -798,6 +894,9 @@
     },
     {
       "MaLop": "LOP-00000034",
+      "MaGV": "GV011",
+      "MaPhong": "A703",
+      "MaSlot": "Thu5-Ca4",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu",
         "SoCaTuan": 1,
@@ -809,6 +908,9 @@
     },
     {
       "MaLop": "LOP-00000035",
+      "MaGV": "GV023",
+      "MaPhong": "C401",
+      "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
         "SoCaTuan": 1,
@@ -820,6 +922,9 @@
     },
     {
       "MaLop": "LOP-00000036",
+      "MaGV": "GV023",
+      "MaPhong": "B404",
+      "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
         "SoCaTuan": 1,
@@ -831,6 +936,9 @@
     },
     {
       "MaLop": "LOP-00000037",
+      "MaGV": "GV023",
+      "MaPhong": "A603",
+      "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
         "SoCaTuan": 1,
@@ -842,6 +950,9 @@
     },
     {
       "MaLop": "LOP-00000038",
+      "MaGV": "GV003",
+      "MaPhong": "D407",
+      "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
         "SoCaTuan": 1,
@@ -853,6 +964,9 @@
     },
     {
       "MaLop": "LOP-00000039",
+      "MaGV": "GV004",
+      "MaPhong": "F606",
+      "MaSlot": "Thu3-Ca4",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
         "SoCaTuan": 1,
@@ -864,6 +978,9 @@
     },
     {
       "MaLop": "LOP-00000040",
+      "MaGV": "GV023",
+      "MaPhong": "B403",
+      "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "Hệ cơ sở dữ liệu (Eng)",
         "SoCaTuan": 1,
@@ -875,6 +992,9 @@
     },
     {
       "MaLop": "LOP-00000041",
+      "MaGV": "GV025",
+      "MaPhong": "D103",
+      "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
         "SoCaTuan": 1,
@@ -886,6 +1006,9 @@
     },
     {
       "MaLop": "LOP-00000042",
+      "MaGV": "GV021",
+      "MaPhong": "A504",
+      "MaSlot": "Thu6-Ca4",
       "info": {
         "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
         "SoCaTuan": 1,
@@ -897,6 +1020,9 @@
     },
     {
       "MaLop": "LOP-00000043",
+      "MaGV": "GV025",
+      "MaPhong": "F404",
+      "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
         "SoCaTuan": 1,
@@ -908,6 +1034,9 @@
     },
     {
       "MaLop": "LOP-00000044",
+      "MaGV": "GV021",
+      "MaPhong": "B210",
+      "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
         "SoCaTuan": 1,
@@ -919,6 +1048,9 @@
     },
     {
       "MaLop": "LOP-00000045",
+      "MaGV": "GV025",
+      "MaPhong": "F405",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Phát triển hệ thống thông tin doanh nghiệp",
         "SoCaTuan": 1,
@@ -930,6 +1062,9 @@
     },
     {
       "MaLop": "LOP-00000047",
+      "MaGV": "GV015",
+      "MaPhong": "C301",
+      "MaSlot": "Thu7-Ca2",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
         "SoCaTuan": 1,
@@ -941,6 +1076,9 @@
     },
     {
       "MaLop": "LOP-00000048",
+      "MaGV": "GV017",
+      "MaPhong": "F306",
+      "MaSlot": "Thu5-Ca3",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
         "SoCaTuan": 1,
@@ -952,6 +1090,9 @@
     },
     {
       "MaLop": "LOP-00000050",
+      "MaGV": "GV015",
+      "MaPhong": "D309",
+      "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
         "SoCaTuan": 1,
@@ -963,6 +1104,9 @@
     },
     {
       "MaLop": "LOP-00000051",
+      "MaGV": "GV017",
+      "MaPhong": "F308",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
         "SoCaTuan": 1,
@@ -974,6 +1118,9 @@
     },
     {
       "MaLop": "LOP-00000052",
+      "MaGV": "GV031",
+      "MaPhong": "A403",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin",
         "SoCaTuan": 1,
@@ -985,6 +1132,9 @@
     },
     {
       "MaLop": "LOP-00000053",
+      "MaGV": "GV015",
+      "MaPhong": "D309",
+      "MaSlot": "Thu6-Ca4",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
         "SoCaTuan": 1,
@@ -996,6 +1146,9 @@
     },
     {
       "MaLop": "LOP-00000054",
+      "MaGV": "GV017",
+      "MaPhong": "F311",
+      "MaSlot": "Thu5-Ca4",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
         "SoCaTuan": 1,
@@ -1007,6 +1160,9 @@
     },
     {
       "MaLop": "LOP-00000055",
+      "MaGV": "GV031",
+      "MaPhong": "F506",
+      "MaSlot": "Thu6-Ca2",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
         "SoCaTuan": 1,
@@ -1018,6 +1174,9 @@
     },
     {
       "MaLop": "LOP-00000056",
+      "MaGV": "GV015",
+      "MaPhong": "B301",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
         "SoCaTuan": 1,
@@ -1029,6 +1188,9 @@
     },
     {
       "MaLop": "LOP-00000057",
+      "MaGV": "GV017",
+      "MaPhong": "F507",
+      "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
         "SoCaTuan": 1,
@@ -1040,6 +1202,9 @@
     },
     {
       "MaLop": "LOP-00000058",
+      "MaGV": "GV031",
+      "MaPhong": "F710",
+      "MaSlot": "Thu6-Ca1",
       "info": {
         "TenMonHoc": "Xác suất và thống kê ứng dụng cho Công nghệ thông tin (Eng)",
         "SoCaTuan": 1,
@@ -1051,6 +1216,9 @@
     },
     {
       "MaLop": "LOP-00000059",
+      "MaGV": "GV020",
+      "MaPhong": "C310",
+      "MaSlot": "Thu6-Ca1",
       "info": {
         "TenMonHoc": "Quản trị hệ thống mạng",
         "SoCaTuan": 1,
@@ -1062,6 +1230,9 @@
     },
     {
       "MaLop": "LOP-00000060",
+      "MaGV": "GV020",
+      "MaPhong": "A404",
+      "MaSlot": "Thu5-Ca4",
       "info": {
         "TenMonHoc": "Quản trị hệ thống mạng",
         "SoCaTuan": 1,
@@ -1073,6 +1244,9 @@
     },
     {
       "MaLop": "LOP-00000061",
+      "MaGV": "GV020",
+      "MaPhong": "F504",
+      "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "Quản trị hệ thống mạng",
         "SoCaTuan": 1,
@@ -1084,6 +1258,9 @@
     },
     {
       "MaLop": "LOP-00000062",
+      "MaGV": "GV006",
+      "MaPhong": "D109",
+      "MaSlot": "Thu3-Ca2",
       "info": {
         "TenMonHoc": "Quản trị hệ thống mạng",
         "SoCaTuan": 1,
@@ -1095,6 +1272,9 @@
     },
     {
       "MaLop": "LOP-00000063",
+      "MaGV": "GV020",
+      "MaPhong": "F510",
+      "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Quản trị hệ thống mạng",
         "SoCaTuan": 1,
@@ -1106,6 +1286,9 @@
     },
     {
       "MaLop": "LOP-00000064",
+      "MaGV": "GV005",
+      "MaPhong": "B405",
+      "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Quản trị hệ thống mạng",
         "SoCaTuan": 1,
@@ -1117,6 +1300,9 @@
     },
     {
       "MaLop": "LOP-00000065",
+      "MaGV": "GV040",
+      "MaPhong": "B411",
+      "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "IoT cơ bản",
         "SoCaTuan": 1,
@@ -1128,6 +1314,9 @@
     },
     {
       "MaLop": "LOP-00000066",
+      "MaGV": "GV043",
+      "MaPhong": "A408",
+      "MaSlot": "Thu6-Ca4",
       "info": {
         "TenMonHoc": "IoT cơ bản",
         "SoCaTuan": 1,
@@ -1139,6 +1328,9 @@
     },
     {
       "MaLop": "LOP-00000067",
+      "MaGV": "GV045",
+      "MaPhong": "A709",
+      "MaSlot": "Thu7-Ca2",
       "info": {
         "TenMonHoc": "IoT cơ bản",
         "SoCaTuan": 1,
@@ -1150,6 +1342,9 @@
     },
     {
       "MaLop": "LOP-00000068",
+      "MaGV": "GV040",
+      "MaPhong": "C402",
+      "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "IoT cơ bản",
         "SoCaTuan": 1,
@@ -1161,6 +1356,9 @@
     },
     {
       "MaLop": "LOP-00000069",
+      "MaGV": "GV043",
+      "MaPhong": "F307",
+      "MaSlot": "Thu6-Ca5",
       "info": {
         "TenMonHoc": "IoT cơ bản",
         "SoCaTuan": 1,
@@ -1172,6 +1370,9 @@
     },
     {
       "MaLop": "LOP-00000070",
+      "MaGV": "GV045",
+      "MaPhong": "F401",
+      "MaSlot": "Thu7-Ca3",
       "info": {
         "TenMonHoc": "IoT cơ bản",
         "SoCaTuan": 1,
@@ -1183,6 +1384,9 @@
     },
     {
       "MaLop": "LOP-00000071",
+      "MaGV": "GV013",
+      "MaPhong": "C209",
+      "MaSlot": "Thu7-Ca3",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
         "SoCaTuan": 1,
@@ -1194,6 +1398,9 @@
     },
     {
       "MaLop": "LOP-00000072",
+      "MaGV": "GV047",
+      "MaPhong": "F503",
+      "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
         "SoCaTuan": 1,
@@ -1205,6 +1412,9 @@
     },
     {
       "MaLop": "LOP-00000073",
+      "MaGV": "GV013",
+      "MaPhong": "F310",
+      "MaSlot": "Thu7-Ca2",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
         "SoCaTuan": 1,
@@ -1216,6 +1426,9 @@
     },
     {
       "MaLop": "LOP-00000074",
+      "MaGV": "GV047",
+      "MaPhong": "B309",
+      "MaSlot": "Thu3-Ca4",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
         "SoCaTuan": 1,
@@ -1227,6 +1440,9 @@
     },
     {
       "MaLop": "LOP-00000075",
+      "MaGV": "GV013",
+      "MaPhong": "F711",
+      "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
         "SoCaTuan": 1,
@@ -1238,6 +1454,9 @@
     },
     {
       "MaLop": "LOP-00000076",
+      "MaGV": "GV047",
+      "MaPhong": "B403",
+      "MaSlot": "Thu7-Ca3",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng web với NodeJS",
         "SoCaTuan": 1,
@@ -1249,6 +1468,9 @@
     },
     {
       "MaLop": "LOP-00000077",
+      "MaGV": "GV037",
+      "MaPhong": "B308",
+      "MaSlot": "Thu5-Ca3",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
         "SoCaTuan": 1,
@@ -1260,6 +1482,9 @@
     },
     {
       "MaLop": "LOP-00000078",
+      "MaGV": "GV037",
+      "MaPhong": "A707",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
         "SoCaTuan": 1,
@@ -1271,6 +1496,9 @@
     },
     {
       "MaLop": "LOP-00000079",
+      "MaGV": "GV037",
+      "MaPhong": "B304",
+      "MaSlot": "Thu7-Ca4",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
         "SoCaTuan": 1,
@@ -1282,6 +1510,9 @@
     },
     {
       "MaLop": "LOP-00000080",
+      "MaGV": "GV037",
+      "MaPhong": "C311",
+      "MaSlot": "Thu7-Ca5",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động đa nền tảng",
         "SoCaTuan": 1,
@@ -1293,6 +1524,9 @@
     },
     {
       "MaLop": "LOP-00000083",
+      "MaGV": "GV044",
+      "MaPhong": "D206",
+      "MaSlot": "Thu6-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật thông tin",
         "SoCaTuan": 1,
@@ -1304,6 +1538,9 @@
     },
     {
       "MaLop": "LOP-00000084",
+      "MaGV": "GV044",
+      "MaPhong": "C408",
+      "MaSlot": "Thu5-Ca4",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật thông tin",
         "SoCaTuan": 1,
@@ -1315,6 +1552,9 @@
     },
     {
       "MaLop": "LOP-00000085",
+      "MaGV": "GV011",
+      "MaPhong": "B409",
+      "MaSlot": "Thu7-Ca1",
       "info": {
         "TenMonHoc": "Lập trình hướng đối tượng",
         "SoCaTuan": 1,
@@ -1326,6 +1566,9 @@
     },
     {
       "MaLop": "LOP-00000086",
+      "MaGV": "GV011",
+      "MaPhong": "F505",
+      "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Lập trình hướng đối tượng",
         "SoCaTuan": 1,
@@ -1337,6 +1580,9 @@
     },
     {
       "MaLop": "LOP-00000087",
+      "MaGV": "GV001",
+      "MaPhong": "F505",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Lập trình hướng đối tượng",
         "SoCaTuan": 1,
@@ -1348,6 +1594,9 @@
     },
     {
       "MaLop": "LOP-00000088",
+      "MaGV": "GV003",
+      "MaPhong": "C307",
+      "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Lập trình hướng đối tượng",
         "SoCaTuan": 1,
@@ -1359,6 +1608,9 @@
     },
     {
       "MaLop": "LOP-00000089",
+      "MaGV": "GV011",
+      "MaPhong": "F504",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Lập trình hướng đối tượng",
         "SoCaTuan": 1,
@@ -1370,6 +1622,9 @@
     },
     {
       "MaLop": "LOP-00000090",
+      "MaGV": "GV001",
+      "MaPhong": "A403",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Lập trình hướng đối tượng",
         "SoCaTuan": 1,
@@ -1381,6 +1636,9 @@
     },
     {
       "MaLop": "LOP-00000091",
+      "MaGV": "GV009",
+      "MaPhong": "C307",
+      "MaSlot": "Thu6-Ca4",
       "info": {
         "TenMonHoc": "Phân tích và thiết kế giải thuật",
         "SoCaTuan": 1,
@@ -1392,6 +1650,9 @@
     },
     {
       "MaLop": "LOP-00000093",
+      "MaGV": "GV009",
+      "MaPhong": "A501",
+      "MaSlot": "Thu5-Ca5",
       "info": {
         "TenMonHoc": "Phân tích và thiết kế giải thuật",
         "SoCaTuan": 1,
@@ -1403,6 +1664,9 @@
     },
     {
       "MaLop": "LOP-00000094",
+      "MaGV": "GV009",
+      "MaPhong": "B308",
+      "MaSlot": "Thu6-Ca5",
       "info": {
         "TenMonHoc": "Phân tích và thiết kế giải thuật",
         "SoCaTuan": 1,
@@ -1414,6 +1678,9 @@
     },
     {
       "MaLop": "LOP-00000096",
+      "MaGV": "GV009",
+      "MaPhong": "A404",
+      "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Phân tích và thiết kế giải thuật",
         "SoCaTuan": 1,
@@ -1425,6 +1692,9 @@
     },
     {
       "MaLop": "LOP-00000097",
+      "MaGV": "GV007",
+      "MaPhong": "B402",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Học máy",
         "SoCaTuan": 1,
@@ -1436,6 +1706,9 @@
     },
     {
       "MaLop": "LOP-00000098",
+      "MaGV": "GV008",
+      "MaPhong": "D102",
+      "MaSlot": "Thu4-Ca4",
       "info": {
         "TenMonHoc": "Nhập môn Học máy",
         "SoCaTuan": 1,
@@ -1447,6 +1720,9 @@
     },
     {
       "MaLop": "LOP-00000099",
+      "MaGV": "GV008",
+      "MaPhong": "C302",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Hệ thống hoạch định nguồn lực doanh nghiệp",
         "SoCaTuan": 1,
@@ -1458,6 +1734,9 @@
     },
     {
       "MaLop": "LOP-00000100",
+      "MaGV": "GV008",
+      "MaPhong": "D406",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Hệ thống hoạch định nguồn lực doanh nghiệp",
         "SoCaTuan": 1,
@@ -1469,6 +1748,9 @@
     },
     {
       "MaLop": "LOP-00000101",
+      "MaGV": "GV037",
+      "MaPhong": "D204",
+      "MaSlot": "Thu7-Ca3",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động",
         "SoCaTuan": 1,
@@ -1480,6 +1762,9 @@
     },
     {
       "MaLop": "LOP-00000102",
+      "MaGV": "GV037",
+      "MaPhong": "A501",
+      "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động",
         "SoCaTuan": 1,
@@ -1491,6 +1776,9 @@
     },
     {
       "MaLop": "LOP-00000103",
+      "MaGV": "GV037",
+      "MaPhong": "A401",
+      "MaSlot": "Thu6-Ca4",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động",
         "SoCaTuan": 1,
@@ -1502,6 +1790,9 @@
     },
     {
       "MaLop": "LOP-00000104",
+      "MaGV": "GV001",
+      "MaPhong": "C210",
+      "MaSlot": "Thu4-Ca4",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động",
         "SoCaTuan": 1,
@@ -1513,6 +1804,9 @@
     },
     {
       "MaLop": "LOP-00000105",
+      "MaGV": "GV003",
+      "MaPhong": "F404",
+      "MaSlot": "Thu7-Ca5",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động",
         "SoCaTuan": 1,
@@ -1524,6 +1818,9 @@
     },
     {
       "MaLop": "LOP-00000106",
+      "MaGV": "GV037",
+      "MaPhong": "F308",
+      "MaSlot": "Thu3-Ca4",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động",
         "SoCaTuan": 1,
@@ -1535,6 +1832,9 @@
     },
     {
       "MaLop": "LOP-00000107",
+      "MaGV": "GV038",
+      "MaPhong": "B311",
+      "MaSlot": "Thu7-Ca4",
       "info": {
         "TenMonHoc": "Nhập môn thị giác máy tính",
         "SoCaTuan": 1,
@@ -1546,6 +1846,9 @@
     },
     {
       "MaLop": "LOP-00000108",
+      "MaGV": "GV007",
+      "MaPhong": "B211",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn thị giác máy tính",
         "SoCaTuan": 1,
@@ -1557,6 +1860,9 @@
     },
     {
       "MaLop": "LOP-00000109",
+      "MaGV": "GV033",
+      "MaPhong": "D202",
+      "MaSlot": "Thu2-Ca4",
       "info": {
         "TenMonHoc": "Nhập môn học máy",
         "SoCaTuan": 1,
@@ -1568,6 +1874,9 @@
     },
     {
       "MaLop": "LOP-00000110",
+      "MaGV": "GV036",
+      "MaPhong": "B209",
+      "MaSlot": "Thu2-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn học máy",
         "SoCaTuan": 1,
@@ -1579,6 +1888,9 @@
     },
     {
       "MaLop": "LOP-00000111",
+      "MaGV": "GV001",
+      "MaPhong": "C404",
+      "MaSlot": "Thu4-Ca5",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
         "SoCaTuan": 1,
@@ -1590,6 +1902,9 @@
     },
     {
       "MaLop": "LOP-00000112",
+      "MaGV": "GV003",
+      "MaPhong": "F310",
+      "MaSlot": "Thu7-Ca4",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
         "SoCaTuan": 1,
@@ -1601,6 +1916,9 @@
     },
     {
       "MaLop": "LOP-00000113",
+      "MaGV": "GV037",
+      "MaPhong": "F703",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
         "SoCaTuan": 1,
@@ -1612,6 +1930,9 @@
     },
     {
       "MaLop": "LOP-00000114",
+      "MaGV": "GV001",
+      "MaPhong": "D106",
+      "MaSlot": "Thu7-Ca2",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
         "SoCaTuan": 1,
@@ -1623,6 +1944,9 @@
     },
     {
       "MaLop": "LOP-00000115",
+      "MaGV": "GV003",
+      "MaPhong": "F411",
+      "MaSlot": "Thu7-Ca3",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
         "SoCaTuan": 1,
@@ -1634,6 +1958,9 @@
     },
     {
       "MaLop": "LOP-00000116",
+      "MaGV": "GV037",
+      "MaPhong": "A605",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Phát triển ứng dụng di động nâng cao",
         "SoCaTuan": 1,
@@ -1645,6 +1972,9 @@
     },
     {
       "MaLop": "LOP-00000117",
+      "MaGV": "GV041",
+      "MaPhong": "C410",
+      "MaSlot": "Thu7-Ca3",
       "info": {
         "TenMonHoc": "Thiết kế giao diện người dùng",
         "SoCaTuan": 1,
@@ -1656,6 +1986,9 @@
     },
     {
       "MaLop": "LOP-00000118",
+      "MaGV": "GV041",
+      "MaPhong": "F507",
+      "MaSlot": "Thu7-Ca2",
       "info": {
         "TenMonHoc": "Thiết kế giao diện người dùng",
         "SoCaTuan": 1,
@@ -1667,6 +2000,9 @@
     },
     {
       "MaLop": "LOP-00000119",
+      "MaGV": "GV041",
+      "MaPhong": "F409",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Thiết kế giao diện người dùng",
         "SoCaTuan": 1,
@@ -1678,6 +2014,9 @@
     },
     {
       "MaLop": "LOP-00000120",
+      "MaGV": "GV013",
+      "MaPhong": "D305",
+      "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "Thiết kế giao diện người dùng",
         "SoCaTuan": 1,
@@ -1689,6 +2028,9 @@
     },
     {
       "MaLop": "LOP-00000121",
+      "MaGV": "GV041",
+      "MaPhong": "F302",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Thiết kế giao diện người dùng",
         "SoCaTuan": 1,
@@ -1700,6 +2042,9 @@
     },
     {
       "MaLop": "LOP-00000122",
+      "MaGV": "GV047",
+      "MaPhong": "A409",
+      "MaSlot": "Thu6-Ca2",
       "info": {
         "TenMonHoc": "Thiết kế giao diện người dùng",
         "SoCaTuan": 1,
@@ -1711,6 +2056,9 @@
     },
     {
       "MaLop": "LOP-00000123",
+      "MaGV": "GV004",
+      "MaPhong": "D204",
+      "MaSlot": "Thu6-Ca5",
       "info": {
         "TenMonHoc": "Quản trị hệ thống thông tin",
         "SoCaTuan": 1,
@@ -1722,6 +2070,9 @@
     },
     {
       "MaLop": "LOP-00000124",
+      "MaGV": "GV021",
+      "MaPhong": "D306",
+      "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Quản trị hệ thống thông tin",
         "SoCaTuan": 1,
@@ -1733,6 +2084,9 @@
     },
     {
       "MaLop": "LOP-00000125",
+      "MaGV": "GV006",
+      "MaPhong": "B301",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Thiết kế mạng",
         "SoCaTuan": 1,
@@ -1744,6 +2098,9 @@
     },
     {
       "MaLop": "LOP-00000126",
+      "MaGV": "GV020",
+      "MaPhong": "A608",
+      "MaSlot": "Thu2-Ca4",
       "info": {
         "TenMonHoc": "Thiết kế mạng",
         "SoCaTuan": 1,
@@ -1755,6 +2112,9 @@
     },
     {
       "MaLop": "LOP-00000127",
+      "MaGV": "GV005",
+      "MaPhong": "F307",
+      "MaSlot": "Thu2-Ca4",
       "info": {
         "TenMonHoc": "Thiết kế mạng",
         "SoCaTuan": 1,
@@ -1766,6 +2126,9 @@
     },
     {
       "MaLop": "LOP-00000128",
+      "MaGV": "GV006",
+      "MaPhong": "C206",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Thiết kế mạng",
         "SoCaTuan": 1,
@@ -1777,6 +2140,9 @@
     },
     {
       "MaLop": "LOP-00000130",
+      "MaGV": "GV005",
+      "MaPhong": "F705",
+      "MaSlot": "Thu7-Ca5",
       "info": {
         "TenMonHoc": "Thiết kế mạng",
         "SoCaTuan": 1,
@@ -1788,6 +2154,9 @@
     },
     {
       "MaLop": "LOP-00000131",
+      "MaGV": "GV014",
+      "MaPhong": "D107",
+      "MaSlot": "Thu5-Ca3",
       "info": {
         "TenMonHoc": "Công nghệ Java",
         "SoCaTuan": 1,
@@ -1799,6 +2168,9 @@
     },
     {
       "MaLop": "LOP-00000132",
+      "MaGV": "GV014",
+      "MaPhong": "F609",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Công nghệ Java",
         "SoCaTuan": 1,
@@ -1810,6 +2182,9 @@
     },
     {
       "MaLop": "LOP-00000133",
+      "MaGV": "GV014",
+      "MaPhong": "F410",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Công nghệ Java",
         "SoCaTuan": 1,
@@ -1821,6 +2196,9 @@
     },
     {
       "MaLop": "LOP-00000134",
+      "MaGV": "GV014",
+      "MaPhong": "C305",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Công nghệ Java",
         "SoCaTuan": 1,
@@ -1832,6 +2210,9 @@
     },
     {
       "MaLop": "LOP-00000135",
+      "MaGV": "GV014",
+      "MaPhong": "F606",
+      "MaSlot": "Thu4-Ca4",
       "info": {
         "TenMonHoc": "Công nghệ Java",
         "SoCaTuan": 1,
@@ -1843,6 +2224,9 @@
     },
     {
       "MaLop": "LOP-00000136",
+      "MaGV": "GV047",
+      "MaPhong": "F603",
+      "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Công nghệ Java",
         "SoCaTuan": 1,
@@ -1854,6 +2238,9 @@
     },
     {
       "MaLop": "LOP-00000137",
+      "MaGV": "GV012",
+      "MaPhong": "C411",
+      "MaSlot": "Thu6-Ca4",
       "info": {
         "TenMonHoc": "Công nghệ .Net",
         "SoCaTuan": 1,
@@ -1865,6 +2252,9 @@
     },
     {
       "MaLop": "LOP-00000138",
+      "MaGV": "GV048",
+      "MaPhong": "F508",
+      "MaSlot": "Thu7-Ca1",
       "info": {
         "TenMonHoc": "Công nghệ .Net",
         "SoCaTuan": 1,
@@ -1876,6 +2266,9 @@
     },
     {
       "MaLop": "LOP-00000139",
+      "MaGV": "GV012",
+      "MaPhong": "F602",
+      "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Công nghệ .Net",
         "SoCaTuan": 1,
@@ -1887,6 +2280,9 @@
     },
     {
       "MaLop": "LOP-00000140",
+      "MaGV": "GV048",
+      "MaPhong": "D106",
+      "MaSlot": "Thu3-Ca5",
       "info": {
         "TenMonHoc": "Công nghệ .Net",
         "SoCaTuan": 1,
@@ -1898,6 +2294,9 @@
     },
     {
       "MaLop": "LOP-00000141",
+      "MaGV": "GV012",
+      "MaPhong": "F302",
+      "MaSlot": "Thu6-Ca2",
       "info": {
         "TenMonHoc": "Công nghệ .Net",
         "SoCaTuan": 1,
@@ -1909,6 +2308,9 @@
     },
     {
       "MaLop": "LOP-00000142",
+      "MaGV": "GV048",
+      "MaPhong": "F404",
+      "MaSlot": "Thu6-Ca1",
       "info": {
         "TenMonHoc": "Công nghệ .Net",
         "SoCaTuan": 1,
@@ -1920,6 +2322,9 @@
     },
     {
       "MaLop": "LOP-00000143",
+      "MaGV": "GV013",
+      "MaPhong": "C308",
+      "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Tư duy Logic",
         "SoCaTuan": 1,
@@ -1931,6 +2336,9 @@
     },
     {
       "MaLop": "LOP-00000144",
+      "MaGV": "GV017",
+      "MaPhong": "D202",
+      "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn Tư duy Logic",
         "SoCaTuan": 1,
@@ -1942,6 +2350,9 @@
     },
     {
       "MaLop": "LOP-00000145",
+      "MaGV": "GV002",
+      "MaPhong": "B301",
+      "MaSlot": "Thu6-Ca4",
       "info": {
         "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
         "SoCaTuan": 1,
@@ -1953,6 +2364,9 @@
     },
     {
       "MaLop": "LOP-00000146",
+      "MaGV": "GV002",
+      "MaPhong": "F601",
+      "MaSlot": "Thu3-Ca5",
       "info": {
         "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
         "SoCaTuan": 1,
@@ -1964,6 +2378,9 @@
     },
     {
       "MaLop": "LOP-00000147",
+      "MaGV": "GV002",
+      "MaPhong": "A509",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
         "SoCaTuan": 1,
@@ -1975,6 +2392,9 @@
     },
     {
       "MaLop": "LOP-00000148",
+      "MaGV": "GV002",
+      "MaPhong": "B307",
+      "MaSlot": "Thu3-Ca4",
       "info": {
         "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
         "SoCaTuan": 1,
@@ -1986,6 +2406,9 @@
     },
     {
       "MaLop": "LOP-00000149",
+      "MaGV": "GV002",
+      "MaPhong": "A409",
+      "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
         "SoCaTuan": 1,
@@ -1997,6 +2420,9 @@
     },
     {
       "MaLop": "LOP-00000150",
+      "MaGV": "GV002",
+      "MaPhong": "F404",
+      "MaSlot": "Thu7-Ca3",
       "info": {
         "TenMonHoc": "Cấu trúc dữ liệu và giải thuật",
         "SoCaTuan": 1,
@@ -2008,6 +2434,9 @@
     },
     {
       "MaLop": "LOP-00000151",
+      "MaGV": "GV033",
+      "MaPhong": "D401",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
         "SoCaTuan": 1,
@@ -2019,6 +2448,9 @@
     },
     {
       "MaLop": "LOP-00000152",
+      "MaGV": "GV033",
+      "MaPhong": "D207",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
         "SoCaTuan": 1,
@@ -2030,6 +2462,9 @@
     },
     {
       "MaLop": "LOP-00000153",
+      "MaGV": "GV035",
+      "MaPhong": "C302",
+      "MaSlot": "Thu7-Ca4",
       "info": {
         "TenMonHoc": "Xử lý dữ liệu lớn",
         "SoCaTuan": 1,
@@ -2041,6 +2476,9 @@
     },
     {
       "MaLop": "LOP-00000154",
+      "MaGV": "GV035",
+      "MaPhong": "C409",
+      "MaSlot": "Thu7-Ca5",
       "info": {
         "TenMonHoc": "Xử lý dữ liệu lớn",
         "SoCaTuan": 1,
@@ -2052,6 +2490,9 @@
     },
     {
       "MaLop": "LOP-00000155",
+      "MaGV": "GV043",
+      "MaPhong": "D103",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Hệ thống thương mại thông minh",
         "SoCaTuan": 1,
@@ -2063,6 +2504,9 @@
     },
     {
       "MaLop": "LOP-00000156",
+      "MaGV": "GV045",
+      "MaPhong": "C301",
+      "MaSlot": "Thu7-Ca1",
       "info": {
         "TenMonHoc": "Hệ thống thương mại thông minh",
         "SoCaTuan": 1,
@@ -2074,6 +2518,9 @@
     },
     {
       "MaLop": "LOP-00000158",
+      "MaGV": "GV004",
+      "MaPhong": "A406",
+      "MaSlot": "Thu6-Ca2",
       "info": {
         "TenMonHoc": "Kiến tập công nghiệp",
         "SoCaTuan": 1,
@@ -2085,6 +2532,9 @@
     },
     {
       "MaLop": "LOP-00000159",
+      "MaGV": "GV004",
+      "MaPhong": "F701",
+      "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Kiến tập công nghiệp",
         "SoCaTuan": 1,
@@ -2096,6 +2546,9 @@
     },
     {
       "MaLop": "LOP-00000161",
+      "MaGV": "GV004",
+      "MaPhong": "A504",
+      "MaSlot": "Thu2-Ca1",
       "info": {
         "TenMonHoc": "Kiến tập công nghiệp",
         "SoCaTuan": 1,
@@ -2107,6 +2560,9 @@
     },
     {
       "MaLop": "LOP-00000162",
+      "MaGV": "GV001",
+      "MaPhong": "A402",
+      "MaSlot": "Thu2-Ca4",
       "info": {
         "TenMonHoc": "Kiến tập công nghiệp",
         "SoCaTuan": 1,
@@ -2118,6 +2574,9 @@
     },
     {
       "MaLop": "LOP-00000164",
+      "MaGV": "GV004",
+      "MaPhong": "F601",
+      "MaSlot": "Thu7-Ca1",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin 2",
         "SoCaTuan": 1,
@@ -2129,6 +2588,9 @@
     },
     {
       "MaLop": "LOP-00000165",
+      "MaGV": "GV004",
+      "MaPhong": "A408",
+      "MaSlot": "Thu5-Ca4",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin 2",
         "SoCaTuan": 1,
@@ -2140,6 +2602,9 @@
     },
     {
       "MaLop": "LOP-00000167",
+      "MaGV": "GV004",
+      "MaPhong": "F509",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin 2",
         "SoCaTuan": 1,
@@ -2151,6 +2616,9 @@
     },
     {
       "MaLop": "LOP-00000168",
+      "MaGV": "GV004",
+      "MaPhong": "F711",
+      "MaSlot": "Thu7-Ca4",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin 2",
         "SoCaTuan": 1,
@@ -2162,6 +2630,9 @@
     },
     {
       "MaLop": "LOP-00000169",
+      "MaGV": "GV047",
+      "MaPhong": "B401",
+      "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Phát triển trò chơi",
         "SoCaTuan": 1,
@@ -2173,6 +2644,9 @@
     },
     {
       "MaLop": "LOP-00000170",
+      "MaGV": "GV047",
+      "MaPhong": "A403",
+      "MaSlot": "Thu5-Ca3",
       "info": {
         "TenMonHoc": "Phát triển trò chơi",
         "SoCaTuan": 1,
@@ -2184,6 +2658,9 @@
     },
     {
       "MaLop": "LOP-00000171",
+      "MaGV": "GV047",
+      "MaPhong": "A606",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Phát triển trò chơi",
         "SoCaTuan": 1,
@@ -2195,6 +2672,9 @@
     },
     {
       "MaLop": "LOP-00000172",
+      "MaGV": "GV047",
+      "MaPhong": "B408",
+      "MaSlot": "Thu5-Ca4",
       "info": {
         "TenMonHoc": "Phát triển trò chơi",
         "SoCaTuan": 1,
@@ -2206,6 +2686,9 @@
     },
     {
       "MaLop": "LOP-00000173",
+      "MaGV": "GV047",
+      "MaPhong": "A502",
+      "MaSlot": "Thu5-Ca5",
       "info": {
         "TenMonHoc": "Phát triển trò chơi",
         "SoCaTuan": 1,
@@ -2217,6 +2700,9 @@
     },
     {
       "MaLop": "LOP-00000174",
+      "MaGV": "GV047",
+      "MaPhong": "F403",
+      "MaSlot": "Thu5-Ca1",
       "info": {
         "TenMonHoc": "Phát triển trò chơi",
         "SoCaTuan": 1,
@@ -2228,6 +2714,9 @@
     },
     {
       "MaLop": "LOP-00000175",
+      "MaGV": "GV040",
+      "MaPhong": "C302",
+      "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Điện toán đám mây",
         "SoCaTuan": 1,
@@ -2239,6 +2728,9 @@
     },
     {
       "MaLop": "LOP-00000176",
+      "MaGV": "GV040",
+      "MaPhong": "F406",
+      "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Điện toán đám mây",
         "SoCaTuan": 1,
@@ -2250,6 +2742,9 @@
     },
     {
       "MaLop": "LOP-00000177",
+      "MaGV": "GV040",
+      "MaPhong": "F506",
+      "MaSlot": "Thu7-Ca2",
       "info": {
         "TenMonHoc": "Điện toán đám mây",
         "SoCaTuan": 1,
@@ -2261,6 +2756,9 @@
     },
     {
       "MaLop": "LOP-00000178",
+      "MaGV": "GV040",
+      "MaPhong": "B207",
+      "MaSlot": "Thu7-Ca1",
       "info": {
         "TenMonHoc": "Điện toán đám mây",
         "SoCaTuan": 1,
@@ -2272,6 +2770,9 @@
     },
     {
       "MaLop": "LOP-00000179",
+      "MaGV": "GV040",
+      "MaPhong": "F709",
+      "MaSlot": "Thu3-Ca3",
       "info": {
         "TenMonHoc": "Điện toán đám mây",
         "SoCaTuan": 1,
@@ -2283,6 +2784,9 @@
     },
     {
       "MaLop": "LOP-00000180",
+      "MaGV": "GV005",
+      "MaPhong": "A608",
+      "MaSlot": "Thu5-Ca4",
       "info": {
         "TenMonHoc": "Điện toán đám mây",
         "SoCaTuan": 1,
@@ -2294,6 +2798,9 @@
     },
     {
       "MaLop": "LOP-00000181",
+      "MaGV": "GV024",
+      "MaPhong": "D205",
+      "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật máy tính",
         "SoCaTuan": 1,
@@ -2305,6 +2812,9 @@
     },
     {
       "MaLop": "LOP-00000182",
+      "MaGV": "GV024",
+      "MaPhong": "F311",
+      "MaSlot": "Thu2-Ca4",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật máy tính",
         "SoCaTuan": 1,
@@ -2316,6 +2826,9 @@
     },
     {
       "MaLop": "LOP-00000183",
+      "MaGV": "GV024",
+      "MaPhong": "F308",
+      "MaSlot": "Thu2-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật máy tính",
         "SoCaTuan": 1,
@@ -2327,6 +2840,9 @@
     },
     {
       "MaLop": "LOP-00000184",
+      "MaGV": "GV024",
+      "MaPhong": "D307",
+      "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật máy tính",
         "SoCaTuan": 1,
@@ -2338,6 +2854,9 @@
     },
     {
       "MaLop": "LOP-00000185",
+      "MaGV": "GV006",
+      "MaPhong": "B304",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật máy tính",
         "SoCaTuan": 1,
@@ -2349,6 +2868,9 @@
     },
     {
       "MaLop": "LOP-00000186",
+      "MaGV": "GV024",
+      "MaPhong": "F307",
+      "MaSlot": "Thu5-Ca4",
       "info": {
         "TenMonHoc": "Nhập môn Bảo mật máy tính",
         "SoCaTuan": 1,
@@ -2360,6 +2882,9 @@
     },
     {
       "MaLop": "LOP-00000189",
+      "MaGV": "GV024",
+      "MaPhong": "F701",
+      "MaSlot": "Thu7-Ca4",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin",
         "SoCaTuan": 1,
@@ -2371,6 +2896,9 @@
     },
     {
       "MaLop": "LOP-00000191",
+      "MaGV": "GV024",
+      "MaPhong": "F406",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin",
         "SoCaTuan": 1,
@@ -2382,6 +2910,9 @@
     },
     {
       "MaLop": "LOP-00000192",
+      "MaGV": "GV024",
+      "MaPhong": "F706",
+      "MaSlot": "Thu3-Ca5",
       "info": {
         "TenMonHoc": "Dự án Công nghệ thông tin",
         "SoCaTuan": 1,
@@ -2393,6 +2924,9 @@
     },
     {
       "MaLop": "LOP-00000193",
+      "MaGV": "GV035",
+      "MaPhong": "B307",
+      "MaSlot": "Thu2-Ca5",
       "info": {
         "TenMonHoc": "Xử lý dữ liệu lớn",
         "SoCaTuan": 1,
@@ -2404,6 +2938,9 @@
     },
     {
       "MaLop": "LOP-00000194",
+      "MaGV": "GV033",
+      "MaPhong": "D309",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Xử lý dữ liệu lớn",
         "SoCaTuan": 1,
@@ -2415,6 +2952,9 @@
     },
     {
       "MaLop": "LOP-00000195",
+      "MaGV": "GV033",
+      "MaPhong": "D405",
+      "MaSlot": "Thu6-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
         "SoCaTuan": 1,
@@ -2426,6 +2966,9 @@
     },
     {
       "MaLop": "LOP-00000196",
+      "MaGV": "GV041",
+      "MaPhong": "D106",
+      "MaSlot": "Thu6-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn xử lý ngôn ngữ tự nhiên",
         "SoCaTuan": 1,
@@ -2437,6 +2980,9 @@
     },
     {
       "MaLop": "LOP-00000197",
+      "MaGV": "GV015",
+      "MaPhong": "D105",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Kỹ năng soạn thảo văn bản kỹ thuật",
         "SoCaTuan": 1,
@@ -2448,6 +2994,9 @@
     },
     {
       "MaLop": "LOP-00000198",
+      "MaGV": "GV013",
+      "MaPhong": "B409",
+      "MaSlot": "Thu4-Ca5",
       "info": {
         "TenMonHoc": "Kỹ năng soạn thảo văn bản kỹ thuật",
         "SoCaTuan": 1,
@@ -2459,6 +3008,9 @@
     },
     {
       "MaLop": "LOP-00000199",
+      "MaGV": "GV013",
+      "MaPhong": "D206",
+      "MaSlot": "Thu4-Ca4",
       "info": {
         "TenMonHoc": "Lập trình hàm",
         "SoCaTuan": 1,
@@ -2470,6 +3022,9 @@
     },
     {
       "MaLop": "LOP-00000200",
+      "MaGV": "GV013",
+      "MaPhong": "F408",
+      "MaSlot": "Thu7-Ca5",
       "info": {
         "TenMonHoc": "Lập trình hàm",
         "SoCaTuan": 1,
@@ -2481,6 +3036,9 @@
     },
     {
       "MaLop": "LOP-00000201",
+      "MaGV": "GV013",
+      "MaPhong": "F311",
+      "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Lập trình hàm",
         "SoCaTuan": 1,
@@ -2492,6 +3050,9 @@
     },
     {
       "MaLop": "LOP-00000202",
+      "MaGV": "GV013",
+      "MaPhong": "B206",
+      "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Lập trình hàm",
         "SoCaTuan": 1,
@@ -2503,6 +3064,9 @@
     },
     {
       "MaLop": "LOP-00000203",
+      "MaGV": "GV013",
+      "MaPhong": "F408",
+      "MaSlot": "Thu4-Ca2",
       "info": {
         "TenMonHoc": "Lập trình hàm",
         "SoCaTuan": 1,
@@ -2514,6 +3078,9 @@
     },
     {
       "MaLop": "LOP-00000204",
+      "MaGV": "GV013",
+      "MaPhong": "F401",
+      "MaSlot": "Thu6-Ca1",
       "info": {
         "TenMonHoc": "Lập trình hàm",
         "SoCaTuan": 1,
@@ -2525,6 +3092,9 @@
     },
     {
       "MaLop": "LOP-00000205",
+      "MaGV": "GV013",
+      "MaPhong": "D407",
+      "MaSlot": "Thu5-Ca5",
       "info": {
         "TenMonHoc": "Nhập môn xử lý tiếng nói",
         "SoCaTuan": 1,
@@ -2536,6 +3106,9 @@
     },
     {
       "MaLop": "LOP-00000206",
+      "MaGV": "GV013",
+      "MaPhong": "B207",
+      "MaSlot": "Thu6-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn xử lý tiếng nói",
         "SoCaTuan": 1,
@@ -2547,6 +3120,9 @@
     },
     {
       "MaLop": "LOP-00000207",
+      "MaGV": "GV035",
+      "MaPhong": "B307",
+      "MaSlot": "Thu6-Ca3",
       "info": {
         "TenMonHoc": "Khai thác dữ liệu và Khai phá tri thức",
         "SoCaTuan": 1,
@@ -2558,6 +3134,9 @@
     },
     {
       "MaLop": "LOP-00000208",
+      "MaGV": "GV043",
+      "MaPhong": "B401",
+      "MaSlot": "Thu5-Ca3",
       "info": {
         "TenMonHoc": "Khai thác dữ liệu và Khai phá tri thức",
         "SoCaTuan": 1,
@@ -2569,6 +3148,9 @@
     },
     {
       "MaLop": "LOP-00000209",
+      "MaGV": "GV038",
+      "MaPhong": "D203",
+      "MaSlot": "Thu7-Ca5",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
         "SoCaTuan": 1,
@@ -2580,6 +3162,9 @@
     },
     {
       "MaLop": "LOP-00000210",
+      "MaGV": "GV007",
+      "MaPhong": "B404",
+      "MaSlot": "Thu4-Ca3",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
         "SoCaTuan": 1,
@@ -2591,6 +3176,9 @@
     },
     {
       "MaLop": "LOP-00000211",
+      "MaGV": "GV038",
+      "MaPhong": "B205",
+      "MaSlot": "Thu7-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
         "SoCaTuan": 1,
@@ -2602,6 +3190,9 @@
     },
     {
       "MaLop": "LOP-00000212",
+      "MaGV": "GV007",
+      "MaPhong": "C210",
+      "MaSlot": "Thu3-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
         "SoCaTuan": 1,
@@ -2613,6 +3204,9 @@
     },
     {
       "MaLop": "LOP-00000213",
+      "MaGV": "GV008",
+      "MaPhong": "F707",
+      "MaSlot": "Thu4-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
         "SoCaTuan": 1,
@@ -2624,6 +3218,9 @@
     },
     {
       "MaLop": "LOP-00000214",
+      "MaGV": "GV038",
+      "MaPhong": "A403",
+      "MaSlot": "Thu5-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
         "SoCaTuan": 1,
@@ -2635,6 +3232,9 @@
     },
     {
       "MaLop": "LOP-00000215",
+      "MaGV": "GV007",
+      "MaPhong": "C403",
+      "MaSlot": "Thu7-Ca1",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
         "SoCaTuan": 1,
@@ -2646,6 +3246,9 @@
     },
     {
       "MaLop": "LOP-00000216",
+      "MaGV": "GV035",
+      "MaPhong": "D409",
+      "MaSlot": "Thu6-Ca2",
       "info": {
         "TenMonHoc": "Nhập môn Xử lý ảnh số",
         "SoCaTuan": 1,

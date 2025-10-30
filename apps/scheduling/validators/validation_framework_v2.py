@@ -95,8 +95,15 @@ class UnifiedValidator:
     
     def _load_database_info(self):
         """Load thông tin từ database"""
-        # Lớp môn học
-        self.classes = LopMonHoc.objects.select_related('ma_mon_hoc').all()
+        # Lớp môn học - ONLY của đợt này (filter by ma_dot)
+        try:
+            dot_obj = DotXep.objects.get(ma_dot=self.ma_dot)
+            phan_congs = PhanCong.objects.filter(ma_dot=dot_obj).select_related('ma_lop', 'ma_lop__ma_mon_hoc')
+            self.classes = [pc.ma_lop for pc in phan_congs]
+        except DotXep.DoesNotExist:
+            logger.warning(f"DotXep {self.ma_dot} not found, loading all classes")
+            self.classes = LopMonHoc.objects.select_related('ma_mon_hoc').all()
+            
         self.class_info = {}
         self.class_type = {}
         

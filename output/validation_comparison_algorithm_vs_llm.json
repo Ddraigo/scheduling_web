@@ -1,19 +1,19 @@
 {
-  "timestamp": "2025-10-30T00:03:06.407235",
+  "timestamp": "2025-10-30T15:32:18.224324",
   "ma_dot": "DOT1_2025-2026_HK1",
   "comparison": {
     "llm_status": "FAIL",
     "algo_status": "FAIL",
-    "llm_violations": 12,
+    "llm_violations": 20,
     "algo_violations": 15,
-    "llm_fitness": 0.9722222222222222,
+    "llm_fitness": 0.9537037037037037,
     "algo_fitness": 0.9652777777777778,
-    "better": "EQUAL",
-    "difference": 0.00694444444444442
+    "better": "Algorithm",
+    "difference": 0.01157407407407407
   },
   "algorithm": {
     "ma_dot": "DOT1_2025-2026_HK1",
-    "timestamp": "2025-10-30T00:03:04.073368",
+    "timestamp": "2025-10-30T15:32:14.969195",
     "total_assignments": 216,
     "violations": [
       {
@@ -157,97 +157,152 @@
   },
   "llm": {
     "ma_dot": "DOT1_2025-2026_HK1",
-    "timestamp": "2025-10-30T00:03:05.280914",
+    "timestamp": "2025-10-30T15:32:16.232255",
     "total_assignments": 216,
     "violations": [
       {
         "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000001",
-        "room": "B201",
-        "slot": "Thu2-Ca1",
-        "message": "Room B201 booked 3 times at slot Thu2-Ca1"
+        "class": "LOP-00000045",
+        "room": "A609",
+        "slot": "Thu4-Ca1",
+        "message": "Room A609 booked 2 times at slot Thu4-Ca1"
       },
       {
         "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000035",
-        "room": "B201",
-        "slot": "Thu2-Ca1",
-        "message": "Room B201 booked 3 times at slot Thu2-Ca1"
+        "class": "LOP-00000177",
+        "room": "A609",
+        "slot": "Thu4-Ca1",
+        "message": "Room A609 booked 2 times at slot Thu4-Ca1"
       },
       {
         "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000145",
-        "room": "B201",
-        "slot": "Thu2-Ca1",
-        "message": "Room B201 booked 3 times at slot Thu2-Ca1"
-      },
-      {
-        "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000208",
-        "room": "B201",
+        "class": "LOP-00000067",
+        "room": "B305",
         "slot": "Thu3-Ca1",
-        "message": "Room B201 booked 2 times at slot Thu3-Ca1"
+        "message": "Room B305 booked 2 times at slot Thu3-Ca1"
       },
       {
         "type": "HC-02_ROOM_CONFLICT",
-        "class": "LOP-00000148",
-        "room": "B201",
+        "class": "LOP-00000210",
+        "room": "B305",
         "slot": "Thu3-Ca1",
-        "message": "Room B201 booked 2 times at slot Thu3-Ca1"
+        "message": "Room B305 booked 2 times at slot Thu3-Ca1"
       },
       {
-        "type": "HC-04_EQUIPMENT_MISMATCH",
-        "class": "LOP-00000163",
-        "room": "A601",
-        "required": "TV, Máy chiếu",
-        "available": "PC",
-        "message": "Room A601 missing equipment: TV, Máy chiếu"
+        "type": "HC-02_ROOM_CONFLICT",
+        "class": "LOP-00000101",
+        "room": "C308",
+        "slot": "Thu4-Ca2",
+        "message": "Room C308 booked 2 times at slot Thu4-Ca2"
       },
       {
-        "type": "HC-04_EQUIPMENT_MISMATCH",
-        "class": "LOP-00000166",
-        "room": "D411",
-        "required": "TV, Máy chiếu",
-        "available": "Thiết bị về điện",
-        "message": "Room D411 missing equipment: TV, Máy chiếu"
+        "type": "HC-02_ROOM_CONFLICT",
+        "class": "LOP-00000215",
+        "room": "C308",
+        "slot": "Thu4-Ca2",
+        "message": "Room C308 booked 2 times at slot Thu4-Ca2"
       },
       {
-        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "type": "HC-06_LT_IN_TH_ROOM",
+        "class": "LOP-0000161",
+        "room": "A507",
+        "message": "Lecture class LOP-0000161 assigned to practical room A507"
+      },
+      {
+        "type": "HC-06_LT_IN_TH_ROOM",
+        "class": "LOP-0000162",
+        "room": "A508",
+        "message": "Lecture class LOP-0000162 assigned to practical room A508"
+      },
+      {
+        "type": "HC-06_LT_IN_TH_ROOM",
+        "class": "LOP-0000164",
+        "room": "A509",
+        "message": "Lecture class LOP-0000164 assigned to practical room A509"
+      },
+      {
+        "type": "HC-05_TH_IN_LT_ROOM",
         "class": "LOP-00000187",
-        "room": "F609",
-        "required": "TV, Máy chiếu",
-        "available": "PC",
-        "message": "Room F609 missing equipment: TV, Máy chiếu"
+        "room": "B310",
+        "message": "Practical class LOP-00000187 assigned to lecture room B310"
       },
       {
-        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "type": "HC-05_TH_IN_LT_ROOM",
         "class": "LOP-00000190",
-        "room": "F701",
-        "required": "TV, Máy chiếu",
-        "available": "PC",
-        "message": "Room F701 missing equipment: TV, Máy chiếu"
+        "room": "B311",
+        "message": "Practical class LOP-00000190 assigned to lecture room B311"
       },
       {
-        "type": "HC-04_EQUIPMENT_MISMATCH",
+        "type": "MISSING_CLASS",
+        "class": "LOP-00000145",
+        "message": "Class LOP-00000145 not scheduled",
+        "course_name": "Cấu trúc dữ liệu và giải thuật",
+        "group": 1,
+        "students": 80
+      },
+      {
+        "type": "MISSING_CLASS",
+        "class": "LOP-00000148",
+        "message": "Class LOP-00000148 not scheduled",
+        "course_name": "Cấu trúc dữ liệu và giải thuật",
+        "group": 2,
+        "students": 80
+      },
+      {
+        "type": "MISSING_CLASS",
         "class": "LOP-00000157",
-        "room": "D108",
-        "required": "TV, Máy chiếu",
-        "available": "Thiết bị về điện",
-        "message": "Room D108 missing equipment: TV, Máy chiếu"
+        "message": "Class LOP-00000157 not scheduled",
+        "course_name": "Kiến tập công nghiệp",
+        "group": 1,
+        "students": 80
       },
       {
-        "type": "HC-03_INSUFFICIENT_CAPACITY",
+        "type": "MISSING_CLASS",
         "class": "LOP-00000160",
-        "room": "D211",
-        "message": "Class LOP-00000160 (80 students) > Room capacity (45)"
+        "message": "Class LOP-00000160 not scheduled",
+        "course_name": "Kiến tập công nghiệp",
+        "group": 2,
+        "students": 80
       },
       {
-        "type": "HC-04_EQUIPMENT_MISMATCH",
-        "class": "LOP-00000160",
-        "room": "D211",
-        "required": "TV, Máy chiếu",
-        "available": "Thiết bị về điện",
-        "message": "Room D211 missing equipment: TV, Máy chiếu"
+        "type": "MISSING_CLASS",
+        "class": "LOP-00000161",
+        "message": "Class LOP-00000161 not scheduled",
+        "course_name": "Kiến tập công nghiệp",
+        "group": 2,
+        "students": 40
+      },
+      {
+        "type": "MISSING_CLASS",
+        "class": "LOP-00000162",
+        "message": "Class LOP-00000162 not scheduled",
+        "course_name": "Kiến tập công nghiệp",
+        "group": 2,
+        "students": 40
+      },
+      {
+        "type": "MISSING_CLASS",
+        "class": "LOP-00000163",
+        "message": "Class LOP-00000163 not scheduled",
+        "course_name": "Dự án Công nghệ thông tin 2",
+        "group": 1,
+        "students": 40
+      },
+      {
+        "type": "MISSING_CLASS",
+        "class": "LOP-00000164",
+        "message": "Class LOP-00000164 not scheduled",
+        "course_name": "Dự án Công nghệ thông tin 2",
+        "group": 1,
+        "students": 40
+      },
+      {
+        "type": "MISSING_CLASS",
+        "class": "LOP-00000166",
+        "message": "Class LOP-00000166 not scheduled",
+        "course_name": "Dự án Công nghệ thông tin 2",
+        "group": 2,
+        "students": 40
       }
     ],
     "warnings": [],
@@ -260,346 +315,24 @@
     "soft_violations": [
       {
         "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000001",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV001",
-        "message": "Class LOP-00000001 assigned to non-preferred slot Thu2-Ca1 for teacher GV001"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000002",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV003",
-        "message": "Class LOP-00000002 assigned to non-preferred slot Thu2-Ca1 for teacher GV003"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000008",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV006",
-        "message": "Class LOP-00000008 assigned to non-preferred slot Thu2-Ca1 for teacher GV006"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000009",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV010",
-        "message": "Class LOP-00000009 assigned to non-preferred slot Thu2-Ca1 for teacher GV010"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000010",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV005",
-        "message": "Class LOP-00000010 assigned to non-preferred slot Thu2-Ca2 for teacher GV005"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000012",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV010",
-        "message": "Class LOP-00000012 assigned to non-preferred slot Thu2-Ca2 for teacher GV010"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000013",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV016",
-        "message": "Class LOP-00000013 assigned to non-preferred slot Thu2-Ca1 for teacher GV016"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
         "class": "LOP-00000015",
-        "slot": "Thu2-Ca3",
-        "teacher": "GV005",
-        "message": "Class LOP-00000015 assigned to non-preferred slot Thu2-Ca3 for teacher GV005"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000016",
-        "slot": "Thu2-Ca3",
-        "teacher": "GV006",
-        "message": "Class LOP-00000016 assigned to non-preferred slot Thu2-Ca3 for teacher GV006"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000017",
-        "slot": "Thu2-Ca4",
-        "teacher": "GV016",
-        "message": "Class LOP-00000017 assigned to non-preferred slot Thu2-Ca4 for teacher GV016"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000021",
-        "slot": "Thu2-Ca5",
-        "teacher": "GV001",
-        "message": "Class LOP-00000021 assigned to non-preferred slot Thu2-Ca5 for teacher GV001"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000026",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV024",
-        "message": "Class LOP-00000026 assigned to non-preferred slot Thu2-Ca2 for teacher GV024"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000032",
-        "slot": "Thu2-Ca4",
-        "teacher": "GV003",
-        "message": "Class LOP-00000032 assigned to non-preferred slot Thu2-Ca4 for teacher GV003"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000037",
-        "slot": "Thu3-Ca1",
-        "teacher": "GV023",
-        "message": "Class LOP-00000037 assigned to non-preferred slot Thu3-Ca1 for teacher GV023"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000040",
-        "slot": "Thu3-Ca2",
-        "teacher": "GV023",
-        "message": "Class LOP-00000040 assigned to non-preferred slot Thu3-Ca2 for teacher GV023"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000041",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV025",
-        "message": "Class LOP-00000041 assigned to non-preferred slot Thu2-Ca1 for teacher GV025"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000043",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV025",
-        "message": "Class LOP-00000043 assigned to non-preferred slot Thu2-Ca2 for teacher GV025"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000044",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV021",
-        "message": "Class LOP-00000044 assigned to non-preferred slot Thu2-Ca2 for teacher GV021"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000045",
-        "slot": "Thu2-Ca3",
-        "teacher": "GV025",
-        "message": "Class LOP-00000045 assigned to non-preferred slot Thu2-Ca3 for teacher GV025"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000046",
-        "slot": "Thu2-Ca3",
-        "teacher": "GV021",
-        "message": "Class LOP-00000046 assigned to non-preferred slot Thu2-Ca3 for teacher GV021"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000048",
-        "slot": "Thu3-Ca1",
-        "teacher": "GV017",
-        "message": "Class LOP-00000048 assigned to non-preferred slot Thu3-Ca1 for teacher GV017"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000051",
-        "slot": "Thu3-Ca2",
-        "teacher": "GV017",
-        "message": "Class LOP-00000051 assigned to non-preferred slot Thu3-Ca2 for teacher GV017"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000053",
-        "slot": "Thu3-Ca3",
-        "teacher": "GV015",
-        "message": "Class LOP-00000053 assigned to non-preferred slot Thu3-Ca3 for teacher GV015"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000054",
-        "slot": "Thu3-Ca3",
-        "teacher": "GV017",
-        "message": "Class LOP-00000054 assigned to non-preferred slot Thu3-Ca3 for teacher GV017"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000056",
-        "slot": "Thu3-Ca4",
-        "teacher": "GV015",
-        "message": "Class LOP-00000056 assigned to non-preferred slot Thu3-Ca4 for teacher GV015"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000057",
-        "slot": "Thu3-Ca4",
-        "teacher": "GV017",
-        "message": "Class LOP-00000057 assigned to non-preferred slot Thu3-Ca4 for teacher GV017"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000061",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV020",
-        "message": "Class LOP-00000061 assigned to non-preferred slot Thu2-Ca2 for teacher GV020"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000062",
-        "slot": "Thu2-Ca4",
-        "teacher": "GV006",
-        "message": "Class LOP-00000062 assigned to non-preferred slot Thu2-Ca4 for teacher GV006"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000064",
-        "slot": "Thu2-Ca5",
-        "teacher": "GV005",
-        "message": "Class LOP-00000064 assigned to non-preferred slot Thu2-Ca5 for teacher GV005"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000067",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV045",
-        "message": "Class LOP-00000067 assigned to non-preferred slot Thu2-Ca2 for teacher GV045"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000069",
-        "slot": "Thu2-Ca3",
-        "teacher": "GV043",
-        "message": "Class LOP-00000069 assigned to non-preferred slot Thu2-Ca3 for teacher GV043"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000070",
-        "slot": "Thu2-Ca3",
-        "teacher": "GV045",
-        "message": "Class LOP-00000070 assigned to non-preferred slot Thu2-Ca3 for teacher GV045"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000074",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV047",
-        "message": "Class LOP-00000074 assigned to non-preferred slot Thu2-Ca2 for teacher GV047"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000085",
-        "slot": "Thu2-Ca5",
-        "teacher": "GV011",
-        "message": "Class LOP-00000085 assigned to non-preferred slot Thu2-Ca5 for teacher GV011"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000086",
-        "slot": "Thu3-Ca2",
-        "teacher": "GV011",
-        "message": "Class LOP-00000086 assigned to non-preferred slot Thu3-Ca2 for teacher GV011"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000090",
-        "slot": "Thu3-Ca3",
-        "teacher": "GV001",
-        "message": "Class LOP-00000090 assigned to non-preferred slot Thu3-Ca3 for teacher GV001"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000097",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV007",
-        "message": "Class LOP-00000097 assigned to non-preferred slot Thu2-Ca1 for teacher GV007"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000098",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV008",
-        "message": "Class LOP-00000098 assigned to non-preferred slot Thu2-Ca1 for teacher GV008"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000099",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV008",
-        "message": "Class LOP-00000099 assigned to non-preferred slot Thu2-Ca2 for teacher GV008"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000103",
-        "slot": "Thu2-Ca4",
-        "teacher": "GV037",
-        "message": "Class LOP-00000103 assigned to non-preferred slot Thu2-Ca4 for teacher GV037"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000104",
-        "slot": "Thu3-Ca4",
-        "teacher": "GV001",
-        "message": "Class LOP-00000104 assigned to non-preferred slot Thu3-Ca4 for teacher GV001"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000105",
-        "slot": "Thu3-Ca2",
-        "teacher": "GV003",
-        "message": "Class LOP-00000105 assigned to non-preferred slot Thu3-Ca2 for teacher GV003"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000106",
-        "slot": "Thu2-Ca5",
-        "teacher": "GV037",
-        "message": "Class LOP-00000106 assigned to non-preferred slot Thu2-Ca5 for teacher GV037"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000107",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV038",
-        "message": "Class LOP-00000107 assigned to non-preferred slot Thu2-Ca1 for teacher GV038"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000115",
-        "slot": "Thu3-Ca4",
-        "teacher": "GV003",
-        "message": "Class LOP-00000115 assigned to non-preferred slot Thu3-Ca4 for teacher GV003"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000125",
-        "slot": "Thu2-Ca5",
-        "teacher": "GV006",
-        "message": "Class LOP-00000125 assigned to non-preferred slot Thu2-Ca5 for teacher GV006"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000127",
         "slot": "Thu3-Ca1",
         "teacher": "GV005",
-        "message": "Class LOP-00000127 assigned to non-preferred slot Thu3-Ca1 for teacher GV005"
+        "message": "Class LOP-00000015 assigned to non-preferred slot Thu3-Ca1 for teacher GV005"
       },
       {
         "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000129",
-        "slot": "Thu2-Ca5",
-        "teacher": "GV020",
-        "message": "Class LOP-00000129 assigned to non-preferred slot Thu2-Ca5 for teacher GV020"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000135",
+        "class": "LOP-00000075",
         "slot": "Thu2-Ca3",
-        "teacher": "GV014",
-        "message": "Class LOP-00000135 assigned to non-preferred slot Thu2-Ca3 for teacher GV014"
+        "teacher": "GV013",
+        "message": "Class LOP-00000075 assigned to non-preferred slot Thu2-Ca3 for teacher GV013"
+      },
+      {
+        "type": "RBM-NGUYEN-VONG",
+        "class": "LOP-00000120",
+        "slot": "Thu2-Ca4",
+        "teacher": "GV013",
+        "message": "Class LOP-00000120 assigned to non-preferred slot Thu2-Ca4 for teacher GV013"
       },
       {
         "type": "RBM-NGUYEN-VONG",
@@ -617,481 +350,47 @@
       },
       {
         "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000140",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV048",
-        "message": "Class LOP-00000140 assigned to non-preferred slot Thu2-Ca2 for teacher GV048"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000142",
-        "slot": "Thu2-Ca4",
-        "teacher": "GV048",
-        "message": "Class LOP-00000142 assigned to non-preferred slot Thu2-Ca4 for teacher GV048"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000144",
-        "slot": "Thu3-Ca5",
-        "teacher": "GV017",
-        "message": "Class LOP-00000144 assigned to non-preferred slot Thu3-Ca5 for teacher GV017"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000150",
-        "slot": "Thu2-Ca4",
-        "teacher": "GV002",
-        "message": "Class LOP-00000150 assigned to non-preferred slot Thu2-Ca4 for teacher GV002"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000152",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV033",
-        "message": "Class LOP-00000152 assigned to non-preferred slot Thu2-Ca2 for teacher GV033"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000158",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV004",
-        "message": "Class LOP-00000158 assigned to non-preferred slot Thu2-Ca2 for teacher GV004"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000189",
-        "slot": "Thu3-Ca4",
-        "teacher": "GV024",
-        "message": "Class LOP-00000189 assigned to non-preferred slot Thu3-Ca4 for teacher GV024"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000192",
-        "slot": "Thu4-Ca2",
-        "teacher": "GV024",
-        "message": "Class LOP-00000192 assigned to non-preferred slot Thu4-Ca2 for teacher GV024"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000194",
-        "slot": "Thu2-Ca3",
-        "teacher": "GV033",
-        "message": "Class LOP-00000194 assigned to non-preferred slot Thu2-Ca3 for teacher GV033"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000197",
-        "slot": "Thu3-Ca5",
-        "teacher": "GV015",
-        "message": "Class LOP-00000197 assigned to non-preferred slot Thu3-Ca5 for teacher GV015"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000198",
-        "slot": "Thu2-Ca5",
-        "teacher": "GV013",
-        "message": "Class LOP-00000198 assigned to non-preferred slot Thu2-Ca5 for teacher GV013"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000202",
-        "slot": "Thu3-Ca2",
-        "teacher": "GV013",
-        "message": "Class LOP-00000202 assigned to non-preferred slot Thu3-Ca2 for teacher GV013"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000205",
-        "slot": "Thu3-Ca3",
-        "teacher": "GV013",
-        "message": "Class LOP-00000205 assigned to non-preferred slot Thu3-Ca3 for teacher GV013"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000206",
-        "slot": "Thu3-Ca4",
-        "teacher": "GV013",
-        "message": "Class LOP-00000206 assigned to non-preferred slot Thu3-Ca4 for teacher GV013"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000207",
-        "slot": "Thu3-Ca5",
-        "teacher": "GV035",
-        "message": "Class LOP-00000207 assigned to non-preferred slot Thu3-Ca5 for teacher GV035"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000208",
-        "slot": "Thu3-Ca1",
-        "teacher": "GV043",
-        "message": "Class LOP-00000208 assigned to non-preferred slot Thu3-Ca1 for teacher GV043"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000209",
-        "slot": "Thu3-Ca1",
-        "teacher": "GV038",
-        "message": "Class LOP-00000209 assigned to non-preferred slot Thu3-Ca1 for teacher GV038"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000211",
-        "slot": "Thu3-Ca2",
-        "teacher": "GV038",
-        "message": "Class LOP-00000211 assigned to non-preferred slot Thu3-Ca2 for teacher GV038"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000212",
-        "slot": "Thu3-Ca2",
-        "teacher": "GV007",
-        "message": "Class LOP-00000212 assigned to non-preferred slot Thu3-Ca2 for teacher GV007"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000213",
-        "slot": "Thu3-Ca3",
-        "teacher": "GV008",
-        "message": "Class LOP-00000213 assigned to non-preferred slot Thu3-Ca3 for teacher GV008"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000003",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV009",
-        "message": "Class LOP-00000003 assigned to non-preferred slot Thu2-Ca1 for teacher GV009"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000020",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV030",
-        "message": "Class LOP-00000020 assigned to non-preferred slot Thu2-Ca2 for teacher GV030"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000022",
-        "slot": "Thu2-Ca3",
-        "teacher": "GV030",
-        "message": "Class LOP-00000022 assigned to non-preferred slot Thu2-Ca3 for teacher GV030"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000024",
-        "slot": "Thu2-Ca4",
-        "teacher": "GV030",
-        "message": "Class LOP-00000024 assigned to non-preferred slot Thu2-Ca4 for teacher GV030"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000029",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV011",
-        "message": "Class LOP-00000029 assigned to non-preferred slot Thu2-Ca1 for teacher GV011"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000039",
-        "slot": "Thu2-Ca5",
-        "teacher": "GV004",
-        "message": "Class LOP-00000039 assigned to non-preferred slot Thu2-Ca5 for teacher GV004"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000066",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV043",
-        "message": "Class LOP-00000066 assigned to non-preferred slot Thu2-Ca1 for teacher GV043"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000075",
-        "slot": "Thu2-Ca3",
-        "teacher": "GV013",
-        "message": "Class LOP-00000075 assigned to non-preferred slot Thu2-Ca3 for teacher GV013"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000077",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV037",
-        "message": "Class LOP-00000077 assigned to non-preferred slot Thu2-Ca1 for teacher GV037"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000079",
-        "slot": "Thu2-Ca3",
-        "teacher": "GV037",
-        "message": "Class LOP-00000079 assigned to non-preferred slot Thu2-Ca3 for teacher GV037"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000082",
-        "slot": "Thu2-Ca5",
-        "teacher": "GV003",
-        "message": "Class LOP-00000082 assigned to non-preferred slot Thu2-Ca5 for teacher GV003"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000087",
-        "slot": "Thu3-Ca1",
-        "teacher": "GV001",
-        "message": "Class LOP-00000087 assigned to non-preferred slot Thu3-Ca1 for teacher GV001"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000088",
-        "slot": "Thu3-Ca1",
-        "teacher": "GV003",
-        "message": "Class LOP-00000088 assigned to non-preferred slot Thu3-Ca1 for teacher GV003"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000091",
-        "slot": "Thu2-Ca4",
-        "teacher": "GV009",
-        "message": "Class LOP-00000091 assigned to non-preferred slot Thu2-Ca4 for teacher GV009"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000093",
-        "slot": "Thu3-Ca1",
-        "teacher": "GV009",
-        "message": "Class LOP-00000093 assigned to non-preferred slot Thu3-Ca1 for teacher GV009"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000094",
-        "slot": "Thu3-Ca2",
-        "teacher": "GV009",
-        "message": "Class LOP-00000094 assigned to non-preferred slot Thu3-Ca2 for teacher GV009"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000101",
-        "slot": "Thu3-Ca2",
-        "teacher": "GV037",
-        "message": "Class LOP-00000101 assigned to non-preferred slot Thu3-Ca2 for teacher GV037"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000102",
-        "slot": "Thu3-Ca3",
-        "teacher": "GV037",
-        "message": "Class LOP-00000102 assigned to non-preferred slot Thu3-Ca3 for teacher GV037"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000109",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV033",
-        "message": "Class LOP-00000109 assigned to non-preferred slot Thu2-Ca1 for teacher GV033"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000114",
-        "slot": "Thu3-Ca2",
-        "teacher": "GV001",
-        "message": "Class LOP-00000114 assigned to non-preferred slot Thu3-Ca2 for teacher GV001"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000116",
-        "slot": "Thu3-Ca5",
-        "teacher": "GV037",
-        "message": "Class LOP-00000116 assigned to non-preferred slot Thu3-Ca5 for teacher GV037"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000118",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV041",
-        "message": "Class LOP-00000118 assigned to non-preferred slot Thu2-Ca2 for teacher GV041"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000119",
-        "slot": "Thu2-Ca4",
-        "teacher": "GV041",
-        "message": "Class LOP-00000119 assigned to non-preferred slot Thu2-Ca4 for teacher GV041"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000120",
-        "slot": "Thu2-Ca4",
-        "teacher": "GV013",
-        "message": "Class LOP-00000120 assigned to non-preferred slot Thu2-Ca4 for teacher GV013"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000122",
-        "slot": "Thu2-Ca4",
-        "teacher": "GV047",
-        "message": "Class LOP-00000122 assigned to non-preferred slot Thu2-Ca4 for teacher GV047"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000131",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV014",
-        "message": "Class LOP-00000131 assigned to non-preferred slot Thu2-Ca1 for teacher GV014"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000136",
-        "slot": "Thu2-Ca5",
-        "teacher": "GV047",
-        "message": "Class LOP-00000136 assigned to non-preferred slot Thu2-Ca5 for teacher GV047"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000143",
-        "slot": "Thu3-Ca5",
-        "teacher": "GV013",
-        "message": "Class LOP-00000143 assigned to non-preferred slot Thu3-Ca5 for teacher GV013"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000145",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV002",
-        "message": "Class LOP-00000145 assigned to non-preferred slot Thu2-Ca1 for teacher GV002"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000146",
-        "slot": "Thu2-Ca2",
-        "teacher": "GV002",
-        "message": "Class LOP-00000146 assigned to non-preferred slot Thu2-Ca2 for teacher GV002"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000148",
-        "slot": "Thu3-Ca1",
-        "teacher": "GV002",
-        "message": "Class LOP-00000148 assigned to non-preferred slot Thu3-Ca1 for teacher GV002"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000151",
-        "slot": "Thu2-Ca5",
-        "teacher": "GV033",
-        "message": "Class LOP-00000151 assigned to non-preferred slot Thu2-Ca5 for teacher GV033"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000153",
-        "slot": "Thu2-Ca1",
-        "teacher": "GV035",
-        "message": "Class LOP-00000153 assigned to non-preferred slot Thu2-Ca1 for teacher GV035"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
         "class": "LOP-00000159",
-        "slot": "Thu3-Ca5",
+        "slot": "Thu2-Ca2",
         "teacher": "GV004",
-        "message": "Class LOP-00000159 assigned to non-preferred slot Thu3-Ca5 for teacher GV004"
+        "message": "Class LOP-00000159 assigned to non-preferred slot Thu2-Ca2 for teacher GV004"
       },
       {
         "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000160",
-        "slot": "Thu4-Ca1",
-        "teacher": "GV004",
-        "message": "Class LOP-00000160 assigned to non-preferred slot Thu4-Ca1 for teacher GV004"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000161",
-        "slot": "Thu4-Ca2",
-        "teacher": "GV004",
-        "message": "Class LOP-00000161 assigned to non-preferred slot Thu4-Ca2 for teacher GV004"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000162",
-        "slot": "Thu4-Ca1",
-        "teacher": "GV001",
-        "message": "Class LOP-00000162 assigned to non-preferred slot Thu4-Ca1 for teacher GV001"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000167",
-        "slot": "Thu4-Ca4",
-        "teacher": "GV004",
-        "message": "Class LOP-00000167 assigned to non-preferred slot Thu4-Ca4 for teacher GV004"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000168",
-        "slot": "Thu4-Ca5",
-        "teacher": "GV004",
-        "message": "Class LOP-00000168 assigned to non-preferred slot Thu4-Ca5 for teacher GV004"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000169",
-        "slot": "Thu3-Ca2",
-        "teacher": "GV047",
-        "message": "Class LOP-00000169 assigned to non-preferred slot Thu3-Ca2 for teacher GV047"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000172",
-        "slot": "Thu3-Ca5",
-        "teacher": "GV047",
-        "message": "Class LOP-00000172 assigned to non-preferred slot Thu3-Ca5 for teacher GV047"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000173",
-        "slot": "Thu4-Ca1",
-        "teacher": "GV047",
-        "message": "Class LOP-00000173 assigned to non-preferred slot Thu4-Ca1 for teacher GV047"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000175",
-        "slot": "Thu2-Ca4",
-        "teacher": "GV040",
-        "message": "Class LOP-00000175 assigned to non-preferred slot Thu2-Ca4 for teacher GV040"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000177",
-        "slot": "Thu3-Ca1",
-        "teacher": "GV040",
-        "message": "Class LOP-00000177 assigned to non-preferred slot Thu3-Ca1 for teacher GV040"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000184",
-        "slot": "Thu4-Ca3",
+        "class": "LOP-00000181",
+        "slot": "Thu2-Ca2",
         "teacher": "GV024",
-        "message": "Class LOP-00000184 assigned to non-preferred slot Thu4-Ca3 for teacher GV024"
-      },
-      {
-        "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000193",
-        "slot": "Thu2-Ca3",
-        "teacher": "GV035",
-        "message": "Class LOP-00000193 assigned to non-preferred slot Thu2-Ca3 for teacher GV035"
+        "message": "Class LOP-00000181 assigned to non-preferred slot Thu2-Ca2 for teacher GV024"
       },
       {
         "type": "RBM-NGUYEN-VONG",
         "class": "LOP-00000200",
-        "slot": "Thu4-Ca1",
+        "slot": "Thu2-Ca5",
         "teacher": "GV013",
-        "message": "Class LOP-00000200 assigned to non-preferred slot Thu4-Ca1 for teacher GV013"
+        "message": "Class LOP-00000200 assigned to non-preferred slot Thu2-Ca5 for teacher GV013"
       },
       {
         "type": "RBM-NGUYEN-VONG",
-        "class": "LOP-00000203",
-        "slot": "Thu4-Ca3",
+        "class": "LOP-00000205",
+        "slot": "Thu3-Ca2",
         "teacher": "GV013",
-        "message": "Class LOP-00000203 assigned to non-preferred slot Thu4-Ca3 for teacher GV013"
+        "message": "Class LOP-00000205 assigned to non-preferred slot Thu3-Ca2 for teacher GV013"
+      },
+      {
+        "type": "RBM-NGUYEN-VONG",
+        "class": "LOP-00000206",
+        "slot": "Thu3-Ca3",
+        "teacher": "GV013",
+        "message": "Class LOP-00000206 assigned to non-preferred slot Thu3-Ca3 for teacher GV013"
+      },
+      {
+        "type": "RBM-NGUYEN-VONG",
+        "class": "LOP-00000209",
+        "slot": "Thu2-Ca1",
+        "teacher": "GV038",
+        "message": "Class LOP-00000209 assigned to non-preferred slot Thu2-Ca1 for teacher GV038"
       }
     ],
-    "fitness_score": 0.9722222222222222
+    "fitness_score": 0.9537037037037037
   }
 }
