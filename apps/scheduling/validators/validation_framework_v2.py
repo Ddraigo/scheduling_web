@@ -346,6 +346,7 @@ class UnifiedValidator:
             logger.error(f"❌ Teacher preference check failed: {e}", exc_info=True)
         
         # 2b. Check soft constraints from MetricsCalculator (RBM-001 đến RBM-007)
+        soft_fitness = None
         if self.metrics_calc:
             try:
                 # 🔥 PHẢI gọi calculate_fitness() TRƯỚC để populate self.violations
@@ -373,65 +374,24 @@ class UnifiedValidator:
                     }
                     soft_violations_list.append(soft_violation_data)
             except Exception as e:
-                logger.error(f"Metrics report failed: {e}", exc_info=True)
+                logger.error(f"❌ Metrics report failed: {e}", exc_info=True)
+                soft_fitness = None  # Explicit set to None if error
+        
+        # 🔥 Nếu không có soft violations → soft_fitness = 1.0 (perfect)
+        if soft_fitness is None:
+            soft_fitness = 1.0 if not soft_violations_list else 0.0
+            logger.info(f"📊 Using fallback soft_fitness: {soft_fitness:.4f} (violations: {len(soft_violations_list)})")
         
         result['soft_violations'] = soft_violations_list
         
-        # 3. Calculate combined fitness (hard + soft)
-        # Pass soft_fitness từ MetricsCalculator nếu có
-        soft_fitness = None
-        if self.metrics_calc:
-            try:
-                soft_fitness = self.metrics_calc.calculate_fitness()
-            except Exception as e:
-                logger.error(f"MetricsCalculator fitness failed: {e}")
+        # 3. Lưu soft_fitness vào result (đã được tính từ MetricsCalculator)
+        result['soft_fitness'] = soft_fitness  # 🔥 soft_fitness từ MetricsCalculator
         
-        fitness = self._calculate_combined_fitness(len(result['violations']), soft_violation_count, soft_fitness)
-        result['fitness_score'] = fitness
-        
-        # Update status based on fitness
-        if result['status'] == 'PASS':  # Only if hard constraints are OK
-            if fitness < 0.7:
-                result['status'] = 'FAIL'
-            elif fitness < 0.9:
-                result['status'] = 'WARNING'
+        # Update status based on hard violations
+        if result['violations']:
+            result['status'] = 'FAIL'
         
         return result
-    
-    def _calculate_combined_fitness(self, hard_violation_count: int, soft_violation_count: int = 0, soft_fitness: Optional[float] = None) -> float:
-        """
-        Tính Fitness Score kết hợp cả Hard Constraints + Soft Constraints
-        
-        Công thức:
-        - Base Fitness từ Hard Constraints: 1.0 - (hard_violations / max_assignments)
-        - Soft Constraint Fitness: từ MetricsCalculator (nếu có)
-        - Combined: (Hard Fitness + Soft Fitness) / 2, hoặc chỉ Hard nếu no soft
-        
-        Args:
-            hard_violation_count: Số hard constraint violations
-            soft_violation_count: Số soft constraint violations
-            soft_fitness: Soft fitness score từ MetricsCalculator (nếu có)
-            
-        Returns:
-            float: Fitness score trong khoảng [-∞, 1.0]
-        """
-        total_assignments = len(self.schedule_data.get_all_assignments())
-        
-        if total_assignments == 0:
-            return 1.0
-        
-        # Tính hard constraint fitness: 1.0 - (violations / total)
-        hard_fitness = 1.0 - (hard_violation_count / total_assignments)
-        
-        # Combine fitness scores
-        if soft_fitness is not None:
-            # Average hard and soft fitness
-            combined_fitness = (hard_fitness + soft_fitness) / 2.0
-        else:
-            # Only hard constraint fitness
-            combined_fitness = hard_fitness
-        
-        return combined_fitness
     
     def to_unified_format(self, source: str = "LLM") -> Dict:
         """
@@ -446,32 +406,12 @@ class UnifiedValidator:
         # Get basic validation result
         result = self.validate_schedule()
         
-        # 🔥 Extract fitness data từ result để pass vào UnifiedValidationOutput
-        # Tính hard_fitness từ hard violations
-        hard_violation_count = len(result.get('violations', []))
-        total_assignments = result.get('total_assignments', 0)
-        hard_fitness = 1.0 - (hard_violation_count / total_assignments) if total_assignments > 0 else 1.0
-        if hard_violation_count > 0:
-            hard_fitness = 0.0  # Nếu có hard violations → không khả thi
+        # 🔥 Extract soft_fitness từ result (đã tính trong validate_schedule)
+        soft_fitness = result.get('soft_fitness', 1.0)
         
-        # Lấy soft_fitness từ MetricsCalculator (nếu có)
-        soft_fitness = 0.0
-        if self.metrics_calc:
-            try:
-                soft_fitness = self.metrics_calc.calculate_fitness()
-            except:
-                soft_fitness = 0.0
-        
-        # Tính combined_fitness
-        if hard_violation_count > 0:
-            combined_fitness = 0.0  # Nếu có hard violations → không khả thi
-        else:
-            combined_fitness = (hard_fitness + soft_fitness) / 2.0 if soft_fitness else hard_fitness
-        
+        # 🔥 Chỉ giữ soft_fitness (bỏ hard_fitness và combined_fitness)
         fitness_data = {
-            'hard_fitness': hard_fitness,
-            'soft_fitness': soft_fitness,
-            'combined_fitness': combined_fitness
+            'soft_fitness': soft_fitness
         }
         
         # Create unified output với fitness_data

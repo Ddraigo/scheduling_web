@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-31T00:00:08.031272",
+  "timestamp": "2025-10-31T00:17:44.081050",
   "source": "LLM",
   "ma_dot": "DOT1_2025-2026_HK1",
   "summary": {
@@ -27,9 +27,7 @@
     }
   },
   "fitness": {
-    "hard_fitness": 0.0,
-    "soft_fitness": 0.0,
-    "combined_fitness": 0.9675925925925926,
+    "soft_fitness": 0.9722,
     "status": "INFEASIBLE"
   },
   "hard_violations": [

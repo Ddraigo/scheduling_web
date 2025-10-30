@@ -252,27 +252,17 @@ class UnifiedValidationOutput:
         # Nếu validator pass fitness_data → Dùng đó (chính xác hơn)
         # Nếu không → Tính lại (backward compatibility)
         if self.fitness_data:
-            hard_fitness = self.fitness_data.get('hard_fitness', 0.0)
-            soft_fitness = self.fitness_data.get('soft_fitness', 0.0)
-            combined_fitness = self.fitness_data.get('combined_fitness', 0.0)
+            soft_fitness = self.fitness_data.get('soft_fitness', 1.0)
         else:
-            # Fallback: Tính lại (cũ cách tính)
-            if hard_violations_count > 0:
-                hard_fitness = 0.0
-                soft_fitness = 0.0
-                combined_fitness = 0.0
-            else:
-                # Không có hard violations → Tính từ soft constraints
-                hard_fitness = 1.0 - (soft_violations_count / self.total_classes) if self.total_classes > 0 else 1.0
-                soft_fitness = 1.0  # Không vi phạm hard constraints
-                combined_fitness = (hard_fitness + soft_fitness) / 2.0
+            # Fallback: Tính lại
+            soft_fitness = 1.0 - (soft_violations_count / self.total_classes) if self.total_classes > 0 else 1.0
         
         # Determine status
-        if combined_fitness <= 0.0:
-            status = "INFEASIBLE"  # Lịch không khả thi
-        elif combined_fitness < 0.7:
+        if hard_violations_count > 0:
+            status = "INFEASIBLE"  # Lịch không khả thi (hard constraints violated)
+        elif soft_fitness < 0.7:
             status = "FAIL"
-        elif combined_fitness < 0.9:
+        elif soft_fitness < 0.9:
             status = "WARNING"
         else:
             status = "PASS"
@@ -300,9 +290,7 @@ class UnifiedValidationOutput:
             },
             
             "fitness": {
-                "hard_fitness": round(hard_fitness, 4),
                 "soft_fitness": round(soft_fitness, 4),
-                "combined_fitness": round(combined_fitness, 4),
                 "status": status,
             },
             
@@ -340,9 +328,7 @@ class UnifiedValidationOutput:
         print(f"  - Soft Violated: {summary['soft_violated_classes']} ({summary['soft_violated_percentage']}%)")
         
         print(f"\n[Fitness]")
-        print(f"  Hard Fitness: {fitness['hard_fitness']}")
         print(f"  Soft Fitness: {fitness['soft_fitness']}")
-        print(f"  Combined Fitness: {fitness['combined_fitness']}")
         print(f"  Status: {fitness['status']}")
         
         print(f"\n[Hard Constraints]")

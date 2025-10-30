@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-30T23:18:11.409785",
+  "timestamp": "2025-10-31T00:09:21.439556",
   "source": "Algorithm",
   "ma_dot": "DOT1_2025-2026_HK1",
   "summary": {
@@ -7,17 +7,19 @@
     "ok_classes": 201,
     "violated_classes": 15,
     "hard_violated_classes": 15,
-    "soft_violated_classes": 1,
+    "soft_violated_classes": 2,
     "ok_percentage": 93.06,
     "violated_percentage": 6.94,
     "hard_violated_percentage": 6.94,
-    "soft_violated_percentage": 0.46
+    "soft_violated_percentage": 0.93
   },
   "constraint_stats": {
     "hard_constraints": {
       "HC-04_EQUIPMENT_MISMATCH": 15
     },
     "soft_constraints": {
+      "RBM-001": 1,
+      "RBM-002": 1,
       "RBM-NGUYEN-VONG": 1
     }
   },
@@ -156,6 +158,22 @@
       "slot": "Thu6-Ca2",
       "teacher": "GV013",
       "message": "Class LOP-00000206 assigned to non-preferred slot Thu6-Ca2 for teacher GV013"
+    },
+    {
+      "type": "RBM-001",
+      "constraint_name": "Giới hạn số ca/ngày cho giảng viên",
+      "violation_count": 1,
+      "weight": 0.9,
+      "penalty": 0.9,
+      "message": "Giới hạn số ca/ngày cho giảng viên: 1 violations × 0.9 = 0.90 penalty"
+    },
+    {
+      "type": "RBM-002",
+      "constraint_name": "Giảm số ngày lên trường của giảng viên",
+      "violation_count": 11,
+      "weight": 0.7,
+      "penalty": 7.699999999999999,
+      "message": "Giảm số ngày lên trường của giảng viên: 11 violations × 0.7 = 7.70 penalty"
     }
   ],
   "violations_by_class": {
@@ -431,6 +449,26 @@
         "required": "PC",
         "available": "Thiết bị về điện",
         "message": "Room D111 missing equipment: PC"
+      }
+    ],
+    "RBM-001": [
+      {
+        "type": "RBM-001",
+        "constraint_name": "Giới hạn số ca/ngày cho giảng viên",
+        "violation_count": 1,
+        "weight": 0.9,
+        "penalty": 0.9,
+        "message": "Giới hạn số ca/ngày cho giảng viên: 1 violations × 0.9 = 0.90 penalty"
+      }
+    ],
+    "RBM-002": [
+      {
+        "type": "RBM-002",
+        "constraint_name": "Giảm số ngày lên trường của giảng viên",
+        "violation_count": 11,
+        "weight": 0.7,
+        "penalty": 7.699999999999999,
+        "message": "Giảm số ngày lên trường của giảng viên: 11 violations × 0.7 = 7.70 penalty"
       }
     ],
     "RBM-NGUYEN-VONG": [
