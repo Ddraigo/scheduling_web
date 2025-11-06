@@ -18,6 +18,9 @@ CREATE TABLE tb_KHOA(
 
 GO
 
+select * from tb_PHAN_CONG
+
+
 /* ===== tb_BO_MON ===== */
 CREATE TABLE tb_BO_MON(
     MaBoMon    VARCHAR(12)    NOT NULL PRIMARY KEY, --VD: BM-001-001 cú pháp BM-3 số cuối MaKhoa-001 cùng khoa thì 3 số cuối tăng dần
@@ -1072,18 +1075,25 @@ ORDER BY MaLop;
 GO
 
 
-;WITH
-Param AS (
+WITH Param AS (
     SELECT CAST('DOT1_2025-2026_HK1' AS VARCHAR(20)) AS MaDot
 ),
--- Mỗi GV nhận số slot ngẫu nhiên trong [2..15]
-GV AS (
-  SELECT 
-      MaGV,
-      8 + ABS(CHECKSUM(NEWID())) % 13 AS SlotTarget -- 8-20
-  FROM dbo.tb_GIANG_VIEN
+-- Chỉ lấy GV CÓ PHAN_CONG trong đợt này
+GVInDot AS (
+  SELECT DISTINCT pc.MaGV
+  FROM dbo.tb_PHAN_CONG pc
+  JOIN dbo.tb_DOT_XEP dx ON pc.MaDot = dx.MaDot
+  WHERE pc.MaDot IN (SELECT MaDot FROM Param)
+    AND pc.MaGV IS NOT NULL
 ),
--- Toàn bộ timeslot KHÔNG Chủ nhật
+-- Gán số slot ngẫu nhiên cho mỗi GV [8..20]
+GVWithTarget AS (
+  SELECT 
+      g.MaGV,
+      8 + ABS(CHECKSUM(NEWID())) % 13 AS SlotTarget -- 8-20
+  FROM GVInDot g
+),
+-- Toàn bộ timeslot KHÔNG Chủ nhật (Thu <> 8)
 TS AS (
   SELECT TimeSlotID, Thu, Ca
   FROM dbo.tb_TIME_SLOT
@@ -1100,7 +1110,7 @@ Ranked AS (
         PARTITION BY g.MaGV
         ORDER BY NEWID()
       ) AS rn
-  FROM GV g
+  FROM GVWithTarget g
   CROSS JOIN TS ts
   CROSS JOIN Param p
 ),
@@ -1116,10 +1126,14 @@ FROM Pick p
 WHERE NOT EXISTS (
   SELECT 1
   FROM dbo.tb_NGUYEN_VONG x
-  WHERE x.MaGV = p.MaGV AND x.MaDot = p.MaDot AND x.TimeSlotID = p.TimeSlotID
+  WHERE x.MaGV = p.MaGV 
+    AND x.MaDot = p.MaDot 
+    AND x.TimeSlotID = p.TimeSlotID
 );
 
 GO
+
+
 
 
 SELECT 

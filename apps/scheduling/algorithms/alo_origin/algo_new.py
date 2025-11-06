@@ -67,6 +67,8 @@ class Room:
     id: str
     capacity: int
     index: int
+    equipment: str = ""  # Thiết bị có sẵn
+    room_type: str = "LT"  # Loại phòng: "LT" hoặc "TH"
 
 
 @dataclass(frozen=True)
@@ -80,6 +82,9 @@ class Course:
     students: int
     index: int
     teacher_index: int
+    so_ca_tuan: int = 1  # Số ca/tuần
+    equipment: str = ""  # Thiết bị yêu cầu
+    course_type: str = "LT"  # Loại khóa học: "LT" hoặc "TH"
 
 
 @dataclass(frozen=True)
@@ -125,6 +130,7 @@ class CBCTTInstance:
     curriculum_by_id: Dict[str, int]
     teacher_by_id: Dict[str, int]
     teachers: List[str]
+    teacher_preferred_periods: Dict[str, Set[int]] = field(default_factory=dict)  # NEW: teacher_id → preferred periods
     total_periods: int = field(init=False)
 
     def __post_init__(self) -> None:
@@ -147,10 +153,13 @@ class ScoreBreakdown:
     curriculum_compactness: int = 0
     lecture_consecutiveness: int = 0
     room_stability: int = 0
+    teacher_preference_violations: int = 0  # NEW: Cost for violating teacher preferences
 
     @property
     def total(self) -> int:
-        return self.room_capacity + self.min_working_days + self.curriculum_compactness + self.lecture_consecutiveness + self.room_stability
+        return (self.room_capacity + self.min_working_days + 
+                self.curriculum_compactness + self.lecture_consecutiveness + 
+                self.room_stability + self.teacher_preference_violations)
 
 
 class ProgressLogger:
@@ -272,9 +281,15 @@ def parse_instance(path: Optional[str], enforce_room_per_course: bool = False) -
         if lines[idx].upper() == "ROOMS:":
             break
         parts = lines[idx].split()
-        if len(parts) != 5:
+        # Format: course_id teacher_id lectures min_working_days students [course_type] [equipment]
+        # Minimum 5 fields, optionally 6-7 for type and equipment
+        if len(parts) < 5:
             raise ValueError(f"Invalid course line: '{lines[idx]}'")
-        course_id, teacher_id, lectures_str, mwd_str, students_str = parts
+        
+        course_id, teacher_id, lectures_str, mwd_str, students_str = parts[:5]
+        course_type = parts[5] if len(parts) > 5 else "LT"  # Default to "LT"
+        equipment = " ".join(parts[6:]) if len(parts) > 6 else ""  # Join remaining parts as equipment
+        
         if course_id in course_by_id:
             raise ValueError(f"Duplicate course identifier '{course_id}'")
         try:
@@ -289,12 +304,18 @@ def parse_instance(path: Optional[str], enforce_room_per_course: bool = False) -
             raise ValueError(f"Course '{course_id}' minimum working days must be >= 0")
         if students <= 0:
             raise ValueError(f"Course '{course_id}' must have positive number of students")
+        
+        # Validate course_type
+        if course_type not in ("LT", "TH"):
+            raise ValueError(f"Course '{course_id}' has invalid type '{course_type}' (must be 'LT' or 'TH')")
+        
         teacher_idx = teacher_by_id.get(teacher_id)
         if teacher_idx is None:
             teacher_idx = len(teachers)
             teacher_by_id[teacher_id] = teacher_idx
             teachers.append(teacher_id)
-        course = Course(course_id, teacher_id, lectures, min_working, students, len(courses), teacher_idx)
+        course = Course(course_id, teacher_id, lectures, min_working, students, len(courses), teacher_idx, 
+                       so_ca_tuan=lectures, equipment=equipment, course_type=course_type)
         course_by_id[course_id] = course.index
         courses.append(course)
         idx += 1
@@ -311,9 +332,15 @@ def parse_instance(path: Optional[str], enforce_room_per_course: bool = False) -
         if lines[idx].upper() == "CURRICULA:":
             break
         parts = lines[idx].split()
-        if len(parts) != 2:
+        # Format: room_id capacity [room_type] [equipment]
+        # Minimum 2 fields, optionally 3-4 for type and equipment
+        if len(parts) < 2:
             raise ValueError(f"Invalid room line: '{lines[idx]}'")
-        room_id, capacity_str = parts
+        
+        room_id, capacity_str = parts[:2]
+        room_type = parts[2] if len(parts) > 2 else "LT"  # Default to "LT"
+        equipment = " ".join(parts[3:]) if len(parts) > 3 else ""  # Join remaining parts as equipment
+        
         if room_id in room_by_id:
             raise ValueError(f"Duplicate room identifier '{room_id}'")
         try:
@@ -322,7 +349,12 @@ def parse_instance(path: Optional[str], enforce_room_per_course: bool = False) -
             raise ValueError(f"Invalid room capacity in '{lines[idx]}'") from exc
         if capacity <= 0:
             raise ValueError(f"Room '{room_id}' must have positive capacity")
-        room = Room(room_id, capacity, len(rooms))
+        
+        # Validate room_type
+        if room_type not in ("LT", "TH"):
+            raise ValueError(f"Room '{room_id}' has invalid type '{room_type}' (must be 'LT' or 'TH')")
+        
+        room = Room(room_id, capacity, len(rooms), equipment=equipment, room_type=room_type)
         rooms.append(room)
         room_by_id[room_id] = room.index
         idx += 1
@@ -456,6 +488,25 @@ def parse_instance(path: Optional[str], enforce_room_per_course: bool = False) -
     if idx >= len(lines) or lines[idx].upper() != "END.":
         raise ValueError("Missing END. terminator")
 
+    # Convert course preferences to teacher preferences (for hard constraint check in _can_place)
+    teacher_preferred_periods: Dict[str, Set[int]] = {}
+    for course_idx, course in enumerate(courses):
+        if preferences[course_idx]:  # Nếu khóa học có nguyện vọng
+            teacher_id = course.teacher
+            if teacher_id not in teacher_preferred_periods:
+                teacher_preferred_periods[teacher_id] = set()
+            # Thêm tất cả periods có preference của khóa học này vào teacher
+            teacher_preferred_periods[teacher_id].update(preferences[course_idx])
+    
+    # Debug: log teacher preferences
+    if teacher_preferred_periods:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.debug(f"🎯 Teacher Preferred Periods:")
+        for teacher_id, periods in sorted(teacher_preferred_periods.items()):
+            periods_sorted = sorted(periods)
+            logger.debug(f"  {teacher_id}: {periods_sorted} ({len(periods)} periods)")
+
     lectures: List[Lecture] = []
     course_lecture_ids: List[List[int]] = [[] for _ in courses]
     for course in courses:
@@ -563,6 +614,7 @@ def parse_instance(path: Optional[str], enforce_room_per_course: bool = False) -
         curriculum_by_id=curriculum_by_id,
         teacher_by_id=teacher_by_id,
         teachers=teachers,
+        teacher_preferred_periods=teacher_preferred_periods,  # NEW: Teacher → preferred periods mapping
     )
 
 
@@ -599,12 +651,41 @@ class TimetableState:
         self.soft_curriculum_compactness = 0
         self.soft_room_stability = 0
         self.soft_lecture_consecutiveness = 0
+        self.soft_teacher_preference_violations = 0
         # Track assigned periods for each course to detect gaps
         # course_idx -> list of assigned periods (sorted)
         self.course_assigned_periods: List[List[int]] = [[] for _ in range(course_count)]
 
     def clone_assignments(self) -> Dict[int, Tuple[int, int]]:
         return dict(self.assignments)
+
+    def _compute_teacher_preference_cost(self, lecture_id: int) -> int:
+        """
+        Tính cost cho teacher preferences.
+        
+        Cost = 1 nếu GV có preferences và period không nằm trong preferences
+        Cost = 0 nếu GV không có preferences hoặc period nằm trong preferences
+        """
+        if lecture_id not in self.assignments:
+            return 0
+        
+        period, _ = self.assignments[lecture_id]
+        course_idx = self.instance.lectures[lecture_id].course
+        teacher = self.instance.course_teachers[course_idx]
+        
+        # Lấy preferred periods của GV
+        preferred_periods = self.instance.teacher_preferred_periods.get(teacher, set())
+        
+        # Nếu GV không có preferences → cost = 0
+        if not preferred_periods:
+            return 0
+        
+        # Nếu period không nằm trong preferred_periods → cost = 1
+        if period not in preferred_periods:
+            return 1
+        
+        # Nếu period nằm trong preferred_periods → cost = 0
+        return 0
 
     def _compute_course_mwd_penalty(self, course_idx: int) -> int:
         
@@ -680,32 +761,30 @@ class TimetableState:
                 return 0
             else:
                 # Vi phạm: 2 tiết không liên tiếp
-                return 5  # Giảm từ 10 xuống 5
+                return 2  # Giảm từ 5 xuống 2
         
         # === QUY TẮC CHUNG: Tránh quá tải - KHÔNG cho phép tất cả tiết cùng ngày ===
         if num_lectures >= 3 and len(lectures_by_day) == 1:
             # PENALTY CỰC NẶNG: Tất cả tiết ở cùng 1 ngày
-            penalty += 30  # Giảm từ 50 xuống 30
+            penalty += 10  # Giảm từ 30 xuống 10 (cho phép TS escape nếu cần)
         
         # === TRƯỜNG HỢP 2: 3 TIẾT ===
         if num_lectures == 3:
             if total_pairs == 1 and len(lectures_by_day) >= 2:
                 # Hoàn hảo: có 1 cặp liên tiếp + 1 tiết rời, trên ít nhất 2 ngày khác nhau
-                # Kiểm tra các cặp có cách nhau ít nhất 1 ngày
                 if len(days_with_pairs) == 1:
-                    # Cặp và tiết rời phải ở ngày khác nhau (đã đảm bảo vì >= 2 ngày)
                     return 0
                 else:
                     return 0
             elif total_pairs == 0:
                 # Vi phạm nghiêm trọng: không có cặp liên tiếp nào
-                penalty += 8  # Giảm từ 15 xuống 8
+                penalty += 3  # Giảm từ 8 xuống 3
             elif total_pairs == 1 and len(lectures_by_day) == 1:
                 # Vi phạm: có 1 cặp nhưng tất cả cùng ngày (quá tải)
-                penalty += 20  # Giảm từ 30 xuống 20 (đã cộng 30 ở trên)
+                penalty += 5  # Giảm từ 20 xuống 5 (+ 10 ở trên = 15 tổng)
             else:
-                # Trường hợp khác (ví dụ: có nhiều hơn 1 cặp - không đúng cấu trúc)
-                penalty += 5  # Giảm từ 8 xuống 5
+                # Trường hợp khác
+                penalty += 2  # Giảm từ 5 xuống 2
         
         # === TRƯỜNG HỢP 3: 4 TIẾT ===
         elif num_lectures == 4:
@@ -714,42 +793,174 @@ class TimetableState:
                 return 0
             elif total_pairs < 2:
                 # Vi phạm: không đủ 2 cặp
-                penalty += (2 - total_pairs) * 8  # Giảm từ 12 xuống 8
+                penalty += (2 - total_pairs) * 3  # Giảm từ 8 xuống 3
             elif total_pairs == 2 and len(days_with_pairs) == 1:
                 # Vi phạm: có 2 cặp nhưng cùng ngày (quá tải)
-                penalty += 15  # Giảm từ 25 xuống 15
+                penalty += 5  # Giảm từ 15 xuống 5
             else:
                 # Trường hợp khác
-                penalty += 3  # Giảm từ 5 xuống 3
+                penalty += 1  # Giảm từ 3 xuống 1
         
         # === TRƯỜNG HỢP >= 5 TIẾT ===
         elif num_lectures >= 5:
             # Yêu cầu tối thiểu: có ít nhất 2 cặp liên tiếp
             if total_pairs < 2:
-                penalty += (2 - total_pairs) * 6  # Giảm từ 10 xuống 6
+                penalty += (2 - total_pairs) * 2  # Giảm từ 6 xuống 2
             # Yêu cầu các cặp phải trải đều trên nhiều ngày
             if len(days_with_pairs) < 2:
-                penalty += 8  # Giảm từ 15 xuống 8
+                penalty += 3  # Giảm từ 8 xuống 3
         
         return penalty
 
 
     def _can_place(self, lecture_id: int, period: int, room_idx: int) -> bool:
+        """
+        Check if a lecture can be placed at (period, room).
+        Returns True if all HARD CONSTRAINTS are satisfied.
+        
+         TEACHER PREFERENCES (Check 8):
+        
+         SOFT CONSTRAINT (NOT HARD):
+        - Preferences are NEVER rejected here (soft constraints allow violations)
+        - If violated: placement IS allowed, but will incur soft cost
+        - Cost calculation: _compute_teacher_preference_cost() calculates 1 point per violation
+        
+         AUTOMATIC RELAXATION LOGIC:
+        When building initial solution:
+        - If teacher has 5 lectures but only 3 preferred slots available
+        - Backtracking will place 2 lectures outside preferred slots
+        - Those 2 violations will accumulate as soft cost (cost += 2)
+        - This happens automatically - NO MANUAL RELAXATION NEEDED
+        
+         DEBUGGING:
+        To test behavior without preferences affecting feasibility:
+        - Use _can_place_relaxed(lecture_id, period, room, relax_preference=True)
+        - This allows checking other hard constraints in isolation
+        
+        Constraint Priority:
+        1. Check 1-7: Hard constraints (MUST be satisfied)
+        2. Check 8: Teacher Preferences (soft cost if violated)
+        """
         
         lecture = self.instance.lectures[lecture_id]
         course_idx = lecture.course
+        course = self.instance.courses[course_idx]
+        teacher = self.instance.course_teachers[course_idx]
+        
+        # ============================================================
+        # Hard Constraints (Check 1-7) - MUST all be satisfied
+        # ============================================================
+        
+        # Check 1: Period availability
         if period in self.instance.unavailability[course_idx]:
             return False
+        
+        # Check 2: Room not already booked at this period
+        room = self.instance.rooms[room_idx]
         if room_idx in self.period_rooms[period]:
             return False
-        teacher = self.instance.course_teachers[course_idx]
+        
+        # Check 3: Teacher conflict
         owner = self.period_teacher_owner[period].get(teacher)
         if owner is not None and owner != lecture_id:
             return False
+        
+        # Check 4: Curriculum conflict
         for curriculum_idx in self.instance.course_curriculums[course_idx]:
             owner = self.period_curriculum_owner[period].get(curriculum_idx)
             if owner is not None and owner != lecture_id:
                 return False
+        
+        # Check 5: HC-03 - Capacity must be adequate (hard constraint)
+        if room.capacity < course.students:
+            return False
+        
+        # Check 6: HC-05/HC-06 - Room type must match (hard constraint)
+        # LT (Lý thuyết) courses → LT rooms, TH (Thực hành) courses → TH rooms
+        if course.course_type != room.room_type:
+            return False
+        
+        # Check 7: HC-04 (Equipment) - Hard constraint
+        # ⚠️ TEMPORARILY DISABLED - Equipment too restrictive
+        # If course requires equipment, room must have that equipment
+        # if course.equipment:
+        #     room_equipment = room.equipment or ""
+        #     # Kiểm tra xem phòng có chứa tất cả thiết bị yêu cầu không
+        #     required_equipment = set(eq.strip() for eq in course.equipment.split(',') if eq.strip())
+        #     room_equipment_set = set(eq.strip() for eq in room_equipment.split(',') if eq.strip())
+        #     
+        #     if not required_equipment.issubset(room_equipment_set):
+        #         return False
+        
+        # ============================================================
+        # Check 8: Teacher Preferences (SOFT CONSTRAINT ⭐)
+        # ============================================================
+        # 🎯 NEVER REJECT HERE - Preferences are soft constraints
+        # - Allow placement even if outside preferred periods
+        # - Cost will be calculated and accumulated separately
+        # - This is what enables automatic relaxation when needed
+        # 
+        # Example: Teacher wants periods 1-3, but we need to use period 10
+        # - Allowed: ✅ Yes (placement succeeds)
+        # - Cost: +1 (preference violation counted in soft cost)
+        
+        return True
+
+    def _can_place_relaxed(self, lecture_id: int, period: int, room_idx: int, 
+                          relax_preference: bool = False) -> bool:
+        """
+        Check if lecture can be placed, with optional relaxation.
+        Used to debug which constraints are causing infeasibility.
+        
+        Args:
+            lecture_id: Lecture ID
+            period: Period index
+            room_idx: Room index
+            relax_preference: If True, ignore teacher preferences (relax Sort Constraint)
+        
+        Returns:
+            True if placement is valid (considering relaxations)
+        """
+        
+        lecture = self.instance.lectures[lecture_id]
+        course_idx = lecture.course
+        course = self.instance.courses[course_idx]
+        teacher = self.instance.course_teachers[course_idx]
+        
+        # Check 1: Period availability
+        if period in self.instance.unavailability[course_idx]:
+            return False
+        
+        # Check 2: Room not already booked at this period
+        room = self.instance.rooms[room_idx]
+        if room_idx in self.period_rooms[period]:
+            return False
+        
+        # Check 3: Teacher conflict
+        owner = self.period_teacher_owner[period].get(teacher)
+        if owner is not None and owner != lecture_id:
+            return False
+        
+        # Check 4: Curriculum conflict
+        for curriculum_idx in self.instance.course_curriculums[course_idx]:
+            owner = self.period_curriculum_owner[period].get(curriculum_idx)
+            if owner is not None and owner != lecture_id:
+                return False
+        
+        # Check 5: HC-03 - Capacity must be adequate (hard constraint)
+        if room.capacity < course.students:
+            return False
+        
+        # Check 6: HC-05/HC-06 - Room type must match (hard constraint)
+        if course.course_type != room.room_type:
+            return False
+        
+        # Check 8: Teacher Preferences (SORT CONSTRAINT - can be relaxed for debugging)
+        if not relax_preference:
+            preferred_periods = self.instance.teacher_preferred_periods.get(teacher, set())
+            if preferred_periods and period not in preferred_periods:
+                return False
+        
         return True
 
     def unassign(self, lecture_id: int) -> None:
@@ -882,9 +1093,15 @@ class TimetableState:
         return conflicts
 
     def _remove_assignment(self, lecture_id: int) -> int:
-        period, room_idx = self.assignments.pop(lecture_id)
+        period, room_idx = self.assignments[lecture_id]  # Get period BEFORE pop
         course_idx = self.instance.lectures[lecture_id].course
         teacher = self.instance.course_teachers[course_idx]
+        
+        # Calculate teacher preference cost BEFORE removing from assignments
+        pref_cost = self._compute_teacher_preference_cost(lecture_id)
+        
+        # Now remove from assignments
+        self.assignments.pop(lecture_id)
         self.period_rooms[period].pop(room_idx, None)
         self.period_teachers[period].discard(teacher)
         self.period_teacher_owner[period].pop(teacher, None)
@@ -892,6 +1109,11 @@ class TimetableState:
             self.period_curriculums[period].discard(curriculum_idx)
             self.period_curriculum_owner[period].pop(curriculum_idx, None)
         delta = 0
+        
+        # Remove teacher preference cost
+        self.soft_teacher_preference_violations -= pref_cost
+        delta -= pref_cost
+        
         old_room_penalty = self.lecture_room_penalty[lecture_id]
         self.soft_room_capacity -= old_room_penalty
         delta -= old_room_penalty
@@ -978,11 +1200,17 @@ class TimetableState:
         new_consec_penalty = self._compute_course_consecutiveness_penalty(course_idx)
         self.soft_lecture_consecutiveness += new_consec_penalty - old_consec_penalty
         delta += new_consec_penalty - old_consec_penalty
+        
+        # Check 8: Teacher Preferences (SOFT CONSTRAINT)
+        pref_cost = self._compute_teacher_preference_cost(lecture_id)
+        self.soft_teacher_preference_violations += pref_cost
+        delta += pref_cost
+        
         return delta
 
     @property
     def current_cost(self) -> int:
-        return self.soft_room_capacity + self.soft_min_working_days + self.soft_curriculum_compactness + self.soft_room_stability + self.soft_lecture_consecutiveness
+        return self.soft_room_capacity + self.soft_min_working_days + self.soft_curriculum_compactness + self.soft_room_stability + self.soft_lecture_consecutiveness + self.soft_teacher_preference_violations
 
     def score_breakdown(self) -> ScoreBreakdown:
         return ScoreBreakdown(
@@ -991,6 +1219,7 @@ class TimetableState:
             curriculum_compactness=self.soft_curriculum_compactness,
             room_stability=self.soft_room_stability,
             lecture_consecutiveness=self.soft_lecture_consecutiveness,
+            teacher_preference_violations=self.soft_teacher_preference_violations,
         )
 
     def check_hard_constraints(self) -> bool:
@@ -1074,14 +1303,31 @@ def _build_initial_solution(instance: CBCTTInstance, rng: random.Random, strateg
         course_idx = instance.lectures[lecture_id].course
         feasible_periods = instance.feasible_periods[course_idx]
         candidates: List[Tuple[int, int, int]] = []
+        
+        # FIRST PASS: Try only feasible periods (hard constraints)
         for period in feasible_periods:
             for room_idx in instance.course_room_preference[course_idx]:
                 delta = state.move_lecture(lecture_id, period, room_idx, commit=False)
                 if delta is None:
                     continue
                 candidates.append((delta, period, room_idx))
+        
+        # FALLBACK: If no candidates found and this course has preferred periods set,
+        # relax to allow ANY feasible period (including outside teacher preferences)
+        # This enables creating a feasible solution when preferred slots are exhausted.
+        if not candidates:
+            # Try ALL feasible periods with ALL rooms
+            for period in feasible_periods:
+                for room_idx in instance.course_room_preference[course_idx]:
+                    # Even if placement violates soft constraints, we need to try
+                    delta = state.move_lecture(lecture_id, period, room_idx, commit=False)
+                    if delta is None:
+                        continue
+                    candidates.append((delta, period, room_idx))
+        
         if not candidates:
             return False
+        
         rng.shuffle(candidates)
         
         # IMPROVEMENT: Score candidates with consecutive placement preference
@@ -1171,9 +1417,20 @@ def _build_initial_solution(instance: CBCTTInstance, rng: random.Random, strateg
             if pref and room_idx == pref[0]:
                 room_score = 0  # Prefer top room strongly
 
-            # Combined score: CÂN BẰNG giữa course, curriculum, và room
-            # Ưu tiên theo thứ tự: course_priority, curriculum_score, room_score, delta
-            return (course_priority, curriculum_score, room_score, delta)
+            # === TEACHER PREFERENCE SCORING (NEW) ===
+            teacher_score = 0  # Default: no bonus/penalty
+            teacher = instance.course_teachers[course_idx]
+            teacher_preferred_periods = instance.teacher_preferred_periods.get(teacher, set())
+            if teacher_preferred_periods:
+                # BALANCED: Prefer teacher periods but don't dominate
+                if period in teacher_preferred_periods:
+                    teacher_score = -5  # BONUS: Prefer preferred period (negative = better)
+                # Note: No penalty for non-preferred (keep 0), let delta handle the cost
+
+            # Combined score: CÂN BẰNG - teacher preference là bonus, không phải hard requirement
+            # Thứ tự: course_priority (consecutiveness), curriculum_score (compactness), 
+            #         teacher_score (preference bonus), room_score, delta
+            return (course_priority, curriculum_score, teacher_score, room_score, delta)
         
         candidates.sort(key=candidate_score)
         if strategy == "random-repair":
@@ -1781,6 +2038,99 @@ class SwapForPairingNeighborhood(Neighborhood):
         return None
 
 
+class TeacherPreferenceNeighborhood(Neighborhood):
+    """Neighborhood chuyên tối ưu teacher preferences.
+    
+    Chiến lược:
+    1. Tìm lectures đang vi phạm teacher preferences (nằm ngoài preferred periods)
+    2. Thử di chuyển vào preferred periods của giảng viên
+    3. Ưu tiên giữ cùng phòng và ngày để giảm thiểu vi phạm các soft constraints khác
+    """
+    name = "TeacherPreference"
+    
+    def generate_candidate(self, state: TimetableState, rng: random.Random) -> Optional[Move]:
+        instance = state.instance
+        
+        # Thu thập các lectures đang vi phạm teacher preferences
+        violating_lectures = []
+        for lecture_id in range(len(instance.lectures)):
+            if lecture_id not in state.assignments:
+                continue
+            
+            current_period, current_room = state.assignments[lecture_id]
+            course_idx = instance.lectures[lecture_id].course
+            teacher = instance.course_teachers[course_idx]
+            
+            # Lấy preferred periods của giảng viên
+            preferred_periods = instance.teacher_preferred_periods.get(teacher, set())
+            
+            if not preferred_periods:
+                continue  # Giảng viên không có preferences
+            
+            # Kiểm tra xem lecture có đang vi phạm không
+            if current_period not in preferred_periods:
+                # Đang vi phạm
+                violating_lectures.append((lecture_id, course_idx, teacher, current_period, current_room, preferred_periods))
+        
+        if not violating_lectures:
+            return None  # Không có vi phạm, hoàn hảo!
+        
+        # Chọn ngẫu nhiên một violating lecture
+        rng.shuffle(violating_lectures)
+        
+        for lecture_id, course_idx, teacher, current_period, current_room, preferred_periods in violating_lectures[:10]:
+            current_day, current_slot = instance.period_to_slot(current_period)
+            
+            # Chiến lược 1: Ưu tiên giữ cùng ngày, chỉ đổi period (giảm thiểu Compactness/Consecutiveness impact)
+            same_day_preferred = [p for p in preferred_periods if instance.period_to_slot(p)[0] == current_day]
+            
+            if same_day_preferred:
+                # Thử di chuyển đến preferred period cùng ngày
+                target_periods = list(same_day_preferred)
+                rng.shuffle(target_periods)
+                
+                for target_period in target_periods[:3]:
+                    if target_period == current_period:
+                        continue
+                    
+                    # Ưu tiên giữ cùng phòng
+                    if state._can_place(lecture_id, target_period, current_room):
+                        delta = state.move_lecture(lecture_id, target_period, current_room, commit=False)
+                        if delta is not None and delta < 5:  # Chấp nhận tăng cost nhỏ (đánh đổi để giảm teacher pref violations)
+                            return MoveLectureMove(lecture_id, target_period, current_room)
+                    
+                    # Thử các phòng khác
+                    for room_idx in instance.course_room_preference[course_idx]:
+                        delta = state.move_lecture(lecture_id, target_period, room_idx, commit=False)
+                        if delta is not None and delta < 5:
+                            return MoveLectureMove(lecture_id, target_period, room_idx)
+            
+            # Chiến lược 2: Nếu không có preferred period cùng ngày, thử các ngày khác
+            other_day_preferred = [p for p in preferred_periods if instance.period_to_slot(p)[0] != current_day]
+            
+            if other_day_preferred:
+                target_periods = list(other_day_preferred)
+                rng.shuffle(target_periods)
+                
+                for target_period in target_periods[:5]:
+                    if target_period == current_period:
+                        continue
+                    
+                    # Ưu tiên giữ cùng phòng
+                    if state._can_place(lecture_id, target_period, current_room):
+                        delta = state.move_lecture(lecture_id, target_period, current_room, commit=False)
+                        if delta is not None and delta < 10:  # Chấp nhận tăng cost lớn hơn cho đổi ngày
+                            return MoveLectureMove(lecture_id, target_period, current_room)
+                    
+                    # Thử các phòng khác
+                    for room_idx in instance.course_room_preference[course_idx]:
+                        delta = state.move_lecture(lecture_id, target_period, room_idx, commit=False)
+                        if delta is not None and delta < 10:
+                            return MoveLectureMove(lecture_id, target_period, room_idx)
+        
+        return None
+
+
 class NeighborhoodManager:
     """Adaptive operator selector."""
 
@@ -1892,7 +2242,7 @@ class TabuSearch:
         rng = self.rng
         iteration = 0
         tabu: Dict[Tuple, int] = {}
-        base_tenure = 7
+        base_tenure = 15  # Tăng từ 7 lên 15 để tránh lặp lại moves xấu
         best_cost = state.current_cost
         last_log = 0.0
         accepted = 0
@@ -1941,10 +2291,10 @@ class TabuSearch:
                 no_improve += 1
             self.manager.reward(idx, improvement)
             if no_improve > 250:
-                base_tenure = min(25, base_tenure + 1)
+                base_tenure = min(40, base_tenure + 1)  # Tăng max từ 25 lên 40
                 no_improve = 0
             elif improvement:
-                base_tenure = max(4, base_tenure - 1)
+                base_tenure = max(8, base_tenure - 1)  # Giảm min từ 4 lên 8
             now = time.time() - start_time
             if now - last_log >= 2.0:
                 accept_rate = accepted / attempted if attempted else 0.0
@@ -1958,6 +2308,7 @@ def run_metaheuristic(state: TimetableState, meta: str, rng: random.Random, logg
     best_assignments = state.clone_assignments()
     best_breakdown = state.score_breakdown()
     neighborhoods: List[Neighborhood] = [
+        TeacherPreferenceNeighborhood(),  # NEW: Ưu tiên cao nhất - tối ưu teacher preferences
         MoveLectureNeighborhood(),
         SwapLecturesNeighborhood(),
         RoomChangeNeighborhood(),

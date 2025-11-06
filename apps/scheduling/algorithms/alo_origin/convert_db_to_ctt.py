@@ -103,12 +103,17 @@ def export_to_ctt(dot_xep, output_path: str = None):
         lop = phan_cong.ma_lop
         gv = phan_cong.ma_gv
         
-        course_id = f"c{idx:04d}"
+        # ===== LẤY COURSE_ID THỰC TỬ phan_cong.ma_lop =====
+        # Dùng ma_lop (ma lớp môn học) làm course_id
+        if lop.ma_lop:
+            course_id = lop.ma_lop  # Sử dụng mã lớp thực
+        else:
+            course_id = f"c{idx:04d}"  # Fallback nếu không có ma_lop
         
         # Lấy giảng viên từ phân công
         # Dùng ma_gv hoặc course_id nếu không có GV
         if gv:
-            teacher_id = gv.ma_gv[:10]  # Lấy 10 ký tự đầu của ma_gv
+            teacher_id = gv.ma_gv  # Lấy mã giảng viên thực
         else:
             teacher_id = f"t{idx:03d}"
         
@@ -129,13 +134,38 @@ def export_to_ctt(dot_xep, output_path: str = None):
         # Số sinh viên từ so_luong_sv
         num_students = lop.so_luong_sv if lop.so_luong_sv else 50  # Default
         
-        course_id_map[lop.ma_lop] = course_id  # Use ma_lop as key, not id
+        # ===== LOẠI KHÓA HỌC: LT (Lý thuyết) hoặc TH (Thực hành) =====
+        mon_hoc = lop.ma_mon_hoc
+        so_tiet_lt = mon_hoc.so_tiet_lt if mon_hoc else 0
+        so_tiet_th = mon_hoc.so_tiet_th if mon_hoc else 0
+        to_mh = lop.to_mh if hasattr(lop, 'to_mh') else 0
+        
+        # Quy tắc từ AlgorithmsDataAdapter:
+        # - Nếu so_tiet_th == 0 → "LT" (Lý thuyết)
+        # - Nếu so_tiet_lt == 0 và so_tiet_th > 0 → "TH" (Thực hành)
+        # - Nếu so_tiet_lt > 0 và so_tiet_th > 0 và to_mh == 0 → "LT"
+        # - Còn lại → "TH"
+        if so_tiet_th == 0:
+            course_type = "LT"
+        elif so_tiet_lt == 0 and so_tiet_th > 0:
+            course_type = "TH"
+        elif so_tiet_lt > 0 and so_tiet_th > 0 and to_mh == 0:
+            course_type = "LT"
+        else:
+            course_type = "TH"
+        
+        # Thiết bị yêu cầu
+        equipment_required = lop.thiet_bi_yeu_cau or ""
+        
+        course_id_map[lop.ma_lop] = course_id  # Map: ma_lop -> course_id
         courses_data.append({
             'id': course_id,
             'teacher': teacher_id,
             'lectures': num_lectures,
             'min_working_days': min_working_days,
             'students': num_students,
+            'course_type': course_type,
+            'equipment': equipment_required,
             'lop': lop,
             'so_ca_tuan': so_ca_tuan,
             'phan_cong': phan_cong
@@ -167,13 +197,28 @@ def export_to_ctt(dot_xep, output_path: str = None):
     print(f"🏛️  Tìm thấy {len(phong_list)} phòng")
     
     for idx, phong in enumerate(phong_list):
-        room_id = phong.ma_phong[:10]  # Lấy 10 ký tự đầu
+        # ===== LẤY ROOM_ID THỰC TỬ phong.ma_phong =====
+        # Dùng ma_phong (mã phòng) làm room_id
+        if phong.ma_phong:
+            room_id = phong.ma_phong  # Sử dụng mã phòng thực
+        else:
+            room_id = f"r{idx:04d}"  # Fallback nếu không có ma_phong
+        
         capacity = phong.suc_chua if phong.suc_chua else 50
         
-        room_id_map[phong.ma_phong] = room_id  # Use ma_phong as key, not id
+        # Xác định loại phòng: "TH" (Thực hành) hoặc "LT" (Lý thuyết - mặc định)
+        loai_phong = phong.loai_phong or ""
+        room_type = "TH" if ("Thực hành" in loai_phong or "TH" in loai_phong) else "LT"
+        
+        # Thiết bị của phòng
+        equipment = phong.thiet_bi or ""
+        
+        room_id_map[phong.ma_phong] = room_id  # Map: ma_phong -> room_id
         rooms_data.append({
             'id': room_id,
             'capacity': capacity,
+            'room_type': room_type,
+            'equipment': equipment,
             'phong': phong
         })
     
@@ -235,29 +280,57 @@ def export_to_ctt(dot_xep, output_path: str = None):
     # Chọn 1 course representative để ghi vào file .ctt
     # (Thuật toán sẽ hiểu rằng GV rảnh vào lúc đó, có thể xếp bất kỳ lớp nào)
     unique_prefs = set()
+    skipped_invalid = 0
+    skipped_no_gv = 0
+    skipped_duplicate = 0
+    
     for nv in nguyen_vong_list:
         time_slot = nv.time_slot_id
-        # Convert ngày từ database (2-8: Thứ 2 - CN) sang .ctt format (0-4: Day 0-4)
-        # Thứ 2=2→0, Thứ 3=3→1, Thứ 4=4→2, Thứ 5=5→3, Thứ 6=6→4, Thứ 7=7→5, CN=8→6
-        day_db = time_slot.thu if time_slot and time_slot.thu else 0
-        day = min(day_db - 2, 4) if day_db >= 2 else 0  # Convert and cap at 4
         
-        # Convert period từ database (1-5) sang .ctt format (0-4)
-        period_db = time_slot.ca.ma_khung_gio if time_slot and time_slot.ca else 1
-        period = period_db - 1  # Convert: 1→0, 2→1, ..., 5→4
-        
-        # Skip nếu period ngoài phạm vi (>= 6)
-        if period >= 6:
+        # ===== CHUYỂN ĐỔI NGÀY =====
+        # DB: thu = 2-8 (Thứ 2=2, Thứ 3=3, Thứ 4=4, Thứ 5=5, Thứ 6=6, Thứ 7=7, CN=8)
+        # .ctt: day = 0-5 (T2=0, T3=1, T4=2, T5=3, T6=4, T7=5)
+        # ⚠️ CN (8) ngoài phạm vi → skip, chỉ lấy T2-T7
+        if not time_slot:
+            skipped_invalid += 1
             continue
         
+        day_db = time_slot.thu if time_slot.thu else 0
+        
+        # Chỉ lấy Thứ 2-7 (2-7), skip CN (8)
+        if day_db < 2 or day_db > 7:
+            skipped_invalid += 1
+            continue
+        
+        day = day_db - 2  # Convert: 2→0, 3→1, 4→2, 5→3, 6→4, 7→5
+        
+        # ===== CHUYỂN ĐỔI PERIOD =====
+        # DB: ma_khung_gio = 1-5 (Ca 1-5, mỗi ca 1 tiết)
+        # .ctt: period = 0-4
+        if not time_slot.ca:
+            skipped_invalid += 1
+            continue
+        
+        period_db = time_slot.ca.ma_khung_gio
+        
+        # Kiểm tra period hợp lệ (phải 1-5)
+        if period_db < 1 or period_db > 5:
+            skipped_invalid += 1
+            continue
+        
+        period = period_db - 1  # Convert: 1→0, 2→1, 3→2, 4→3, 5→4
+        
+        # ===== KIỂM TRA GV =====
         gv_id = nv.ma_gv.ma_gv if nv.ma_gv else None
         
         if not gv_id or gv_id not in gv_courses or not gv_courses[gv_id]:
+            skipped_no_gv += 1
             continue
         
-        # Kiểm tra đã có preference này chưa
+        # ===== KIỂM TRA TRÙNG LẶP =====
         pref_key = (gv_id, day, period)
         if pref_key in unique_prefs:
+            skipped_duplicate += 1
             continue
         unique_prefs.add(pref_key)
         
@@ -271,11 +344,19 @@ def export_to_ctt(dot_xep, output_path: str = None):
             'gv_id': gv_id
         })
     
+    # ===== THỐNG KÊ SKIP =====
+    print(f"\n📊 Thống kê lọc nguyện vọng:")
+    print(f"  - Tổng NguyenVong: {len(nguyen_vong_list)}")
+    print(f"  - Lọc (ngày/period ngoài phạm vi): {skipped_invalid}")
+    print(f"  - Lọc (GV không dạy): {skipped_no_gv}")
+    print(f"  - Lọc (trùng lặp): {skipped_duplicate}")
+    print(f"  - ✅ Lưu giữ: {len(preferred_periods)}")
+    
     # Debug: Hiển thị chi tiết nguyện vọng
-    print(f"\n📋 Chi tiết nguyện vọng (sample):")
+    print(f"\n📋 Chi tiết nguyện vọng (sample - 10 cái đầu tiên):")
     for i, pref in enumerate(preferred_periods[:10]):
         print(f"  {i+1}. {pref['course']} - GV: {pref['teacher']} ({pref['gv_id']}), "
-              f"Thu: {pref['day']}, Ca: {pref['period']}")
+              f"Thu: {pref['day']+2} (ngày {pref['day']}), Ca: {pref['period']+1} (period {pref['period']})")
     
     print(f"\n💡 Ghi chú:")
     print(f"  - NguyenVong = soft constraint (ưu tiên, không bắt buộc)")
@@ -288,7 +369,7 @@ def export_to_ctt(dot_xep, output_path: str = None):
         f.write(f"Name: Export_{dot_xep.ma_dot}\n")
         f.write(f"Courses: {len(courses_data)}\n")
         f.write(f"Rooms: {len(rooms_data)}\n")
-        f.write(f"Days: 5\n")  # 5 ngày trong tuần (Thứ 2 - CN)
+        f.write(f"Days: 6\n")  # 6 ngày trong tuần (Thứ 2 - Thứ 7)
         f.write(f"Periods_per_day: 5\n")  # 5 ca/ngày (từ database)
         f.write(f"Curricula: {len(curricula_data)}\n")
         f.write(f"Constraints: {len(unavailability_constraints)}\n")
@@ -297,13 +378,19 @@ def export_to_ctt(dot_xep, output_path: str = None):
         # COURSES
         f.write("COURSES:\n")
         for course in courses_data:
-            f.write(f"{course['id']} {course['teacher']} {course['lectures']} {course['min_working_days']} {course['students']}\n")
+            course_line = f"{course['id']} {course['teacher']} {course['lectures']} {course['min_working_days']} {course['students']} {course['course_type']}"
+            if course['equipment']:
+                course_line += f" {course['equipment']}"
+            f.write(f"{course_line}\n")
         f.write("\n")
         
         # ROOMS
         f.write("ROOMS:\n")
         for room in rooms_data:
-            f.write(f"{room['id']} {room['capacity']}\n")
+            room_line = f"{room['id']} {room['capacity']} {room['room_type']}"
+            if room['equipment']:
+                room_line += f" {room['equipment']}"
+            f.write(f"{room_line}\n")
         f.write("\n")
         
         # CURRICULA
@@ -333,7 +420,7 @@ def export_to_ctt(dot_xep, output_path: str = None):
     print(f"  - Ngành: {len(curricula_data)}")
     print(f"  - Unavailability: {len(unavailability_constraints)}")
     print(f"  - Preferences (Nguyện vọng): {len(preferred_periods)}")
-    print(f"  - Total periods: 5 × 5 = 25")
+    print(f"  - Total periods: 6 × 5 = 30  (Thứ 2-7, mỗi ngày 5 ca)")
     
     return output_path
 
