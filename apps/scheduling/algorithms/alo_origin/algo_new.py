@@ -1203,19 +1203,19 @@ class TimetableState:
         
         # Remove teacher preference cost
         self.soft_teacher_preference_violations -= pref_cost
-        delta -= pref_cost
+        delta -= pref_cost * WEIGHT_TEACHER_PREFERENCE
         
         # Track teacher lecture consolidation penalty change (ONLY during optimization, not initial building)
         # During initial building: skip consolidation to avoid backtracking issues
         if hasattr(self, '_optimization_phase') and self._optimization_phase:
             new_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
-            consolidation_delta = (new_consolidation_penalty - old_consolidation_penalty) * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
+            consolidation_delta = new_consolidation_penalty - old_consolidation_penalty
             self.soft_teacher_lecture_consolidation += consolidation_delta
-            delta += consolidation_delta
+            delta += consolidation_delta * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
         
         old_room_penalty = self.lecture_room_penalty[lecture_id]
         self.soft_room_capacity -= old_room_penalty
-        delta -= old_room_penalty
+        delta -= old_room_penalty * WEIGHT_ROOM_CAPACITY
         self.lecture_room_penalty[lecture_id] = 0
         day, slot = self.instance.period_to_slot(period)
         old_penalty = self.course_mwd_penalty[course_idx]
@@ -1225,7 +1225,7 @@ class TimetableState:
         new_penalty = self._compute_course_mwd_penalty(course_idx)
         self.course_mwd_penalty[course_idx] = new_penalty
         self.soft_min_working_days += new_penalty - old_penalty
-        delta += new_penalty - old_penalty
+        delta += (new_penalty - old_penalty) * WEIGHT_MIN_WORKING_DAYS
         old_penalty = self.course_room_penalty[course_idx]
         counts = self.course_room_counts[course_idx]
         counts[room_idx] -= 1
@@ -1234,7 +1234,7 @@ class TimetableState:
         new_penalty = self._compute_course_room_penalty(course_idx)
         self.course_room_penalty[course_idx] = new_penalty
         self.soft_room_stability += new_penalty - old_penalty
-        delta += new_penalty - old_penalty
+        delta += (new_penalty - old_penalty) * WEIGHT_ROOM_STABILITY
         for curriculum_idx in self.instance.course_curriculums[course_idx]:
             slots = self.curriculum_day_slots[curriculum_idx][day]
             old_penalty = self.curriculum_day_penalty[curriculum_idx][day]
@@ -1276,7 +1276,7 @@ class TimetableState:
         overflow = max(0, students - capacity)
         self.lecture_room_penalty[lecture_id] = overflow
         self.soft_room_capacity += overflow
-        delta += overflow
+        delta += overflow * WEIGHT_ROOM_CAPACITY
         day, slot = self.instance.period_to_slot(period)
         old_penalty = self.course_mwd_penalty[course_idx]
         self.course_day_counts[course_idx][day] += 1
@@ -1285,14 +1285,14 @@ class TimetableState:
         new_penalty = self._compute_course_mwd_penalty(course_idx)
         self.course_mwd_penalty[course_idx] = new_penalty
         self.soft_min_working_days += new_penalty - old_penalty
-        delta += new_penalty - old_penalty
+        delta += (new_penalty - old_penalty) * WEIGHT_MIN_WORKING_DAYS
         old_penalty = self.course_room_penalty[course_idx]
         counts = self.course_room_counts[course_idx]
         counts[room_idx] += 1
         new_penalty = self._compute_course_room_penalty(course_idx)
         self.course_room_penalty[course_idx] = new_penalty
         self.soft_room_stability += new_penalty - old_penalty
-        delta += new_penalty - old_penalty
+        delta += (new_penalty - old_penalty) * WEIGHT_ROOM_STABILITY
         for curriculum_idx in self.instance.course_curriculums[course_idx]:
             slots = self.curriculum_day_slots[curriculum_idx][day]
             old_penalty = self.curriculum_day_penalty[curriculum_idx][day]
@@ -1315,20 +1315,26 @@ class TimetableState:
         # During initial building: skip consolidation to avoid backtracking issues
         if hasattr(self, '_optimization_phase') and self._optimization_phase:
             new_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
-            consolidation_delta = (new_consolidation_penalty - old_consolidation_penalty) * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
+            consolidation_delta = new_consolidation_penalty - old_consolidation_penalty
             self.soft_teacher_lecture_consolidation += consolidation_delta
-            delta += consolidation_delta
+            delta += consolidation_delta * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
         
         # Check 8: Teacher Preferences (SOFT CONSTRAINT)
         pref_cost = self._compute_teacher_preference_cost(lecture_id)
         self.soft_teacher_preference_violations += pref_cost
-        delta += pref_cost
+        delta += pref_cost * WEIGHT_TEACHER_PREFERENCE
         
         return delta
 
     @property
     def current_cost(self) -> int:
-        return self.soft_room_capacity + self.soft_min_working_days + self.soft_curriculum_compactness + self.soft_room_stability + self.soft_lecture_consecutiveness + self.soft_teacher_preference_violations + self.soft_teacher_lecture_consolidation
+        return (self.soft_room_capacity * WEIGHT_ROOM_CAPACITY + 
+                self.soft_min_working_days * WEIGHT_MIN_WORKING_DAYS + 
+                self.soft_curriculum_compactness * WEIGHT_CURRICULUM_COMPACTNESS + 
+                self.soft_room_stability * WEIGHT_ROOM_STABILITY + 
+                self.soft_lecture_consecutiveness * WEIGHT_LECTURE_CONSECUTIVENESS + 
+                self.soft_teacher_preference_violations * WEIGHT_TEACHER_PREFERENCE + 
+                self.soft_teacher_lecture_consolidation * WEIGHT_TEACHER_LECTURE_CONSOLIDATION)
 
     def score_breakdown(self) -> ScoreBreakdown:
         return ScoreBreakdown(
