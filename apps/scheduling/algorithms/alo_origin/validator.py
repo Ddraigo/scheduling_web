@@ -483,6 +483,66 @@ class Validator:
                     cost += lectures_in_room - 1
         return cost
     
+    def costs_on_room_type(self) -> int:
+        """
+        Check HC-05/HC-06: Room type must match course type (Extended constraint).
+        - LT courses require LT rooms
+        - TH courses require TH rooms
+        Returns: count of room type mismatches
+        """
+        cost = 0
+        for c in range(self.faculty.courses):
+            course = self.faculty.course_vect[c]
+            course_type = course.course_type
+            
+            # Skip if no type specified
+            if not course_type:
+                continue
+            
+            for p in range(self.faculty.periods):
+                room_id = self.timetable(c, p)
+                if room_id != 0:
+                    # Convert 1-based room_id to 0-based index
+                    r = room_id - 1
+                    room = self.faculty.room_vect[r]
+                    room_type = room.room_type
+                    
+                    # Check type mismatch
+                    if room_type and course_type != room_type:
+                        cost += 1
+        
+        return cost
+    
+    def costs_on_equipment(self) -> int:
+        """
+        Check HC-04: Room must have required equipment (Extended constraint).
+        - Course equipment requirements must be subset of room equipment
+        Returns: count of equipment requirement violations
+        """
+        cost = 0
+        for c in range(self.faculty.courses):
+            course = self.faculty.course_vect[c]
+            required_equipment = set(course.equipment)
+            
+            # Skip if no equipment required
+            if not required_equipment:
+                continue
+            
+            for p in range(self.faculty.periods):
+                room_id = self.timetable(c, p)
+                if room_id != 0:
+                    # Convert 1-based room_id to 0-based index
+                    r = room_id - 1
+                    room = self.faculty.room_vect[r]
+                    available_equipment = set(room.equipment)
+                    
+                    # Check if all required equipment is available
+                    missing_equipment = required_equipment - available_equipment
+                    if missing_equipment:
+                        cost += 1  # Count as 1 violation per lecture
+        
+        return cost
+    
     def costs_on_room_capacity(self) -> int:
         """
         Check S1: Room capacity should be sufficient for course students.
@@ -686,6 +746,69 @@ class Validator:
         
         return cost
     
+    def costs_on_teacher_lecture_consolidation(self) -> int:
+        """
+        Check S6: Teacher Lecture Consolidation (NEW).
+        Soft constraint: prefer teachers teaching consecutive lectures in same room.
+        Penalty: +1 for each transition where teacher changes room between consecutive lectures.
+        
+        Logic:
+        - Group all lectures by teacher
+        - For each teacher, sort lectures by (day, period)
+        - For consecutive lectures on same day:
+          - If different rooms AND same course type: +1 penalty
+          - If different course types (LT↔TH): no penalty (must change room)
+          - If not consecutive periods (gap): no penalty (different time slots)
+        
+        Returns: count of room changes between consecutive teacher lectures of SAME type
+        """
+        cost = 0
+        ppd = self.faculty.periods_per_day
+        
+        # Group lectures by teacher
+        teacher_lectures: Dict[str, List[tuple]] = {}
+        
+        for c in range(self.faculty.courses):
+            course = self.faculty.course_vect[c]
+            teacher_name = course.teacher
+            
+            if teacher_name not in teacher_lectures:
+                teacher_lectures[teacher_name] = []
+            
+            for p in range(self.faculty.periods):
+                room_id = self.timetable(c, p)
+                if room_id != 0:
+                    day = p // ppd
+                    period_in_day = p % ppd
+                    teacher_lectures[teacher_name].append((day, period_in_day, p, room_id, c))
+        
+        # Check consolidation for each teacher
+        for teacher_name, lectures in teacher_lectures.items():
+            if len(lectures) <= 1:
+                continue
+            
+            # Sort by day, then period
+            lectures.sort(key=lambda x: (x[0], x[1]))
+            
+            # Check consecutive lectures
+            for i in range(len(lectures) - 1):
+                day1, period1, p1, room1, course1 = lectures[i]
+                day2, period2, p2, room2, course2 = lectures[i + 1]
+                
+                # Only check if on same day and consecutive periods
+                if day1 == day2 and period2 == period1 + 1:
+                    # Consecutive lectures on same day
+                    if room1 != room2:
+                        # ✅ FIX: Only penalize if SAME course type
+                        course1_type = self.faculty.course_vect[course1].course_type
+                        course2_type = self.faculty.course_vect[course2].course_type
+                        
+                        # Only count as violation if same type (should use same room)
+                        if course1_type and course2_type and course1_type == course2_type:
+                            cost += 1  # Penalty: teacher changes room unnecessarily
+        
+        return cost
+    
     # ========== TOTAL COST CALCULATION ==========
     
     def total_violations(self) -> int:
@@ -693,7 +816,9 @@ class Validator:
         return (self.costs_on_lectures() + 
                 self.costs_on_conflicts() + 
                 self.costs_on_availability() + 
-                self.costs_on_room_occupation())
+                self.costs_on_room_occupation() +
+                self.costs_on_room_type() +          # HC-05/HC-06 (Extended)
+                self.costs_on_equipment())           # HC-04 (Extended)
     
     def total_cost(self) -> int:
         """Get total weighted cost (hard violations + soft costs)."""
@@ -702,7 +827,8 @@ class Validator:
                 self.costs_on_curriculum_compactness() * self.faculty.CURRICULUM_COMPACTNESS_COST +
                 self.costs_on_room_stability() * self.faculty.ROOM_STABILITY_COST +
                 self.costs_on_lecture_consecutiveness() +
-                self.costs_on_teacher_preferences())
+                self.costs_on_teacher_lecture_consolidation() +  # S6 (Extended)
+                self.costs_on_teacher_preferences())             # S8 (Extended)
     
     # ========== PRINT METHODS ==========
     
@@ -720,12 +846,15 @@ class Validator:
         print(f"Violations of Conflicts (hard) : {self.costs_on_conflicts()}")
         print(f"Violations of Availability (hard) : {self.costs_on_availability()}")
         print(f"Violations of RoomOccupation (hard) : {self.costs_on_room_occupation()}")
+        print(f"Violations of RoomType (hard - extended) : {self.costs_on_room_type()}")
+        print(f"Violations of Equipment (hard - extended) : {self.costs_on_equipment()}")
         print(f"Cost of RoomCapacity (soft) : {self.costs_on_room_capacity()}")
         print(f"Cost of MinWorkingDays (soft) : {self.costs_on_min_working_days() * self.faculty.MIN_WORKING_DAYS_COST}")
         print(f"Cost of CurriculumCompactness (soft) : {self.costs_on_curriculum_compactness() * self.faculty.CURRICULUM_COMPACTNESS_COST}")
         print(f"Cost of RoomStability (soft) : {self.costs_on_room_stability() * self.faculty.ROOM_STABILITY_COST}")
         print(f"Cost of LectureConsecutiveness (soft) : {self.costs_on_lecture_consecutiveness()}")
-        print(f"Cost of TeacherPreferences (soft) : {self.costs_on_teacher_preferences()}")
+        print(f"Cost of TeacherLectureConsolidation (soft - extended) : {self.costs_on_teacher_lecture_consolidation()}")
+        print(f"Cost of TeacherPreferences (soft - extended) : {self.costs_on_teacher_preferences()}")
     
     # ========== VIOLATION DETAIL METHODS ==========
     
@@ -735,11 +864,14 @@ class Validator:
         self.print_violations_on_conflicts()
         self.print_violations_on_availability()
         self.print_violations_on_room_occupation()
+        self.print_violations_on_room_type()
+        self.print_violations_on_equipment()
         self.print_violations_on_room_capacity()
         self.print_violations_on_min_working_days()
         self.print_violations_on_curriculum_compactness()
         self.print_violations_on_room_stability()
         self.print_violations_on_lecture_consecutiveness()
+        self.print_violations_on_teacher_lecture_consolidation()
         self.print_violations_on_teacher_preferences()
     
     def print_violations_on_lectures(self):
@@ -783,11 +915,59 @@ class Validator:
                 if lectures > 1:
                     day = p // self.faculty.periods_per_day
                     timeslot = p % self.faculty.periods_per_day
-                    print(f"[H] {lectures} lectures in room {self.faculty.room_vect[r].name} "
+                    print(f"[H] {lectures} lectures in room {self.faculty.room_vect[r - 1].name} "
                           f"the period {p} (day {day}, timeslot {timeslot})", end="")
                     if lectures > 2:
                         print(f" [{lectures - 1} violations]", end="")
                     print()
+    
+    def print_violations_on_room_type(self):
+        """Print detailed room type violations."""
+        for c in range(self.faculty.courses):
+            course = self.faculty.course_vect[c]
+            course_type = course.course_type
+            
+            if not course_type:
+                continue
+            
+            for p in range(self.faculty.periods):
+                room_id = self.timetable(c, p)
+                if room_id != 0:
+                    r = room_id - 1
+                    room = self.faculty.room_vect[r]
+                    room_type = room.room_type
+                    
+                    if room_type and course_type != room_type:
+                        day = p // self.faculty.periods_per_day
+                        timeslot = p % self.faculty.periods_per_day
+                        print(f"[H] Room type mismatch: Course {course.name} (type={course_type}) "
+                              f"assigned to room {room.name} (type={room_type}) "
+                              f"at period {p} (day {day}, timeslot {timeslot})")
+    
+    def print_violations_on_equipment(self):
+        """Print detailed equipment violations."""
+        for c in range(self.faculty.courses):
+            course = self.faculty.course_vect[c]
+            required_equipment = set(course.equipment)
+            
+            if not required_equipment:
+                continue
+            
+            for p in range(self.faculty.periods):
+                room_id = self.timetable(c, p)
+                if room_id != 0:
+                    r = room_id - 1
+                    room = self.faculty.room_vect[r]
+                    available_equipment = set(room.equipment)
+                    
+                    missing_equipment = required_equipment - available_equipment
+                    if missing_equipment:
+                        day = p // self.faculty.periods_per_day
+                        timeslot = p % self.faculty.periods_per_day
+                        missing_str = ", ".join(sorted(missing_equipment))
+                        print(f"[H] Equipment missing: Course {course.name} requires [{', '.join(sorted(required_equipment))}] "
+                              f"but room {room.name} only has [{', '.join(sorted(available_equipment)) if available_equipment else 'none'}]. "
+                              f"Missing: [{missing_str}] at period {p} (day {day}, timeslot {timeslot})")
     
     def print_violations_on_room_capacity(self):
         """Print detailed room capacity violations."""
@@ -947,6 +1127,58 @@ class Validator:
             for p, day_name, slot_name in violations:
                 print(f"[S(1)] Course {course.name} (Teacher: {teacher_name}) has lecture at non-preferred period "
                       f"{p} ({day_name}, {slot_name})")
+    
+    def print_violations_on_teacher_lecture_consolidation(self):
+        """Print detailed teacher lecture consolidation violations."""
+        ppd = self.faculty.periods_per_day
+        
+        # Group lectures by teacher
+        teacher_lectures: Dict[str, List[tuple]] = {}
+        
+        for c in range(self.faculty.courses):
+            course = self.faculty.course_vect[c]
+            teacher_name = course.teacher
+            
+            if teacher_name not in teacher_lectures:
+                teacher_lectures[teacher_name] = []
+            
+            for p in range(self.faculty.periods):
+                room_id = self.timetable(c, p)
+                if room_id != 0:
+                    day = p // ppd
+                    period_in_day = p % ppd
+                    teacher_lectures[teacher_name].append((day, period_in_day, p, room_id, c))
+        
+        # Check consolidation for each teacher
+        for teacher_name, lectures in teacher_lectures.items():
+            if len(lectures) <= 1:
+                continue
+            
+            # Sort by day, then period
+            lectures.sort(key=lambda x: (x[0], x[1]))
+            
+            # Check consecutive lectures
+            for i in range(len(lectures) - 1):
+                day1, period1, p1, room1, course1 = lectures[i]
+                day2, period2, p2, room2, course2 = lectures[i + 1]
+                
+                # Only check if on same day and consecutive periods
+                if day1 == day2 and period2 == period1 + 1:
+                    # Consecutive lectures on same day
+                    if room1 != room2:
+                        # ✅ FIX: Only print if SAME course type
+                        course1_type = self.faculty.course_vect[course1].course_type
+                        course2_type = self.faculty.course_vect[course2].course_type
+                        
+                        # Only count as violation if same type
+                        if course1_type and course2_type and course1_type == course2_type:
+                            course1_name = self.faculty.course_vect[course1].name
+                            course2_name = self.faculty.course_vect[course2].name
+                            room1_name = self.faculty.room_vect[room1 - 1].name
+                            room2_name = self.faculty.room_vect[room2 - 1].name
+                            print(f"[S(1)] Teacher {teacher_name} changes room between consecutive lectures of SAME type ({course1_type}): "
+                                  f"Day {day1}, Period {period1} ({course1_name} in {room1_name}) -> "
+                                  f"Period {period2} ({course2_name} in {room2_name})")
 
 
 def main():

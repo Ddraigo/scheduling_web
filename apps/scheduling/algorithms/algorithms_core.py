@@ -12,6 +12,27 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
+# ============================================================================
+# SOFT CONSTRAINT WEIGHTS - Tuning ưu tiên tối ưu hóa
+# ============================================================================
+# Cao hơn = Ưu tiên cao hơn trong quá trình tối ưu hóa
+# Priority Order (HIGH to LOW):
+# 1. Teacher Preferences (2.0) - Nguyện vọng GV
+# 2. Teacher Lecture Consolidation (1.8) - GV dạy liên tiếp cùng phòng
+# 3. Lecture Consecutiveness (1.5) - Pattern xếp tiết học
+# 4. Room Stability (1.0) - Hard constraint priority
+# 5. Room Capacity (1.0) - Hard constraint priority
+# 6. Min Working Days (1.0) - Hard constraint priority
+# 7. Curriculum Compactness (0.5) - Low priority (cuối ưu tiên)
+WEIGHT_ROOM_CAPACITY = 1.0  # Hard constraint priority
+WEIGHT_MIN_WORKING_DAYS = 1.0  # Hard constraint priority
+WEIGHT_ROOM_STABILITY = 1.0  # Medium priority
+WEIGHT_LECTURE_CONSECUTIVENESS = 1.5  # Medium priority (pattern xếp tiết học)
+WEIGHT_TEACHER_LECTURE_CONSOLIDATION = 1.8  # HIGH priority (GV dạy liên tiếp cùng phòng)
+WEIGHT_CURRICULUM_COMPACTNESS = 0.5  # Low priority (cuối ưu tiên)
+WEIGHT_TEACHER_PREFERENCE = 2.0  # Highest priority (nguyện vọng GV)
+# ============================================================================
+
 STRICT_SAMPLE_INSTANCE = """Name: Tiny
 Courses: 2
 Rooms: 2
@@ -630,9 +651,21 @@ class TimetableState:
         self.soft_room_stability = 0
         self.soft_lecture_consecutiveness = 0
         self.soft_teacher_preference_violations = 0
+        self.soft_teacher_lecture_consolidation = 0  # NEW: Teacher lecture consolidation
         # Track assigned periods for each course to detect gaps
         # course_idx -> list of assigned periods (sorted)
         self.course_assigned_periods: List[List[int]] = [[] for _ in range(course_count)]
+        # NEW: Track teacher lectures consolidation
+        # teacher_idx -> dict of {course_idx -> {lecture_id -> (period, room_idx)}}
+        self.teacher_course_lectures: Dict[int, Dict[int, Dict[int, Tuple[int, int]]]] = {}
+        for lecture_id in range(lecture_count):
+            course_idx = instance.lectures[lecture_id].course
+            teacher = instance.course_teachers[course_idx]
+            if teacher not in self.teacher_course_lectures:
+                self.teacher_course_lectures[teacher] = {}
+            if course_idx not in self.teacher_course_lectures[teacher]:
+                self.teacher_course_lectures[teacher][course_idx] = {}
+            self.teacher_course_lectures[teacher][course_idx][lecture_id] = None
 
     def clone_assignments(self) -> Dict[int, Tuple[int, int]]:
         return dict(self.assignments)
@@ -790,6 +823,62 @@ class TimetableState:
         
         return penalty
 
+    def _compute_teacher_lecture_consolidation_penalty(self, teacher: int) -> int:
+        """
+        Tính penalty cho việc giảng viên đổi phòng giữa các lectures LIÊN TIẾP CÙNG TYPE.
+        
+        ✅ FIX: Chỉ phạt nếu consecutive lectures CÙNG COURSE_TYPE (LT hoặc TH).
+        Nếu khác type (LT→TH hoặc TH→LT) thì PHẢI đổi phòng → không phạt.
+        
+        Mục tiêu:
+        - Giảng viên dạy liên tiếp cùng type nên dùng cùng phòng
+        - Nếu đổi phòng giữa các lectures liên tiếp cùng type → penalty +1
+        
+        Returns:
+            Số lần GV đổi phòng giữa consecutive lectures CÙNG TYPE
+        """
+        if teacher not in self.teacher_course_lectures:
+            return 0
+        
+        # Collect all lectures của teacher (tất cả courses)
+        all_lectures = []
+        for course_idx, lectures_dict in self.teacher_course_lectures[teacher].items():
+            course_type = self.instance.courses[course_idx].course_type
+            for lecture_id, assignment in lectures_dict.items():
+                if assignment is not None:  # Đã được xếp
+                    period, room_idx = assignment
+                    day, slot = self.instance.period_to_slot(period)
+                    all_lectures.append({
+                        'day': day,
+                        'slot': slot,
+                        'period': period,
+                        'room_idx': room_idx,
+                        'course_idx': course_idx,
+                        'course_type': course_type
+                    })
+        
+        if len(all_lectures) <= 1:
+            return 0
+        
+        # Sort by day, then slot
+        all_lectures.sort(key=lambda x: (x['day'], x['slot']))
+        
+        # Check consecutive lectures
+        penalty = 0
+        for i in range(len(all_lectures) - 1):
+            lec1 = all_lectures[i]
+            lec2 = all_lectures[i + 1]
+            
+            # Only check if on same day and consecutive slots
+            if lec1['day'] == lec2['day'] and lec2['slot'] == lec1['slot'] + 1:
+                # Consecutive lectures on same day
+                if lec1['room_idx'] != lec2['room_idx']:
+                    # ✅ FIX: Only penalize if SAME course type
+                    if lec1['course_type'] and lec2['course_type'] and lec1['course_type'] == lec2['course_type']:
+                        penalty += 1  # Same type → should use same room
+                    # Different types (LT↔TH) → MUST change room → no penalty
+        
+        return penalty
 
     def _can_place(self, lecture_id: int, period: int, room_idx: int) -> bool:
         """
@@ -859,16 +948,15 @@ class TimetableState:
             return False
         
         # Check 7: HC-04 (Equipment) - Hard constraint
-        # ⚠️ TEMPORARILY DISABLED - Equipment too restrictive
         # If course requires equipment, room must have that equipment
-        # if course.equipment:
-        #     room_equipment = room.equipment or ""
-        #     # Kiểm tra xem phòng có chứa tất cả thiết bị yêu cầu không
-        #     required_equipment = set(eq.strip() for eq in course.equipment.split(',') if eq.strip())
-        #     room_equipment_set = set(eq.strip() for eq in room_equipment.split(',') if eq.strip())
-        #     
-        #     if not required_equipment.issubset(room_equipment_set):
-        #         return False
+        if course.equipment:
+            room_equipment = room.equipment or ""
+            # Kiểm tra xem phòng có chứa tất cả thiết bị yêu cầu không
+            required_equipment = set(eq.strip() for eq in course.equipment.split(',') if eq.strip())
+            room_equipment_set = set(eq.strip() for eq in room_equipment.split(',') if eq.strip())
+            
+            if not required_equipment.issubset(room_equipment_set):
+                return False
         
         # ============================================================
         # Check 8: Teacher Preferences (SOFT CONSTRAINT ⭐)
@@ -1078,6 +1166,9 @@ class TimetableState:
         # Calculate teacher preference cost BEFORE removing from assignments
         pref_cost = self._compute_teacher_preference_cost(lecture_id)
         
+        # Calculate teacher lecture consolidation penalty BEFORE removing
+        old_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
+        
         # Now remove from assignments
         self.assignments.pop(lecture_id)
         self.period_rooms[period].pop(room_idx, None)
@@ -1086,11 +1177,23 @@ class TimetableState:
         for curriculum_idx in self.instance.course_curriculums[course_idx]:
             self.period_curriculums[period].discard(curriculum_idx)
             self.period_curriculum_owner[period].pop(curriculum_idx, None)
+        
+        # Update teacher lecture consolidation tracking
+        self.teacher_course_lectures[teacher][course_idx][lecture_id] = None
+        
         delta = 0
         
         # Remove teacher preference cost
         self.soft_teacher_preference_violations -= pref_cost
         delta -= pref_cost
+        
+        # Track teacher lecture consolidation penalty change (ONLY during optimization, not initial building)
+        # During initial building: skip consolidation to avoid backtracking issues
+        if hasattr(self, '_optimization_phase') and self._optimization_phase:
+            new_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
+            consolidation_delta = (new_consolidation_penalty - old_consolidation_penalty) * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
+            self.soft_teacher_lecture_consolidation += consolidation_delta
+            delta += consolidation_delta
         
         old_room_penalty = self.lecture_room_penalty[lecture_id]
         self.soft_room_capacity -= old_room_penalty
@@ -1120,26 +1223,35 @@ class TimetableState:
             slots.discard(slot)
             new_penalty = self._compute_curriculum_day_penalty(slots)
             self.curriculum_day_penalty[curriculum_idx][day] = new_penalty
-            self.soft_curriculum_compactness += new_penalty - old_penalty
-            delta += new_penalty - old_penalty
+            penalty_delta = (new_penalty - old_penalty) * WEIGHT_CURRICULUM_COMPACTNESS
+            self.soft_curriculum_compactness += penalty_delta
+            delta += penalty_delta
         # Track lecture consecutiveness
         old_consec_penalty = self._compute_course_consecutiveness_penalty(course_idx)
         self.course_assigned_periods[course_idx].remove(period)
         new_consec_penalty = self._compute_course_consecutiveness_penalty(course_idx)
-        self.soft_lecture_consecutiveness += new_consec_penalty - old_consec_penalty
-        delta += new_consec_penalty - old_consec_penalty
+        consec_delta = (new_consec_penalty - old_consec_penalty) * WEIGHT_LECTURE_CONSECUTIVENESS
+        self.soft_lecture_consecutiveness += consec_delta
+        delta += consec_delta
         return delta
 
     def _insert_assignment(self, lecture_id: int, period: int, room_idx: int) -> int:
-        self.assignments[lecture_id] = (period, room_idx)
+        # Calculate teacher lecture consolidation penalty BEFORE inserting
         course_idx = self.instance.lectures[lecture_id].course
         teacher = self.instance.course_teachers[course_idx]
+        old_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
+        
+        self.assignments[lecture_id] = (period, room_idx)
         self.period_rooms[period][room_idx] = lecture_id
         self.period_teachers[period].add(teacher)
         self.period_teacher_owner[period][teacher] = lecture_id
         for curriculum_idx in self.instance.course_curriculums[course_idx]:
             self.period_curriculums[period].add(curriculum_idx)
             self.period_curriculum_owner[period][curriculum_idx] = lecture_id
+        
+        # Update teacher lecture consolidation tracking
+        self.teacher_course_lectures[teacher][course_idx][lecture_id] = (period, room_idx)
+        
         delta = 0
         students = self.instance.course_students[course_idx]
         capacity = self.instance.rooms[room_idx].capacity
@@ -1169,15 +1281,25 @@ class TimetableState:
             slots.add(slot)
             new_penalty = self._compute_curriculum_day_penalty(slots)
             self.curriculum_day_penalty[curriculum_idx][day] = new_penalty
-            self.soft_curriculum_compactness += new_penalty - old_penalty
-            delta += new_penalty - old_penalty
+            penalty_delta = (new_penalty - old_penalty) * WEIGHT_CURRICULUM_COMPACTNESS
+            self.soft_curriculum_compactness += penalty_delta
+            delta += penalty_delta
         # Track lecture consecutiveness
         old_consec_penalty = self._compute_course_consecutiveness_penalty(course_idx)
         self.course_assigned_periods[course_idx].append(period)
         self.course_assigned_periods[course_idx].sort()
         new_consec_penalty = self._compute_course_consecutiveness_penalty(course_idx)
-        self.soft_lecture_consecutiveness += new_consec_penalty - old_consec_penalty
-        delta += new_consec_penalty - old_consec_penalty
+        consec_delta = (new_consec_penalty - old_consec_penalty) * WEIGHT_LECTURE_CONSECUTIVENESS
+        self.soft_lecture_consecutiveness += consec_delta
+        delta += consec_delta
+        
+        # Track teacher lecture consolidation penalty change (ONLY during optimization, not initial building)
+        # During initial building: skip consolidation to avoid backtracking issues
+        if hasattr(self, '_optimization_phase') and self._optimization_phase:
+            new_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
+            consolidation_delta = (new_consolidation_penalty - old_consolidation_penalty) * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
+            self.soft_teacher_lecture_consolidation += consolidation_delta
+            delta += consolidation_delta
         
         # Check 8: Teacher Preferences (SOFT CONSTRAINT)
         pref_cost = self._compute_teacher_preference_cost(lecture_id)
@@ -1188,7 +1310,7 @@ class TimetableState:
 
     @property
     def current_cost(self) -> int:
-        return self.soft_room_capacity + self.soft_min_working_days + self.soft_curriculum_compactness + self.soft_room_stability + self.soft_lecture_consecutiveness + self.soft_teacher_preference_violations
+        return self.soft_room_capacity + self.soft_min_working_days + self.soft_curriculum_compactness + self.soft_room_stability + self.soft_lecture_consecutiveness + self.soft_teacher_preference_violations + self.soft_teacher_lecture_consolidation
 
     def score_breakdown(self) -> ScoreBreakdown:
         return ScoreBreakdown(
@@ -2109,6 +2231,122 @@ class TeacherPreferenceNeighborhood(Neighborhood):
         return None
 
 
+class TeacherLectureConsolidationNeighborhood(Neighborhood):
+    """Neighborhood chuyên tối ưu Teacher Lecture Consolidation constraint.
+    
+    Chiến lược:
+    1. Tìm teachers có lectures bị phân tán (khác phòng, khác ngày, có gaps)
+    2. Thử nhóm lectures của cùng teacher + cùng course vào:
+       - Cùng phòng (best)
+       - Consecutive periods (no gaps)
+       - Cùng ngày (nếu không thể consecutive)
+    3. Ưu tiên teachers với penalty cao nhất
+    """
+    name = "TeacherLectureConsolidation"
+    
+    def generate_candidate(self, state: TimetableState, rng: random.Random) -> Optional[Move]:
+        instance = state.instance
+        
+        # Chỉ chạy khi đang trong optimization phase
+        if not hasattr(state, '_optimization_phase') or not state._optimization_phase:
+            return None
+        
+        # Thu thập teachers với consolidation penalty > 0
+        teachers_with_penalty = []
+        for teacher in range(len(instance.teachers)):
+            penalty = state._compute_teacher_lecture_consolidation_penalty(teacher)
+            if penalty > 0:
+                teachers_with_penalty.append((penalty, teacher))
+        
+        if not teachers_with_penalty:
+            return None  # Perfect consolidation!
+        
+        # Sort by penalty (highest first)
+        teachers_with_penalty.sort(reverse=True)
+        
+        # Try top 5 teachers
+        for penalty, teacher in teachers_with_penalty[:5]:
+            # Get all courses taught by this teacher
+            for course_idx in range(len(instance.courses)):
+                if instance.course_teachers[course_idx] != teacher:
+                    continue
+                
+                lectures = state.teacher_course_lectures[teacher][course_idx]
+                assigned = [(lid, info) for lid, info in lectures.items() if info is not None]
+                
+                if len(assigned) <= 1:
+                    continue  # Nothing to consolidate
+                
+                # Analyze current state
+                periods = [info[0] for lid, info in assigned]
+                rooms = [info[1] for lid, info in assigned]
+                periods.sort()
+                
+                # Strategy 1: Move lectures to same room + consecutive periods
+                # Find most common room
+                from collections import Counter
+                room_counts = Counter(rooms)
+                target_room = room_counts.most_common(1)[0][0]
+                
+                # Find a day with most lectures already placed
+                days = [instance.period_to_slot(p)[0] for p in periods]
+                day_counts = Counter(days)
+                target_day = day_counts.most_common(1)[0][0]
+                
+                # Try to consolidate on target_day, target_room
+                for lid, (current_period, current_room) in assigned:
+                    current_day, current_slot = instance.period_to_slot(current_period)
+                    
+                    # Skip if already on target day + room
+                    if current_day == target_day and current_room == target_room:
+                        continue
+                    
+                    # Find adjacent slots on target_day to create consecutive placement
+                    occupied_slots = set()
+                    for other_lid, other_info in assigned:
+                        if other_lid == lid:
+                            continue
+                        other_period, _ = other_info
+                        other_day, other_slot = instance.period_to_slot(other_period)
+                        if other_day == target_day:
+                            occupied_slots.add(other_slot)
+                    
+                    # Find slots adjacent to existing lectures
+                    target_slots = set()
+                    for slot in occupied_slots:
+                        target_slots.add(slot - 1)
+                        target_slots.add(slot + 1)
+                    
+                    # Filter valid slots (0 to periods_per_day-1)
+                    target_slots = [s for s in target_slots if 0 <= s < instance.periods_per_day and s not in occupied_slots]
+                    
+                    if not target_slots:
+                        # Fallback: any slot on target_day
+                        target_slots = [s for s in range(instance.periods_per_day) if s not in occupied_slots]
+                    
+                    rng.shuffle(target_slots)
+                    
+                    for slot in target_slots[:3]:
+                        target_period = target_day * instance.periods_per_day + slot
+                        
+                        # Try target_room first
+                        if target_period in instance.feasible_periods[course_idx]:
+                            delta = state.move_lecture(lid, target_period, target_room, commit=False)
+                            if delta is not None and delta < 8:  # Accept small cost increase
+                                return MoveLectureMove(lid, target_period, target_room)
+                        
+                        # Try other preferred rooms
+                        for room_idx in instance.course_room_preference[course_idx]:
+                            if room_idx == target_room:
+                                continue
+                            if target_period in instance.feasible_periods[course_idx]:
+                                delta = state.move_lecture(lid, target_period, room_idx, commit=False)
+                                if delta is not None and delta < 8:
+                                    return MoveLectureMove(lid, target_period, room_idx)
+        
+        return None
+
+
 class NeighborhoodManager:
     """Adaptive operator selector."""
 
@@ -2324,7 +2562,8 @@ def run_metaheuristic(state: TimetableState, meta: str, rng: random.Random, logg
     best_assignments = state.clone_assignments()
     best_breakdown = state.score_breakdown()
     neighborhoods: List[Neighborhood] = [
-        TeacherPreferenceNeighborhood(),  # NEW: Ưu tiên cao nhất - tối ưu teacher preferences
+        TeacherPreferenceNeighborhood(),  # Priority 1: Teacher preferences (weight 2.0)
+        TeacherLectureConsolidationNeighborhood(),  # Priority 2: Teacher consolidation (weight 1.8) - NEW!
         MoveLectureNeighborhood(),
         SwapLecturesNeighborhood(),
         RoomChangeNeighborhood(),

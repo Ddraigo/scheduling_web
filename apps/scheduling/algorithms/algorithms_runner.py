@@ -126,10 +126,13 @@ class AlgorithmRunner:
             logger.info(f"  - Curriculum Compactness: {initial_breakdown.curriculum_compactness}")
             logger.info(f"  - Lecture Consecutiveness: {initial_breakdown.lecture_consecutiveness}")
             
-            # Run metaheuristic
+            # Run metaheuristic - enable optimization phase for Teacher Lecture Consolidation
             remaining_time = time_limit - elapsed_init
             if remaining_time > 0:
                 logger.info(f"Running {strategy} optimization for {remaining_time:.2f}s...")
+                
+                # Enable optimization phase: activate Teacher Lecture Consolidation penalty
+                state._optimization_phase = True
                 
                 log_file = Path(settings.BASE_DIR) / 'output' / f'progress_{self.ma_dot}.csv'
                 progress_logger = ProgressLogger(log_file)

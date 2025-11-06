@@ -145,7 +145,7 @@ def export_to_ctt(dot_xep, output_path: str = None):
         # - Nếu so_tiet_lt == 0 và so_tiet_th > 0 → "TH" (Thực hành)
         # - Nếu so_tiet_lt > 0 và so_tiet_th > 0 và to_mh == 0 → "LT"
         # - Còn lại → "TH"
-        if so_tiet_th == 0:
+        if so_tiet_th == 0 and to_mh == 0:
             course_type = "LT"
         elif so_tiet_lt == 0 and so_tiet_th > 0:
             course_type = "TH"

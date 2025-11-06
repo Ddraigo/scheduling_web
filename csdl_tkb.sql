@@ -18,7 +18,7 @@ CREATE TABLE tb_KHOA(
 
 GO
 
-select * from tb_PHAN_CONG
+select * from tb_LOP_MONHOC
 
 
 /* ===== tb_BO_MON ===== */
@@ -919,7 +919,11 @@ DECORATED AS (
                     ELSE N'Tiếng Việt'                                              -- Tiêu chuẩn, 4+1
                   END,
         SoLuongSV      = CASE WHEN (p.SoTinChi >= 4 AND p.To_MH = 0 AND p.SoTietTH > 0) THEN 80 ELSE 40 END,
-        ThietBiYeuCau  = CASE WHEN p.To_MH > 0 THEN N'PC' ELSE N'TV, Máy chiếu' END,
+        ThietBiYeuCau = CASE 
+    WHEN p.To_MH > 0 THEN N'PC'                    -- Tổ TH (1,2) → PC (khớp với phòng TH)
+    WHEN p.SoTietTH > 0 THEN N'PC'                 -- LT nhưng có TH → PC
+    ELSE N'TV, Máy chiếu'                          -- Chỉ LT thuần túy → TV, Máy chiếu
+END,
         SoCaTuan       = CASE WHEN (p.SoTinChi >= 4 AND p.SoTietLT >= 60) THEN 2 ELSE 1 END
     FROM PLAN_CTE p
     JOIN GROUPS g ON g.MaMonHoc = p.MaMonHoc AND g.Nhom_MH = p.Nhom_MH
@@ -951,6 +955,18 @@ WHERE NOT EXISTS (
 );
 
 GO
+
+-- ===== UPDATE SỬA THIẾT BỊ =====
+UPDATE dbo.tb_LOP_MONHOC
+SET ThietBiYeuCau = N'PC'
+WHERE MaLop IN (
+    'LOP-00000157', -- Students=80, Equipment='TV, Máy chiếu' → PC
+    'LOP-00000160', -- Students=80, Equipment='TV, Máy chiếu' → PC
+    'LOP-00000163', -- Students=40, Equipment='TV, Máy chiếu' → PC
+    'LOP-00000166', -- Students=40, Equipment='TV, Máy chiếu' → PC
+    'LOP-00000187', -- Students=40, Equipment='TV, Máy chiếu' → PC
+    'LOP-00000190'  -- Students=40, Equipment='TV, Máy chiếu' → PC
+);
 
 SELECT * FROM tb_LOP_MONHOC
 
