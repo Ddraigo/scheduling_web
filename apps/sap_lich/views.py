@@ -13,7 +13,6 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from apps.scheduling.models import DotXep
-from apps.scheduling.algorithms.algorithms_runner import AlgorithmsRunner
 
 logger = logging.getLogger(__name__)
 
@@ -74,89 +73,162 @@ def algo_scheduler_view(request):
 @require_http_methods(["POST"])
 def algo_scheduler_run_api(request):
     """
-    API endpoint để chạy thuật toán xếp lịch với retry logic
-    Expected POST data: { "ma_dot": "2025-2026_HK1", "time_limit": 300, "seed": null }
+    API endpoint để chạy thuật toán xếp lịch với improved algorithm (fixed teacher preference bug)
     
-    Key changes:
-    - Sử dụng random seed (không seed=42 cố định)
-    - Tăng time_limit mặc định lên 300s (5 phút)
-    - Thêm retry logic (tối đa 3 lần nếu fail)
+    Expected POST data:
+    {
+        "ma_dot": "2025-2026_HK1",
+        "strategy": "TS",  // "TS" (Tabu Search) hoặc "SA" (Simulated Annealing)
+        "init_method": "greedy-cprop",  // "greedy-cprop" hoặc "random-repair"
+        "time_limit": 180,  // seconds (default 180s = 3 phút)
+        "seed": 42,  // optional, random seed
+        "save_to_db": true  // optional, lưu vào ThoiKhoaBieu hay không
+    }
+    
+    Returns:
+    {
+        "status": "success",
+        "ma_dot": "2025-2026_HK1",
+        "initial_cost": 145,
+        "final_cost": 89,
+        "improvement": 56,
+        "improvement_percent": 38.6,
+        "time_elapsed": 180.5,
+        "breakdown": {
+            "room_capacity": 0,
+            "min_working_days": 0,
+            "curriculum_compactness": 45,
+            "lecture_consecutiveness": 0,
+            "room_stability": 0,
+            "teacher_preferences": 44
+        },
+        "sol_file": "/path/to/solution.sol",
+        "saved_to_db": true,
+        "message": "Xếp lịch thành công!"
+    }
     """
     try:
+        from apps.scheduling.algorithms.algorithms_runner import AlgorithmRunner
+        
         data = json.loads(request.body)
         ma_dot = data.get('ma_dot')
-        time_limit = float(data.get('time_limit', 300.0))  # Default 5 minutes
-        seed = data.get('seed')  # None by default → random seed
+        strategy = data.get('strategy', 'TS').upper()
+        init_method = data.get('init_method', 'greedy-cprop')
+        time_limit = float(data.get('time_limit', 180))
+        seed = data.get('seed', 42)
+        save_to_db = data.get('save_to_db', True)
 
+        # Validation
         if not ma_dot:
             return JsonResponse({
                 'status': 'error',
                 'message': 'Vui lòng cung cấp ma_dot'
             }, status=400)
 
-        # Nếu seed không cung cấp, dùng random seed
-        if seed is None:
-            seed = random.randint(1, 1_000_000)
-        else:
-            seed = int(seed)
-
-        logger.info(f"Bắt đầu xếp lịch cho {ma_dot} (seed={seed}, time_limit={time_limit}s)")
-
-        # Retry logic: nếu fail (depth < 216), thử lại với seed khác
-        max_retries = 3
-        last_error = None
-        
-        for attempt in range(max_retries):
-            if attempt > 0:
-                logger.warning(f"Attempt {attempt + 1}/{max_retries} - Thử lại với seed mới")
-                seed = random.randint(1, 1_000_000)
-
-            try:
-                # Chạy runner
-                runner = AlgorithmsRunner(ma_dot=ma_dot, seed=seed, time_limit=time_limit)
-                result = runner.run()
-
-                # Kiểm tra xem có thành công không
-                if result['status'] == 'success':
-                    logger.info(f"✅ Xếp lịch thành công ở attempt {attempt + 1}")
-                    return JsonResponse(result)
-                else:
-                    # Fail nhưng không phải lỗi exception - có thể retry
-                    depth = result.get('debug_info', {}).get('max_depth', 0)
-                    if depth < 200:  # Nếu depth rất thấp, retry
-                        logger.warning(f"Depth thấp ({depth}/216), retry với seed mới")
-                        last_error = result
-                        continue
-                    else:
-                        # Depth khá cao, không retry
-                        logger.error(f"Xếp lịch fail với depth {depth}")
-                        return JsonResponse(result)
-
-            except Exception as e:
-                logger.exception(f"Attempt {attempt + 1} failed: {e}")
-                last_error = str(e)
-                if attempt < max_retries - 1:
-                    time.sleep(1)  # Wait before retry
-                    continue
-                else:
-                    # Lần cuối fail
-                    return JsonResponse({
-                        'status': 'error',
-                        'message': f'Xếp lịch thất bại sau {max_retries} lần: {str(e)}',
-                        'attempts': max_retries
-                    }, status=500)
-
-        # Nếu tất cả attempts đều fail
-        logger.error(f"Tất cả {max_retries} attempts đều thất bại")
-        if isinstance(last_error, dict):
-            return JsonResponse(last_error)
-        else:
+        if strategy not in ['TS', 'SA']:
             return JsonResponse({
                 'status': 'error',
-                'message': f'Xếp lịch thất bại sau {max_retries} lần',
-                'last_error': str(last_error),
-                'attempts': max_retries
+                'message': 'Strategy không hợp lệ. Phải là "TS" hoặc "SA"'
+            }, status=400)
+
+        if init_method not in ['greedy-cprop', 'random-repair']:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Init method không hợp lệ. Phải là "greedy-cprop" hoặc "random-repair"'
+            }, status=400)
+
+        logger.info(f"🚀 Bắt đầu xếp lịch cho {ma_dot}")
+        logger.info(f"   Strategy: {strategy}, Init: {init_method}, Time: {time_limit}s, Seed: {seed}")
+
+        # Step 1: Initialize runner
+        runner = AlgorithmRunner(ma_dot=ma_dot, seed=seed)
+
+        # Step 2: Prepare data (export DB to CTT)
+        logger.info("📊 Step 1: Chuẩn bị dữ liệu (export DB sang CTT)")
+        if not runner.prepare_data():
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Không thể chuẩn bị dữ liệu. Kiểm tra xem DotXep có tồn tại và có dữ liệu hợp lệ không.'
+            }, status=400)
+
+        # Step 3: Run optimization
+        logger.info("🔧 Step 2: Chạy thuật toán optimization")
+        result = runner.run_optimization(
+            strategy=strategy,
+            init_method=init_method,
+            time_limit=time_limit
+        )
+
+        if not result or not result.get('success'):
+            error_msg = result.get('error', 'Thuật toán thất bại') if result else 'Lỗi không xác định'
+            logger.error(f"❌ Optimization failed: {error_msg}")
+            return JsonResponse({
+                'status': 'error',
+                'message': error_msg
             }, status=500)
+
+        # Step 4: Save to database (nếu requested)
+        if save_to_db:
+            logger.info("💾 Step 3: Lưu kết quả vào database")
+            
+            # Reconstruct assignments from formatted result
+            assignments = {}
+            for lecture_id_str, assignment_data in result.get('assignments', {}).items():
+                lecture_id = int(lecture_id_str)
+                period = assignment_data['period_absolute']
+                
+                # Find room_idx from room_id
+                room_id = assignment_data['room_id']
+                room_idx = None
+                for idx, room in enumerate(runner.instance.rooms):
+                    if room.id == room_id:
+                        room_idx = idx
+                        break
+                
+                if room_idx is not None:
+                    assignments[lecture_id] = (period, room_idx)
+            
+            saved = runner.save_to_database(assignments)
+            result['saved_to_db'] = saved
+            
+            if not saved:
+                logger.warning("⚠️  Lưu vào database thất bại, nhưng optimization thành công")
+                result['warning'] = 'Lưu vào database thất bại'
+        else:
+            result['saved_to_db'] = False
+
+        # Format response
+        logger.info(f"✅ Xếp lịch hoàn tất!")
+        logger.info(f"   Initial cost: {result['initial_cost']}")
+        logger.info(f"   Final cost: {result['final_cost']}")
+        logger.info(f"   Improvement: {result['improvement']} ({result['improvement_percent']:.1f}%)")
+        logger.info(f"   Teacher preferences: {result['breakdown']['teacher_preferences']} violations")
+
+        # Convert to JsonResponse format
+        response = {
+            'status': 'success',
+            'ma_dot': result['ma_dot'],
+            'initial_cost': result['initial_cost'],
+            'final_cost': result['final_cost'],
+            'improvement': result['improvement'],
+            'improvement_percent': round(result['improvement_percent'], 2),
+            'time_elapsed': round(result['time_elapsed'], 2),
+            'breakdown': result['breakdown'],
+            'sol_file': result['sol_file'],
+            'saved_to_db': result['saved_to_db'],
+            'message': f'Xếp lịch thành công! Cost giảm từ {result["initial_cost"]} xuống {result["final_cost"]} ({result["improvement_percent"]:.1f}%)',
+            'details': {
+                'strategy': strategy,
+                'init_method': init_method,
+                'seed': seed,
+                'lectures_scheduled': len(result.get('assignments', {}))
+            }
+        }
+
+        if 'warning' in result:
+            response['warning'] = result['warning']
+
+        return JsonResponse(response)
 
     except json.JSONDecodeError:
         logger.error("JSON không hợp lệ")
@@ -165,7 +237,7 @@ def algo_scheduler_run_api(request):
             'message': 'JSON không hợp lệ'
         }, status=400)
     except Exception as e:
-        logger.exception(f"Lỗi API không dự báo: {e}")
+        logger.exception(f"Lỗi API: {e}")
         return JsonResponse({
             'status': 'error',
             'message': f'Lỗi: {str(e)}'

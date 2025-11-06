@@ -6,8 +6,7 @@ from .algorithms_core import (
     CBCTTInstance, TimetableState, Room, Course, Curriculum, Lecture,
     ScoreBreakdown, build_initial_solution, rebuild_state
 )
-from .algorithms_data_adapter import AlgorithmsDataAdapter
-from .algorithms_runner import AlgorithmsRunner
+from .algorithms_runner import AlgorithmRunner
 
 __all__ = [
     'CBCTTInstance',
@@ -19,6 +18,5 @@ __all__ = [
     'ScoreBreakdown',
     'build_initial_solution',
     'rebuild_state',
-    'AlgorithmsDataAdapter',
-    'AlgorithmsRunner',
+    'AlgorithmRunner',
 ]

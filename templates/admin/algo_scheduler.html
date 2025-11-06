@@ -32,12 +32,63 @@
             </select>
         </div>
         
+        <!-- Algorithm Parameters -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="strategySelect">Chiến lược (Strategy):</label>
+                    <select id="strategySelect" class="form-control">
+                        <option value="TS">Tabu Search (TS) - Khuyến khích</option>
+                        <option value="SA">Simulated Annealing (SA)</option>
+                    </select>
+                    <small class="form-text text-muted">TS: Tốt hơn cho tìm optimum toàn cục | SA: Tốt cho thoát khỏi local optima</small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="initMethodSelect">Phương pháp khởi tạo (Init Method):</label>
+                    <select id="initMethodSelect" class="form-control">
+                        <option value="greedy-cprop">Greedy CPROP - Khuyến khích</option>
+                        <option value="random-repair">Random Repair</option>
+                    </select>
+                    <small class="form-text text-muted">Greedy: Giải pháp ban đầu tốt hơn | Random: Đa dạng hơn</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="timeLimitInput">Thời gian tối đa (giây):</label>
+                    <input type="number" id="timeLimitInput" class="form-control" value="180" min="30" max="600" step="30">
+                    <small class="form-text text-muted">30-180s: nhanh | 180-300s: cân bằng | 300s+: chi tiết</small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="seedInput">Seed (tùy chọn):</label>
+                    <input type="number" id="seedInput" class="form-control" value="42" placeholder="để trống để random">
+                    <small class="form-text text-muted">Seed cụ thể để kết quả lặp lại</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-check mb-3">
+            <input type="checkbox" id="saveToDbCheck" class="form-check-input" checked>
+            <label class="form-check-label" for="saveToDbCheck">
+                Lưu kết quả vào database (ThoiKhoaBieu)
+            </label>
+        </div>
+        
         <div class="btn-group" role="group">
             <button type="button" class="btn btn-primary" onclick="runAlgorithm()">
-                🧮 Chạy thuật toán
+                🧮 Chạy thuật toán V2 (Fixed)
             </button>
             <button type="button" class="btn btn-info" onclick="viewResult()">
                 📊 Xem kết quả
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="clearLog()">
+                🗑️ Xóa log
             </button>
         </div>
     </div>
@@ -128,13 +179,23 @@
         const periodId = getSelectedPeriod();
         if (!periodId) return;
         
-        log(`Đang chạy thuật toán cho đợt: ${periodId}...`);
+        const strategy = document.getElementById('strategySelect').value;
+        const initMethod = document.getElementById('initMethodSelect').value;
+        const timeLimit = parseFloat(document.getElementById('timeLimitInput').value) || 180;
+        const seed = document.getElementById('seedInput').value ? parseInt(document.getElementById('seedInput').value) : 42;
+        const saveToDb = document.getElementById('saveToDbCheck').checked;
+        
+        log(`🚀 Bắt đầu xếp lịch cho đợt: ${periodId}`);
+        log(`⚙️ Tham số: Strategy=${strategy}, Init=${initMethod}, Time=${timeLimit}s, Seed=${seed}`);
         log(`⏳ Đang xử lý...`);
         
         const payload = {
             ma_dot: periodId,
-            time_limit: 30,
-            seed: 42
+            strategy: strategy,
+            init_method: initMethod,
+            time_limit: timeLimit,
+            seed: seed,
+            save_to_db: saveToDb
         };
         
         fetch("{% url 'sap_lich:algo_scheduler_run_api' %}", {
@@ -149,29 +210,27 @@
         .then(data => {
             if (data.status === 'success') {
                 log(`✅ Xếp lịch thành công!`, 'success');
-                log(`⏱️ Thời gian: ${data.elapsed_time.toFixed(2)}s`);
+                log(`⏱️ Thời gian: ${data.time_elapsed.toFixed(2)}s`);
+                log(`📈 Cost: ${data.initial_cost} → ${data.final_cost} (Cải thiện: ${data.improvement_percent.toFixed(1)}%)`);
                 
-                if (data.ui_data) {
-                    const ui = data.ui_data;
-                    log(`📊 Kết quả:`);
-                    log(`  - Tổng buổi học: ${ui.total_lectures}`);
-                    log(`  - Chi phí quá tải phòng: ${ui.score_breakdown.room_capacity}`);
-                    log(`  - Chi phí ngày làm việc: ${ui.score_breakdown.min_working_days}`);
-                    log(`  - Chi phí compactness: ${ui.score_breakdown.curriculum_compactness}`);
-                    log(`  - Chi phí ổn định phòng: ${ui.score_breakdown.room_stability}`);
-                    log(`  - Tổng chi phí: ${ui.score_breakdown.total}`);
-                    
-                    if (ui.schedule_items.length > 0) {
-                        log(`Xem trước 10 item đầu:`);
-                        ui.schedule_items.forEach((item, idx) => {
-                            log(`  ${idx+1}. ${item.course_id} | GV: ${item.teacher} | Phòng: ${item.room} | Ngày ${item.day}, Ca ${item.slot}`);
-                        });
-                    }
+                // Cost breakdown
+                log(`📊 Chi tiết cost:`);
+                const breakdown = data.breakdown;
+                log(`  - Quá tải phòng: ${breakdown.room_capacity}`);
+                log(`  - Ngày làm việc tối thiểu: ${breakdown.min_working_days}`);
+                log(`  - Compactness: ${breakdown.curriculum_compactness}`);
+                log(`  - Liên tiếp buổi học: ${breakdown.lecture_consecutiveness}`);
+                log(`  - Ổn định phòng: ${breakdown.room_stability}`);
+                log(`  - Ưu tiên giáo viên: ${breakdown.teacher_preferences}`);
+                log(`  - Tổng: ${data.final_cost}`);
+                
+                if (data.saved_to_db) {
+                    log(`💾 Đã lưu ${data.details.lectures_scheduled} buổi học vào database`, 'success');
+                } else {
+                    log(`⚠️ Lưu vào database thất bại hoặc bị tắt`, 'error');
                 }
                 
-                if (data.save_result) {
-                    log(`💾 Đã lưu ${data.save_result.created_count} buổi học vào DB`);
-                }
+                log(`� File solution: ${data.sol_file}`);
             } else {
                 log(`❌ Lỗi: ${data.message || 'Lỗi không xác định'}`, 'error');
             }

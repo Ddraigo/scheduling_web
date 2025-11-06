@@ -1,25 +1,3 @@
-"""
-Inspired by Tomas Muller's ITC-2007 hybrid constraint-based + local search approach; ITC-2007 Track 3 (CB-CTT) specification.
-References:
-- Muller, T. (2009). ITC-2007 solver description (unitime.org).
-- ITC-2007 Track 3 Curriculum-Based Course Timetabling specification (unitime.org).
-- Schaerf, A. (1999). A survey of automated timetabling. Artificial Intelligence Review.
-
->>> inst = parse_instance(None)
->>> inst.days, inst.periods_per_day, len(inst.courses)
-(2, 3, 2)
->>> rng = random.Random(1)
->>> start = time.time()
->>> state = build_initial_solution(inst, rng, "greedy-cprop", start, 3.0)
->>> state.check_hard_constraints()
-True
->>> from pathlib import Path
->>> tmp = Path("_ctt_solver_doctest.sol")
->>> write_solution(inst, state.clone_assignments(), tmp)
->>> tmp.read_text().strip().splitlines()[0].count(" ")
-3
->>> tmp.unlink()
-"""
 
 from __future__ import annotations
 

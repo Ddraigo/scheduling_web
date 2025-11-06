@@ -1,205 +1,291 @@
 """
-Algorithms Runner: Điều phối chạy CB-CTT scheduler
+Service để chạy thuật toán scheduling algorithm từ Django
 """
 
+import logging
 import time
 import random
-import logging
+from pathlib import Path
 from typing import Dict, Tuple, Optional
+from django.conf import settings
 
-from .algorithms_core import (
-    build_initial_solution, rebuild_state, TimetableState, ScoreBreakdown,
-    run_metaheuristic, ProgressLogger
+from ..algorithms.algorithms_core import (
+    parse_instance,
+    build_initial_solution,
+    run_metaheuristic,
+    write_solution,
+    CBCTTInstance,
+    TimetableState,
+    ScoreBreakdown,
+    ProgressLogger
 )
-from .algorithms_data_adapter import AlgorithmsDataAdapter
+from ..algorithms.algorithms_data_adapter import export_to_ctt
+from ..models import DotXep, PhanCong, ThoiKhoaBieu, TimeSlot
 
 logger = logging.getLogger(__name__)
 
 
-class AlgorithmsRunner:
-    """
-    Điều phối chạy thuật toán xếp lịch
-    """
-
-    def __init__(self, ma_dot: str, seed: int = None, time_limit: float = 30.0):
+class AlgorithmRunner:
+    """Runner để thực thi thuật toán scheduling"""
+    
+    def __init__(self, ma_dot: str, seed: int = 42):
         """
         Khởi tạo runner
         
         Args:
-            ma_dot: Mã đợt xếp (VD: '2025-2026_HK1')
-            seed: Random seed (nếu None thì luôn ngẫu nhiên)
-            time_limit: Thời gian tối đa (giây)
+            ma_dot: Mã đợt xếp lịch
+            seed: Random seed cho reproducibility
         """
         self.ma_dot = ma_dot
         self.seed = seed
-        self.time_limit = time_limit
-        if seed is not None:
-            self.rng = random.Random(seed)
-        else:
-            self.rng = random.Random()
-        self.start_time = None
+        self.dot_xep = None
         self.instance = None
-
-    def run(self) -> Dict:
+        self.ctt_file_path = None
+        
+    def prepare_data(self) -> bool:
         """
-        Chạy toàn bộ quy trình xếp lịch
+        Chuẩn bị dữ liệu: export DB sang .ctt file
         
         Returns:
-            Dict chứa kết quả (status, schedule, score_breakdown, etc.)
+            True nếu thành công, False nếu thất bại
         """
-        self.start_time = time.time()
-        
         try:
-            # 1. Load dữ liệu từ DB
-            logger.info(f"Đang load dữ liệu cho đợt: {self.ma_dot}")
-            self.instance = AlgorithmsDataAdapter.build_cbctt_instance_from_db(self.ma_dot)
-            logger.info(f"✅ Loaded {len(self.instance.lectures)} lectures, {len(self.instance.courses)} courses, {len(self.instance.rooms)} rooms")
-            logger.info(f"   Days: {self.instance.days}, Periods/day: {self.instance.periods_per_day}, Total periods: {self.instance.total_periods}")
-            logger.info(f"   Teachers: {len(self.instance.teachers)}, Curriculums: {len(self.instance.curriculums)}")
-
-            # 2. Xây dựng lời giải khởi tạo
-            logger.info("Đang xây dựng lời giải khởi tạo...")
-            init_deadline = self.start_time + self.time_limit * 0.35
-            time_budget = max(5.0, init_deadline - time.time())
+            # Lấy đợt xếp
+            self.dot_xep = DotXep.objects.get(ma_dot=self.ma_dot)
+            logger.info(f"Found DotXep: {self.dot_xep.ma_dot} - {self.dot_xep.ten_dot}")
             
-            try:
-                state = build_initial_solution(
-                    self.instance,
-                    self.rng,
-                    time_limit=time_budget
-                )
-            except RuntimeError as e:
-                logger.error(f"❌ Lỗi xây dựng lời giải khởi tạo: {e}")
-                
-                # Đếm số nguyện vọng để debug
-                from apps.scheduling.models import NguyenVong, DotXep
-                nguyen_vong_count = 0
-                try:
-                    dot_xep = DotXep.objects.get(ma_dot=self.ma_dot)
-                    nguyen_vong_count = NguyenVong.objects.filter(ma_dot=dot_xep).count()
-                except Exception:
-                    pass
-                
-                return {
-                    'status': 'error',
-                    'ma_dot': self.ma_dot,
-                    'message': f"Không thể xây dựng lời giải khởi tạo: {str(e)}",
-                    'elapsed_time': time.time() - self.start_time,
-                    'debug_info': {
-                        'courses': len(self.instance.courses),
-                        'rooms': len(self.instance.rooms),
-                        'lectures': len(self.instance.lectures),
-                        'total_periods': self.instance.total_periods,
-                        'teachers': len(self.instance.teachers),
-                        'curriculums': len(self.instance.curriculums),
-                        'nguyen_vong_count': nguyen_vong_count,
-                    }
-                }
-
-            elapsed = time.time() - self.start_time
-            logger.info(f"✅ Lời giải khởi tạo xây dựng xong trong {elapsed:.2f}s, cost={state.current_cost}")
-            logger.info(f"   Assigned: {len(state.assignments)}/{len(self.instance.lectures)} lectures")
-
-            # 3. Kiểm tra ràng buộc cứng
-            if not state.check_hard_constraints():
-                logger.error("❌ Lời giải khởi tạo không thỏa ràng buộc cứng")
-                return {
-                    'status': 'error',
-                    'ma_dot': self.ma_dot,
-                    'message': "Lời giải khởi tạo không thỏa ràng buộc cứng",
-                    'elapsed_time': time.time() - self.start_time,
-                }
-
-            # 4. Chạy metaheuristic optimization (Tabu Search hoặc Simulated Annealing)
-            logger.info("Đang chạy metaheuristic optimization...")
-            opt_start = time.time()
-            opt_budget = max(5.0, self.time_limit - (opt_start - self.start_time))
+            # Export sang .ctt file vào thư mục output/
+            output_dir = Path(settings.BASE_DIR) / 'output' / 'ctt_files'
+            output_dir.mkdir(parents=True, exist_ok=True)
             
-            with ProgressLogger() as progress_logger:
-                best_assignments, best_breakdown = run_metaheuristic(
-                    state,
-                    meta="SA",  # Simulated Annealing
-                    rng=self.rng,
-                    logger=progress_logger,
-                    remaining_time=opt_budget
-                )
+            self.ctt_file_path = str(export_to_ctt(
+                dot_xep=self.dot_xep,
+                output_dir=str(output_dir)
+            ))
             
-            opt_elapsed = time.time() - opt_start
-            logger.info(f"✅ Metaheuristic hoàn thành trong {opt_elapsed:.2f}s, cost={best_breakdown.total}")
-            logger.info(f"   - Room capacity: {best_breakdown.room_capacity}")
-            logger.info(f"   - Min working days: {best_breakdown.min_working_days}")
-            logger.info(f"   - Curriculum compactness: {best_breakdown.curriculum_compactness}")
-            logger.info(f"   - Room stability: {best_breakdown.room_stability}")
-            logger.info(f"   - Lecture clustering: {best_breakdown.lecture_clustering}")
-
-            # 5. Lưu kết quả vào DB (TẠM THỜI DISABLED - chưa cần)
-            logger.info("⊘ Skip saving to database (disabled for testing)")
-            save_result = {
-                'ma_dot': self.ma_dot,
-                'created_count': 0,  # Placeholder
-                'room_capacity_penalty': best_breakdown.room_capacity,
-                'min_working_days_penalty': best_breakdown.min_working_days,
-                'curriculum_compactness_penalty': best_breakdown.curriculum_compactness,
-                'room_stability_penalty': best_breakdown.room_stability,
-                'lecture_clustering_penalty': best_breakdown.lecture_clustering,
-                'total_cost': best_breakdown.total,
-            }
-            # save_result = AlgorithmsDataAdapter.save_results_to_db(
-            #     self.ma_dot,
-            #     self.instance,
-            #     best_assignments,
-            #     best_breakdown
-            # )
-
-            # 6. Format kết quả cho UI
-            elapsed_total = time.time() - self.start_time
-            ui_result = AlgorithmsDataAdapter.format_result_for_ui(
-                self.ma_dot,
-                self.instance,
-                best_assignments,
-                best_breakdown,
-                elapsed_total
-            )
-
-            # 7. Export kết quả ra file JSON
-            logger.info("Đang export kết quả ra file JSON...")
-            json_export = AlgorithmsDataAdapter.export_result_to_json(
-                self.ma_dot,
-                self.instance,
-                best_assignments,
-                best_breakdown,
-                elapsed_total
-            )
-            logger.info(f"JSON export status: {json_export.get('status')}")
-
-            return {
-                'status': 'success',
-                'ma_dot': self.ma_dot,
-                'elapsed_time': elapsed_total,
-                'ui_data': ui_result,
-                'save_result': save_result,
-                'json_export': json_export,
-            }
-
+            logger.info(f"Exported to CTT file: {self.ctt_file_path}")
+            return True
+            
+        except DotXep.DoesNotExist:
+            logger.error(f"DotXep not found: {self.ma_dot}")
+            return False
         except Exception as e:
-            logger.exception(f"Lỗi không mong muốn: {e}")
-            return {
-                'status': 'error',
-                'ma_dot': self.ma_dot,
-                'message': f"Lỗi: {str(e)}",
-                'elapsed_time': time.time() - self.start_time,
-            }
-
-    def run_with_metaheuristic(self, metaheuristic: str = "SA") -> Dict:
+            logger.error(f"Error preparing data: {e}", exc_info=True)
+            return False
+    
+    def run_optimization(
+        self,
+        strategy: str = "TS",
+        init_method: str = "greedy-cprop",
+        time_limit: float = 180.0
+    ) -> Optional[Dict]:
         """
-        Chạy với metaheuristic optimization (nâng cao - dành cho sau)
+        Chạy thuật toán optimization
         
         Args:
-            metaheuristic: 'SA' (Simulated Annealing) hoặc 'TS' (Tabu Search)
-        
+            strategy: "TS" (Tabu Search) hoặc "SA" (Simulated Annealing)
+            init_method: "greedy-cprop" hoặc "random-repair"
+            time_limit: Thời gian tối đa (giây)
+            
         Returns:
-            Dict kết quả
+            Dictionary chứa kết quả, hoặc None nếu thất bại
         """
-        # TODO: Thêm code cho metaheuristic (Simulated Annealing, Tabu Search)
-        # Tạm thời chỉ dùng lời giải khởi tạo
-        return self.run()
+        if not self.ctt_file_path:
+            logger.error("CTT file not prepared. Call prepare_data() first.")
+            return None
+        
+        try:
+            # Parse instance
+            logger.info(f"Parsing CTT instance: {self.ctt_file_path}")
+            self.instance = parse_instance(self.ctt_file_path, enforce_room_per_course=True)
+            
+            logger.info(f"Instance loaded: {len(self.instance.courses)} courses, "
+                       f"{len(self.instance.rooms)} rooms, "
+                       f"{self.instance.days} days × {self.instance.periods_per_day} periods")
+            
+            # Initialize
+            rng = random.Random(self.seed)
+            start_time = time.time()
+            
+            # Build initial solution
+            logger.info(f"Building initial solution with {init_method}...")
+            state = build_initial_solution(
+                self.instance,
+                rng,
+                init_method,
+                start_time,
+                time_limit
+            )
+            
+            initial_cost = state.current_cost
+            initial_breakdown = state.score_breakdown()
+            elapsed_init = time.time() - start_time
+            
+            logger.info(f"Initial solution built in {elapsed_init:.2f}s, cost: {initial_cost}")
+            logger.info(f"  - Teacher Preferences: {initial_breakdown.teacher_preference_violations}")
+            logger.info(f"  - Curriculum Compactness: {initial_breakdown.curriculum_compactness}")
+            logger.info(f"  - Lecture Consecutiveness: {initial_breakdown.lecture_consecutiveness}")
+            
+            # Run metaheuristic
+            remaining_time = time_limit - elapsed_init
+            if remaining_time > 0:
+                logger.info(f"Running {strategy} optimization for {remaining_time:.2f}s...")
+                
+                log_file = Path(settings.BASE_DIR) / 'output' / f'progress_{self.ma_dot}.csv'
+                progress_logger = ProgressLogger(log_file)
+                
+                best_assignments, best_breakdown = run_metaheuristic(
+                    state,
+                    strategy,
+                    rng,
+                    progress_logger,
+                    remaining_time
+                )
+                
+                final_cost = best_breakdown.total
+                logger.info(f"Optimization completed. Final cost: {final_cost}")
+                logger.info(f"  - Teacher Preferences: {best_breakdown.teacher_preference_violations}")
+                logger.info(f"  - Curriculum Compactness: {best_breakdown.curriculum_compactness}")
+                logger.info(f"  - Lecture Consecutiveness: {best_breakdown.lecture_consecutiveness}")
+            else:
+                best_assignments = state.clone_assignments()
+                best_breakdown = initial_breakdown
+                final_cost = initial_cost
+            
+            # Save solution to .sol file
+            sol_file = Path(settings.BASE_DIR) / 'output' / f'solution_{self.ma_dot}.sol'
+            write_solution(self.instance, best_assignments, sol_file)
+            logger.info(f"Solution saved to: {sol_file}")
+            
+            # Return results
+            return {
+                'success': True,
+                'ma_dot': self.ma_dot,
+                'initial_cost': initial_cost,
+                'final_cost': final_cost,
+                'improvement': initial_cost - final_cost,
+                'improvement_percent': (initial_cost - final_cost) / initial_cost * 100 if initial_cost > 0 else 0,
+                'time_elapsed': time.time() - start_time,
+                'breakdown': {
+                    'room_capacity': best_breakdown.room_capacity,
+                    'min_working_days': best_breakdown.min_working_days,
+                    'curriculum_compactness': best_breakdown.curriculum_compactness,
+                    'lecture_consecutiveness': best_breakdown.lecture_consecutiveness,
+                    'room_stability': best_breakdown.room_stability,
+                    'teacher_preferences': best_breakdown.teacher_preference_violations,
+                },
+                'sol_file': str(sol_file),
+                'assignments': self._format_assignments(best_assignments)
+            }
+            
+        except Exception as e:
+            logger.error(f"Error during optimization: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    def _format_assignments(self, assignments: Dict[int, Tuple[int, int]]) -> Dict:
+        """
+        Format assignments để dễ đọc
+        
+        Args:
+            assignments: {lecture_id: (period, room_idx)}
+            
+        Returns:
+            Dictionary với format dễ đọc
+        """
+        formatted = {}
+        for lecture_id, (period, room_idx) in assignments.items():
+            course_idx = self.instance.lectures[lecture_id].course
+            course_id = self.instance.courses[course_idx].id
+            room_id = self.instance.rooms[room_idx].id
+            
+            day = period // self.instance.periods_per_day
+            slot = period % self.instance.periods_per_day
+            
+            formatted[str(lecture_id)] = {
+                'course_id': course_id,
+                'room_id': room_id,
+                'day': day,
+                'period': slot,
+                'period_absolute': period
+            }
+        
+        return formatted
+    
+    def save_to_database(self, assignments: Dict[int, Tuple[int, int]]) -> bool:
+        """
+        Lưu kết quả vào database (ThoiKhoaBieu)
+        
+        Args:
+            assignments: {lecture_id: (period, room_idx)}
+            
+        Returns:
+            True nếu thành công
+        """
+        try:
+            # Xóa thời khóa biểu cũ của đợt này
+            ThoiKhoaBieu.objects.filter(ma_dot=self.dot_xep).delete()
+            logger.info(f"Deleted old schedules for {self.ma_dot}")
+            
+            # Tạo mapping từ course_id (string) sang PhanCong
+            course_id_to_phancong = {}
+            for pc in PhanCong.objects.filter(ma_dot=self.dot_xep).select_related('ma_lop', 'ma_phong'):
+                course_id_to_phancong[pc.ma_lop.ma_lop] = pc
+            
+            # Tạo mapping từ room_id (string) sang PhongHoc
+            from ..models import PhongHoc
+            room_id_to_phong = {p.ma_phong: p for p in PhongHoc.objects.all()}
+            
+            # Tạo ThoiKhoaBieu mới
+            created_count = 0
+            for lecture_id, (period, room_idx) in assignments.items():
+                course_idx = self.instance.lectures[lecture_id].course
+                course_id = self.instance.courses[course_idx].id
+                room_id = self.instance.rooms[room_idx].id
+                
+                # Tính day và period
+                day = period // self.instance.periods_per_day
+                slot = period % self.instance.periods_per_day
+                
+                # Chuyển từ 0-based sang DB format (Thứ 2-7 = 2-7, Ca 1-5 = 1-5)
+                db_day = day + 2  # 0→2, 1→3, ..., 5→7
+                db_period = slot + 1  # 0→1, 1→2, ..., 4→5
+                
+                # Tìm TimeSlot tương ứng
+                try:
+                    time_slot = TimeSlot.objects.get(thu=db_day, ca__ma_khung_gio=db_period)
+                except TimeSlot.DoesNotExist:
+                    logger.warning(f"TimeSlot not found for day={db_day}, period={db_period}")
+                    continue
+                
+                # Tìm PhanCong
+                if course_id not in course_id_to_phancong:
+                    logger.warning(f"PhanCong not found for course_id={course_id}")
+                    continue
+                
+                phan_cong = course_id_to_phancong[course_id]
+                
+                # Tìm PhongHoc
+                if room_id not in room_id_to_phong:
+                    logger.warning(f"PhongHoc not found for room_id={room_id}")
+                    continue
+                
+                phong = room_id_to_phong[room_id]
+                
+                # Tạo ThoiKhoaBieu
+                ThoiKhoaBieu.objects.create(
+                    ma_dot=self.dot_xep,
+                    ma_phan_cong=phan_cong,
+                    time_slot_id=time_slot,
+                    ma_phong=phong
+                )
+                created_count += 1
+            
+            logger.info(f"Created {created_count} ThoiKhoaBieu records")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error saving to database: {e}", exc_info=True)
+            return False
