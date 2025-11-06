@@ -2207,7 +2207,7 @@ class SimulatedAnnealing:
 
 
 class TabuSearch:
-    """Tabu search metaheuristic with adaptive tenure."""
+    """Tabu search metaheuristic with adaptive tenure and diversification."""
 
     def __init__(self, state: TimetableState, neighborhoods: Sequence[Neighborhood], rng: random.Random, logger: ProgressLogger) -> None:
         self.state = state
@@ -2220,17 +2220,22 @@ class TabuSearch:
         rng = self.rng
         iteration = 0
         tabu: Dict[Tuple, int] = {}
-        base_tenure = 15  # Tăng từ 7 lên 15 để tránh lặp lại moves xấu
+        base_tenure = 25  # Tăng từ 15 → 25: tabu list lâu hơn để tránh lặp lại
         best_cost = state.current_cost
         last_log = 0.0
-        accepted = 0
-        attempted = 0
+        non_tabu_count = 0  # Track non-tabu moves selected
+        tabu_count = 0  # Track tabu moves rejected
         no_improve = 0
-        sample_size = 20
+        sample_size = 80  # TĂNG từ 20 → 80: khám phá tốt hơn, find better neighbors
+        diversify_counter = 0  # Counter để trigger diversification
         while time.time() - start_time < time_limit:
             iteration += 1
             candidates: List[Tuple[int, bool, int, Move, Tuple]] = []
-            for _ in range(sample_size):
+            
+            # Collect more candidates with retry logic
+            generation_attempts = 0
+            while len(candidates) < sample_size and generation_attempts < sample_size * 3:
+                generation_attempts += 1
                 idx, operator = self.manager.select(rng)
                 move = operator.generate_candidate(state, rng)
                 if move is None:
@@ -2241,9 +2246,21 @@ class TabuSearch:
                 signature = move.signature()
                 is_tabu = tabu.get(signature, 0) > iteration
                 candidates.append((delta, is_tabu, idx, move, signature))
+            
             if not candidates:
                 continue
+            
+            # Sort: non-tabu first, then by delta
             candidates.sort(key=lambda item: (item[1], item[0]))
+            
+            # Count tabu vs non-tabu for statistics
+            for delta, is_tabu, idx, move, signature in candidates:
+                if is_tabu:
+                    tabu_count += 1
+                else:
+                    non_tabu_count += 1
+            
+            # Select best non-tabu, or aspiration if tabu is better
             chosen = None
             for delta, is_tabu, idx, move, signature in candidates:
                 if not is_tabu or state.current_cost + delta < best_cost:
@@ -2251,13 +2268,16 @@ class TabuSearch:
                     break
             if chosen is None:
                 chosen = candidates[0]
+            
             delta, is_tabu, idx, move, signature = chosen
             delta_apply = move.apply(state)
             if delta_apply is None:
                 continue
-            attempted += 1
-            accepted += 1
-            tabu[signature] = iteration + base_tenure + rng.randint(0, 4)
+            
+            # Update tabu with probabilistic tenure
+            tenure_length = base_tenure + rng.randint(0, 5)
+            tabu[signature] = iteration + tenure_length
+            
             improvement = False
             if state.current_cost < best_cost:
                 best_cost = state.current_cost
@@ -2265,20 +2285,38 @@ class TabuSearch:
                 best_breakdown = state.score_breakdown()
                 improvement = True
                 no_improve = 0
+                diversify_counter = 0
             else:
                 no_improve += 1
+                diversify_counter += 1
+            
             self.manager.reward(idx, improvement)
-            if no_improve > 250:
-                base_tenure = min(40, base_tenure + 1)  # Tăng max từ 25 lên 40
+            
+            # Adaptive tenure: tăng khi stuck, giảm khi cải thiện
+            if no_improve > 150:  # Giảm từ 250 → 150: phát hiện stuck sớm hơn
+                base_tenure = min(50, base_tenure + 2)  # Tăng mạnh hơn (từ +1 → +2)
                 no_improve = 0
+                
+                # DIVERSIFICATION: Clear tabu list khi stuck quá lâu
+                if diversify_counter > 300:
+                    tabu.clear()
+                    diversify_counter = 0
             elif improvement:
-                base_tenure = max(8, base_tenure - 1)  # Giảm min từ 4 lên 8
+                base_tenure = max(15, base_tenure - 1)  # Giảm min từ 8 → 15
+            
             now = time.time() - start_time
             if now - last_log >= 2.0:
-                accept_rate = accepted / attempted if attempted else 0.0
+                # For TS: accept_rate = non-tabu / total candidates
+                # (percentage of moves that are not blocked by tabu list)
+                total_candidates = non_tabu_count + tabu_count
+                accept_rate = non_tabu_count / total_candidates if total_candidates > 0 else 1.0
                 hard_ok = state.check_hard_constraints()
                 self.logger.log(now, best_cost, state.current_cost, hard_ok, accept_rate, move.name)
                 last_log = now
+                # Reset counters for next logging interval
+                non_tabu_count = 0
+                tabu_count = 0
+        
         return best_assignments, best_breakdown
 
 
