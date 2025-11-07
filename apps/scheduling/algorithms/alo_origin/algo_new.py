@@ -42,15 +42,15 @@ from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 # 4. Room Stability (1.0) - Hard constraint priority
 # 5. Room Capacity (1.0) - Hard constraint priority
 # 6. Min Working Days (1.0) - Hard constraint priority
-# 7. Curriculum Compactness (0.5) - Low priority (cuối ưu tiên)
+# 7. Curriculum Compactness - REMOVED (conflicts with S7)
 WEIGHT_ROOM_CAPACITY = 1.0
 WEIGHT_MIN_WORKING_DAYS = 1.0
 WEIGHT_ROOM_STABILITY = 1.0
 WEIGHT_LECTURE_CONSECUTIVENESS = 1.5  # Medium priority
 WEIGHT_TEACHER_LECTURE_CONSOLIDATION = 1.8  # HIGH priority (GV dạy liên tiếp cùng phòng)
-WEIGHT_CURRICULUM_COMPACTNESS = 0.5  # Low priority (end)
+# WEIGHT_CURRICULUM_COMPACTNESS = 0.0  # REMOVED: Conflicts with S7
 WEIGHT_TEACHER_PREFERENCE = 2.0  # Highest priority
-WEIGHT_TEACHER_WORKING_DAYS = 1.5  # S7: Minimize teacher working days (tập trung tiết vào ít ngày)
+WEIGHT_TEACHER_WORKING_DAYS = 2.5  # S7: Increased to dominate
 
 STRICT_SAMPLE_INSTANCE = """Name: Tiny
 Courses: 2
@@ -671,7 +671,7 @@ class TimetableState:
         self.lecture_room_penalty: List[int] = [0] * lecture_count
         self.soft_room_capacity = 0
         self.soft_min_working_days = 0
-        self.soft_curriculum_compactness = 0
+        # self.soft_curriculum_compactness = 0  # REMOVED: S2 conflicts with S7
         self.soft_room_stability = 0
         self.soft_lecture_consecutiveness = 0
         self.soft_teacher_preference_violations = 0
@@ -1247,13 +1247,14 @@ class TimetableState:
         period, room_idx = self.assignments[lecture_id]  # Get period BEFORE pop
         course_idx = self.instance.lectures[lecture_id].course
         teacher = self.instance.course_teachers[course_idx]
-        
+
         # Calculate teacher preference cost BEFORE removing from assignments
         pref_cost = self._compute_teacher_preference_cost(lecture_id)
-        
-        # Calculate teacher lecture consolidation penalty BEFORE removing
+
+        # Capture S6/S7 penalties BEFORE we edit any structures
         old_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
-        
+        old_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
+
         # Now remove from assignments
         self.assignments.pop(lecture_id)
         self.period_rooms[period].pop(room_idx, None)
@@ -1271,22 +1272,18 @@ class TimetableState:
         # Remove teacher preference cost
         self.soft_teacher_preference_violations -= pref_cost
         delta -= pref_cost * WEIGHT_TEACHER_PREFERENCE
-        
-        # Track teacher lecture consolidation penalty change (ONLY during optimization, not initial building)
-        # During initial building: skip consolidation to avoid backtracking issues
-        if hasattr(self, '_optimization_phase') and self._optimization_phase:
-            new_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
-            consolidation_delta = new_consolidation_penalty - old_consolidation_penalty
-            self.soft_teacher_lecture_consolidation += consolidation_delta
-            delta += consolidation_delta * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
-            
-            # S7: Track teacher working days penalty change
-            old_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
-            # After removal, recalculate penalty
-            new_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
-            working_days_delta = new_working_days_penalty - old_working_days_penalty
-            self.soft_teacher_working_days += working_days_delta
-            delta += working_days_delta * WEIGHT_TEACHER_WORKING_DAYS
+
+        # Track teacher lecture consolidation penalty change (S6)
+        new_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
+        consolidation_delta = new_consolidation_penalty - old_consolidation_penalty
+        self.soft_teacher_lecture_consolidation += consolidation_delta
+        delta += consolidation_delta * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
+
+        # S7: Track teacher working days penalty change
+        new_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
+        working_days_delta = new_working_days_penalty - old_working_days_penalty
+        self.soft_teacher_working_days += working_days_delta
+        delta += working_days_delta * WEIGHT_TEACHER_WORKING_DAYS
         
         old_room_penalty = self.lecture_room_penalty[lecture_id]
         self.soft_room_capacity -= old_room_penalty
@@ -1317,8 +1314,8 @@ class TimetableState:
             new_penalty = self._compute_curriculum_day_penalty(slots)
             self.curriculum_day_penalty[curriculum_idx][day] = new_penalty
             penalty_delta = new_penalty - old_penalty
-            self.soft_curriculum_compactness += penalty_delta
-            delta += penalty_delta * WEIGHT_CURRICULUM_COMPACTNESS
+            # self.soft_curriculum_compactness += penalty_delta  # REMOVED: S2 conflicts with S7
+            # delta += penalty_delta * WEIGHT_CURRICULUM_COMPACTNESS  # REMOVED
         # Track lecture consecutiveness
         old_consec_penalty = self._compute_course_consecutiveness_penalty(course_idx)
         self.course_assigned_periods[course_idx].remove(period)
@@ -1333,7 +1330,8 @@ class TimetableState:
         course_idx = self.instance.lectures[lecture_id].course
         teacher = self.instance.course_teachers[course_idx]
         old_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
-        
+        old_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
+
         self.assignments[lecture_id] = (period, room_idx)
         self.period_rooms[period][room_idx] = lecture_id
         self.period_teachers[period].add(teacher)
@@ -1375,8 +1373,8 @@ class TimetableState:
             new_penalty = self._compute_curriculum_day_penalty(slots)
             self.curriculum_day_penalty[curriculum_idx][day] = new_penalty
             penalty_delta = new_penalty - old_penalty
-            self.soft_curriculum_compactness += penalty_delta
-            delta += penalty_delta * WEIGHT_CURRICULUM_COMPACTNESS
+            # self.soft_curriculum_compactness += penalty_delta  # REMOVED: S2 conflicts with S7
+            # delta += penalty_delta * WEIGHT_CURRICULUM_COMPACTNESS  # REMOVED
         # Track lecture consecutiveness
         old_consec_penalty = self._compute_course_consecutiveness_penalty(course_idx)
         self.course_assigned_periods[course_idx].append(period)
@@ -1386,21 +1384,17 @@ class TimetableState:
         self.soft_lecture_consecutiveness += consec_delta
         delta += consec_delta * WEIGHT_LECTURE_CONSECUTIVENESS
         
-        # Track teacher lecture consolidation penalty change (ONLY during optimization, not initial building)
-        # During initial building: skip consolidation to avoid backtracking issues
-        if hasattr(self, '_optimization_phase') and self._optimization_phase:
-            new_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
-            consolidation_delta = new_consolidation_penalty - old_consolidation_penalty
-            self.soft_teacher_lecture_consolidation += consolidation_delta
-            delta += consolidation_delta * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
-            
-            # S7: Track teacher working days penalty change
-            old_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
-            # After insertion, recalculate penalty
-            new_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
-            working_days_delta = new_working_days_penalty - old_working_days_penalty
-            self.soft_teacher_working_days += working_days_delta
-            delta += working_days_delta * WEIGHT_TEACHER_WORKING_DAYS
+        # Track teacher lecture consolidation penalty change (S6)
+        new_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
+        consolidation_delta = new_consolidation_penalty - old_consolidation_penalty
+        self.soft_teacher_lecture_consolidation += consolidation_delta
+        delta += consolidation_delta * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
+
+        # S7: Track teacher working days penalty change
+        new_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
+        working_days_delta = new_working_days_penalty - old_working_days_penalty
+        self.soft_teacher_working_days += working_days_delta
+        delta += working_days_delta * WEIGHT_TEACHER_WORKING_DAYS
         
         # Check 8: Teacher Preferences (SOFT CONSTRAINT)
         pref_cost = self._compute_teacher_preference_cost(lecture_id)
@@ -1413,7 +1407,7 @@ class TimetableState:
     def current_cost(self) -> int:
         return (self.soft_room_capacity * WEIGHT_ROOM_CAPACITY + 
                 self.soft_min_working_days * WEIGHT_MIN_WORKING_DAYS + 
-                self.soft_curriculum_compactness * WEIGHT_CURRICULUM_COMPACTNESS + 
+                # self.soft_curriculum_compactness * WEIGHT_CURRICULUM_COMPACTNESS +  # REMOVED: S2 conflicts with S7
                 self.soft_room_stability * WEIGHT_ROOM_STABILITY + 
                 self.soft_lecture_consecutiveness * WEIGHT_LECTURE_CONSECUTIVENESS + 
                 self.soft_teacher_preference_violations * WEIGHT_TEACHER_PREFERENCE + 
@@ -1431,7 +1425,7 @@ class TimetableState:
         return ScoreBreakdown(
             room_capacity=self.soft_room_capacity,
             min_working_days=self.soft_min_working_days,
-            curriculum_compactness=self.soft_curriculum_compactness,
+            curriculum_compactness=0,  # REMOVED: S2 conflicts with S7 - set to 0
             room_stability=self.soft_room_stability,
             lecture_consecutiveness=self.soft_lecture_consecutiveness,
             teacher_lecture_consolidation=s6_total,  # Calculate on-the-fly
@@ -2349,44 +2343,179 @@ class TeacherPreferenceNeighborhood(Neighborhood):
 
 
 class TeacherWorkingDaysNeighborhood(Neighborhood):
-    """Neighborhood chuyên tối ưu Teacher Working Days Minimization (S7) constraint.
+    """
+    Tối ưu S7 (Teacher Working Days) với cân bằng S6 (Lecture Consolidation).
     
-    Chiến lược: Tập trung các tiết của GV vào ít ngày nhất có thể
-    1. Tìm teachers có working_days > min_days_theoretical
-    2. Xác định target_day (ngày GV đã có nhiều tiết nhất)
-    3. Thử di chuyển lectures từ ngày khác sang target_day
-    4. Ưu tiên teachers với working_days penalty cao nhất
-    
-    Min days theoretical = ⌈total_lectures / periods_per_day⌉
-    Vì mỗi ngày tối đa periods_per_day ca (thường là 5)
+    Chiến lược:
+    1. Tính min_feasible_days dựa trên teacher preferences
+    2. Ưu tiên teachers có penalty cao nhất
+    3. MOVE lectures từ sparse days → dense days (smart preference checking)
+    4. SWAP lectures khi timetable full (chỉ isolated_day ↔ busy_day)
+    5. Evaluate multiple candidates, chọn move tốt nhất
+    6. Adaptive threshold theo search phase:
+       - Early (0-30%): 25.0 (aggressive)
+       - Mid (30-70%): 18.0 (balanced)
+       - Late (70-100%): 12.0 (conservative)
     """
     name = "TeacherWorkingDays"
     
+    def __init__(self):
+        super().__init__()
+        self._call_count = 0
+        self._success_count = 0
+        self._start_time = None  # Track when search started
+        self._failure_reasons = {
+            'no_teachers_with_penalty': 0,
+            'already_optimal': 0,
+            'no_sparse_days': 0,
+            'no_free_slots': 0,
+            'move_failed': 0,
+            'swap_failed': 0,
+            'no_lectures': 0,
+            'preference_violation': 0,
+            'no_s7_gain': 0
+        }
+    
+    def _get_adaptive_threshold(self, elapsed_time: float, time_limit: float) -> float:
+        """
+        Adaptive threshold dựa vào phase của search.
+        
+        - Early phase (0-30%): 25.0 (aggressive S7 optimization)
+        - Mid phase (30-70%): 18.0 (balanced)
+        - Late phase (70-100%): 12.0 (conservative, avoid worsening other constraints)
+        """
+        if time_limit <= 0:
+            return 20.0
+        
+        progress = elapsed_time / time_limit
+        
+        if progress < 0.3:
+            return 25.0  # Early: aggressive
+        elif progress < 0.7:
+            return 18.0  # Mid: balanced
+        else:
+            return 12.0  # Late: conservative
+    
+    def _violates_teacher_preference(self, state, instance, lecture_id: int, target_period: int) -> bool:
+        """
+        Kiểm tra xem việc move lecture có vi phạm teacher preference không.
+        
+        CHÚ Ý: Chỉ reject nếu TĂNG số vi phạm preferences so với vị trí hiện tại!
+        - Nếu lecture đã ở non-preferred period, cho phép move sang non-preferred khác
+        - Chỉ reject nếu move từ preferred → non-preferred
+        """
+        course_idx = instance.lectures[lecture_id].course
+        teacher_name = instance.course_teachers[course_idx]
+        preferred_periods = instance.teacher_preferred_periods.get(teacher_name, set())
+        
+        # Nếu teacher không có preferences, không vi phạm
+        if not preferred_periods:
+            return False
+        
+        # Lấy current period
+        current_assignment = state.assignments.get(lecture_id)
+        if current_assignment:
+            current_period = current_assignment[0]
+            current_in_preferred = current_period in preferred_periods
+            target_in_preferred = target_period in preferred_periods
+            
+            # Chỉ reject nếu:
+            # - Current đang TRONG preferred, target NGOÀI preferred (tăng violation)
+            # - Nếu cả hai đều NGOÀI preferred → cho phép (không làm tệ hơn)
+            if current_in_preferred and not target_in_preferred:
+                return True  # Reject: tăng violation
+            else:
+                return False  # Accept: không tăng violation hoặc giảm violation
+        else:
+            # Lecture chưa được assign, reject nếu target không preferred
+            return target_period not in preferred_periods
+    
+    def _score_move(self, state, delta: int, s7_before: int, s7_after: int) -> float:
+        """
+        Score một move dựa trên S7 reduction và delta cost.
+        Higher score = better move.
+        
+        Score = S7_reduction * 10.0 - delta * 0.5
+        """
+        s7_reduction = s7_before - s7_after
+        return s7_reduction * 10.0 - delta * 0.5
+
+    def _evaluate_swap_s7(self, state: TimetableState, lecture_a: int, lecture_b: int) -> Optional[Tuple[bool, bool]]:
+        """Đánh giá swap có cải thiện S7 hay không và đảm bảo không làm tệ hơn."""
+
+        instance = state.instance
+        course_a = instance.lectures[lecture_a].course
+        course_b = instance.lectures[lecture_b].course
+        teacher_a = instance.course_teachers[course_a]
+        teacher_b = instance.course_teachers[course_b]
+
+        s7_before_a = state._compute_teacher_working_days_penalty(teacher_a)
+        if teacher_b != teacher_a:
+            s7_before_b = state._compute_teacher_working_days_penalty(teacher_b)
+        else:
+            s7_before_b = s7_before_a
+
+        swap_delta = state.swap_lectures(lecture_a, lecture_b, commit=True)
+        if swap_delta is None:
+            return None
+
+        s7_after_a = state._compute_teacher_working_days_penalty(teacher_a)
+        if teacher_b != teacher_a:
+            s7_after_b = state._compute_teacher_working_days_penalty(teacher_b)
+        else:
+            s7_after_b = s7_after_a
+
+        revert_delta = state.swap_lectures(lecture_a, lecture_b, commit=True)
+        if revert_delta is None:
+            raise RuntimeError("Failed to revert swap during S7 evaluation")
+
+        improved = (s7_after_a < s7_before_a) or (teacher_b != teacher_a and s7_after_b < s7_before_b)
+        worsened = (s7_after_a > s7_before_a) or (teacher_b != teacher_a and s7_after_b > s7_before_b)
+
+        return improved, worsened
+    
     def generate_candidate(self, state: TimetableState, rng: random.Random) -> Optional[Move]:
         instance = state.instance
+        self._call_count += 1
         
-        # Chỉ chạy khi đang trong optimization phase
-        if not hasattr(state, '_optimization_phase') or not state._optimization_phase:
-            return None
+        # Initialize start time if first call
+        if self._start_time is None:
+            self._start_time = time.time()
         
-        # Thu thập teachers có working_days penalty > 0
+        # Calculate adaptive threshold
+        elapsed_time = time.time() - self._start_time
+        # Estimate total time limit (we don't have it directly, use reasonable estimate)
+        estimated_time_limit = 300.0  # 5 minutes default
+        threshold = self._get_adaptive_threshold(elapsed_time, estimated_time_limit)
+        
+        # Step 1: Tìm teachers có penalty > 0, sort theo penalty giảm dần
         teachers_with_penalty = []
-        for teacher in range(len(instance.teachers)):
-            penalty = state._compute_teacher_working_days_penalty(teacher)
+        for teacher_name in instance.teachers:
+            penalty = state._compute_teacher_working_days_penalty(teacher_name)
             if penalty > 0:
-                teachers_with_penalty.append((penalty, teacher))
+                teachers_with_penalty.append((penalty, teacher_name))
         
         if not teachers_with_penalty:
-            return None  # Perfect consolidation by days!
+            self._failure_reasons['no_teachers_with_penalty'] += 1
+            return None
         
-        # Sort by penalty (highest first)
         teachers_with_penalty.sort(reverse=True)
         
-        # Try top teachers
-        for penalty, teacher in teachers_with_penalty[:5]:
-            # Get all lectures of this teacher
+        # Debug logging every 100 calls
+        if self._call_count % 100 == 0:
+            success_rate = (self._success_count / self._call_count * 100) if self._call_count > 0 else 0
+            print(f"[S7-DEBUG] Calls: {self._call_count}, Success: {self._success_count} ({success_rate:.1f}%), Threshold: {threshold:.1f}", file=sys.stderr)
+            print(f"[S7-DEBUG] Top failures: {sorted(self._failure_reasons.items(), key=lambda x: -x[1])[:3]}", file=sys.stderr)
+            print(f"[S7-DEBUG] Current S7 total: {sum(p for p, _ in teachers_with_penalty)}", file=sys.stderr)
+        
+        # Step 2: Xử lý từng teacher (ưu tiên penalty cao)
+        for penalty, teacher_name in teachers_with_penalty[:10]:  # Top 10 teachers
+            # Collect all lectures
             all_lectures = []
-            for course_idx, lectures_dict in state.teacher_course_lectures[teacher].items():
+            if teacher_name not in state.teacher_course_lectures:
+                continue
+            
+            for course_idx, lectures_dict in state.teacher_course_lectures[teacher_name].items():
                 for lecture_id, assignment in lectures_dict.items():
                     if assignment is not None:
                         period, room_idx = assignment
@@ -2401,62 +2530,223 @@ class TeacherWorkingDaysNeighborhood(Neighborhood):
                         })
             
             if len(all_lectures) <= 1:
-                continue  # Nothing to consolidate
+                self._failure_reasons['no_lectures'] += 1
+                continue
             
-            # Find day with most lectures (target_day)
+            # Step 3: Tính min_feasible_days dựa trên preferences
+            min_feasible_days = self._calculate_min_feasible_days(
+                instance, teacher_name, len(all_lectures)
+            )
+            
+            # Count current days
             from collections import Counter
             day_counts = Counter([lec['day'] for lec in all_lectures])
-            target_day, _ = day_counts.most_common(1)[0]
+            current_days = len(day_counts)
             
-            # Find lectures NOT on target_day
-            lectures_on_other_days = [lec for lec in all_lectures if lec['day'] != target_day]
+            if current_days <= min_feasible_days:
+                self._failure_reasons['already_optimal'] += 1
+                continue  # Already optimal
             
-            if not lectures_on_other_days:
-                continue  # Already consolidated on one day
+            # Step 4: Tìm ngày có ít lectures nhất để consolidate
+            sparse_days = sorted(day_counts.items(), key=lambda x: x[1])[:3]  # 3 sparsest days
+            dense_days = sorted(day_counts.items(), key=lambda x: -x[1])[:3]  # 3 densest days
             
-            # Find available slots on target_day
-            occupied_slots = set()
-            for lec in all_lectures:
-                if lec['day'] == target_day:
-                    occupied_slots.add(lec['slot'])
+            # Step 5: Thử MOVE lectures từ sparse → dense
+            # Collect multiple candidate moves, evaluate and pick best
+            candidate_moves = []
             
-            available_slots = [s for s in range(instance.periods_per_day) if s not in occupied_slots]
-            
-            if not available_slots:
-                continue  # No space on target_day
-            
-            rng.shuffle(available_slots)
-            
-            # Try to move lectures from other days to target_day
-            for lec in lectures_on_other_days[:3]:  # Try top 3 lectures
-                lecture_id = lec['lecture_id']
-                current_period = lec['period']
-                current_room = lec['room_idx']
-                course_idx = lec['course_idx']
+            for sparse_day, sparse_count in sparse_days:
+                lectures_to_move = [lec for lec in all_lectures if lec['day'] == sparse_day]
+                rng.shuffle(lectures_to_move)
                 
-                # Try each available slot on target_day
-                for slot in available_slots:
-                    target_period = target_day * instance.periods_per_day + slot
+                for lec in lectures_to_move[:3]:  # Try first 3 lectures
+                    lecture_id = lec['lecture_id']
+                    current_room = lec['room_idx']
+                    course_idx = lec['course_idx']
                     
-                    # Check if period is feasible
-                    if target_period not in instance.feasible_periods.get(course_idx, set()):
-                        continue
-                    
-                    # Try current room first (minimize room changes)
-                    if target_period in instance.feasible_periods.get(course_idx, set()):
-                        delta = state.move_lecture(lecture_id, target_period, current_room, commit=False)
-                        if delta is not None and delta < 0:  # Only accept improvements
-                            return MoveLectureMove(lecture_id, target_period, current_room)
-                    
-                    # Try other rooms if current room doesn't work
-                    for room_idx in range(len(instance.rooms)):
-                        if room_idx == current_room:
+                    # Try moving to dense days
+                    for dense_day, _ in dense_days:
+                        if dense_day == sparse_day:
                             continue
-                        delta = state.move_lecture(lecture_id, target_period, room_idx, commit=False)
-                        if delta is not None and delta < 0:
-                            return MoveLectureMove(lecture_id, target_period, room_idx)
+                        
+                        # Find free slots on dense_day
+                        free_slots = self._find_free_slots(state, instance, dense_day)
+                        if not free_slots:
+                            self._failure_reasons['no_free_slots'] += 1
+                            continue
+                        
+                        rng.shuffle(free_slots)
+                        for slot in free_slots[:2]:  # Try first 2 free slots
+                            target_period = dense_day * instance.periods_per_day + slot
+                            
+                            if target_period not in instance.feasible_periods[course_idx]:
+                                continue
+                            
+                            # Check preference violation
+                            if self._violates_teacher_preference(state, instance, lecture_id, target_period):
+                                self._failure_reasons['preference_violation'] += 1
+                                continue
+                            
+                            # Calculate S7 before move
+                            s7_before = state._compute_teacher_working_days_penalty(teacher_name)
+                            
+                            delta = state.move_lecture(lecture_id, target_period, current_room, commit=False)
+                            if delta is not None and delta <= threshold:  # Use adaptive threshold
+                                # Calculate S7 after move (simulate)
+                                # We need to temporarily commit to get accurate S7
+                                old_assignment = state.assignments.get(lecture_id)
+                                if old_assignment is None:
+                                    continue
+
+                                original_period, original_room = old_assignment
+                                state.move_lecture(lecture_id, target_period, current_room, commit=True)
+                                s7_after = state._compute_teacher_working_days_penalty(teacher_name)
+                                # Rollback to original placement
+                                state.move_lecture(lecture_id, original_period, original_room, commit=True)
+
+                                if s7_after >= s7_before:
+                                    self._failure_reasons['no_s7_gain'] += 1
+                                    continue
+
+                                score = self._score_move(state, delta, s7_before, s7_after)
+                                candidate_moves.append((score, delta, lecture_id, target_period, current_room))
+                            else:
+                                self._failure_reasons['move_failed'] += 1
+            
+            # Return best candidate move
+            if candidate_moves:
+                candidate_moves.sort(reverse=True)  # Highest score first
+                best_score, best_delta, best_lid, best_period, best_room = candidate_moves[0]
+                self._success_count += 1
+                return MoveLectureMove(best_lid, best_period, best_room)
+            
+            # Step 6: SWAP fallback (chỉ khi sparse_day có 1-2 lectures)
+            for sparse_day, sparse_count in sparse_days:
+                if sparse_count > 2:  # Only handle sparse days with 1-2 lectures
+                    continue
+                
+                lectures_on_sparse = [lec for lec in all_lectures if lec['day'] == sparse_day]
+                if len(lectures_on_sparse) == 0:
+                    continue
+                
+                # Try to move ALL lectures from sparse day to dense days
+                for lec_sparse in lectures_on_sparse:
+                    lecture_a = lec_sparse['lecture_id']
+                    
+                    # STRATEGY A: Try SWAP within same teacher first (less side effects)
+                    for dense_day, dense_count in dense_days:
+                        if dense_count <= 1 or dense_day == sparse_day:
+                            continue
+                        
+                        # Find lectures of SAME teacher on dense_day
+                        same_teacher_lectures = [lec for lec in all_lectures 
+                                               if lec['day'] == dense_day]
+                        
+                        for lec_b in same_teacher_lectures:
+                            lecture_b = lec_b['lecture_id']
+                            if lecture_b == lecture_a:
+                                continue
+                            
+                            delta = state.swap_lectures(lecture_a, lecture_b, commit=False)
+                            if delta is not None and delta <= threshold:  # Use adaptive threshold
+                                eval_result = self._evaluate_swap_s7(state, lecture_a, lecture_b)
+                                if eval_result is None:
+                                    self._failure_reasons['swap_failed'] += 1
+                                    continue
+
+                                improved, worsened = eval_result
+                                if not worsened and improved:
+                                    self._success_count += 1
+                                    return SwapLecturesMove(lecture_a, lecture_b)
+
+                                self._failure_reasons['no_s7_gain'] += 1
+                            else:
+                                self._failure_reasons['swap_failed'] += 1
+                    
+                    # STRATEGY B: If no same-teacher swap works, try OTHER teachers
+                    for dense_day, dense_count in dense_days:
+                        if dense_count <= 1 or dense_day == sparse_day:
+                            continue
+                        
+                        # Find all lectures on dense_day (any teacher)
+                        for period in range(dense_day * instance.periods_per_day,
+                                          (dense_day + 1) * instance.periods_per_day):
+                            if period not in state.period_rooms:
+                                continue
+                            
+                            for room_idx, lecture_b in list(state.period_rooms[period].items()):
+                                if lecture_b == lecture_a:
+                                    continue
+                                
+                                delta = state.swap_lectures(lecture_a, lecture_b, commit=False)
+                                if delta is not None and delta <= threshold:  # Use adaptive threshold
+                                    eval_result = self._evaluate_swap_s7(state, lecture_a, lecture_b)
+                                    if eval_result is None:
+                                        self._failure_reasons['swap_failed'] += 1
+                                        continue
+
+                                    improved, worsened = eval_result
+                                    if not worsened and improved:
+                                        self._success_count += 1
+                                        return SwapLecturesMove(lecture_a, lecture_b)
+
+                                    self._failure_reasons['no_s7_gain'] += 1
+                                else:
+                                    self._failure_reasons['swap_failed'] += 1
         
         return None
+    
+    def _calculate_min_feasible_days(self, instance, teacher_name: str, total_lectures: int) -> int:
+        """
+        Tính số ngày tối thiểu dựa trên teacher preferences.
+        
+        - Có preferences: Đếm số days khác nhau trong preferred periods
+        - Không có preferences: ⌈total_lectures / periods_per_day⌉
+        """
+        preferred_periods = instance.teacher_preferred_periods.get(teacher_name, set())
+        
+        if not preferred_periods:
+            # Không có preferences → theoretical minimum
+            return math.ceil(total_lectures / instance.periods_per_day)
+        
+        # Có preferences → đếm số days khác nhau
+        preferred_days = set()
+        for period in preferred_periods:
+            day, _ = instance.period_to_slot(period)
+            preferred_days.add(day)
+        
+        # Greedy packing: Tính xem có thể fit vào bao nhiêu ngày
+        days_by_capacity = []
+        for day in sorted(preferred_days):
+            capacity = sum(1 for p in preferred_periods 
+                          if instance.period_to_slot(p)[0] == day)
+            days_by_capacity.append((day, capacity))
+        
+        # Sort by capacity descending
+        days_by_capacity.sort(key=lambda x: -x[1])
+        
+        remaining = total_lectures
+        min_days = 0
+        for day, capacity in days_by_capacity:
+            if remaining <= 0:
+                break
+            remaining -= capacity
+            min_days += 1
+        
+        return max(min_days, 1)
+    
+    def _find_free_slots(self, state, instance, day: int) -> list:
+        """Tìm tất cả slots trống (chưa đầy rooms) trên một ngày."""
+        free_slots = []
+        for slot in range(instance.periods_per_day):
+            period = day * instance.periods_per_day + slot
+            # Check if this period has available rooms
+            # period_rooms is List[Dict[int, int]] where period_rooms[period] = {room_idx: lecture_id}
+            occupied_rooms = len(state.period_rooms[period])
+            total_rooms = len(instance.rooms)
+            if occupied_rooms < total_rooms:  # Has at least 1 free room
+                free_slots.append(slot)
+        return free_slots
 
 
 class TeacherLectureConsolidationNeighborhood(Neighborhood):
@@ -2474,10 +2764,6 @@ class TeacherLectureConsolidationNeighborhood(Neighborhood):
     
     def generate_candidate(self, state: TimetableState, rng: random.Random) -> Optional[Move]:
         instance = state.instance
-        
-        # Chỉ chạy khi đang trong optimization phase
-        if not hasattr(state, '_optimization_phase') or not state._optimization_phase:
-            return None
         
         # Thu thập teachers với consolidation penalty > 0
         teachers_with_penalty = []
@@ -2790,13 +3076,10 @@ def run_metaheuristic(state: TimetableState, meta: str, rng: random.Random, logg
     best_assignments = state.clone_assignments()
     best_breakdown = state.score_breakdown()
     
-    # Enable optimization phase for teacher-specific neighborhoods
-    state._optimization_phase = True
-    
     neighborhoods: List[Neighborhood] = [
-        TeacherPreferenceNeighborhood(),  # Priority 1: Teacher preferences (weight 2.0)
-        TeacherLectureConsolidationNeighborhood(),  # Priority 2: Teacher consolidation (weight 1.8)
-        TeacherWorkingDaysNeighborhood(),  # Priority 3: Teacher working days (weight 1.0) - S7
+        TeacherWorkingDaysNeighborhood(),  # Priority 1: Teacher working days (weight 2.5) - S7
+        TeacherPreferenceNeighborhood(),  # Priority 2: Teacher preferences (weight 2.0)
+        TeacherLectureConsolidationNeighborhood(),  # Priority 3: Teacher consolidation (weight 1.8)
         MoveLectureNeighborhood(),
         SwapLecturesNeighborhood(),
         RoomChangeNeighborhood(),

@@ -63,7 +63,7 @@ class Faculty:
         
         # Cost constants for soft constraints
         self.MIN_WORKING_DAYS_COST = 5
-        self.CURRICULUM_COMPACTNESS_COST = 2
+        self.CURRICULUM_COMPACTNESS_COST = 2  # REMOVED: Conflicts with S7
         self.ROOM_STABILITY_COST = 1
         
         # 2D matrices: [course][period] -> bool
@@ -875,7 +875,7 @@ class Validator:
         """Get total weighted cost (hard violations + soft costs)."""
         return (self.costs_on_room_capacity() + 
                 self.costs_on_min_working_days() * self.faculty.MIN_WORKING_DAYS_COST +
-                self.costs_on_curriculum_compactness() * self.faculty.CURRICULUM_COMPACTNESS_COST +
+                # self.costs_on_curriculum_compactness() * self.faculty.CURRICULUM_COMPACTNESS_COST +  # REMOVED: S2
                 self.costs_on_room_stability() * self.faculty.ROOM_STABILITY_COST +
                 self.costs_on_lecture_consecutiveness() +
                 self.costs_on_teacher_lecture_consolidation() +  # S6 (Extended)
@@ -902,7 +902,7 @@ class Validator:
         print(f"Violations of Equipment (hard - extended) : {self.costs_on_equipment()}")
         print(f"Cost of RoomCapacity (soft) : {self.costs_on_room_capacity()}")
         print(f"Cost of MinWorkingDays (soft) : {self.costs_on_min_working_days() * self.faculty.MIN_WORKING_DAYS_COST}")
-        print(f"Cost of CurriculumCompactness (soft) : {self.costs_on_curriculum_compactness() * self.faculty.CURRICULUM_COMPACTNESS_COST}")
+        print(f"Cost of CurriculumCompactness (soft) : {self.costs_on_curriculum_compactness() * self.faculty.CURRICULUM_COMPACTNESS_COST}")  # REMOVED: S2
         print(f"Cost of RoomStability (soft) : {self.costs_on_room_stability() * self.faculty.ROOM_STABILITY_COST}")
         print(f"Cost of LectureConsecutiveness (soft) : {self.costs_on_lecture_consecutiveness()}")
         print(f"Cost of TeacherLectureConsolidation (soft - extended) : {self.costs_on_teacher_lecture_consolidation()}")
@@ -921,7 +921,7 @@ class Validator:
         self.print_violations_on_equipment()
         self.print_violations_on_room_capacity()
         self.print_violations_on_min_working_days()
-        self.print_violations_on_curriculum_compactness()
+        # self.print_violations_on_curriculum_compactness()  # REMOVED: S2 conflicts with S7
         self.print_violations_on_room_stability()
         self.print_violations_on_lecture_consecutiveness()
         self.print_violations_on_teacher_lecture_consolidation()
