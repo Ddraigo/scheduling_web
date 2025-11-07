@@ -86,6 +86,8 @@ def export_to_itc_ctt(dot_xep, output_path: str = None):
     # ===== 1. LẤY CÁC KHÓA HỌC =====
     courses_data = []
     course_id_map = {}
+    sample_course_id = None
+    sample_teacher_id = None
     
     phan_cong_list = PhanCong.objects.filter(
         ma_dot=dot_xep
@@ -102,10 +104,19 @@ def export_to_itc_ctt(dot_xep, output_path: str = None):
         else:
             course_id = f"c{idx:04d}"  # Fallback
         
+        # Sample lần đầu tiên
+        if idx == 0:
+            sample_course_id = course_id
+        
         course_id_map[lop.ma_lop] = course_id  # Use ma_lop instead of id
         
         # ===== LẤY TEACHER_ID THỰC =====
         teacher_id = gv.ma_gv if gv else f"t{idx:03d}"
+        
+        # Sample lần đầu tiên
+        if idx == 0:
+            sample_teacher_id = teacher_id
+        
         num_lectures = lop.so_ca_tuan if lop.so_ca_tuan else 1
         
         # min_working_days
@@ -127,6 +138,7 @@ def export_to_itc_ctt(dot_xep, output_path: str = None):
     # ===== 2. LẤY CÁC PHÒNG HỌC =====
     rooms_data = []
     room_id_map = {}
+    sample_room_id = None
     
     phong_hoc_list = PhongHoc.objects.all().order_by('ma_phong')
     print(f"🏫 Tìm thấy {len(phong_hoc_list)} phòng học")
@@ -137,6 +149,10 @@ def export_to_itc_ctt(dot_xep, output_path: str = None):
             room_id = phong.ma_phong  # Sử dụng mã phòng thực
         else:
             room_id = f"r{idx:04d}"  # Fallback
+        
+        # Sample lần đầu tiên
+        if sample_room_id is None:
+            sample_room_id = room_id
         
         room_id_map[phong.ma_phong] = room_id  # Use ma_phong instead of id
         
@@ -150,6 +166,7 @@ def export_to_itc_ctt(dot_xep, output_path: str = None):
     # ===== 3. TẠO CURRICULA (nhóm các môn học cùng MonHoc) =====
     curricula_data = []
     mon_hoc_courses = defaultdict(list)
+    mon_hoc_map = {}  # ma_mon_hoc → curriculum_id
     
     for course in courses_data:
         mon_hoc = course['lop'].ma_mon_hoc
@@ -158,7 +175,10 @@ def export_to_itc_ctt(dot_xep, output_path: str = None):
     
     for idx, (ma_mon_hoc, course_ids) in enumerate(sorted(mon_hoc_courses.items())):
         if len(course_ids) > 1:
-            curriculum_id = f"q{idx:03d}"
+            # ===== LẤY CURRICULUM_ID THỰC TỬ ma_mon_hoc =====
+            # Sử dụng mã môn học thực làm curriculum_id
+            curriculum_id = ma_mon_hoc
+            mon_hoc_map[ma_mon_hoc] = curriculum_id
             curricula_data.append({
                 'id': curriculum_id,
                 'courses': course_ids
@@ -206,13 +226,22 @@ def export_to_itc_ctt(dot_xep, output_path: str = None):
         f.write(f"END.\n")
     
     print(f"✅ Đã xuất file: {output_path}")
-    print(f"📊 Thống kê:")
+    print(f"\n📊 THỐNG KÊ:")
     print(f"  - Courses: {len(courses_data)}")
+    print(f"    └─ Sử dụng mã lớp thực (ma_lop) từ database")
     print(f"  - Rooms: {len(rooms_data)}")
+    print(f"    └─ Sử dụng mã phòng thực (ma_phong) từ database")
     print(f"  - Curricula: {len(curricula_data)}")
+    print(f"    └─ Sử dụng mã môn học thực (ma_mon_hoc) từ database")
     print(f"  - Days: 6 (Thứ 2-7)")
     print(f"  - Periods per day: 5")
     print(f"  - Format: ITC-2007 Standard (no extensions)")
+    
+    print(f"\n💾 ĐỊNH DẠNG DỮ LIỆU:")
+    print(f"  ✓ Courses: {sample_course_id if courses_data else 'N/A'}")
+    print(f"  ✓ Teachers: {sample_teacher_id if courses_data else 'N/A'}")
+    print(f"  ✓ Rooms: {sample_room_id if rooms_data else 'N/A'}")
+    print(f"  ✓ Curricula: {[c['id'] for c in curricula_data[:3]] if curricula_data else 'N/A'}")
     
     return str(output_path)
 

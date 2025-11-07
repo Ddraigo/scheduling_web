@@ -257,7 +257,7 @@ def export_to_ctt(dot_xep=None, output_path: str = None, ma_dot: str = None, out
     curricula_data = []
     curriculum_id_map = {}
     
-    # Nhóm lớp học theo MonHoc (đây là ngành)
+    # Nhóm lớp học theo MonHoc
     lop_by_mon = defaultdict(list)
     for phan_cong in phan_cong_list:
         lop = phan_cong.ma_lop
@@ -265,10 +265,12 @@ def export_to_ctt(dot_xep=None, output_path: str = None, ma_dot: str = None, out
         if lop.ma_lop in course_id_map:
             lop_by_mon[mon_hoc.ma_mon_hoc].append(course_id_map[lop.ma_lop])
     
-    print(f"🎓 Tìm thấy {len(lop_by_mon)} môn học (ngành)")
+    print(f"🎓 Tìm thấy {len(lop_by_mon)} môn học")
     
-    for idx, (mon_hoc_id, lop_ids) in enumerate(lop_by_mon.items()):
-        curriculum_id = f"q{idx:03d}"
+    for mon_hoc_id, lop_ids in lop_by_mon.items():
+        # ===== SỬ DỤNG MÃ MÔN HỌC THỰC TẠI LÀM CURRICULUM_ID =====
+        # Thay vì tạo mã tự động q000, q001, ... dùng ma_mon_hoc (mã môn học) trực tiếp
+        curriculum_id = mon_hoc_id
         
         # lop_ids đã là course_ids rồi
         course_ids = lop_ids

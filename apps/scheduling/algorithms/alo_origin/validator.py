@@ -809,6 +809,57 @@ class Validator:
         
         return cost
     
+    def costs_on_teacher_working_days(self) -> int:
+        """
+        Check S7: Teacher Working Days Minimization (NEW).
+        Soft constraint: minimize number of days teachers come to school.
+        Penalty: +1 for each day exceeding theoretical minimum.
+        
+        Logic:
+        - For each teacher, calculate:
+          - total_lectures = sum of all lectures
+          - actual_days = number of distinct days teacher has lectures
+          - min_days_theoretical = ⌈total_lectures / periods_per_day⌉
+          - penalty = max(0, actual_days - min_days_theoretical)
+        
+        Returns: total penalty across all teachers
+        """
+        cost = 0
+        ppd = self.faculty.periods_per_day
+        
+        # Group lectures by teacher
+        teacher_lectures: Dict[str, set] = {}
+        
+        for c in range(self.faculty.courses):
+            course = self.faculty.course_vect[c]
+            teacher_name = course.teacher
+            
+            if teacher_name not in teacher_lectures:
+                teacher_lectures[teacher_name] = set()
+            
+            for p in range(self.faculty.periods):
+                room_id = self.timetable(c, p)
+                if room_id != 0:
+                    day = p // ppd
+                    teacher_lectures[teacher_name].add(day)
+        
+        # Calculate penalty for each teacher
+        for teacher_name, days_set in teacher_lectures.items():
+            # Count total lectures for this teacher
+            total_lectures = 0
+            for c in range(self.faculty.courses):
+                if self.faculty.course_vect[c].teacher == teacher_name:
+                    for p in range(self.faculty.periods):
+                        if self.timetable(c, p) != 0:
+                            total_lectures += 1
+            
+            actual_days = len(days_set)
+            min_days_theoretical = (total_lectures + ppd - 1) // ppd  # Ceiling division
+            penalty = max(0, actual_days - min_days_theoretical)
+            cost += penalty
+        
+        return cost
+    
     # ========== TOTAL COST CALCULATION ==========
     
     def total_violations(self) -> int:
@@ -828,6 +879,7 @@ class Validator:
                 self.costs_on_room_stability() * self.faculty.ROOM_STABILITY_COST +
                 self.costs_on_lecture_consecutiveness() +
                 self.costs_on_teacher_lecture_consolidation() +  # S6 (Extended)
+                self.costs_on_teacher_working_days() +           # S7 (Extended)
                 self.costs_on_teacher_preferences())             # S8 (Extended)
     
     # ========== PRINT METHODS ==========
@@ -854,6 +906,7 @@ class Validator:
         print(f"Cost of RoomStability (soft) : {self.costs_on_room_stability() * self.faculty.ROOM_STABILITY_COST}")
         print(f"Cost of LectureConsecutiveness (soft) : {self.costs_on_lecture_consecutiveness()}")
         print(f"Cost of TeacherLectureConsolidation (soft - extended) : {self.costs_on_teacher_lecture_consolidation()}")
+        print(f"Cost of TeacherWorkingDays (soft - extended) : {self.costs_on_teacher_working_days()}")
         print(f"Cost of TeacherPreferences (soft - extended) : {self.costs_on_teacher_preferences()}")
     
     # ========== VIOLATION DETAIL METHODS ==========
@@ -872,6 +925,7 @@ class Validator:
         self.print_violations_on_room_stability()
         self.print_violations_on_lecture_consecutiveness()
         self.print_violations_on_teacher_lecture_consolidation()
+        self.print_violations_on_teacher_working_days()
         self.print_violations_on_teacher_preferences()
     
     def print_violations_on_lectures(self):
@@ -1179,6 +1233,44 @@ class Validator:
                             print(f"[S(1)] Teacher {teacher_name} changes room between consecutive lectures of SAME type ({course1_type}): "
                                   f"Day {day1}, Period {period1} ({course1_name} in {room1_name}) -> "
                                   f"Period {period2} ({course2_name} in {room2_name})")
+    
+    def print_violations_on_teacher_working_days(self):
+        """Print detailed teacher working days violations."""
+        ppd = self.faculty.periods_per_day
+        
+        # Group lectures by teacher
+        teacher_lectures: Dict[str, set] = {}
+        
+        for c in range(self.faculty.courses):
+            course = self.faculty.course_vect[c]
+            teacher_name = course.teacher
+            
+            if teacher_name not in teacher_lectures:
+                teacher_lectures[teacher_name] = set()
+            
+            for p in range(self.faculty.periods):
+                room_id = self.timetable(c, p)
+                if room_id != 0:
+                    day = p // ppd
+                    teacher_lectures[teacher_name].add(day)
+        
+        # Print violations for each teacher
+        for teacher_name, days_set in teacher_lectures.items():
+            # Count total lectures for this teacher
+            total_lectures = 0
+            for c in range(self.faculty.courses):
+                if self.faculty.course_vect[c].teacher == teacher_name:
+                    for p in range(self.faculty.periods):
+                        if self.timetable(c, p) != 0:
+                            total_lectures += 1
+            
+            actual_days = len(days_set)
+            min_days_theoretical = (total_lectures + ppd - 1) // ppd  # Ceiling division
+            penalty = max(0, actual_days - min_days_theoretical)
+            
+            if penalty > 0:
+                print(f"[S(1)] Teacher {teacher_name}: {actual_days} working days (min: {min_days_theoretical} days) "
+                      f"-> penalty +{penalty} (total lectures: {total_lectures})")
 
 
 def main():

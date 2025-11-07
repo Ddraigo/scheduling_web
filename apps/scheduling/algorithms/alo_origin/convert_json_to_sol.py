@@ -223,9 +223,9 @@ def convert_json_to_sol(json_file, sol_file=None):
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         # Default usage
-        # Path: project_root/output/schedule_algorithm_DOT1_2025-2026_HK1.json
-        default_json = Path(__file__).parent.parent.parent.parent.parent / 'output' / 'schedule_algorithm_DOT1_2025-2026_HK1.json'
-        default_sol = Path(__file__).parent / 'schedule_algorithm_DOT1_2025-2026_HK1.sol'
+        # Path: project_root/output/schedule_llm_2025-2026-HK1.json
+        default_json = Path(__file__).parent.parent.parent.parent.parent / 'output' / 'schedule_llm_2025-2026-HK1.json'
+        default_sol = Path(__file__).parent / 'schedule_llm_2025-2026-HK1.sol'
         
         print(f"Usage: python convert_json_to_sol.py <input.json> [output.sol]\n")
         print(f"Converting default files:")

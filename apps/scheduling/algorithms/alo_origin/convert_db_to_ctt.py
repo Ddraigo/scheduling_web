@@ -239,8 +239,10 @@ def export_to_ctt(dot_xep, output_path: str = None):
     
     print(f"🎓 Tìm thấy {len(lop_by_mon)} môn học (ngành)")
     
-    for idx, (mon_hoc_id, lop_ids) in enumerate(lop_by_mon.items()):
-        curriculum_id = f"q{idx:03d}"
+    for mon_hoc_id, lop_ids in lop_by_mon.items():
+        # ===== SỬ DỤNG MÃ MÔN HỌC THỰC TẠI LÀM CURRICULUM_ID =====
+        # Thay vì tạo mã tự động q000, q001, ... dùng ma_mon_hoc (mã môn học) trực tiếp
+        curriculum_id = mon_hoc_id
         
         # lop_ids đã là course_ids rồi
         course_ids = lop_ids

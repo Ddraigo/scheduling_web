@@ -31,6 +31,7 @@ WEIGHT_LECTURE_CONSECUTIVENESS = 1.5  # Medium priority (pattern xếp tiết h�
 WEIGHT_TEACHER_LECTURE_CONSOLIDATION = 1.8  # HIGH priority (GV dạy liên tiếp cùng phòng)
 WEIGHT_CURRICULUM_COMPACTNESS = 0.5  # Low priority (cuối ưu tiên)
 WEIGHT_TEACHER_PREFERENCE = 2.0  # Highest priority (nguyện vọng GV)
+WEIGHT_TEACHER_WORKING_DAYS = 1.8  # S7: Minimize teacher working days (tập trung tiết vào ít ngày)
 # ============================================================================
 
 STRICT_SAMPLE_INSTANCE = """Name: Tiny
@@ -152,13 +153,18 @@ class ScoreBreakdown:
     curriculum_compactness: int = 0
     lecture_consecutiveness: int = 0
     room_stability: int = 0
-    teacher_preference_violations: int = 0  # NEW: Cost for violating teacher preferences
+    teacher_lecture_consolidation: int = 0  # S6: Teacher changes room between consecutive lectures
+    teacher_working_days: int = 0  # S7: Teacher working days minimization
+    teacher_preference_violations: int = 0  # S8: Cost for violating teacher preferences
 
     @property
     def total(self) -> int:
         return (self.room_capacity + self.min_working_days + 
                 self.curriculum_compactness + self.lecture_consecutiveness + 
-                self.room_stability + self.teacher_preference_violations)
+                self.room_stability + 
+                self.teacher_lecture_consolidation + 
+                self.teacher_working_days + 
+                self.teacher_preference_violations)
 
 
 class ProgressLogger:
@@ -652,15 +658,16 @@ class TimetableState:
         self.soft_lecture_consecutiveness = 0
         self.soft_teacher_preference_violations = 0
         self.soft_teacher_lecture_consolidation = 0  # NEW: Teacher lecture consolidation
+        self.soft_teacher_working_days = 0  # S7: Teacher working days minimization
         # Track assigned periods for each course to detect gaps
         # course_idx -> list of assigned periods (sorted)
         self.course_assigned_periods: List[List[int]] = [[] for _ in range(course_count)]
         # NEW: Track teacher lectures consolidation
-        # teacher_idx -> dict of {course_idx -> {lecture_id -> (period, room_idx)}}
-        self.teacher_course_lectures: Dict[int, Dict[int, Dict[int, Tuple[int, int]]]] = {}
+        # teacher_name (str) -> dict of {course_idx -> {lecture_id -> (period, room_idx) or None}}
+        self.teacher_course_lectures: Dict[str, Dict[int, Dict[int, Optional[Tuple[int, int]]]]] = {}
         for lecture_id in range(lecture_count):
             course_idx = instance.lectures[lecture_id].course
-            teacher = instance.course_teachers[course_idx]
+            teacher = instance.course_teachers[course_idx]  # This is teacher NAME (string)
             if teacher not in self.teacher_course_lectures:
                 self.teacher_course_lectures[teacher] = {}
             if course_idx not in self.teacher_course_lectures[teacher]:
@@ -823,7 +830,7 @@ class TimetableState:
         
         return penalty
 
-    def _compute_teacher_lecture_consolidation_penalty(self, teacher: int) -> int:
+    def _compute_teacher_lecture_consolidation_penalty(self, teacher: str) -> int:
         """
         Tính penalty cho việc giảng viên đổi phòng giữa các lectures LIÊN TIẾP CÙNG TYPE.
         
@@ -877,6 +884,60 @@ class TimetableState:
                     if lec1['course_type'] and lec2['course_type'] and lec1['course_type'] == lec2['course_type']:
                         penalty += 1  # Same type → should use same room
                     # Different types (LT↔TH) → MUST change room → no penalty
+        
+        return penalty
+
+    def _compute_teacher_working_days_penalty(self, teacher: str) -> int:
+        """
+        S7: TEACHER WORKING DAYS MINIMIZATION
+        
+        Tính penalty dựa trên số ngày lên trường của GV.
+        Mục tiêu: Tối thiểu hóa số ngày lên trường, tập trung tiết vào ít ngày nhất.
+        
+        Công thức:
+        - Total lectures = số tiết của GV
+        - Max slots per day = instance.periods_per_day
+        - Min days theoretical = ⌈Total lectures / periods_per_day⌉
+        - Penalty = actual working days - min days theoretical
+        
+        Ví dụ (với periods_per_day = 5):
+        - 6 tiết, 4 ngày → Penalty = 4 - ⌈6/5⌉ = 4 - 2 = 2 (tệ)
+        - 6 tiết, 2 ngày → Penalty = 2 - ⌈6/5⌉ = 2 - 2 = 0 (tốt) ✓
+        
+        Returns:
+            Penalty dựa trên mức độ phân tán tiết học của GV
+        """
+        if teacher not in self.teacher_course_lectures:
+            return 0
+        
+        # 1. Đếm tổng số tiết của GV
+        total_lectures = 0
+        for course_idx, lectures_dict in self.teacher_course_lectures[teacher].items():
+            for lecture_id, assignment in lectures_dict.items():
+                if assignment is not None:  # Đã được xếp
+                    total_lectures += 1
+        
+        if total_lectures <= 0:
+            return 0
+        
+        # 2. Đếm số ngày hoạt động của GV
+        active_days = set()
+        for course_idx, lectures_dict in self.teacher_course_lectures[teacher].items():
+            for lecture_id, assignment in lectures_dict.items():
+                if assignment is not None:
+                    period, _ = assignment
+                    day, _ = self.instance.period_to_slot(period)
+                    active_days.add(day)
+        
+        # 3. Tính số ngày tối thiểu lý thuyết
+        # - Mỗi ngày tối đa N ca (N = periods_per_day)
+        # - Nên min_days = ⌈total_lectures / periods_per_day⌉
+        periods_per_day = self.instance.periods_per_day
+        min_days_theoretical = (total_lectures + periods_per_day - 1) // periods_per_day  # Ceiling division
+        
+        # 4. Penalty = số ngày thực tế - số ngày tối thiểu
+        actual_days = len(active_days)
+        penalty = max(0, actual_days - min_days_theoretical)
         
         return penalty
 
@@ -1194,6 +1255,14 @@ class TimetableState:
             consolidation_delta = new_consolidation_penalty - old_consolidation_penalty
             self.soft_teacher_lecture_consolidation += consolidation_delta
             delta += consolidation_delta * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
+            
+            # S7: Track teacher working days penalty change
+            old_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
+            # After removal, recalculate penalty
+            new_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
+            working_days_delta = new_working_days_penalty - old_working_days_penalty
+            self.soft_teacher_working_days += working_days_delta
+            delta += working_days_delta * WEIGHT_TEACHER_WORKING_DAYS
         
         old_room_penalty = self.lecture_room_penalty[lecture_id]
         self.soft_room_capacity -= old_room_penalty
@@ -1223,16 +1292,16 @@ class TimetableState:
             slots.discard(slot)
             new_penalty = self._compute_curriculum_day_penalty(slots)
             self.curriculum_day_penalty[curriculum_idx][day] = new_penalty
-            penalty_delta = (new_penalty - old_penalty) * WEIGHT_CURRICULUM_COMPACTNESS
+            penalty_delta = new_penalty - old_penalty
             self.soft_curriculum_compactness += penalty_delta
-            delta += penalty_delta
+            delta += penalty_delta * WEIGHT_CURRICULUM_COMPACTNESS
         # Track lecture consecutiveness
         old_consec_penalty = self._compute_course_consecutiveness_penalty(course_idx)
         self.course_assigned_periods[course_idx].remove(period)
         new_consec_penalty = self._compute_course_consecutiveness_penalty(course_idx)
-        consec_delta = (new_consec_penalty - old_consec_penalty) * WEIGHT_LECTURE_CONSECUTIVENESS
+        consec_delta = new_consec_penalty - old_consec_penalty
         self.soft_lecture_consecutiveness += consec_delta
-        delta += consec_delta
+        delta += consec_delta * WEIGHT_LECTURE_CONSECUTIVENESS
         return delta
 
     def _insert_assignment(self, lecture_id: int, period: int, room_idx: int) -> int:
@@ -1281,17 +1350,17 @@ class TimetableState:
             slots.add(slot)
             new_penalty = self._compute_curriculum_day_penalty(slots)
             self.curriculum_day_penalty[curriculum_idx][day] = new_penalty
-            penalty_delta = (new_penalty - old_penalty) * WEIGHT_CURRICULUM_COMPACTNESS
+            penalty_delta = new_penalty - old_penalty
             self.soft_curriculum_compactness += penalty_delta
-            delta += penalty_delta
+            delta += penalty_delta * WEIGHT_CURRICULUM_COMPACTNESS
         # Track lecture consecutiveness
         old_consec_penalty = self._compute_course_consecutiveness_penalty(course_idx)
         self.course_assigned_periods[course_idx].append(period)
         self.course_assigned_periods[course_idx].sort()
         new_consec_penalty = self._compute_course_consecutiveness_penalty(course_idx)
-        consec_delta = (new_consec_penalty - old_consec_penalty) * WEIGHT_LECTURE_CONSECUTIVENESS
+        consec_delta = new_consec_penalty - old_consec_penalty
         self.soft_lecture_consecutiveness += consec_delta
-        delta += consec_delta
+        delta += consec_delta * WEIGHT_LECTURE_CONSECUTIVENESS
         
         # Track teacher lecture consolidation penalty change (ONLY during optimization, not initial building)
         # During initial building: skip consolidation to avoid backtracking issues
@@ -1300,6 +1369,14 @@ class TimetableState:
             consolidation_delta = new_consolidation_penalty - old_consolidation_penalty
             self.soft_teacher_lecture_consolidation += consolidation_delta
             delta += consolidation_delta * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
+            
+            # S7: Track teacher working days penalty change
+            old_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
+            # After insertion, recalculate penalty
+            new_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
+            working_days_delta = new_working_days_penalty - old_working_days_penalty
+            self.soft_teacher_working_days += working_days_delta
+            delta += working_days_delta * WEIGHT_TEACHER_WORKING_DAYS
         
         # Check 8: Teacher Preferences (SOFT CONSTRAINT)
         pref_cost = self._compute_teacher_preference_cost(lecture_id)
@@ -1316,15 +1393,25 @@ class TimetableState:
                 self.soft_room_stability * WEIGHT_ROOM_STABILITY + 
                 self.soft_lecture_consecutiveness * WEIGHT_LECTURE_CONSECUTIVENESS + 
                 self.soft_teacher_preference_violations * WEIGHT_TEACHER_PREFERENCE + 
-                self.soft_teacher_lecture_consolidation * WEIGHT_TEACHER_LECTURE_CONSOLIDATION)
+                self.soft_teacher_lecture_consolidation * WEIGHT_TEACHER_LECTURE_CONSOLIDATION +
+                self.soft_teacher_working_days * WEIGHT_TEACHER_WORKING_DAYS)
 
     def score_breakdown(self) -> ScoreBreakdown:
+        # Calculate S6 and S7 on-the-fly from current assignments
+        s6_total = 0
+        s7_total = 0
+        for teacher_name in self.instance.teachers:  # Iterate by teacher NAME
+            s6_total += self._compute_teacher_lecture_consolidation_penalty(teacher_name)
+            s7_total += self._compute_teacher_working_days_penalty(teacher_name)
+        
         return ScoreBreakdown(
             room_capacity=self.soft_room_capacity,
             min_working_days=self.soft_min_working_days,
             curriculum_compactness=self.soft_curriculum_compactness,
             room_stability=self.soft_room_stability,
             lecture_consecutiveness=self.soft_lecture_consecutiveness,
+            teacher_lecture_consolidation=s6_total,  # Calculate on-the-fly
+            teacher_working_days=s7_total,  # Calculate on-the-fly
             teacher_preference_violations=self.soft_teacher_preference_violations,
         )
 
@@ -2237,6 +2324,117 @@ class TeacherPreferenceNeighborhood(Neighborhood):
         return None
 
 
+class TeacherWorkingDaysNeighborhood(Neighborhood):
+    """Neighborhood chuyên tối ưu Teacher Working Days Minimization (S7) constraint.
+    
+    Chiến lược: Tập trung các tiết của GV vào ít ngày nhất có thể
+    1. Tìm teachers có working_days > min_days_theoretical
+    2. Xác định target_day (ngày GV đã có nhiều tiết nhất)
+    3. Thử di chuyển lectures từ ngày khác sang target_day
+    4. Ưu tiên teachers với working_days penalty cao nhất
+    
+    Min days theoretical = ⌈total_lectures / periods_per_day⌉
+    Vì mỗi ngày tối đa periods_per_day ca (thường là 5)
+    """
+    name = "TeacherWorkingDays"
+    
+    def generate_candidate(self, state: TimetableState, rng: random.Random) -> Optional[Move]:
+        instance = state.instance
+        
+        # Chỉ chạy khi đang trong optimization phase
+        if not hasattr(state, '_optimization_phase') or not state._optimization_phase:
+            return None
+        
+        # Thu thập teachers có working_days penalty > 0
+        teachers_with_penalty = []
+        for teacher in range(len(instance.teachers)):
+            penalty = state._compute_teacher_working_days_penalty(teacher)
+            if penalty > 0:
+                teachers_with_penalty.append((penalty, teacher))
+        
+        if not teachers_with_penalty:
+            return None  # Perfect consolidation by days!
+        
+        # Sort by penalty (highest first)
+        teachers_with_penalty.sort(reverse=True)
+        
+        # Try top teachers
+        for penalty, teacher in teachers_with_penalty[:5]:
+            # Get all lectures of this teacher
+            all_lectures = []
+            for course_idx, lectures_dict in state.teacher_course_lectures[teacher].items():
+                for lecture_id, assignment in lectures_dict.items():
+                    if assignment is not None:
+                        period, room_idx = assignment
+                        day, slot = instance.period_to_slot(period)
+                        all_lectures.append({
+                            'lecture_id': lecture_id,
+                            'period': period,
+                            'room_idx': room_idx,
+                            'day': day,
+                            'slot': slot,
+                            'course_idx': course_idx
+                        })
+            
+            if len(all_lectures) <= 1:
+                continue  # Nothing to consolidate
+            
+            # Find day with most lectures (target_day)
+            from collections import Counter
+            day_counts = Counter([lec['day'] for lec in all_lectures])
+            target_day, _ = day_counts.most_common(1)[0]
+            
+            # Find lectures NOT on target_day
+            lectures_on_other_days = [lec for lec in all_lectures if lec['day'] != target_day]
+            
+            if not lectures_on_other_days:
+                continue  # Already consolidated on one day
+            
+            # Find available slots on target_day
+            occupied_slots = set()
+            for lec in all_lectures:
+                if lec['day'] == target_day:
+                    occupied_slots.add(lec['slot'])
+            
+            available_slots = [s for s in range(instance.periods_per_day) if s not in occupied_slots]
+            
+            if not available_slots:
+                continue  # No space on target_day
+            
+            rng.shuffle(available_slots)
+            
+            # Try to move lectures from other days to target_day
+            for lec in lectures_on_other_days[:3]:  # Try top 3 lectures
+                lecture_id = lec['lecture_id']
+                current_period = lec['period']
+                current_room = lec['room_idx']
+                course_idx = lec['course_idx']
+                
+                # Try each available slot on target_day
+                for slot in available_slots:
+                    target_period = target_day * instance.periods_per_day + slot
+                    
+                    # Check if period is feasible
+                    if target_period not in instance.feasible_periods.get(course_idx, set()):
+                        continue
+                    
+                    # Try current room first (minimize room changes)
+                    if target_period in instance.feasible_periods.get(course_idx, set()):
+                        delta = state.move_lecture(lecture_id, target_period, current_room, commit=False)
+                        if delta is not None and delta < 0:  # Only accept improvements
+                            return MoveLectureMove(lecture_id, target_period, current_room)
+                    
+                    # Try other rooms if current room doesn't work
+                    for room_idx in range(len(instance.rooms)):
+                        if room_idx == current_room:
+                            continue
+                        delta = state.move_lecture(lecture_id, target_period, room_idx, commit=False)
+                        if delta is not None and delta < 0:
+                            return MoveLectureMove(lecture_id, target_period, room_idx)
+        
+        return None
+
+
 class TeacherLectureConsolidationNeighborhood(Neighborhood):
     """Neighborhood chuyên tối ưu Teacher Lecture Consolidation constraint.
     
@@ -2567,9 +2765,13 @@ class TabuSearch:
 def run_metaheuristic(state: TimetableState, meta: str, rng: random.Random, logger: ProgressLogger, remaining_time: float) -> Tuple[Dict[int, Tuple[int, int]], ScoreBreakdown]:
     best_assignments = state.clone_assignments()
     best_breakdown = state.score_breakdown()
+    
+    state._optimization_phase = True
+    
     neighborhoods: List[Neighborhood] = [
         TeacherPreferenceNeighborhood(),  # Priority 1: Teacher preferences (weight 2.0)
-        TeacherLectureConsolidationNeighborhood(),  # Priority 2: Teacher consolidation (weight 1.8) - NEW!
+        TeacherLectureConsolidationNeighborhood(),  # Priority 2: Teacher consolidation (weight 1.8)
+        TeacherWorkingDaysNeighborhood(),  # Priority 3: Teacher working days (weight 1.0) - S7
         MoveLectureNeighborhood(),
         SwapLecturesNeighborhood(),
         RoomChangeNeighborhood(),
