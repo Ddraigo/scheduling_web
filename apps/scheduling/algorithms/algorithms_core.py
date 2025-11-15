@@ -3152,7 +3152,11 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     print(f"Room capacity: {breakdown.room_capacity}")
     print(f"Min working days: {breakdown.min_working_days}")
     print(f"Curriculum compactness: {breakdown.curriculum_compactness}")
+    print(f"Lecture consecutiveness: {breakdown.lecture_consecutiveness}")
     print(f"Room stability: {breakdown.room_stability}")
+    print(f"Teacher lecture consolidation (S6): {breakdown.teacher_lecture_consolidation}")
+    print(f"Teacher working days (S7): {breakdown.teacher_working_days}")
+    print(f"Teacher preferences (S8): {breakdown.teacher_preference_violations}")
     print(f"Total cost: {breakdown.total}")
 
 
