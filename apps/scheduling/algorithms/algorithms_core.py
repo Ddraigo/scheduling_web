@@ -20,6 +20,7 @@ from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 # 5. Room Capacity (1.0) - Hard constraint priority
 # 6. Min Working Days (1.0) - Hard constraint priority
 # 7. Curriculum Compactness - REMOVED (conflicts with S7)
+
 WEIGHT_ROOM_CAPACITY = 1.0
 WEIGHT_MIN_WORKING_DAYS = 1.0
 WEIGHT_ROOM_STABILITY = 1.0
