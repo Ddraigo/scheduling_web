@@ -60,7 +60,7 @@ def run_algo_new(ctt_file, time_limit=30, seed=42):
     print(f"⏱️  Time limit: {time_limit}s")
     print(f"🎲 Seed: {seed}")
     
-    algo_script = WORKSPACE / "apps/scheduling/algorithms/alo_origin/algo_new.py"
+    algo_script = WORKSPACE / "apps/scheduling/algorithms/algorithms_core.py"
     if not algo_script.exists():
         print(f"❌ Script not found: {algo_script}")
         return None

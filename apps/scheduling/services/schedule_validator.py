@@ -2,17 +2,27 @@
 Validator chuyên biệt cho LLM Schedule Generation
 Kiểm tra hard constraints + tính toán metrics
 Tích hợp với cấu trúc dữ liệu hiện tại (ma_dot, ma_lop, ma_phong, time_slot_id)
-
-Sử dụng ConstraintViolation từ constraint_checker.py để đảm bảo consistency
 """
 
 import logging
 from typing import Dict, List, Optional
 from collections import defaultdict
-
-from apps.scheduling.validators.constraint_checker import ConstraintViolation
+from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ConstraintViolation:
+    """Represents a constraint violation"""
+    constraint_type: str
+    severity: str  # 'hard' or 'soft'
+    message: str
+    affected_entities: List[str] = None
+    
+    def __post_init__(self):
+        if self.affected_entities is None:
+            self.affected_entities = []
 
 
 class ScheduleValidator:

@@ -55,7 +55,7 @@ class AlgorithmRunner:
             logger.info(f"Found DotXep: {self.dot_xep.ma_dot} - {self.dot_xep.ten_dot}")
             
             # Export sang .ctt file vào thư mục output/
-            output_dir = Path(settings.BASE_DIR) / 'output' / 'ctt_files'
+            output_dir = Path(settings.BASE_DIR) / 'output' / 'test_web_algo' / 'ctt_files'
             output_dir.mkdir(parents=True, exist_ok=True)
             
             self.ctt_file_path = str(export_to_ctt(
@@ -134,7 +134,7 @@ class AlgorithmRunner:
                 # Enable optimization phase: activate Teacher Lecture Consolidation penalty
                 state._optimization_phase = True
                 
-                log_file = Path(settings.BASE_DIR) / 'output' / f'progress_{self.ma_dot}.csv'
+                log_file = Path(settings.BASE_DIR) / 'output' / 'test_web_algo' / f'progress_{self.ma_dot}.csv'
                 progress_logger = ProgressLogger(log_file)
                 
                 best_assignments, best_breakdown = run_metaheuristic(
@@ -156,7 +156,9 @@ class AlgorithmRunner:
                 final_cost = initial_cost
             
             # Save solution to .sol file
-            sol_file = Path(settings.BASE_DIR) / 'output' / f'solution_{self.ma_dot}.sol'
+            sol_dir = Path(settings.BASE_DIR) / 'output' / 'test_web_algo'
+            sol_dir.mkdir(parents=True, exist_ok=True)
+            sol_file = sol_dir / f'solution_{self.ma_dot}.sol'
             write_solution(self.instance, best_assignments, sol_file)
             logger.info(f"Solution saved to: {sol_file}")
             
