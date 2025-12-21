@@ -36,7 +36,7 @@ def llm_scheduler_view(request):
         'app_label': 'sap_lich',
         'opts': {
             'app_label': 'sap_lich',
-            'model_name': 'scheduler',
+            'model_name': 'saplich',
             'verbose_name_plural': 'Sắp lịch',
         },
     }
@@ -62,7 +62,7 @@ def algo_scheduler_view(request):
         'app_label': 'sap_lich',
         'opts': {
             'app_label': 'sap_lich',
-            'model_name': 'scheduler',
+            'model_name': 'saplich',
             'verbose_name_plural': 'Sắp lịch',
         },
     }

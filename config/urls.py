@@ -4,6 +4,7 @@ from django.urls import include, path
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
 from apps.scheduling import views as views_scheduling
+from apps.sap_lich import views as views_sap_lich
 
 # Create router for scheduling ViewSets
 scheduler_router = DefaultRouter()
@@ -39,6 +40,10 @@ urlpatterns = [
     
     # DynAPI MUST BE LAST to prevent greedy matching of api/<model_name>/
     path('', include('apps.dyn_api.urls')),
+    
+    # Sap Lich admin pages (must be before admin/ to work)
+    path('admin/sap_lich/llm-scheduler/', admin.site.admin_view(views_sap_lich.llm_scheduler_view), name='sap_lich_llm_scheduler'),
+    path('admin/sap_lich/algo-scheduler/', admin.site.admin_view(views_sap_lich.algo_scheduler_view), name='sap_lich_algo_scheduler'),
     
     path("admin/", admin.site.urls),
     path("", include('admin_black.urls')),
