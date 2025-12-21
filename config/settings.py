@@ -239,8 +239,6 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
         {"name": "Trang chủ", "url": "/", "permissions": ["auth.view_user"]},
         {"name": "Dữ liệu", "url": "/data_table/", "permissions": ["auth.view_user"]},
-        {"name": "Sắp lịch bằng LLM", "url": "admin:sap_lich_llm_scheduler", "permissions": ["auth.view_user"], "icon": "fas fa-robot"},
-        {"name": "Sắp lịch bằng thuật toán", "url": "admin:sap_lich_algo_scheduler", "permissions": ["auth.view_user"], "icon": "fas fa-cogs"},
     ],
     "usermenu_links": [
         {"name": "Hồ sơ", "url": "/admin/auth/user/", "icon": "fas fa-cogs"},
@@ -249,19 +247,21 @@ JAZZMIN_SETTINGS = {
     "navigation_expanded": False,
     # Order apps - put "Sắp lịch" first
     "order_with_respect_to": ["sap_lich", "scheduling", "auth", "authtoken", "data_table"],
+    # Hide the dummy model, only show custom links
+    "hide_models": ["sap_lich.saplich"],
     # Show all apps including new ones
     "show_ui_builder": False,
-    # Custom links under "Sắp lịch" app
+    # Custom links under "Sắp lịch" in sidebar
     "custom_links": {
         "sap_lich": [
             {
                 "name": "Sắp lịch bằng LLM",
-                "url": "admin:sap_lich_llm_scheduler",
+                "url": "/admin/sap_lich/llm-scheduler/",
                 "icon": "fas fa-robot",
             },
             {
                 "name": "Sắp lịch bằng thuật toán",
-                "url": "admin:sap_lich_algo_scheduler",
+                "url": "/admin/sap_lich/algo-scheduler/",
                 "icon": "fas fa-cogs",
             }
         ]
