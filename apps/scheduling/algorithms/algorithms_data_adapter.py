@@ -474,7 +474,7 @@ def main():
     
     print(f"\n✨ Dữ liệu đã sẵn sàng tại: {output_file}")
     print("Bây giờ bạn có thể chạy algo_new.py với:")
-    print(f"  python apps/scheduling/algorithms/alo_origin/algo_new.py --instance {output_file}")
+    print(f"  python apps/scheduling/algorithms/algorithms_core.py --instance {output_file}")
 
 
 if __name__ == "__main__":
