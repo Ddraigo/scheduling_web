@@ -8,112 +8,455 @@
     <h1 class="h4 m-0 pr-3 mr-3 border-right">{{ title }}</h1>
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/admin/">Trang chủ</a></li>
-        <li class="breadcrumb-item"><a href="/admin/sap_lich/llm-scheduler/">Sắp lịch</a></li>
         <li class="breadcrumb-item active">{{ title }}</li>
     </ol>
 </div>
 {% endblock %}
 
-
 {% block content %}
-<div id="content-main" style="padding: 20px;">
-
-<!-- Control Panel -->
-<div class="card mb-4">
-    <div class="card-header">
-        <h5>⚙️ Bảng điều khiển</h5>
-    </div>
-    <div class="card-body">
-        <div class="form-group mb-3">
-            <label for="periodSelect">Chọn đợt xếp:</label>
-            <select id="periodSelect" class="form-control">
-                <option value="">-- Chọn đợt --</option>
+<div id="content-main" class="chat-container">
+    
+    <!-- Chat Header -->
+    <div class="chat-header">
+        <div class="chat-header-info">
+            <div class="chat-avatar">
+                <span>🤖</span>
+            </div>
+            <div class="chat-title">
+                <h5>Trợ lý Xếp Lịch</h5>
+                <span class="status-online">● Online</span>
+            </div>
+        </div>
+        <div class="chat-header-actions">
+            <select id="periodSelect" class="form-select form-select-sm" style="width: auto;">
+                <option value="">-- Chọn đợt xếp --</option>
                 {% for period in periods %}
                 <option value="{{ period.ma_dot }}">
-                    {{ period.ma_dot }} - {{ period.ten_dot }} ({{ period.trang_thai }})
+                    {{ period.ten_dot }}
                 </option>
                 {% endfor %}
             </select>
-        </div>
-        
-        <div class="btn-group" role="group">
-            <button type="button" class="btn btn-primary" onclick="testFetchData()">
-                📥 Tải dữ liệu
-            </button>
-            <button type="button" class="btn btn-info" onclick="testPrepareCompact()">
-                🔧 Định dạng compact
-            </button>
-            <button type="button" class="btn btn-warning" onclick="testBuildPrompt()">
-                📝 Xây dựng prompt
-            </button>
-            <button type="button" class="btn btn-success" onclick="testCallLLM()">
-                🤖 Gọi LLM
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearChat()" title="Xóa lịch sử">
+                🗑️
             </button>
         </div>
-        
-        <hr>
-        
-        <button type="button" class="btn btn-lg btn-success" onclick="testFullPipeline()">
-            ▶️ Chạy toàn bộ quy trình
-        </button>
     </div>
+    
+    <!-- Chat Messages Area -->
+    <div class="chat-messages" id="chatMessages">
+        <!-- Welcome message -->
+        <div class="message bot-message">
+            <div class="message-avatar">🤖</div>
+            <div class="message-content">
+                <div class="message-text">
+                    Xin chào! 👋 Tôi là trợ lý AI hỗ trợ tra cứu thông tin về lịch học.
+                    <br><br>
+                    Tôi có thể giúp bạn:
+                    <ul>
+                        <li>📚 Tra cứu thông tin giảng viên và môn dạy</li>
+                        <li>🏫 Tìm phòng trống theo thời gian</li>
+                        <li>📅 Xem lịch dạy của giảng viên</li>
+                        <li>💡 Gợi ý phòng phù hợp (LT/TH) cho môn học</li>
+                    </ul>
+                    Hãy đặt câu hỏi để bắt đầu!
+                </div>
+                <div class="message-time">{{ current_time }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chat Input Area -->
+    <div class="chat-input-area">
+        <div class="suggestion-chips">
+            <button class="chip" onclick="sendSuggestion('Giảng viên Nguyễn dạy môn gì?')">
+                👤 GV Nguyễn dạy gì?
+            </button>
+            <button class="chip" onclick="sendSuggestion('Thứ 3 ca 1 có phòng TH nào trống?')">
+                🏫 Phòng TH trống T3 Ca1
+            </button>
+            <button class="chip" onclick="sendSuggestion('Liệt kê tất cả phòng Lý thuyết')">
+                📋 DS Phòng LT
+            </button>
+            <button class="chip" onclick="sendSuggestion('Môn Lập trình có bao nhiêu lớp?')">
+                📚 Lớp môn Lập trình
+            </button>
+        </div>
+        <div class="input-group">
+            <textarea 
+                id="userInput" 
+                class="form-control" 
+                placeholder="Nhập câu hỏi của bạn..."
+                rows="1"
+                onkeypress="handleKeyPress(event)"
+            ></textarea>
+            <button class="btn btn-primary" onclick="sendMessage()" id="sendBtn">
+                <span id="sendIcon">➤</span>
+                <span id="loadingIcon" style="display: none;">
+                    <span class="spinner-border spinner-border-sm"></span>
+                </span>
+            </button>
+        </div>
+    </div>
+    
 </div>
-
-<!-- Output Console -->
-<div class="card">
-    <div class="card-header">
-        <h5>📊 Kết quả</h5>
-    </div>
-    <div class="card-body">
-        <div id="outputConsole" style="background-color: #1e1e1e; color: #00ff00; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; max-height: 600px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word;">
-            Đang chờ thực hiện lệnh...
-        </div>
-    </div>
-</div>
-
 {% endblock %}
 
 {% block extrahead %}
 {{ block.super }}
 <style>
-    /* Force vertical stacking */
-    #content-main {
-        display: block !important;
-        width: 100% !important;
+    /* Chat Container */
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 120px);
+        max-width: 1600px;
+        width: 95%;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        overflow: hidden;
     }
     
-    .card {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        margin-bottom: 20px;
-        width: 100% !important;
-        display: block !important;
+    /* Chat Header */
+    .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
     }
-    .card-header {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #ddd;
-        padding: 10px 15px;
+    
+    .chat-header-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
-    .card-header h5 {
+    
+    .chat-avatar {
+        width: 48px;
+        height: 48px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    
+    .chat-title h5 {
         margin: 0;
+        font-size: 18px;
+        font-weight: 600;
     }
-    .card-body {
-        padding: 15px;
-    }
-    #outputConsole {
+    
+    .status-online {
         font-size: 12px;
-        line-height: 1.4;
+        color: #90EE90;
     }
-    .btn-group {
+    
+    .chat-header-actions {
         display: flex;
         gap: 10px;
-        flex-wrap: wrap;
+        align-items: center;
+    }
+    
+    .chat-header-actions .form-select {
+        background: rgba(255,255,255,0.9);
+        border: none;
+        font-size: 13px;
+    }
+    
+    .chat-header-actions .btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+    }
+    
+    /* Chat Messages */
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background: #f8f9fa;
+    }
+    
+    .message {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 16px;
+        max-width: 85%;
+    }
+    
+    .user-message {
+        flex-direction: row-reverse;
+        margin-left: auto;
+    }
+    
+    .message-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+    
+    .bot-message .message-avatar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .user-message .message-avatar {
+        background: #e9ecef;
+    }
+    
+    .message-content {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .message-text {
+        padding: 12px 16px;
+        border-radius: 18px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    
+    .bot-message .message-text {
+        background: white;
+        border-radius: 4px 18px 18px 18px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    
+    .user-message .message-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 18px 4px 18px 18px;
+    }
+    
+    .message-time {
+        font-size: 11px;
+        color: #999;
+        padding: 0 8px;
+    }
+    
+    .user-message .message-time {
+        text-align: right;
+    }
+    
+    /* Chat Input */
+    .chat-input-area {
+        padding: 16px 20px;
+        background: white;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .suggestion-chips {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+    
+    .chip {
+        flex-shrink: 0;
+        padding: 6px 14px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background: white;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .chip:hover {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+    
+    .chat-container .input-group {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .chat-container .input-group textarea {
+        flex: 1;
+        border-radius: 24px;
+        padding: 12px 20px;
+        border: 1px solid #ddd;
+        resize: none;
+        font-size: 14px;
+    }
+    
+    .chat-container .input-group textarea:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+    
+    .chat-container .input-group .btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+    
+    .chat-container .input-group .btn:hover {
+        transform: scale(1.05);
+    }
+    
+    /* Typing indicator */
+    .typing-indicator {
+        display: flex;
+        gap: 4px;
+        padding: 12px 16px;
+        background: white;
+        border-radius: 18px;
+        width: fit-content;
+    }
+    
+    .typing-indicator span {
+        width: 8px;
+        height: 8px;
+        background: #667eea;
+        border-radius: 50%;
+        animation: typing 1s infinite ease-in-out;
+    }
+    
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes typing {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-4px); }
+    }
+    
+    /* Markdown styling in messages */
+    .message-text ul, .message-text ol {
+        margin: 8px 0;
+        padding-left: 20px;
+    }
+    
+    .message-text li {
+        margin: 4px 0;
+    }
+    
+    .message-text code {
+        background: #f0f0f0;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: monospace;
+    }
+    
+    .message-text strong {
+        font-weight: 600;
+    }
+    
+    /* Table styling */
+    .message-text table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0;
+        font-size: 13px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .message-text table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .message-text table th {
+        padding: 12px 10px;
+        text-align: left;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    
+    .message-text table td {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .message-text table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .message-text table tbody tr:hover {
+        background-color: #f8f9ff;
+    }
+    
+    .message-text table tbody tr:nth-child(even) {
+        background-color: #fafafa;
+    }
+    
+    .message-text table tbody tr:nth-child(even):hover {
+        background-color: #f0f2ff;
+    }
+    
+    /* Heading styles in messages */
+    .message-text h1, .message-text h2, .message-text h3 {
+        margin: 16px 0 8px 0;
+        color: #333;
+    }
+    
+    .message-text h3 {
+        font-size: 15px;
+        color: #667eea;
+        border-bottom: 2px solid #667eea;
+        padding-bottom: 4px;
+        display: inline-block;
+    }
+    
+    .message-text hr {
+        border: none;
+        border-top: 1px solid #eee;
+        margin: 16px 0;
+    }
+    
+    /* Responsive table */
+    .table-wrapper {
+        overflow-x: auto;
+        margin: 8px 0;
+    }
+    
+    /* Scrollbar styling */
+    .chat-messages::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .chat-messages::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    
+    .chat-messages::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 3px;
+    }
+    
+    .chat-messages::-webkit-scrollbar-thumb:hover {
+        background: #999;
+    }
+    
+    /* Fix sidebar scroll issue */
+    .sidebar, .sidebar-wrapper, nav.sidebar {
+        overflow-x: hidden !important;
     }
 </style>
-{% endblock %}
-
-{% block extrastyle %}
-{{ block.super }}
 {% endblock %}
 
 {% block footer %}
@@ -121,159 +464,286 @@
 <script>
     const apiBaseUrl = '/api/scheduling';
     
-    function log(message, type = 'info') {
-        const console = document.getElementById('outputConsole');
-        const timestamp = new Date().toLocaleTimeString();
-        const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
-        console.innerHTML += `[${timestamp}] ${prefix} ${message}\n`;
-        console.scrollTop = console.scrollHeight;
-    }
-    
-    function clearLog() {
-        document.getElementById('outputConsole').innerHTML = '';
+    function getCurrentTime() {
+        return new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     }
     
     function getSelectedPeriod() {
-        const select = document.getElementById('periodSelect');
-        const periodId = select.value;
-        if (!periodId) {
-            log('⚠️ Vui lòng chọn đợt xếp!', 'error');
-            return null;
-        }
-        return periodId;
+        return document.getElementById('periodSelect').value || null;
     }
     
-    async function testFetchData() {
-        clearLog();
-        const periodId = getSelectedPeriod();
-        if (!periodId) return;
+    function addMessage(content, isUser = false) {
+        const messagesContainer = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
         
-        log(`Đang tải dữ liệu cho đợt: ${periodId}...`);
+        // Enhanced markdown to HTML conversion
+        let htmlContent = parseMarkdown(content);
         
-        try {
-            const response = await fetch(`${apiBaseUrl}/llm_scheduler/?period_id=${periodId}&step=fetch_data`);
-            const data = await response.json();
+        function parseMarkdown(text) {
+            // Parse tables first
+            text = parseMarkdownTables(text);
             
-            if (data.success) {
-                log(`✅ Đã tải thành công dữ liệu`, 'success');
-                log(`📊 Thống kê chi tiết:`);
-                if (data.stats) {
-                    log(`   📌 Lớp & Giảng viên:`);
-                    log(`      • Phân công: ${data.stats.phan_cong_count || 0} lớp`);
-                    log(`      • Giảng viên: ${data.stats.teachers_count || 0} người`);
-                    log(`   📌 Phòng học:`);
-                    log(`      • Tổng phòng: ${data.stats.rooms_count || 0}`);
-                    log(`      • Phòng LT: ${data.stats.rooms_lt || 0}`);
-                    log(`      • Phòng TH: ${data.stats.rooms_th || 0}`);
-                    log(`   📌 Thời gian & Ràng buộc:`);
-                    log(`      • Khung thời gian: ${data.stats.timeslots_count || 0}`);
-                    log(`      • Ràng buộc mềm: ${data.stats.constraints_custom || 0}`);
-                    log(`      • Nguyện vọng: ${data.stats.preferences_count || 0}`);
-                }
-            } else {
-                log(`❌ Lỗi: ${data.error || data.message}`, 'error');
-            }
-        } catch (error) {
-            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
-        }
-    }
-    
-    async function prepareCompactData() {
-        clearLog();
-        const periodId = getSelectedPeriod();
-        if (!periodId) return;
-        
-        log(`Chuẩn bị dữ liệu compact cho đợt: ${periodId}...`);
-        
-        try {
-            const response = await fetch(`${apiBaseUrl}/llm_scheduler/?period_id=${periodId}&step=prepare_compact`);
-            const data = await response.json();
+            // Parse headings
+            text = text.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+            text = text.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+            text = text.replace(/^# (.*)$/gm, '<h1>$1</h1>');
             
-            if (data.success) {
-                log(`✅ Đã tạo định dạng compact`, 'success');
-                log(`📊 Thống kê: ${JSON.stringify(data.stats, null, 2)}`);
-            } else {
-                log(`❌ Lỗi: ${data.error || data.message}`, 'error');
-            }
-        } catch (error) {
-            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
-        }
-    }
-    
-    async function testBuildPrompt() {
-        clearLog();
-        const periodId = getSelectedPeriod();
-        if (!periodId) return;
-        
-        log(`Đang xây dựng prompt cho đợt: ${periodId}...`);
-        
-        try {
-            const response = await fetch(`${apiBaseUrl}/llm_scheduler/?period_id=${periodId}&step=build_prompt`);
-            const data = await response.json();
+            // Parse horizontal rules
+            text = text.replace(/^---$/gm, '<hr>');
             
-            if (data.success) {
-                log(`✅ Đã tạo prompt`, 'success');
-                log(`📝 Kích thước prompt: ${data.prompt.prompt_length} ký tự`);
-                log(`📝 Xem trước:`);
-                log(data.prompt.prompt_preview);
-            } else {
-                log(`❌ Lỗi: ${data.error || data.message}`, 'error');
-            }
-        } catch (error) {
-            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
-        }
-    }
-    
-    async function testCallLLM() {
-        clearLog();
-        const periodId = getSelectedPeriod();
-        if (!periodId) return;
-        
-        log(`Đang gọi LLM để tạo lịch cho đợt: ${periodId}...`);
-        log(`⏳ Đang chờ phản hồi từ LLM... (có thể mất 10-30 giây)`);
-        
-        try {
-            const response = await fetch(`${apiBaseUrl}/llm_scheduler/?period_id=${periodId}&step=call_llm`);
-            const data = await response.json();
+            // Parse bold and italic
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            text = text.replace(/`(.*?)`/g, '<code>$1</code>');
             
-            if (data.success) {
-                log(`✅ LLM đã phản hồi thành công`, 'success');
-                if (data.llm_result) {
-                    log(`📊 Số lịch tạo được: ${data.llm_result.schedule_count}`);
-                    if (data.llm_result.has_errors) {
-                        log(`⚠️ Có lỗi trong lịch được tạo`, 'warning');
+            // Parse bullet points
+            const lines = text.split('\n');
+            let inList = false;
+            let result = [];
+            
+            for (let line of lines) {
+                if (line.match(/^\* (.*)$/)) {
+                    if (!inList) {
+                        result.push('<ul>');
+                        inList = true;
                     }
+                    result.push('<li>' + line.replace(/^\* /, '') + '</li>');
+                } else if (line.match(/^- (.*)$/)) {
+                    if (!inList) {
+                        result.push('<ul>');
+                        inList = true;
+                    }
+                    result.push('<li>' + line.replace(/^- /, '') + '</li>');
+                } else {
+                    if (inList) {
+                        result.push('</ul>');
+                        inList = false;
+                    }
+                    result.push(line);
                 }
-            } else {
-                log(`❌ Lỗi: ${data.error || data.message}`, 'error');
             }
-        } catch (error) {
-            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
+            if (inList) result.push('</ul>');
+            
+            text = result.join('\n');
+            
+            // Convert remaining newlines to <br> (but not inside tables/lists)
+            text = text.replace(/\n(?!<)/g, '<br>');
+            text = text.replace(/<br><(h[123]|ul|ol|table|hr|div)/g, '<$1');
+            text = text.replace(/<\/(h[123]|ul|ol|table|hr|div)><br>/g, '</$1>');
+            
+            return text;
+        }
+        
+        function parseMarkdownTables(text) {
+            const lines = text.split('\n');
+            let result = [];
+            let tableLines = [];
+            let inTable = false;
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // Check if line is a table row (starts and ends with |)
+                if (line.startsWith('|') && line.endsWith('|')) {
+                    if (!inTable) {
+                        inTable = true;
+                        tableLines = [];
+                    }
+                    tableLines.push(line);
+                } else {
+                    if (inTable) {
+                        // End of table, convert to HTML
+                        result.push(convertTableToHtml(tableLines));
+                        tableLines = [];
+                        inTable = false;
+                    }
+                    result.push(lines[i]);
+                }
+            }
+            
+            // Handle table at end of content
+            if (inTable && tableLines.length > 0) {
+                result.push(convertTableToHtml(tableLines));
+            }
+            
+            return result.join('\n');
+        }
+        
+        function convertTableToHtml(tableLines) {
+            if (tableLines.length < 2) return tableLines.join('\n');
+            
+            let html = '<div class="table-wrapper"><table>';
+            
+            // Parse header
+            const headerCells = tableLines[0].split('|').filter(cell => cell.trim() !== '');
+            html += '<thead><tr>';
+            headerCells.forEach(cell => {
+                html += '<th>' + cell.trim() + '</th>';
+            });
+            html += '</tr></thead>';
+            
+            // Parse body (skip separator line at index 1)
+            html += '<tbody>';
+            for (let i = 2; i < tableLines.length; i++) {
+                const cells = tableLines[i].split('|').filter(cell => cell.trim() !== '');
+                if (cells.length > 0) {
+                    html += '<tr>';
+                    cells.forEach(cell => {
+                        html += '<td>' + cell.trim() + '</td>';
+                    });
+                    html += '</tr>';
+                }
+            }
+            html += '</tbody></table></div>';
+            
+            return html;
+        }
+        
+        messageDiv.innerHTML = `
+            <div class="message-avatar">${isUser ? '👤' : '🤖'}</div>
+            <div class="message-content">
+                <div class="message-text">${htmlContent}</div>
+                <div class="message-time">${getCurrentTime()}</div>
+            </div>
+        `;
+        
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    function addTypingIndicator() {
+        const messagesContainer = document.getElementById('chatMessages');
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message bot-message';
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = `
+            <div class="message-avatar">🤖</div>
+            <div class="message-content">
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        `;
+        messagesContainer.appendChild(typingDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    function removeTypingIndicator() {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) {
+            indicator.remove();
         }
     }
     
-    async function testFullPipeline() {
-        clearLog();
-        const periodId = getSelectedPeriod();
-        if (!periodId) return;
+    function setLoading(loading) {
+        const sendBtn = document.getElementById('sendBtn');
+        const sendIcon = document.getElementById('sendIcon');
+        const loadingIcon = document.getElementById('loadingIcon');
+        const userInput = document.getElementById('userInput');
         
-        log(`🚀 Bắt đầu quy trình hoàn chỉnh cho đợt: ${periodId}`);
-        log(`⏳ Đang xử lý... (có thể mất vài phút)`);
+        sendBtn.disabled = loading;
+        userInput.disabled = loading;
+        sendIcon.style.display = loading ? 'none' : 'inline';
+        loadingIcon.style.display = loading ? 'inline' : 'none';
+    }
+    
+    async function sendMessage() {
+        const userInput = document.getElementById('userInput');
+        const message = userInput.value.trim();
+        
+        if (!message) return;
+        
+        // Add user message
+        addMessage(message, true);
+        userInput.value = '';
+        
+        // Show loading
+        setLoading(true);
+        addTypingIndicator();
         
         try {
-            const response = await fetch(`${apiBaseUrl}/llm_scheduler/?period_id=${periodId}&step=generate_schedule`);
+            const periodId = getSelectedPeriod();
+            const response = await fetch(`${apiBaseUrl}/chatbot/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify({
+                    message: message,
+                    ma_dot: periodId
+                })
+            });
+            
             const data = await response.json();
+            removeTypingIndicator();
             
             if (data.success) {
-                log(`✅ Hoàn thành quy trình!`, 'success');
-                log(`📊 Kết quả cuối cùng:`);
-                log(JSON.stringify(data, null, 2));
+                addMessage(data.response);
             } else {
-                log(`❌ Lỗi: ${data.error || data.message}`, 'error');
+                addMessage(`❌ Lỗi: ${data.error || 'Không thể xử lý yêu cầu'}`);
             }
         } catch (error) {
-            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
+            removeTypingIndicator();
+            addMessage(`❌ Lỗi kết nối: ${error.message}`);
+        } finally {
+            setLoading(false);
         }
     }
+    
+    function sendSuggestion(text) {
+        document.getElementById('userInput').value = text;
+        sendMessage();
+    }
+    
+    function handleKeyPress(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+        }
+    }
+    
+    function clearChat() {
+        const messagesContainer = document.getElementById('chatMessages');
+        // Keep only the welcome message
+        const messages = messagesContainer.querySelectorAll('.message');
+        messages.forEach((msg, index) => {
+            if (index > 0) msg.remove();
+        });
+        
+        // Also clear server-side history
+        fetch(`${apiBaseUrl}/chatbot/clear/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            }
+        }).catch(err => console.log('Clear history error:', err));
+    }
+    
+    function getCsrfToken() {
+        const name = 'csrftoken';
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Auto-resize textarea
+    document.getElementById('userInput').addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
 </script>
 {% endblock %}
