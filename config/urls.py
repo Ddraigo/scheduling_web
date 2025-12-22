@@ -28,6 +28,9 @@ urlpatterns = [
     # Scheduling API - Custom endpoints FIRST, then ViewSet routes
     # ⭐ MUST BE BEFORE dyn_api to prevent matching 'llm_scheduler' as model_name
     path('api/scheduling/llm_scheduler/', views_scheduling.llm_scheduler_api, name='llm-scheduler'),
+    path('api/scheduling/chatbot/', views_scheduling.chatbot_api, name='chatbot-api'),
+    path('api/scheduling/chatbot/history/', views_scheduling.chatbot_history_api, name='chatbot-history'),
+    path('api/scheduling/chatbot/clear/', views_scheduling.chatbot_clear_api, name='chatbot-clear'),
     path('api/scheduling/token_stats/', views_scheduling.token_stats_api, name='token-stats'),
     path('api/scheduling/debug/dotxep/', views_scheduling.debug_dotxep_api, name='debug-dotxep'),
     path('api/scheduling/', include(scheduler_router.urls)),  # Then all ViewSets

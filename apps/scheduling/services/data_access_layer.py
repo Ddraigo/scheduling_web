@@ -80,13 +80,20 @@ class DataAccessLayer:
         Lấy thông tin giảng viên + môn họ có thể dạy + lịch dạy
         """
         gv = GiangVien.objects.select_related('ma_bo_mon').get(ma_gv=ma_gv)
+        
+        # Lấy các lớp môn học mà GV này được phân công
+        phan_cong_lops = PhanCong.objects.filter(
+            ma_gv=ma_gv,
+            ma_dot__trang_thai__in=['RUNNING', 'PUBLISHED']
+        ).values_list('ma_lop_id', flat=True)
+        
         return {
             'giang_vien': gv,
             'mon_hoc_co_the_day': GVDayMon.objects.filter(
                 ma_gv=ma_gv
             ).select_related('ma_mon_hoc'),
             'lich_day_hien_tai': ThoiKhoaBieu.objects.filter(
-                phan_cong__ma_gv=ma_gv,
+                ma_lop__in=phan_cong_lops,
                 ma_dot__trang_thai__in=['RUNNING', 'PUBLISHED']
             ).select_related('time_slot_id', 'ma_lop', 'ma_phong')
         }
@@ -241,8 +248,14 @@ class DataAccessLayer:
     @staticmethod
     def get_tkb_by_giang_vien(ma_gv, ma_dot=None):
         """Lấy lịch học của giảng viên"""
+        # Tìm các lớp mà GV được phân công
+        phan_cong_query = PhanCong.objects.filter(ma_gv=ma_gv)
+        if ma_dot:
+            phan_cong_query = phan_cong_query.filter(ma_dot__ma_dot=ma_dot)
+        phan_cong_lops = phan_cong_query.values_list('ma_lop_id', flat=True)
+        
         query = ThoiKhoaBieu.objects.filter(
-            phan_cong__ma_gv=ma_gv
+            ma_lop__in=phan_cong_lops
         ).select_related('ma_lop', 'ma_phong', 'time_slot_id', 'ma_dot')
         if ma_dot:
             query = query.filter(ma_dot__ma_dot=ma_dot)
@@ -562,10 +575,10 @@ def get_giang_vien_info_dict(ma_gv):
         'so_mon_co_the_day': thong_tin['mon_hoc_co_the_day'].count(),
         'lich_day_hien_tai': [
             {
-                'lop': t.lop_mon_hoc.ma_lop,
-                'mon': t.lop_mon_hoc.mon_hoc.ten_mon_hoc,
-                'phong': t.phong_hoc.ma_phong,
-                'time_slot': t.time_slot.time_slot_id,
+                'lop': t.ma_lop.ma_lop,
+                'mon': t.ma_lop.ma_mon_hoc.ten_mon_hoc,
+                'phong': t.ma_phong.ma_phong if t.ma_phong else None,
+                'time_slot': t.time_slot_id.time_slot_id,
             }
             for t in thong_tin['lich_day_hien_tai']
         ]
