@@ -255,14 +255,14 @@ JAZZMIN_SETTINGS = {
     "custom_links": {
         "sap_lich": [
             {
-                "name": "Sắp lịch bằng LLM",
-                "url": "/admin/sap_lich/llm-scheduler/",
-                "icon": "fas fa-robot",
-            },
-            {
                 "name": "Sắp lịch bằng thuật toán",
                 "url": "/admin/sap_lich/algo-scheduler/",
                 "icon": "fas fa-cogs",
+            },
+            {
+                "name": "Chat bot hỗ trợ",
+                "url": "/admin/sap_lich/llm-scheduler/",
+                "icon": "fas fa-robot",
             }
         ]
     },

@@ -7,6 +7,7 @@ import json
 import logging
 import random
 import time
+from datetime import datetime
 from django.contrib import admin
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def llm_scheduler_view(request):
-    """Admin view for LLM-based scheduler"""
+    """Admin view for LLM Chatbot Assistant"""
     try:
         periods = list(DotXep.objects.all().values('ma_dot', 'ten_dot', 'trang_thai'))
     except Exception:
@@ -28,7 +29,7 @@ def llm_scheduler_view(request):
     context = {
         **admin.site.each_context(request),
         'periods': periods,
-        'title': 'Sắp lịch bằng LLM',
+        'title': 'Trợ lý AI - Hỏi đáp Lịch học',
         'site_title': admin.site.site_title,
         'site_header': admin.site.site_header,
         'has_permission': True,
@@ -39,6 +40,7 @@ def llm_scheduler_view(request):
             'model_name': 'saplich',
             'verbose_name_plural': 'Sắp lịch',
         },
+        'current_time': datetime.now().strftime('%H:%M'),
     }
     return render(request, 'admin/llm_scheduler.html', context)
 
