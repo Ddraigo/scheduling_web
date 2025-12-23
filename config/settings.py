@@ -117,11 +117,20 @@ WSGI_APPLICATION = "config.wsgi.application"
 DB_ENGINE   = os.getenv('DB_ENGINE', None)
 DB_USERNAME = os.getenv('DB_USERNAME', os.getenv('DB_USER', 'sa'))
 DB_PASS     = os.getenv('DB_PASS', os.getenv('DB_PASSWORD', 'sa123'))
-DB_HOST     = os.getenv('DB_HOST', os.getenv('DB_SERVER', 'MSI\\SQLEXPRESS'))
+DB_HOST     = os.getenv('DB_HOST', os.getenv('DB_SERVER', '.\\SQLEXPRESS'))
 DB_PORT     = os.getenv('DB_PORT', '')
 DB_NAME     = os.getenv('DB_NAME', os.getenv('DB_DATABASE', 'CSDL_TKB'))
 DB_DRIVER   = os.getenv('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
 DB_USE_WINDOWS_AUTH = os.getenv('DB_USE_WINDOWS_AUTH', 'false').lower() == 'true'
+
+# DEBUG: In ra các giá trị để kiểm tra
+print(f"=== DATABASE CONFIG DEBUG ===")
+print(f"DB_ENGINE: {DB_ENGINE}")
+print(f"DB_HOST: {DB_HOST}")
+print(f"DB_NAME: {DB_NAME}")
+print(f"DB_USERNAME: {DB_USERNAME}")
+print(f"DB_DRIVER: {DB_DRIVER}")
+print(f"==============================")
 
 if DB_ENGINE and DB_NAME and DB_USERNAME:
     if DB_ENGINE == 'mssql':
