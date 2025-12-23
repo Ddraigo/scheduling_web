@@ -12,6 +12,7 @@ from .models import (
     DuKienDT, GVDayMon, KhungTG, RangBuocMem, RangBuocTrongDot, NguyenVong,
     NgayNghiCoDinh, NgayNghiDot
 )
+from .utils.excel_export import ExcelExporter
 
 # Rename "Scheduling System" app label to "Dữ liệu" in admin
 class CustomAdminSite(admin.AdminSite):
@@ -42,6 +43,32 @@ admin.site.app_index = patched_app_index
 class BaseAdmin(admin.ModelAdmin):
     """Base admin class with common settings"""
     date_hierarchy = None
+    change_list_template = 'admin/scheduling/change_list.html'
+    
+    def export_to_excel(self, request, queryset):
+        """Action to export selected items to Excel"""
+        model_name = self.model.__name__
+        exporter_method = f'export_{model_name.lower()}'
+        
+        if hasattr(ExcelExporter, exporter_method):
+            return getattr(ExcelExporter, exporter_method)(queryset)
+        else:
+            # Generic export for models without custom exporter
+            fields = [f.name for f in self.model._meta.fields if f.name != 'id']
+            headers = [f.verbose_name for f in self.model._meta.fields if f.name != 'id']
+            filename = f'{model_name}_{queryset.model._meta.verbose_name_plural}'
+            return ExcelExporter.export_queryset(queryset, fields, headers, filename)
+    
+    export_to_excel.short_description = "Xuất Excel (.xlsx)"
+    
+    def delete_selected_custom(self, request, queryset):
+        """Custom delete action"""
+        from django.contrib import messages
+        count = queryset.count()
+        queryset.delete()
+        messages.success(request, f'Đã xóa {count} bản ghi thành công.')
+    
+    delete_selected_custom.short_description = "Xóa đã chọn"
 
 
 @admin.register(Khoa)
@@ -114,9 +141,27 @@ class GiangVienAdmin(BaseAdmin):
     )
     
     def loai_gv_colored(self, obj):
-        colors = {'Chính': '#0066cc', 'Phụ': '#ffc107', 'Hợp tác': '#28a745'}
-        color = colors.get(obj.loai_gv, '#6c757d')
-        return format_html('<span style="background-color: {}; color: white; padding: 3px 8px; border-radius: 3px;">{}</span>', color, obj.loai_gv or 'N/A')
+        # Lấy giá trị từ DB, không thay đổi nội dung
+        value = obj.loai_gv or 'N/A'
+        # Chỉ dùng 3 màu cố định
+        palette = ['#0066cc', "#cfa629", '#28a745']
+        known = {
+            'Chính': 0,
+            'Phụ': 1,
+            'Hợp tác': 2,
+        }
+        if value in known:
+            color = palette[known[value]]
+        else:
+            # Giá trị khác: gán màu ổn định dựa trên hash để mỗi value khác nhau sẽ dùng màu khác trong palette
+            idx = abs(hash(value)) % len(palette)
+            color = palette[idx]
+
+        return format_html(
+            '<span style="background-color: {}; color: white; padding: 3px 8px; border-radius: 3px;">{}</span>',
+            color,
+            value
+        )
     loai_gv_colored.short_description = 'Loại GV'
 
 
@@ -195,14 +240,14 @@ class ThoiKhoaBieuAdmin(BaseAdmin):
 
 
 @admin.register(DuKienDT)
-class DuKienDTAdmin(admin.ModelAdmin):
+class DuKienDTAdmin(BaseAdmin):
     list_display = ['ma_du_kien_dt', 'nam_hoc', 'hoc_ky', 'mo_ta_hoc_ky']
     list_filter = ['nam_hoc', 'hoc_ky']
     search_fields = ['ma_du_kien_dt', 'mo_ta_hoc_ky']
 
 
 @admin.register(GVDayMon)
-class GVDayMonAdmin(admin.ModelAdmin):
+class GVDayMonAdmin(BaseAdmin):
     list_display = ['id', 'ma_gv', 'ma_mon_hoc']
     list_filter = ['ma_mon_hoc']
     search_fields = ['ma_gv__ten_gv', 'ma_mon_hoc__ten_mon_hoc']
@@ -237,33 +282,37 @@ class PhanCongAdmin(BaseAdmin):
 
 
 @admin.register(RangBuocTrongDot)
-class RangBuocTrongDotAdmin(admin.ModelAdmin):
+class RangBuocTrongDotAdmin(BaseAdmin):
     list_display = ['id', 'ma_dot', 'ma_rang_buoc']
     list_filter = ['ma_dot']
     ordering = ['id']
 
 
 @admin.register(NguyenVong)
-class NguyenVongAdmin(admin.ModelAdmin):
+class NguyenVongAdmin(BaseAdmin):
     list_display = ['id', 'ma_gv', 'ma_dot', 'time_slot_id']
     list_filter = ['ma_dot']
     ordering = ['id']
+    
+    def export_to_excel(self, request, queryset):
+        return ExcelExporter.export_nguyen_vong(queryset)
+    export_to_excel.short_description = "Xuất Excel (.xlsx)"
 
 
 @admin.register(KhungTG)
-class KhungTGAdmin(admin.ModelAdmin):
+class KhungTGAdmin(BaseAdmin):
     list_display = ['ma_khung_gio', 'ten_ca', 'gio_bat_dau', 'gio_ket_thuc', 'so_tiet']
     ordering = ['ma_khung_gio']
 
 
 @admin.register(RangBuocMem)
-class RangBuocMemAdmin(admin.ModelAdmin):
+class RangBuocMemAdmin(BaseAdmin):
     list_display = ['ma_rang_buoc', 'ten_rang_buoc', 'trong_so']
     search_fields = ['ma_rang_buoc', 'ten_rang_buoc']
 
 
 @admin.register(NgayNghiCoDinh)
-class NgayNghiCoDinhAdmin(admin.ModelAdmin):
+class NgayNghiCoDinhAdmin(BaseAdmin):
     """Ngày nghỉ cố định (lặp lại hằng năm)"""
     list_display = ['id', 'ten_ngay_nghi', 'ngay', 'ghi_chu']
     search_fields = ['ten_ngay_nghi', 'ngay']
@@ -281,12 +330,11 @@ class NgayNghiCoDinhAdmin(admin.ModelAdmin):
 
 
 @admin.register(NgayNghiDot)
-class NgayNghiDotAdmin(admin.ModelAdmin):
+class NgayNghiDotAdmin(BaseAdmin):
     """Ngày nghỉ theo đợt xếp lịch (riêng cho mỗi đợt)"""
     list_display = ['id', 'ma_dot', 'ten_ngay_nghi', 'ngay_bd', 'so_ngay_nghi', 'tuan_info']
     list_filter = ['ma_dot', 'ngay_bd']
     search_fields = ['ma_dot__ma_dot', 'ten_ngay_nghi']
-    date_hierarchy = 'ngay_bd'
     list_per_page = 50
     fieldsets = (
         ('Thông tin đợt', {
