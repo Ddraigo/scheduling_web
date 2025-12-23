@@ -18,7 +18,6 @@ CREATE TABLE tb_KHOA(
 
 GO
 
-select * from tb_LOP_MONHOC
 
 
 /* ===== tb_BO_MON ===== */
