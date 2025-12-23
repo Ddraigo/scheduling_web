@@ -65,18 +65,19 @@
                 alert('Không tìm thấy form!');
                 return;
             }
-            
-            // Remove old action input
-            const oldInput = form.querySelector('input[name="action"]');
-            if (oldInput) oldInput.remove();
-            
-            // Add action input
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'action';
-            input.value = actionName;
-            form.appendChild(input);
-            
+
+            // Đặt giá trị vào select action nếu tồn tại; nếu không thì tạo hidden
+            const actionSelect = form.querySelector('select[name="action"]');
+            if (actionSelect) {
+                actionSelect.value = actionName;
+            } else {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'action';
+                input.value = actionName;
+                form.appendChild(input);
+            }
+
             form.submit();
         }
     </script>
@@ -99,11 +100,6 @@
                 // Bỏ qua change đầu tiên do Jazzmin trigger khi init
                 if (e.type === 'change' && !$el.data('auto-init-done')) {
                     $el.data('auto-init-done', true);
-                    return;
-                }
-
-                // Bỏ qua change không phải người dùng (không có originalEvent)
-                if (e.type === 'change' && !e.originalEvent) {
                     return;
                 }
 
