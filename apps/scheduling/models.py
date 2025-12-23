@@ -71,7 +71,6 @@ class DuKienDT(models.Model):
         (1, 'Học kỳ 1'),
         (2, 'Học kỳ 2'),
         (3, 'Học kỳ Hè'),
-        (4, 'Học kỳ 4'),
     ]
     
     ma_du_kien_dt = models.CharField(max_length=15, primary_key=True, db_column='MaDuKienDT', 

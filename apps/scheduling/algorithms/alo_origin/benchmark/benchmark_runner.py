@@ -59,7 +59,9 @@ class BenchmarkResult:
     
     def validate_solution(self, instance_file: str, working_dir: Path):
         """Validate solution using existing validator.py script."""
-        validator_path = working_dir / "validator.py"
+        # Validator is in apps/scheduling/utils/
+        # working_dir = benchmark/, parent.parent = algorithms/, parent.parent.parent = scheduling/
+        validator_path = working_dir.parent.parent.parent / "utils" / "validator.py"
         
         if not validator_path.exists():
             print(f"Warning: Validator not found at {validator_path}, using solver output only")
@@ -67,11 +69,13 @@ class BenchmarkResult:
         
         try:
             # validator.py uses positional args: validator.py <instance.ctt> <solution.sol>
+            # Run from the scheduling directory (parent.parent.parent of benchmark/)
+            scheduling_dir = working_dir.parent.parent.parent
             result = subprocess.run(
                 ["python", str(validator_path), 
                  instance_file, 
                  str(self.config.output_file)],
-                cwd=working_dir,
+                cwd=scheduling_dir,
                 capture_output=True,
                 text=True,
                 timeout=30
@@ -230,7 +234,7 @@ class BenchmarkRunner:
                 print("\n✓ Run completed successfully")
                 
                 # Validate solution using validator
-                if result.validate_solution(config.instance, self.working_dir):
+                if result.validate_solution(config.instance_full_path, self.working_dir):
                     print(f"✓ Validation successful")
                     print(f"✓ Total cost: {result.total_cost}")
                     print(f"  Hard violations: {sum(result.hard_violations.values())}")
