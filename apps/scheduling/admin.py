@@ -39,11 +39,11 @@ def patched_app_index(request, app_label, extra_context=None):
 admin.site.app_index = patched_app_index
 
 
-
 class BaseAdmin(admin.ModelAdmin):
     """Base admin class with common settings"""
     date_hierarchy = None
     change_list_template = 'admin/scheduling/change_list.html'
+    actions = ['export_to_excel', 'delete_selected_custom']
     
     def export_to_excel(self, request, queryset):
         """Action to export selected items to Excel"""
