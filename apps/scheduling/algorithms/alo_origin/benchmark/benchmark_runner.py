@@ -16,19 +16,24 @@ import argparse
 class BenchmarkConfig:
     """Configuration for a single benchmark run."""
     
-    def __init__(self, instance: str, time_limit: int, seed: int, meta: str = "TS", init: str = "greedy-cprop"):
+    def __init__(self, instance: str, time_limit: int, seed: int, meta: str = "TS", init: str = "greedy-cprop", output_dir: Path = None, instance_full_path: str = None):
         self.instance = instance
+        self.instance_full_path = instance_full_path or instance  # Use full path if provided
         self.time_limit = time_limit
         self.seed = seed
         self.meta = meta
         self.init = init
-        self.output_file = f"test_{Path(instance).stem}_t{time_limit}_s{seed}.sol"
+        # Save to test_data directory
+        output_filename = f"test_{Path(instance).stem}_t{time_limit}_s{seed}.sol"
+        self.output_file = str(output_dir / output_filename) if output_dir else output_filename
     
     def to_cmd(self) -> List[str]:
         """Convert to command line arguments."""
+        # Use relative path from benchmark directory to algorithms_core.py
+        algo_path = "../../algorithms_core.py"
         return [
-            "python", "algo_new.py",
-            "--instance", self.instance,
+            "python", algo_path,
+            "--instance", self.instance_full_path,
             "--out", self.output_file,
             "--time_limit", str(self.time_limit),
             "--seed", str(self.seed),
@@ -348,6 +353,31 @@ def main():
     
     # Setup paths
     script_dir = Path(__file__).parent
+    test_data_dir = script_dir.parent / "test_data"
+    
+    # Create test_data directory if not exists
+    test_data_dir.mkdir(exist_ok=True)
+    print(f"Output directory: {test_data_dir}")
+    
+    # Find instance file - try multiple locations
+    instance_path = None
+    possible_locations = [
+        script_dir / args.instance,  # In benchmark directory
+        test_data_dir / args.instance,  # In test_data directory
+        Path(args.instance),  # Absolute or relative from cwd
+    ]
+    
+    for loc in possible_locations:
+        if loc.exists():
+            instance_path = loc.resolve()
+            print(f"Found instance: {instance_path}")
+            break
+    
+    if not instance_path:
+        print(f"ERROR: Instance file '{args.instance}' not found in:")
+        for loc in possible_locations:
+            print(f"  - {loc}")
+        return
     
     # Generate configurations
     configs = []
@@ -355,10 +385,12 @@ def main():
         for seed in args.seeds:
             config = BenchmarkConfig(
                 instance=args.instance,
+                instance_full_path=str(instance_path),
                 time_limit=time_limit,
                 seed=seed,
                 meta=args.meta,
-                init=args.init
+                init=args.init,
+                output_dir=test_data_dir
             )
             configs.append(config)
     
@@ -367,7 +399,7 @@ def main():
     runner.run_all(configs)
     
     # Save and display results
-    output_path = script_dir / args.output
+    output_path = test_data_dir / args.output
     runner.save_results(output_path)
     runner.print_summary()
     

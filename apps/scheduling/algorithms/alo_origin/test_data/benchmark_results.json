@@ -1,0 +1,109 @@
+{
+  "timestamp": "2025-12-23 16:34:41",
+  "total_runs": 6,
+  "successful_runs": 0,
+  "results": [
+    {
+      "config": {
+        "instance": "dot1.ctt",
+        "time_limit": 100,
+        "seed": 42,
+        "meta": "TS",
+        "init": "greedy-cprop",
+        "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t100_s42.sol"
+      },
+      "elapsed_time": 100.86140179634094,
+      "total_cost": null,
+      "hard_violations": {},
+      "soft_costs": {},
+      "success": false,
+      "error_message": "Failed to parse output",
+      "is_feasible": null
+    },
+    {
+      "config": {
+        "instance": "dot1.ctt",
+        "time_limit": 100,
+        "seed": 100,
+        "meta": "TS",
+        "init": "greedy-cprop",
+        "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t100_s100.sol"
+      },
+      "elapsed_time": 100.56665563583374,
+      "total_cost": null,
+      "hard_violations": {},
+      "soft_costs": {},
+      "success": false,
+      "error_message": "Failed to parse output",
+      "is_feasible": null
+    },
+    {
+      "config": {
+        "instance": "dot1.ctt",
+        "time_limit": 100,
+        "seed": 200,
+        "meta": "TS",
+        "init": "greedy-cprop",
+        "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t100_s200.sol"
+      },
+      "elapsed_time": 100.93392586708069,
+      "total_cost": null,
+      "hard_violations": {},
+      "soft_costs": {},
+      "success": false,
+      "error_message": "Failed to parse output",
+      "is_feasible": null
+    },
+    {
+      "config": {
+        "instance": "dot1.ctt",
+        "time_limit": 300,
+        "seed": 42,
+        "meta": "TS",
+        "init": "greedy-cprop",
+        "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t300_s42.sol"
+      },
+      "elapsed_time": 301.2900900840759,
+      "total_cost": null,
+      "hard_violations": {},
+      "soft_costs": {},
+      "success": false,
+      "error_message": "Failed to parse output",
+      "is_feasible": null
+    },
+    {
+      "config": {
+        "instance": "dot1.ctt",
+        "time_limit": 300,
+        "seed": 100,
+        "meta": "TS",
+        "init": "greedy-cprop",
+        "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t300_s100.sol"
+      },
+      "elapsed_time": 300.77694630622864,
+      "total_cost": null,
+      "hard_violations": {},
+      "soft_costs": {},
+      "success": false,
+      "error_message": "Failed to parse output",
+      "is_feasible": null
+    },
+    {
+      "config": {
+        "instance": "dot1.ctt",
+        "time_limit": 300,
+        "seed": 200,
+        "meta": "TS",
+        "init": "greedy-cprop",
+        "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t300_s200.sol"
+      },
+      "elapsed_time": 302.80190443992615,
+      "total_cost": null,
+      "hard_violations": {},
+      "soft_costs": {},
+      "success": false,
+      "error_message": "Failed to parse output",
+      "is_feasible": null
+    }
+  ]
+}
