@@ -487,11 +487,20 @@ def main():
     
     args = parser.parse_args()
     
-    # Load results
+    # Load results - check test_data directory first
     input_path = Path(args.input)
     if not input_path.exists():
-        print(f"Error: Input file not found: {input_path}")
-        sys.exit(1)
+        # Try test_data directory
+        script_dir = Path(__file__).parent
+        test_data_path = script_dir.parent / "test_data" / args.input
+        if test_data_path.exists():
+            input_path = test_data_path
+        else:
+            print(f"Error: Input file not found: {args.input}")
+            print(f"Checked locations:")
+            print(f"  - {Path(args.input).absolute()}")
+            print(f"  - {test_data_path}")
+            sys.exit(1)
     
     data = load_results(input_path)
     

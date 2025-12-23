@@ -1,7 +1,7 @@
 {
-  "timestamp": "2025-12-23 16:34:41",
+  "timestamp": "2025-12-23 18:15:07",
   "total_runs": 6,
-  "successful_runs": 0,
+  "successful_runs": 6,
   "results": [
     {
       "config": {
@@ -12,13 +12,29 @@
         "init": "greedy-cprop",
         "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t100_s42.sol"
       },
-      "elapsed_time": 100.86140179634094,
-      "total_cost": null,
-      "hard_violations": {},
-      "soft_costs": {},
-      "success": false,
-      "error_message": "Failed to parse output",
-      "is_feasible": null
+      "elapsed_time": 100.57821798324585,
+      "total_cost": 134,
+      "hard_violations": {
+        "lectures": 0,
+        "conflicts": 0,
+        "availability": 0,
+        "room_occupation": 0,
+        "room_type": 0,
+        "equipment": 0
+      },
+      "soft_costs": {
+        "room_capacity": 0,
+        "min_working_days": 0,
+        "curriculum_compactness": 330,
+        "room_stability": 0,
+        "lecture_consecutiveness": 0,
+        "teacher_consolidation": 14,
+        "teacher_working_days": 45,
+        "teacher_preferences": 75
+      },
+      "success": true,
+      "error_message": null,
+      "is_feasible": true
     },
     {
       "config": {
@@ -29,13 +45,29 @@
         "init": "greedy-cprop",
         "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t100_s100.sol"
       },
-      "elapsed_time": 100.56665563583374,
-      "total_cost": null,
-      "hard_violations": {},
-      "soft_costs": {},
-      "success": false,
-      "error_message": "Failed to parse output",
-      "is_feasible": null
+      "elapsed_time": 100.52589154243469,
+      "total_cost": 101,
+      "hard_violations": {
+        "lectures": 0,
+        "conflicts": 0,
+        "availability": 0,
+        "room_occupation": 0,
+        "room_type": 0,
+        "equipment": 0
+      },
+      "soft_costs": {
+        "room_capacity": 0,
+        "min_working_days": 0,
+        "curriculum_compactness": 336,
+        "room_stability": 0,
+        "lecture_consecutiveness": 0,
+        "teacher_consolidation": 9,
+        "teacher_working_days": 40,
+        "teacher_preferences": 52
+      },
+      "success": true,
+      "error_message": null,
+      "is_feasible": true
     },
     {
       "config": {
@@ -46,64 +78,128 @@
         "init": "greedy-cprop",
         "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t100_s200.sol"
       },
-      "elapsed_time": 100.93392586708069,
-      "total_cost": null,
-      "hard_violations": {},
-      "soft_costs": {},
-      "success": false,
-      "error_message": "Failed to parse output",
-      "is_feasible": null
+      "elapsed_time": 100.63194918632507,
+      "total_cost": 134,
+      "hard_violations": {
+        "lectures": 0,
+        "conflicts": 0,
+        "availability": 0,
+        "room_occupation": 0,
+        "room_type": 0,
+        "equipment": 0
+      },
+      "soft_costs": {
+        "room_capacity": 0,
+        "min_working_days": 0,
+        "curriculum_compactness": 324,
+        "room_stability": 0,
+        "lecture_consecutiveness": 0,
+        "teacher_consolidation": 17,
+        "teacher_working_days": 48,
+        "teacher_preferences": 69
+      },
+      "success": true,
+      "error_message": null,
+      "is_feasible": true
     },
     {
       "config": {
         "instance": "dot1.ctt",
-        "time_limit": 300,
+        "time_limit": 400,
         "seed": 42,
         "meta": "TS",
         "init": "greedy-cprop",
-        "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t300_s42.sol"
+        "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t400_s42.sol"
       },
-      "elapsed_time": 301.2900900840759,
-      "total_cost": null,
-      "hard_violations": {},
-      "soft_costs": {},
-      "success": false,
-      "error_message": "Failed to parse output",
-      "is_feasible": null
+      "elapsed_time": 402.88783955574036,
+      "total_cost": 47,
+      "hard_violations": {
+        "lectures": 0,
+        "conflicts": 0,
+        "availability": 0,
+        "room_occupation": 0,
+        "room_type": 0,
+        "equipment": 0
+      },
+      "soft_costs": {
+        "room_capacity": 0,
+        "min_working_days": 0,
+        "curriculum_compactness": 222,
+        "room_stability": 0,
+        "lecture_consecutiveness": 0,
+        "teacher_consolidation": 4,
+        "teacher_working_days": 28,
+        "teacher_preferences": 15
+      },
+      "success": true,
+      "error_message": null,
+      "is_feasible": true
     },
     {
       "config": {
         "instance": "dot1.ctt",
-        "time_limit": 300,
+        "time_limit": 400,
         "seed": 100,
         "meta": "TS",
         "init": "greedy-cprop",
-        "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t300_s100.sol"
+        "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t400_s100.sol"
       },
-      "elapsed_time": 300.77694630622864,
-      "total_cost": null,
-      "hard_violations": {},
-      "soft_costs": {},
-      "success": false,
-      "error_message": "Failed to parse output",
-      "is_feasible": null
+      "elapsed_time": 400.9966630935669,
+      "total_cost": 55,
+      "hard_violations": {
+        "lectures": 0,
+        "conflicts": 0,
+        "availability": 0,
+        "room_occupation": 0,
+        "room_type": 0,
+        "equipment": 0
+      },
+      "soft_costs": {
+        "room_capacity": 0,
+        "min_working_days": 0,
+        "curriculum_compactness": 218,
+        "room_stability": 0,
+        "lecture_consecutiveness": 0,
+        "teacher_consolidation": 13,
+        "teacher_working_days": 22,
+        "teacher_preferences": 20
+      },
+      "success": true,
+      "error_message": null,
+      "is_feasible": true
     },
     {
       "config": {
         "instance": "dot1.ctt",
-        "time_limit": 300,
+        "time_limit": 400,
         "seed": 200,
         "meta": "TS",
         "init": "greedy-cprop",
-        "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t300_s200.sol"
+        "output_file": "D:\\HOCTAP\\DU_AN_CNTT\\scheduling_web\\apps\\scheduling\\algorithms\\alo_origin\\test_data\\test_dot1_t400_s200.sol"
       },
-      "elapsed_time": 302.80190443992615,
-      "total_cost": null,
-      "hard_violations": {},
-      "soft_costs": {},
-      "success": false,
-      "error_message": "Failed to parse output",
-      "is_feasible": null
+      "elapsed_time": 407.46527457237244,
+      "total_cost": 55,
+      "hard_violations": {
+        "lectures": 0,
+        "conflicts": 0,
+        "availability": 0,
+        "room_occupation": 0,
+        "room_type": 0,
+        "equipment": 0
+      },
+      "soft_costs": {
+        "room_capacity": 0,
+        "min_working_days": 0,
+        "curriculum_compactness": 242,
+        "room_stability": 0,
+        "lecture_consecutiveness": 0,
+        "teacher_consolidation": 9,
+        "teacher_working_days": 27,
+        "teacher_preferences": 19
+      },
+      "success": true,
+      "error_message": null,
+      "is_feasible": true
     }
   ]
 }

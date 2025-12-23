@@ -71,7 +71,6 @@ class DuKienDT(models.Model):
         (1, 'Học kỳ 1'),
         (2, 'Học kỳ 2'),
         (3, 'Học kỳ Hè'),
-        (4, 'Học kỳ 4'),
     ]
     
     ma_du_kien_dt = models.CharField(max_length=15, primary_key=True, db_column='MaDuKienDT', 
@@ -265,7 +264,7 @@ class DotXep(models.Model):
                               verbose_name="Tên đợt")
     trang_thai = models.CharField(max_length=20, default='DRAFT', choices=TRANG_THAI_CHOICES,
                                  db_column='TrangThai', verbose_name="Trạng thái")
-    ngay_tao = models.DateTimeField(auto_now_add=True, db_column='NgayTao', verbose_name="Ngày tạo")
+    ngay_tao = models.DateTimeField(auto_now_add=True, null=True, blank=True, db_column='NgayTao', verbose_name="Ngày tạo")
     ngay_khoa = models.DateTimeField(null=True, blank=True, db_column='NgayKhoa', 
                                     verbose_name="Ngày khóa")
     
@@ -293,10 +292,10 @@ class PhanCong(models.Model):
     ma_gv = models.ForeignKey(GiangVien, on_delete=models.CASCADE, null=True, blank=True,
                              db_column='MaGV', related_name='phan_cong_list', 
                              verbose_name="Giảng viên")
-    tuan_bd = models.SmallIntegerField(db_column='TuanBD', 
+    tuan_bd = models.SmallIntegerField(db_column='TuanBD', default=1,
                                        validators=[MinValueValidator(1), MaxValueValidator(20)],
                                        verbose_name="Tuần bắt đầu (1-20)")
-    tuan_kt = models.SmallIntegerField(db_column='TuanKT',
+    tuan_kt = models.SmallIntegerField(db_column='TuanKT', default=15,
                                        validators=[MinValueValidator(1), MaxValueValidator(20)],
                                        verbose_name="Tuần kết thúc (>= TuanBD, ≤ 20)")
 
@@ -436,13 +435,13 @@ class ThoiKhoaBieu(models.Model):
                                 verbose_name="Phòng học")  # Nullable: có thể chưa sắp xếp phòng
     time_slot_id = models.ForeignKey(TimeSlot, on_delete=models.CASCADE, db_column='TimeSlotID',
                                     related_name='tkb_list', verbose_name="Time slot")
-    tuan_hoc = models.CharField(max_length=64, db_column='TuanHoc',
+    tuan_hoc = models.CharField(max_length=64, null=True, blank=True, db_column='TuanHoc',
                                verbose_name="Pattern tuần học")  # VD: "1111111000000000"
-    ngay_bd = models.DateField(db_column='NgayBD',
+    ngay_bd = models.DateField(null=True, blank=True, db_column='NgayBD',
                               verbose_name="Ngày bắt đầu khoá học")  # Ngày bắt đầu toàn bộ môn
-    ngay_kt = models.DateField(db_column='NgayKT',
+    ngay_kt = models.DateField(null=True, blank=True, db_column='NgayKT',
                               verbose_name="Ngày kết thúc khoá học")  # Ngày kết thúc toàn bộ môn
-    ngay_tao = models.DateTimeField(auto_now_add=True, db_column='NgayTao',
+    ngay_tao = models.DateTimeField(auto_now_add=True, null=True, blank=True, db_column='NgayTao',
                                    verbose_name="Ngày tạo")
     ghi_chu = models.CharField(max_length=200, null=True, blank=True, db_column='GhiChu',
                               verbose_name="Ghi chú")

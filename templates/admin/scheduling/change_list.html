@@ -1,0 +1,120 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    
+    {# Custom Export Excel Button #}
+    <li style="list-style: none; margin-left: 8px;">
+        <a href="#" onclick="submitAction('export_to_excel', event)" 
+           style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; 
+                  background: linear-gradient(135deg, #1e7e34, #28a745); color: white; 
+                  border-radius: 5px; text-decoration: none; font-weight: 500; 
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+           onmouseover="this.style.background='linear-gradient(135deg, #155724, #1e7e34)'; this.style.transform='translateY(-2px)';"
+           onmouseout="this.style.background='linear-gradient(135deg, #1e7e34, #28a745)'; this.style.transform='translateY(0)';">
+            <i class="fas fa-file-excel"></i> Xuất Excel
+        </a>
+    </li>
+    
+    {# Custom Delete Button #}
+    <li style="list-style: none; margin-left: 8px;">
+        <a href="#" onclick="submitAction('delete_selected_custom', event)" 
+           style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; 
+                  background: linear-gradient(135deg, #c82333, #dc3545); color: white; 
+                  border-radius: 5px; text-decoration: none; font-weight: 500; 
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+           onmouseover="this.style.background='linear-gradient(135deg, #a71d2a, #c82333)'; this.style.transform='translateY(-2px)';"
+           onmouseout="this.style.background='linear-gradient(135deg, #c82333, #dc3545)'; this.style.transform='translateY(0)';">
+            <i class="fas fa-trash-alt"></i> Xóa đã chọn
+        </a>
+    </li>
+{% endblock %}
+
+{% block result_list %}
+    <style>
+        /* Hide action dropdown bar */
+        #changelist-form .actions {
+            display: none !important;
+        }
+    </style>
+    {{ block.super }}
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script>
+        function submitAction(actionName, event) {
+            event.preventDefault();
+            
+            const checkboxes = document.querySelectorAll('input[name="_selected_action"]:checked');
+            
+            if (checkboxes.length === 0) {
+                alert('Vui lòng chọn ít nhất một bản ghi!');
+                return;
+            }
+            
+            if (actionName === 'delete_selected_custom') {
+                if (!confirm(`Bạn có chắc chắn muốn xóa ${checkboxes.length} bản ghi đã chọn?`)) {
+                    return;
+                }
+            }
+            
+            const form = document.querySelector('#changelist-form');
+            if (!form) {
+                alert('Không tìm thấy form!');
+                return;
+            }
+            
+            // Remove old action input
+            const oldInput = form.querySelector('input[name="action"]');
+            if (oldInput) oldInput.remove();
+            
+            // Add action input
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'action';
+            input.value = actionName;
+            form.appendChild(input);
+            
+            form.submit();
+        }
+    </script>
+{% endblock %}
+
+{% block extrajs %}
+    {{ block.super }}
+    <script>
+        // Auto-submit filter form when dropdown changes
+        (function() {
+            // Dùng jQuery toàn cục (Select2 cũng đăng ký trên window.jQuery)
+            var $ = window.jQuery || django.jQuery;
+
+            console.log('Filter auto-submit script loaded');
+
+            // Dùng event delegation để bắt cả select2:select và change
+            $(document).on('select2:select select2:clear change', '.search-filter', function(e) {
+                var $el = $(this);
+
+                // Bỏ qua change đầu tiên do Jazzmin trigger khi init
+                if (e.type === 'change' && !$el.data('auto-init-done')) {
+                    $el.data('auto-init-done', true);
+                    return;
+                }
+
+                // Bỏ qua change không phải người dùng (không có originalEvent)
+                if (e.type === 'change' && !e.originalEvent) {
+                    return;
+                }
+
+                console.log('Filter changed:', e.type, $el.val());
+                // Đợi Jazzmin set name attribute xong rồi submit
+                setTimeout(function() {
+                    $('#changelist-search').submit();
+                }, 80);
+            });
+
+            console.log('Filter auto-submit delegation attached (window.jQuery)');
+        })();
+    </script>
+{% endblock %}
