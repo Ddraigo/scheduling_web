@@ -1,114 +1,276 @@
-# [Django Black Dashboard](https://app-generator.dev/product/black-dashboard/django/)
+# Hệ Thống Xếp Lịch Học - Scheduling Web
 
-**Open-source Django Starter** crafted on top of **[Black Dashboard](https://app-generator.dev/product/black-dashboard/)**, an open-source `Bootstrap` UI Kit released by [Creative-Tim](https://app-generator.dev/agency/creative-tim/). The product is designed to deliver the best possible user experience with highly customizable feature-rich pages. 
+Hệ thống quản lý và xếp lịch học tự động cho trường đại học, xây dựng trên nền tảng Django.
 
-- 👉 [Django Black Dashboard](https://app-generator.dev/product/black-dashboard/django/) - `Product Page`
-- 👉 [Django Black Dashboard](https://django-black-dashboard.onrender.com/) - `LIVE Demo` 
-- 👉 [Django Black Dashboard](https://app-generator.dev/docs/products/django/black-dashboard/index.html) - `Documentation` (learn how to use the product) 
+## 📋 Mục Lục
 
-<br />
+- [Yêu Cầu Hệ Thống](#yêu-cầu-hệ-thống)
+- [Cài Đặt](#cài-đặt)
+- [Cấu Hình](#cấu-hình)
+- [Chạy Dự Án](#chạy-dự-án)
+- [Cấu Trúc Dự Án](#cấu-trúc-dự-án)
+- [Tính Năng](#tính-năng)
 
-## Features
+## 🔧 Yêu Cầu Hệ Thống
 
-- Simple, Easy-to-Extend codebase
-- [Black Dashboard](https://app-generator.dev/product/black-dashboard/) Design Integration
-- [Bootstrap](https://app-generator.dev/docs/templates/bootstrap.html) CSS Styling 
-- Session-based Authentication, Password recovery
-- DB Persistence: SQLite (default), can be used with MySql, PgSql
-- Apps:
-  - [DEMO](https://django-black-dashboard.onrender.com/dynamic-dt/product/) **Dynamic DataTables** - generate server-side datatables without coding
-  - [DEMO](https://django-black-dashboard.onrender.com/api/product/) **Dynamic APIs** - Expose secure APIs without coding  
-  - [DEMO](https://django-black-dashboard.onrender.com/charts/) **Charts** - powered by ApexCharts 
-- [Django CLI Package](https://app-generator.dev/docs/developer-tools/django-cli/index.html)
-    - `Commit/rollback Git Changes`
-    - `Backup & restore DB`
-    - `Interact with Django Core`
-    - `Manage Environment`
-    - `Manage Dependencies`  
-- [Deployment](https://app-generator.dev/docs/deployment.html)
-  - Docker/Docker Compose Scripts 
-  - CI/CD for [Render](https://app-generator.dev/docs/deployment/render/index.html)
-- [Vite](https://app-generator.dev/docs/technologies/vite/index.html) for assets management 
+### Phần Mềm Cần Thiết
 
-<br />
+- **Python**: 3.9 hoặc cao hơn
+- **Node.js**: 16.x hoặc cao hơn
+- **npm**: 8.x hoặc cao hơn
+- **Database**: SQLite (mặc định) hoặc SQL Server
 
-## [Documentation](https://app-generator.dev/docs/products/django/black-dashboard/index.html)
+### Kiểm Tra Phiên Bản
 
-- Understand the codebase structure
-- Prepare the environment
-- Setting Up the Database
-- Start the Project
-- Switch from SQLite to MySql or PgSql
-- Add a new model and migrate database
-- Enable `Dynamic Tables` for a new model
-- Enable `Dynamic API` for a new model
-- Deploy on Render
+```bash
+python --version
+node --version
+npm --version
+```
 
-![Django Black Dashboard - Open-Source Django Starter ](https://user-images.githubusercontent.com/51070104/196730732-dda1794b-93ce-48cb-bc5c-182411495512.png)
+## 📦 Cài Đặt
 
-<br />
+### Bước 1: Clone Dự Án
 
-## Deploy LIVE
+```bash
+git clone <repository-url>
+cd scheduling_web
+```
 
-> One-click deploy (requires to have already an account).
+### Bước 2: Tạo Môi Trường Ảo Python
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+#### Windows (PowerShell)
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
 
-<br /> 
+#### Windows (Command Prompt)
+```cmd
+python -m venv venv
+venv\Scripts\activate.bat
+```
 
-## [Black Dashboard PRO Version](https://app-generator.dev/product/black-dashboard-pro/django/)
+#### Linux/macOS
+```bash
+python -m venv venv
+source venv/bin/activate
+```
 
-> The premium version provides more features, priority on support, and is more often updated - [Live Demo](https://django-black-pro.onrender.com).
+### Bước 3: Cài Đặt Dependencies Python
 
-- Simple, Easy-to-Extend Codebase
-- [Black Dashboard](https://app-generator.dev/product/black-dashboard/) Design Integration
-- Bootstrap Styling 
-- DB Persistence: SQLite (default), can be used with MySql, PgSql
-- Extended Users Profiles
-- Authentication
-   - Session-based 
-   - OAuth GitHub, Google
-- Apps:
-  - [DEMO](https://django-black-pro.onrender.com/dynamic-dt/product/) **Dynamic DataTables** - generate server-side datatables without coding  
-  - [DEMO](https://django-black-pro.onrender.com/api/product/) **Dynamic APIs** - Expose secure APIs without coding  
-  - [DEMO](https://django-black-pro.onrender.com/chart/) **Charts** - powered by ApexCharts 
-  - **React Integration**
-  - **Media Files Manager** - empower users to manage and preview files with ease
-  - **Celery** (async tasks)
-- [Django CLI Package](https://app-generator.dev/docs/developer-tools/django-cli/index.html)
-    - `Commit/rollback Git Changes`
-    - `Backup & restore DB`
-    - `Interact with Django Core`
-    - `Manage Environment`
-    - `Manage Dependencies`  
-- [Deployment](https://app-generator.dev/docs/deployment.html)
-  - Docker/Docker Compose Scripts 
-  - CI/CD for [Render](https://app-generator.dev/docs/deployment/render/index.html)
-- [Vite](https://app-generator.dev/docs/technologies/vite/index.html) for assets management 
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
-![Django Black PRO - Premium Django starter built with Black Dashboard design from Creative-Tim](https://github.com/user-attachments/assets/63c1ea5b-6c8b-4e67-8e07-156c3e06895f)
+### Bước 4: Cài Đặt Dependencies Frontend
 
-<br />
+```bash
+npm install
+```
 
-## `Customize` with [Django App Generator](https://app-generator.dev/tools/django-generator/)
+## ⚙️ Cấu Hình
 
-- Access the [App Generator](https://app-generator.dev/tools/django-generator/) page
-- Select the preferred design
-- (Optional) Design Database: edit models and fields
-- (Optional) Edit the fields for the extended user model
-- (Optional) Enable OAuth for GitHub
-- (Optional) Add Celery (async tasks)
-- (Optional) Enable Dynamic API Module
-- Docker Scripts
-- Render CI/Cd Scripts
+### Bước 1: Tạo File Environment
 
-**The generated Django project is available as a ZIP Archive and also uploaded to GitHub.**
+Sao chép file mẫu và chỉnh sửa:
 
-![Django Generator - User Interface for choosing the Design](https://github.com/user-attachments/assets/b989c434-1c53-49ff-8dda-b46dbfc142ac) 
+```bash
+cp env.sample .env
+```
 
-![Django App Generator - User Interface for Edit the Extended User Model](https://github.com/user-attachments/assets/f1a5fb68-a5ba-49c9-a3ae-91716de09912) 
+### Bước 2: Chỉnh Sửa File `.env`
 
-<br />
+Mở file `.env` và cấu hình các thông số:
 
----
-[Django Black Dashboard](https://app-generator.dev/product/black-dashboard/django/) - Open-Source **Django** Starter provided by [App Generator](https://app-generator.dev).
+```env
+# Chế độ chạy (True = development, False = production)
+DEBUG=True
+
+# Secret key cho Django (đổi thành key bảo mật của cá nhân)
+SECRET_KEY=your-secret-key
+
+# Cấu hình Database (mặc định sử dụng SQLite)
+# Bỏ comment và cấu hình nếu dùng SQL Server
+
+# DB_ENGINE=mssql
+# DB_HOST=.\SQLEXPRESS
+# DB_NAME=CSDL_TKB
+# DB_USERNAME=your_username
+# DB_PASS=your_password
+# DB_PORT=3306
+```
+
+### Bước 3: Khởi Tạo Database
+
+```bash
+# Tạo migrations
+python manage.py makemigrations
+
+# Chạy migrations
+python manage.py migrate
+
+# Tạo superuser (admin)
+python manage.py createsuperuser
+```
+
+Nhập thông tin admin khi được hỏi:
+- Username
+- Email
+- Password
+
+### Bước 4: Thu Thập Static Files
+
+```bash
+python manage.py collectstatic --noinput
+```
+
+## 🚀 Chạy Dự Án
+
+### Development Mode
+
+#### Terminal 1: Chạy Django Backend
+
+```bash
+# Kích hoạt virtual environment (nếu chưa)
+.\venv\Scripts\Activate.ps1  # Windows PowerShell
+# hoặc
+source venv/bin/activate      # Linux/macOS
+
+# Chạy development server
+python manage.py runserver
+```
+
+Server sẽ chạy tại: `http://127.0.0.1:8000/`
+
+#### Terminal 2: Chạy Frontend Build (Tùy chọn)
+
+Nếu muốn phát triển frontend với hot reload:
+
+```bash
+npm run dev
+```
+
+### Production Mode
+
+#### Sử dụng Gunicorn (Linux/macOS)
+
+```bash
+gunicorn --config gunicorn-cfg.py config.wsgi
+```
+
+#### Sử dụng Docker
+
+```bash
+# Build image
+docker-compose build
+
+# Chạy container
+docker-compose up -d
+```
+
+## 📁 Cấu Trúc Dự Án
+
+```
+scheduling_web/
+├── apps/                    # Các Django apps
+│   ├── scheduling/         # Module xếp lịch chính
+│   ├── data_table/         # Quản lý dữ liệu
+│   ├── charts/             # Biểu đồ và thống kê
+│   ├── pages/              # Các trang web
+│   └── sap_lich/           # Xử lý thuật toán xếp lịch
+├── config/                  # Cấu hình Django
+│   ├── settings.py         # Cài đặt chính
+│   ├── urls.py             # URL routing
+│   └── wsgi.py             # WSGI config
+├── static/                  # Static files (CSS, JS, images)
+├── templates/               # HTML templates
+├── docs/                    # Tài liệu dự án
+├── cli/                     # CLI tools và helpers
+├── manage.py               # Django management script
+├── requirements.txt        # Python dependencies
+├── package.json            # Node.js dependencies
+└── .env                    # Environment variables
+```
+
+## ✨ Tính Năng
+
+- 🗓️ **Xếp Lịch Tự Động**: Thuật toán xếp lịch thông minh
+- 👥 **Quản Lý Giảng Viên**: Theo dõi phân công giảng dạy
+- 🏫 **Quản Lý Phòng Học**: Sắp xếp phòng học tối ưu
+- 📊 **Thống Kê & Báo Cáo**: Biểu đồ trực quan
+- 📤 **Xuất Excel**: Export thời khóa biểu
+- 🔐 **Xác Thực & Phân Quyền**: Hệ thống Django auth
+
+## 🔑 Truy Cập Hệ Thống
+
+### Admin Panel
+- URL: `http://127.0.0.1:8000/admin/`
+- Đăng nhập bằng superuser đã tạo
+
+### User Interface
+- URL: `http://127.0.0.1:8000/`
+
+## 📝 Các Lệnh Hữu Ích
+
+```bash
+# Tạo app mới
+python manage.py startapp <app_name>
+
+# Xem cấu trúc database
+python manage.py dbshell
+
+# Chạy tests
+python manage.py test
+
+# Tạo backup database
+python manage.py dbbackup
+
+# Load dữ liệu mẫu (nếu có fixtures)
+python manage.py loaddata <fixture_name>
+
+# Xóa cache
+python manage.py clearcache
+
+# Build frontend production
+npm run build
+```
+
+## 🐛 Troubleshooting
+
+### Lỗi: "No module named 'django'"
+```bash
+# Đảm bảo virtual environment đã được kích hoạt
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### Lỗi: "port 8000 is already in use"
+```bash
+# Windows
+netstat -ano | findstr :8000
+taskkill /PID <PID> /F
+
+# Linux/macOS
+lsof -ti:8000 | xargs kill -9
+```
+
+### Lỗi Database Migration
+```bash
+python manage.py migrate --fake-initial
+# hoặc
+python manage.py migrate --run-syncdb
+```
+
+## 📄 License
+
+[Thêm thông tin license của bạn ở đây]
+
+## 👥 Contributors
+
+[Thêm thông tin về nhóm phát triển]
+
+## 📞 Liên Hệ
+
+[Thêm thông tin liên hệ]

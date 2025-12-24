@@ -132,21 +132,27 @@ print(f"DB_USERNAME: {DB_USERNAME}")
 print(f"DB_DRIVER: {DB_DRIVER}")
 print(f"==============================")
 
-if DB_ENGINE and DB_NAME and DB_USERNAME:
+if DB_ENGINE and DB_NAME and (DB_USERNAME or DB_USE_WINDOWS_AUTH):
     if DB_ENGINE == 'mssql':
-        DATABASES = { 
-          'default': {
-            'ENGINE'  : 'mssql', 
-            'NAME'    : DB_NAME,
-            'USER'    : DB_USERNAME,
-            'PASSWORD': DB_PASS,
-            'HOST'    : DB_HOST,
-            'PORT'    : DB_PORT,
-            'OPTIONS': {
-                'driver': DB_DRIVER,
-                'extra_params': 'TrustServerCertificate=yes',
+        _mssql_options = {
+            'driver': DB_DRIVER,
+            'extra_params': 'TrustServerCertificate=yes',
+        }
+        # With Windows Authentication we should not pass user/password
+        if DB_USE_WINDOWS_AUTH:
+            _mssql_options.pop('extra_params', None)
+            _mssql_options['trusted_connection'] = 'yes'
+
+        DATABASES = {
+            'default': {
+                'ENGINE': 'mssql',
+                'NAME': DB_NAME,
+                'USER': None if DB_USE_WINDOWS_AUTH else DB_USERNAME,
+                'PASSWORD': None if DB_USE_WINDOWS_AUTH else DB_PASS,
+                'HOST': DB_HOST,
+                'PORT': DB_PORT or None,  # Avoid empty PORT causing invalid attribute
+                'OPTIONS': _mssql_options,
             },
-            }, 
         }
 else:
     DATABASES = {
@@ -307,6 +313,9 @@ JAZZMIN_SETTINGS = {
         "scheduling.rangbuocmem": "fas fa-wave-square",  # Ràng buộc mềm
         "scheduling.rangbuoctrongdot": "fas fa-shield-alt",  # Ràng buộc trong đợt
         "scheduling.dukiendt": "fas fa-clipboard-check",  # Dự kiến dạy-học (fixed: was dukilendtao)
+        "scheduling.ngaynghicodinh": "fas fa-calendar-xmark",  # Ngày nghỉ cố định
+        "scheduling.ngaynghidot": "fas fa-calendar-minus",  # Ngày nghỉ theo đợt
+        
         "scheduling.nguyenvong": "fas fa-heart",
         "scheduling.timeslot": "fas fa-hourglass-end",
         "scheduling.thoikhoabieu": "fas fa-calendar-check",

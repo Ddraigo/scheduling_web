@@ -47,23 +47,22 @@
         function submitAction(actionName, event) {
             event.preventDefault();
             
-            const checkboxes = document.querySelectorAll('input[name="_selected_action"]:checked');
-            
-            if (checkboxes.length === 0) {
-                alert('Vui lòng chọn ít nhất một bản ghi!');
-                return;
-            }
-            
-            if (actionName === 'delete_selected_custom') {
-                if (!confirm(`Bạn có chắc chắn muốn xóa ${checkboxes.length} bản ghi đã chọn?`)) {
-                    return;
-                }
-            }
-            
             const form = document.querySelector('#changelist-form');
             if (!form) {
                 alert('Không tìm thấy form!');
                 return;
+            }
+
+            const checkboxes = document.querySelectorAll('input[name="_selected_action"]:checked');
+
+            if (actionName === 'delete_selected_custom') {
+                if (checkboxes.length === 0) {
+                    alert('Hãy chọn bản ghi trước khi xóa.');
+                    return;
+                }
+                if (!confirm(`Bạn có chắc chắn muốn xóa ${checkboxes.length} bản ghi đã chọn?`)) {
+                    return;
+                }
             }
 
             // Đặt giá trị vào select action nếu tồn tại; nếu không thì tạo hidden
@@ -77,6 +76,28 @@
                 input.value = actionName;
                 form.appendChild(input);
             }
+
+            // Bổ sung các trường admin action để tránh lỗi thiếu tham số
+            const ensureHidden = (name, value) => {
+                let el = form.querySelector(`input[name="${name}"]`);
+                if (!el) {
+                    el = document.createElement('input');
+                    el.type = 'hidden';
+                    el.name = name;
+                    form.appendChild(el);
+                }
+                el.value = value;
+            };
+
+            ensureHidden('index', '0');
+            ensureHidden('select_across', '0');
+            // Đảm bảo một checkbox ẩn để Django không cảnh báo thiếu selection, nhưng action backend sẽ lấy theo filter
+            if (checkboxes.length === 0) {
+                ensureHidden('_selected_action', 'dummy');
+            }
+
+            // Giữ nguyên querystring hiện tại để action nhận đúng filter
+            form.action = window.location.pathname + window.location.search;
 
             form.submit();
         }
