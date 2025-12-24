@@ -4,7 +4,11 @@ FIXED: Field names now match actual model definitions
 Enhanced UI with custom styling
 """
 
-from django.contrib import admin
+import re
+from datetime import datetime
+
+from django.contrib import admin, messages
+from django.contrib.admin.helpers import ACTION_CHECKBOX_NAME
 from django.utils.html import format_html
 from .models import (
     Khoa, BoMon, GiangVien, MonHoc, PhongHoc,
@@ -44,9 +48,43 @@ class BaseAdmin(admin.ModelAdmin):
     date_hierarchy = None
     change_list_template = 'admin/scheduling/change_list.html'
     actions = ['export_to_excel', 'delete_selected_custom']
+
+    @staticmethod
+    def _safe_filename(name: str) -> str:
+        """Sanitize filename to avoid invalid chars."""
+        safe = re.sub(r"[^A-Za-z0-9._-]+", "_", name).strip("._-")
+        return safe or "export"
+
+    def _extract_dot_code(self, request, queryset):
+        """Try to get mã đợt từ filter hoặc bản ghi."""
+        # Từ bộ lọc trên changelist
+        for key in ["ma_dot__id__exact", "ma_dot__exact", "ma_dot"]:
+            val = request.GET.get(key)
+            if val:
+                return val
+
+        # Từ bản ghi đầu tiên (nếu có)
+        first = queryset.first()
+        if first is not None and hasattr(first, "ma_dot"):
+            dot_obj = getattr(first, "ma_dot")
+            if dot_obj is not None:
+                return getattr(dot_obj, "ma_dot", None) or str(dot_obj)
+        return None
     
     def export_to_excel(self, request, queryset):
         """Action to export selected items to Excel"""
+        # Nếu không chọn bản ghi nào, dùng toàn bộ queryset đã lọc ở changelist
+        if queryset.count() == 0:
+            try:
+                changelist = self.get_changelist_instance(request)
+                queryset = changelist.get_queryset(request)
+            except Exception:
+                queryset = self.model.objects.none()
+
+        if queryset.count() == 0:
+            messages.warning(request, "Không có bản ghi để xuất (sau filter).")
+            return None
+
         model_name = self.model.__name__
         exporter_method = f'export_{model_name.lower()}'
         
@@ -57,7 +95,40 @@ class BaseAdmin(admin.ModelAdmin):
             fields = [f.name for f in self.model._meta.fields if f.name != 'id']
             headers = [f.verbose_name for f in self.model._meta.fields if f.name != 'id']
             filename = f'{model_name}_{queryset.model._meta.verbose_name_plural}'
-            return ExcelExporter.export_queryset(queryset, fields, headers, filename)
+            response = ExcelExporter.export_queryset(queryset, fields, headers, filename)
+        
+        # Ghi đè tên file: mã đợt + tên bảng + timestamp, tránh ký tự không hợp lệ
+        dot_code = self._extract_dot_code(request, queryset)
+        table_name = self.model._meta.verbose_name_plural or self.model._meta.verbose_name
+        base_name = f"{dot_code}_{table_name}" if dot_code else table_name
+        safe_name = self._safe_filename(base_name)
+        response['Content-Disposition'] = f'attachment; filename="{safe_name}.xlsx"'
+        return response
+
+    def changelist_view(self, request, extra_context=None):
+        """Override để xử lý export action trước validation của Django admin."""
+        if request.method == 'POST' and request.POST.get('action') == 'export_to_excel':
+            try:
+                changelist = self.get_changelist_instance(request)
+                export_qs = changelist.get_queryset(request)
+            except Exception:
+                export_qs = self.model.objects.none()
+
+            # Nếu có chọn cụ thể (loại bỏ giá trị dummy), ưu tiên subset đó
+            selected = request.POST.getlist(ACTION_CHECKBOX_NAME)
+            selected = [pk for pk in selected if pk != 'dummy']
+            
+            if selected and request.POST.get('select_across') != '1':
+                export_qs = export_qs.filter(pk__in=selected)
+            
+            # Xuất file trực tiếp, bỏ qua toàn bộ validation của Django admin
+            return self.export_to_excel(request, export_qs)
+        
+        return super().changelist_view(request, extra_context)
+
+    def response_action(self, request, queryset):
+        """Giữ lại cho các action khác."""
+        return super().response_action(request, queryset)
     
     export_to_excel.short_description = "Xuất Excel (.xlsx)"
     
