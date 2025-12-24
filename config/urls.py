@@ -1,5 +1,6 @@
 """core URL Configuration"""
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.urls import include, path
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
@@ -21,6 +22,9 @@ scheduler_router.register(r'thoi-khoa-bieu', views_scheduling.ThoiKhoaBieuViewSe
 scheduler_router.register(r'schedule-generation', views_scheduling.ScheduleGenerationViewSet, basename='schedule-generation')
 
 urlpatterns = [
+    # Redirect root to admin dashboard
+    path('', lambda request: redirect('/admin/', permanent=False)),
+
     path('', include('apps.pages.urls')),
     path('', include('apps.data_table.urls')),
     path('charts/', include('apps.charts.urls')),
