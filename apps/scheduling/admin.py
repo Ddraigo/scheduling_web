@@ -5,6 +5,7 @@ Enhanced UI with custom styling
 """
 
 import re
+import unicodedata
 from datetime import datetime
 
 from django.contrib import admin, messages
@@ -51,8 +52,14 @@ class BaseAdmin(admin.ModelAdmin):
 
     @staticmethod
     def _safe_filename(name: str) -> str:
-        """Sanitize filename to avoid invalid chars."""
-        safe = re.sub(r"[^A-Za-z0-9._-]+", "_", name).strip("._-")
+        """Sanitize filename: remove Vietnamese accents, keep letters."""
+        # Bỏ dấu tiếng Việt
+        name = unicodedata.normalize('NFKD', name)
+        name = name.encode('ascii', 'ignore').decode('ascii')
+        # Loại bỏ ký tự không hợp lệ, giữ chữ số, chữ cái, khoảng trắng, gạch ngang
+        safe = re.sub(r'[^\w\s-]', '', name).strip()
+        # Thay khoảng trắng liên tiếp bằng underscore
+        safe = re.sub(r'\s+', '_', safe)
         return safe or "export"
 
     def _extract_dot_code(self, request, queryset):
