@@ -1,0 +1,820 @@
+{% extends "admin/base.html" %}
+{% load static i18n %}
+{% load custom_filters %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    :root {
+        --primary-color: #6366f1;
+        --primary-dark: #4f46e5;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --bg-light: #f8fafc;
+        --bg-card: #ffffff;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+
+    body {
+        background: var(--bg-light);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    #content-main {
+        padding: 0;
+    }
+
+    /* Container chính */
+    .tkb-container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Header Controls */
+    .tkb-header {
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+    }
+
+    .control-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 16px;
+        align-items: center;
+    }
+
+    .control-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .control-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-select, .form-control {
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 14px;
+        transition: all 0.2s;
+        background: white;
+    }
+
+    .form-select:focus, .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        outline: none;
+    }
+
+    /* View Toggle Buttons */
+    .view-toggle {
+        display: flex;
+        gap: 8px;
+        background: var(--bg-light);
+        padding: 4px;
+        border-radius: 12px;
+        width: fit-content;
+    }
+
+    .toggle-btn {
+        padding: 10px 20px;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .toggle-btn:hover {
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--primary-color);
+    }
+
+    .toggle-btn.active {
+        background: var(--primary-color);
+        color: white;
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* Week Navigation */
+    .week-navigation {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--bg-light);
+        padding: 8px;
+        border-radius: 12px;
+        width: fit-content;
+    }
+
+    .week-nav-btn {
+        width: 36px;
+        height: 36px;
+        border: none;
+        background: white;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        font-size: 16px;
+        color: var(--text-dark);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .week-nav-btn:hover:not(:disabled) {
+        background: var(--primary-color);
+        color: white;
+        transform: scale(1.05);
+    }
+
+    .week-nav-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+
+    .week-display {
+        font-weight: 700;
+        font-size: 16px;
+        color: var(--primary-color);
+        padding: 0 16px;
+        min-width: 100px;
+        text-align: center;
+    }
+
+    /* Info Cards */
+    .info-card {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .info-card h3 {
+        font-size: 14px;
+        font-weight: 500;
+        opacity: 0.9;
+        margin: 0 0 8px 0;
+    }
+
+    .info-card .value {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    /* Schedule Table */
+    .schedule-wrapper {
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        overflow-x: auto;
+    }
+
+    .schedule-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 1200px;
+    }
+
+    .schedule-table thead th {
+        background: var(--bg-light);
+        color: var(--text-dark);
+        font-weight: 700;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 16px 12px;
+        text-align: center;
+        border-bottom: 2px solid var(--border-color);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .schedule-table thead th:first-child {
+        border-top-left-radius: 12px;
+    }
+
+    .schedule-table thead th:last-child {
+        border-top-right-radius: 12px;
+    }
+
+    .schedule-table tbody tr:hover {
+        background: var(--bg-light);
+    }
+
+    .schedule-table td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: top;
+    }
+
+    .time-cell {
+        background: var(--bg-light);
+        font-weight: 600;
+        color: var(--text-dark);
+        text-align: center;
+        min-width: 100px;
+        border-right: 2px solid var(--border-color);
+    }
+
+    .time-label {
+        font-size: 14px;
+        display: block;
+    }
+
+    .time-range {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 4px;
+        display: block;
+    }
+
+    .class-cell {
+        min-height: 80px;
+        position: relative;
+    }
+
+    .class-card {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        border-left: 4px solid var(--primary-color);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 8px;
+        transition: all 0.2s;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .class-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    }
+
+    .class-card.multiple {
+        border-left-color: var(--warning-color);
+        background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    }
+
+    .class-title {
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--text-dark);
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .class-info {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .class-badge {
+        display: inline-block;
+        background: var(--primary-color);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 600;
+        margin-top: 6px;
+    }
+
+    .empty-cell {
+        color: var(--text-muted);
+        text-align: center;
+        font-size: 13px;
+        padding: 20px;
+        font-style: italic;
+    }
+
+    /* Error/No Data State */
+    .no-data-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-muted);
+    }
+
+    .no-data-state .icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+
+    .no-data-state h3 {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .no-data-state p {
+        font-size: 14px;
+    }
+
+    /* Legend */
+    .legend {
+        display: flex;
+        gap: 20px;
+        margin-top: 20px;
+        padding: 16px;
+        background: var(--bg-light);
+        border-radius: 12px;
+        flex-wrap: wrap;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .tkb-container {
+            padding: 12px;
+        }
+
+        .tkb-header {
+            padding: 16px;
+        }
+
+        .control-row {
+            flex-direction: column;
+        }
+
+        .control-group {
+            width: 100%;
+        }
+
+        .view-toggle, .week-navigation {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+
+    /* Loading State */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid var(--border-color);
+        border-top-color: var(--primary-color);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="col-12 col-md-auto d-flex flex-grow-1 align-items-center">
+    <h1 class="h4 m-0 pr-3 mr-3 border-right">{{ title }}</h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/admin/">Trang chủ</a></li>
+        <li class="breadcrumb-item active">{{ title }}</li>
+    </ol>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="tkb-container">
+    <!-- Header Controls -->
+    <div class="tkb-header">
+        <div class="control-row">
+            <!-- Chọn đợt xếp lịch -->
+            <div class="control-group">
+                <label class="control-label">📅 Đợt xếp lịch</label>
+                <select id="dotSelect" class="form-select" onchange="updateSchedule()">
+                    <option value="">-- Chọn đợt --</option>
+                    {% for dot in dot_list %}
+                    <option value="{{ dot.ma_dot }}" {% if dot.ma_dot == ma_dot %}selected{% endif %}>
+                        {{ dot.ten_dot }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- View Type Toggle -->
+            <div class="control-group">
+                <label class="control-label">👁️ Góc nhìn</label>
+                <div class="view-toggle">
+                    <button class="toggle-btn {% if view_type == 'teacher' %}active{% endif %}" 
+                            onclick="changeView('teacher')">
+                        👨‍🏫 Giáo viên
+                    </button>
+                    <button class="toggle-btn {% if view_type == 'room' %}active{% endif %}" 
+                            onclick="changeView('room')">
+                        🏫 Phòng học
+                    </button>
+                </div>
+            </div>
+
+            <!-- Display Mode Toggle -->
+            <div class="control-group">
+                <label class="control-label">📊 Hiển thị</label>
+                <div class="view-toggle">
+                    <button class="toggle-btn {% if display_mode == 'general' %}active{% endif %}" 
+                            onclick="changeMode('general')">
+                        📋 Tổng quát
+                    </button>
+                    <button class="toggle-btn {% if display_mode == 'weekly' %}active{% endif %}" 
+                            onclick="changeMode('weekly')">
+                        📅 Theo tuần
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-row">
+            <!-- Chọn GV/Phòng -->
+            <div class="control-group">
+                {% if view_type == 'teacher' %}
+                <label class="control-label">👨‍🏫 Chọn giáo viên</label>
+                <select id="itemSelect" class="form-select" onchange="updateSchedule()">
+                    <option value="">-- Chọn giáo viên --</option>
+                    {% for teacher in teachers %}
+                    <option value="{{ teacher.ma_gv }}" {% if teacher.ma_gv == selected_id %}selected{% endif %}>
+                        {{ teacher.ma_gv }} - {{ teacher.ten_gv }}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% else %}
+                <label class="control-label">🏫 Chọn phòng học</label>
+                <select id="itemSelect" class="form-select" onchange="updateSchedule()">
+                    <option value="">-- Chọn phòng --</option>
+                    {% for room in rooms %}
+                    <option value="{{ room.ma_phong }}" {% if room.ma_phong == selected_id %}selected{% endif %}>
+                        {{ room.ma_phong }}{% if room.loai_phong %} ({{ room.loai_phong }}){% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+            </div>
+
+            <!-- Week Navigation (chỉ hiện khi ở chế độ weekly) -->
+            {% if display_mode == 'weekly' %}
+            <div class="control-group">
+                <label class="control-label">📆 Tuần học</label>
+                <div class="week-navigation">
+                    <button class="week-nav-btn" onclick="changeWeek(-1)" 
+                            {% if week_number <= 1 %}disabled{% endif %}>
+                        ◀
+                    </button>
+                    <div class="week-display">Tuần {{ week_number }}</div>
+                    <button class="week-nav-btn" onclick="changeWeek(1)"
+                            {% if week_number >= 15 %}disabled{% endif %}>
+                        ▶
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Info Card -->
+            {% if selected_teacher or selected_room %}
+            <div class="control-group">
+                <div class="info-card">
+                    <h3>
+                        {% if view_type == 'teacher' %}
+                            Giáo viên
+                        {% else %}
+                            Phòng học
+                        {% endif %}
+                    </h3>
+                    <p class="value">
+                        {% if selected_teacher %}
+                            {{ selected_teacher.ten_gv }}
+                        {% elif selected_room %}
+                            {{ selected_room.ma_phong }}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Schedule Table -->
+    {% if error %}
+    <div class="schedule-wrapper">
+        <div class="no-data-state">
+            <div class="icon">⚠️</div>
+            <h3>Có lỗi xảy ra</h3>
+            <p>{{ error }}</p>
+        </div>
+    </div>
+    {% elif not ma_dot %}
+    <div class="schedule-wrapper">
+        <div class="no-data-state">
+            <div class="icon">📅</div>
+            <h3>Chưa chọn đợt xếp lịch</h3>
+            <p>Vui lòng chọn đợt xếp lịch để xem thời khóa biểu</p>
+        </div>
+    </div>
+    {% elif not selected_id %}
+    <div class="schedule-wrapper">
+        <div class="no-data-state">
+            <div class="icon">🔍</div>
+            <h3>
+                {% if view_type == 'teacher' %}
+                    Chưa chọn giáo viên
+                {% else %}
+                    Chưa chọn phòng học
+                {% endif %}
+            </h3>
+            <p>
+                {% if view_type == 'teacher' %}
+                    Vui lòng chọn giáo viên để xem lịch dạy
+                {% else %}
+                    Vui lòng chọn phòng để xem lịch sử dụng
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    {% elif schedule_data %}
+    <div class="schedule-wrapper">
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th>Thời gian</th>
+                    <th>
+                        Thứ 2
+                        {% if week_dates and week_dates.2 %}
+                        <div style="font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 4px;">
+                            {{ week_dates.2.display }}
+                        </div>
+                        {% endif %}
+                    </th>
+                    <th>
+                        Thứ 3
+                        {% if week_dates and week_dates.3 %}
+                        <div style="font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 4px;">
+                            {{ week_dates.3.display }}
+                        </div>
+                        {% endif %}
+                    </th>
+                    <th>
+                        Thứ 4
+                        {% if week_dates and week_dates.4 %}
+                        <div style="font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 4px;">
+                            {{ week_dates.4.display }}
+                        </div>
+                        {% endif %}
+                    </th>
+                    <th>
+                        Thứ 5
+                        {% if week_dates and week_dates.5 %}
+                        <div style="font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 4px;">
+                            {{ week_dates.5.display }}
+                        </div>
+                        {% endif %}
+                    </th>
+                    <th>
+                        Thứ 6
+                        {% if week_dates and week_dates.6 %}
+                        <div style="font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 4px;">
+                            {{ week_dates.6.display }}
+                        </div>
+                        {% endif %}
+                    </th>
+                    <th>
+                        Thứ 7
+                        {% if week_dates and week_dates.7 %}
+                        <div style="font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 4px;">
+                            {{ week_dates.7.display }}
+                        </div>
+                        {% endif %}
+                    </th>
+                    <th>
+                        Chủ nhật
+                        {% if week_dates and week_dates.8 %}
+                        <div style="font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 4px;">
+                            {{ week_dates.8.display }}
+                        </div>
+                        {% endif %}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ca in schedule_data.ca_list %}
+                <tr>
+                    <td class="time-cell">
+                        <span class="time-label">{{ ca.ten_ca }}</span>
+                        <span class="time-range">{{ ca.gio_bat_dau|time:"H:i" }} - {{ ca.gio_ket_thuc|time:"H:i" }}</span>
+                    </td>
+                    {% for thu_num in "2345678" %}
+                    <td class="class-cell">
+                        {% with thu_key="thu_"|add:thu_num %}
+                        {% with day_schedule=schedule_data.schedule|get_item:thu_key %}
+                        {% if day_schedule %}
+                            {% for slot in day_schedule %}
+                                {% if slot.ca == ca.ma_khung_gio %}
+                                    {% if slot.classes %}
+                                        {% for class in slot.classes %}
+                                        <div class="class-card {% if slot.classes|length > 1 %}multiple{% endif %}">
+                                            <div class="class-title">
+                                                📚 {{ class.mon_hoc }}
+                                            </div>
+                                            <div class="class-info">
+                                                🏷️ {{ class.ma_lop }}
+                                            </div>
+                                            {% if view_type == 'teacher' %}
+                                            <div class="class-info">
+                                                🏫 {{ class.phong }}
+                                            </div>
+                                            {% else %}
+                                            <div class="class-info">
+                                                👨‍🏫 {{ class.gv_name }}
+                                            </div>
+                                            {% endif %}
+                                            <span class="class-badge">{{ class.week_display }}</span>
+                                        </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="empty-cell">-</div>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+                        {% endwith %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-left: 4px solid var(--primary-color);"></div>
+                <span>Lớp học bình thường</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #fffbeb, #fef3c7); border-left: 4px solid var(--warning-color);"></div>
+                <span>Nhiều lớp cùng slot</span>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="schedule-wrapper">
+        <div class="no-data-state">
+            <div class="icon">📭</div>
+            <h3>Không có dữ liệu</h3>
+            <p>
+                {% if view_type == 'teacher' %}
+                    Giáo viên này chưa được phân công lịch dạy
+                {% else %}
+                    Phòng này chưa có lịch sử dụng
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Helper để truy cập dictionary trong template
+document.addEventListener('DOMContentLoaded', function() {
+    // Register custom filter for dict access
+    if (typeof django === 'undefined') {
+        window.django = {};
+    }
+});
+
+function updateSchedule() {
+    const ma_dot = document.getElementById('dotSelect').value;
+    const id = document.getElementById('itemSelect').value;
+    const view = '{{ view_type }}';
+    const mode = '{{ display_mode }}';
+    const week = '{{ week_number }}';
+    
+    if (ma_dot && id) {
+        window.location.href = `?ma_dot=${ma_dot}&view=${view}&mode=${mode}&week=${week}&id=${id}`;
+    } else if (ma_dot) {
+        window.location.href = `?ma_dot=${ma_dot}&view=${view}&mode=${mode}&week=${week}`;
+    }
+}
+
+function changeView(newView) {
+    const ma_dot = document.getElementById('dotSelect').value;
+    const mode = '{{ display_mode }}';
+    const week = '{{ week_number }}';
+    
+    if (ma_dot) {
+        window.location.href = `?ma_dot=${ma_dot}&view=${newView}&mode=${mode}&week=${week}`;
+    } else {
+        window.location.href = `?view=${newView}&mode=${mode}&week=${week}`;
+    }
+}
+
+function changeMode(newMode) {
+    const ma_dot = document.getElementById('dotSelect').value;
+    const view = '{{ view_type }}';
+    const id = '{{ selected_id }}';
+    const week = '{{ week_number }}';
+    
+    let url = `?view=${view}&mode=${newMode}&week=${week}`;
+    if (ma_dot) url += `&ma_dot=${ma_dot}`;
+    if (id) url += `&id=${id}`;
+    
+    window.location.href = url;
+}
+
+function changeWeek(delta) {
+    const ma_dot = document.getElementById('dotSelect').value;
+    const view = '{{ view_type }}';
+    const mode = '{{ display_mode }}';
+    const id = '{{ selected_id }}';
+    const currentWeek = {{ week_number }};
+    const newWeek = currentWeek + delta;
+    
+    if (newWeek < 1 || newWeek > 15) return;
+    
+    let url = `?view=${view}&mode=${mode}&week=${newWeek}`;
+    if (ma_dot) url += `&ma_dot=${ma_dot}`;
+    if (id) url += `&id=${id}`;
+    
+    window.location.href = url;
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey || e.metaKey) return;
+    
+    {% if display_mode == 'weekly' %}
+    if (e.key === 'ArrowLeft') {
+        const week = {{ week_number }};
+        if (week > 1) changeWeek(-1);
+    } else if (e.key === 'ArrowRight') {
+        const week = {{ week_number }};
+        if (week < 15) changeWeek(1);
+    }
+    {% endif %}
+});
+</script>
+
+{% endblock %}

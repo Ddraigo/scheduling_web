@@ -7,13 +7,17 @@ import json
 import logging
 import random
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.contrib import admin
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from apps.scheduling.models import DotXep
+from django.db.models import Q, Prefetch
+from apps.scheduling.models import (
+    DotXep, ThoiKhoaBieu, GiangVien, PhongHoc, 
+    TimeSlot, KhungTG, PhanCong, LopMonHoc, MonHoc
+)
 
 logger = logging.getLogger(__name__)
 
@@ -245,3 +249,438 @@ def algo_scheduler_run_api(request):
             'message': f'Lỗi: {str(e)}'
         }, status=500)
 
+
+@require_http_methods(["GET"])
+def algo_scheduler_view_result_api(request):
+    """
+    API endpoint để xem kết quả thời khóa biểu đã được lưu vào database
+    
+    Expected GET parameters:
+    - ma_dot: Mã đợt xếp lịch
+    
+    Returns:
+    {
+        "status": "success",
+        "ma_dot": "2025-2026_HK1",
+        "ten_dot": "Học kỳ 1 năm 2025-2026",
+        "total_schedules": 150,
+        "schedules": [
+            {
+                "ma_lop": "CTTT01",
+                "ten_lop": "Cấu trúc dữ liệu",
+                "ma_gv": "GV001",
+                "ten_gv": "Nguyễn Văn A",
+                "ma_phong": "A101",
+                "thu": 2,
+                "ca": 1,
+                "tuan_hoc": 1
+            },
+            ...
+        ]
+    }
+    """
+    try:
+        ma_dot = request.GET.get('ma_dot')
+        
+        if not ma_dot:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Vui lòng cung cấp ma_dot'
+            }, status=400)
+        
+        # Kiểm tra đợt xếp có tồn tại không
+        try:
+            dot_xep = DotXep.objects.get(ma_dot=ma_dot)
+        except DotXep.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Không tìm thấy đợt xếp {ma_dot}'
+            }, status=404)
+        
+        # Lấy tất cả thời khóa biểu của đợt
+        from apps.scheduling.models import ThoiKhoaBieu, PhanCong
+        
+        tkb_list = ThoiKhoaBieu.objects.filter(
+            ma_dot=dot_xep
+        ).select_related(
+            'ma_lop',
+            'ma_lop__ma_mon_hoc',
+            'ma_phong',
+            'time_slot_id__ca'
+        ).order_by('time_slot_id__thu', 'time_slot_id__ca__ma_khung_gio')
+        
+        # Lấy mapping từ ma_lop sang giảng viên qua PhanCong
+        lop_to_gv = {}
+        for pc in PhanCong.objects.filter(ma_dot=dot_xep).select_related('ma_lop', 'ma_gv'):
+            lop_to_gv[pc.ma_lop.ma_lop] = pc.ma_gv
+        
+        # Format kết quả
+        schedules = []
+        for tkb in tkb_list:
+            # Lấy thông tin giảng viên từ mapping
+            gv = lop_to_gv.get(tkb.ma_lop.ma_lop)
+            
+            schedules.append({
+                'id': tkb.ma_tkb,
+                'ma_lop': tkb.ma_lop.ma_lop,
+                'ten_lop': f"{tkb.ma_lop.ma_mon_hoc.ten_mon_hoc} (Nhóm {tkb.ma_lop.nhom_mh})",
+                'ma_mon': tkb.ma_lop.ma_mon_hoc.ma_mon_hoc,
+                'ten_mon': tkb.ma_lop.ma_mon_hoc.ten_mon_hoc,
+                'ma_gv': gv.ma_gv if gv else 'N/A',
+                'ten_gv': gv.ten_gv if gv else 'Chưa phân công',
+                'ma_phong': tkb.ma_phong.ma_phong if tkb.ma_phong else 'N/A',
+                'suc_chua': tkb.ma_phong.suc_chua if tkb.ma_phong and tkb.ma_phong.suc_chua else 0,
+                'loai_phong': tkb.ma_phong.loai_phong if tkb.ma_phong else 'N/A',
+                'thu': tkb.time_slot_id.thu,
+                'ca': tkb.time_slot_id.ca.ma_khung_gio,
+                'gio_bat_dau': str(tkb.time_slot_id.ca.gio_bat_dau),
+                'gio_ket_thuc': str(tkb.time_slot_id.ca.gio_ket_thuc),
+                'tuan_hoc': tkb.tuan_hoc if tkb.tuan_hoc else '1',
+            })
+        
+        logger.info(f"Retrieved {len(schedules)} schedules for {ma_dot}")
+        
+        return JsonResponse({
+            'status': 'success',
+            'ma_dot': ma_dot,
+            'ten_dot': dot_xep.ten_dot,
+            'total_schedules': len(schedules),
+            'schedules': schedules
+        })
+    
+    except Exception as e:
+        logger.exception(f"Lỗi khi xem kết quả: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+
+
+def thoikhoabieu_view(request):
+    """
+    View hiển thị thời khóa biểu với nhiều góc nhìn và dạng hiển thị
+    - Góc nhìn: theo giáo viên, theo phòng
+    - Dạng hiển thị: tổng quát (tất cả tuần), chi tiết (theo tuần)
+    """
+    # Lấy các tham số từ request
+    view_type = request.GET.get('view', 'teacher')  # 'teacher' hoặc 'room'
+    display_mode = request.GET.get('mode', 'general')  # 'general' hoặc 'weekly'
+    week_number = int(request.GET.get('week', 1))  # Tuần hiện tại (1-15)
+    ma_dot = request.GET.get('ma_dot', '')  # Đợt xếp lịch
+    selected_id = request.GET.get('id', '')  # Mã GV hoặc mã phòng
+    
+    # Lấy danh sách đợt xếp lịch
+    dot_list = DotXep.objects.all().order_by('-ma_dot')
+    
+    # Nếu không có ma_dot, lấy đợt mới nhất
+    if not ma_dot and dot_list.exists():
+        ma_dot = dot_list.first().ma_dot
+    
+    # Khởi tạo context
+    context = {
+        **admin.site.each_context(request),
+        'title': 'Thời Khóa Biểu',
+        'view_type': view_type,
+        'display_mode': display_mode,
+        'week_number': week_number,
+        'ma_dot': ma_dot,
+        'selected_id': selected_id,
+        'dot_list': dot_list,
+        'weeks': range(1, 16),  # 15 tuần
+        'app_label': 'sap_lich',
+        'opts': {
+            'app_label': 'sap_lich',
+            'model_name': 'thoikhoabieu',
+            'verbose_name_plural': 'Thời khóa biểu',
+        },
+    }
+    
+    if not ma_dot:
+        return render(request, 'admin/thoikhoabieu.html', context)
+    
+    try:
+        dot_xep = DotXep.objects.get(ma_dot=ma_dot)
+        context['dot_xep'] = dot_xep
+        
+        if view_type == 'teacher':
+            # Lấy danh sách giáo viên CÓ LỊCH DẠY THỰC TẾ trong đợt này
+            # Lấy từ TKB thông qua PhanCong
+            gv_co_lich = PhanCong.objects.filter(
+                ma_dot=dot_xep,
+                ma_gv__isnull=False,
+                ma_lop__tkb_list__ma_dot=dot_xep  # Lớp phải có TKB
+            ).select_related('ma_gv').values(
+                'ma_gv__ma_gv', 'ma_gv__ten_gv'
+            ).distinct().order_by('ma_gv__ma_gv')
+            
+            teachers = [{'ma_gv': gv['ma_gv__ma_gv'], 'ten_gv': gv['ma_gv__ten_gv']} 
+                       for gv in gv_co_lich]
+            context['teachers'] = teachers
+            
+            # Nếu chưa chọn GV, chọn GV đầu tiên
+            if not selected_id and teachers:
+                selected_id = teachers[0]['ma_gv']
+                context['selected_id'] = selected_id
+            
+            if selected_id:
+                try:
+                    gv = GiangVien.objects.get(ma_gv=selected_id)
+                    context['selected_teacher'] = gv
+                    
+                    # Lấy các lớp mà GV dạy trong đợt này
+                    lop_gv = PhanCong.objects.filter(
+                        ma_dot=dot_xep, ma_gv=gv
+                    ).values_list('ma_lop__ma_lop', flat=True)
+                    
+                    # Lấy TKB của các lớp đó
+                    tkb_list = ThoiKhoaBieu.objects.filter(
+                        ma_dot=dot_xep,
+                        ma_lop__ma_lop__in=lop_gv
+                    ).select_related(
+                        'ma_lop', 'ma_lop__ma_mon_hoc', 'ma_phong', 
+                        'time_slot_id', 'time_slot_id__ca'
+                    ).order_by('time_slot_id__thu', 'time_slot_id__ca')
+                    
+                    schedule_data = build_schedule_data(
+                        tkb_list, display_mode, week_number, dot_xep
+                    )
+                    context['schedule_data'] = schedule_data
+                    
+                    # Thêm ngày tháng cho từng thứ nếu ở chế độ weekly
+                    if display_mode == 'weekly':
+                        context['week_dates'] = get_week_dates(dot_xep, week_number)
+                except GiangVien.DoesNotExist:
+                    context['error'] = f'Không tìm thấy giáo viên {selected_id}'
+                
+        else:  # view_type == 'room'
+            # Lấy danh sách phòng CÓ LỊCH SỬ DỤNG trong đợt này
+            rooms = PhongHoc.objects.filter(
+                tkb_list__ma_dot=dot_xep
+            ).distinct().order_by('ma_phong')
+            context['rooms'] = rooms
+            
+            # Nếu chưa chọn phòng, chọn phòng đầu tiên
+            if not selected_id and rooms.exists():
+                selected_id = rooms.first().ma_phong
+                context['selected_id'] = selected_id
+            
+            if selected_id:
+                try:
+                    phong = PhongHoc.objects.get(ma_phong=selected_id)
+                    context['selected_room'] = phong
+                    
+                    # Lấy TKB của phòng
+                    tkb_list = ThoiKhoaBieu.objects.filter(
+                        ma_dot=dot_xep,
+                        ma_phong=phong
+                    ).select_related(
+                        'ma_lop', 'ma_lop__ma_mon_hoc', 'ma_phong',
+                        'time_slot_id', 'time_slot_id__ca'
+                    ).order_by('time_slot_id__thu', 'time_slot_id__ca')
+                    
+                    schedule_data = build_schedule_data(
+                        tkb_list, display_mode, week_number, dot_xep
+                    )
+                    context['schedule_data'] = schedule_data
+                    
+                    # Thêm ngày tháng cho từng thứ nếu ở chế độ weekly
+                    if display_mode == 'weekly':
+                        context['week_dates'] = get_week_dates(dot_xep, week_number)
+                except PhongHoc.DoesNotExist:
+                    context['error'] = f'Không tìm thấy phòng {selected_id}'
+                except PhongHoc.DoesNotExist:
+                    context['error'] = f'Không tìm thấy phòng {selected_id}'
+        
+    except DotXep.DoesNotExist:
+        context['error'] = f'Không tìm thấy đợt xếp lịch {ma_dot}'
+    except Exception as e:
+        logger.exception(f"Lỗi khi hiển thị TKB: {e}")
+        context['error'] = f'Lỗi: {str(e)}'
+    
+    return render(request, 'admin/thoikhoabieu.html', context)
+
+
+def build_schedule_data(tkb_list, display_mode, week_number, dot_xep):
+    """
+    Xây dựng dữ liệu lịch học theo tuần
+    Args:
+        tkb_list: QuerySet các TKB
+        display_mode: 'general' hoặc 'weekly'
+        week_number: Số tuần hiện tại
+        dot_xep: DotXep object
+    Returns: {
+        'schedule': {
+            'thu_2': [{'ca': 1, 'ca_info': {...}, 'classes': [...]}, ...],
+            'thu_3': [...],
+            ...
+        },
+        'ca_list': [...]
+    }
+    """
+    # Khởi tạo cấu trúc dữ liệu
+    schedule = {f'thu_{i}': {} for i in range(2, 9)}  # Thứ 2-8 (8=CN)
+    
+    # Lấy danh sách ca học
+    ca_list = KhungTG.objects.all().order_by('ma_khung_gio')
+    
+    # Khởi tạo tất cả các slot trống
+    for thu in range(2, 9):
+        thu_key = f'thu_{thu}'
+        for ca in ca_list:
+            schedule[thu_key][ca.ma_khung_gio] = {
+                'ca': ca.ma_khung_gio,
+                'ca_info': {
+                    'ten_ca': ca.ten_ca,
+                    'gio_bd': ca.gio_bat_dau.strftime('%H:%M'),
+                    'gio_kt': ca.gio_ket_thuc.strftime('%H:%M'),
+                },
+                'classes': []
+            }
+    
+    # Tạo cache cho PhanCong để tránh query nhiều lần
+    phan_cong_cache = {}
+    phan_cong_data = PhanCong.objects.filter(
+        ma_dot=dot_xep
+    ).select_related('ma_gv', 'ma_lop')
+    
+    for pc in phan_cong_data:
+        phan_cong_cache[pc.ma_lop.ma_lop] = {
+            'gv_name': pc.ma_gv.ten_gv if pc.ma_gv else 'Chưa phân',
+            'gv_code': pc.ma_gv.ma_gv if pc.ma_gv else '',
+        }
+    
+    # Điền dữ liệu từ TKB
+    for tkb in tkb_list:
+        thu = tkb.time_slot_id.thu
+        ca = tkb.time_slot_id.ca.ma_khung_gio
+        thu_key = f'thu_{thu}'
+        
+        # Parse tuần học
+        weeks = parse_tuan_hoc(tkb.tuan_hoc, week_number, display_mode)
+        
+        # Nếu ở chế độ chi tiết theo tuần và không có buổi nào trong tuần này thì bỏ qua
+        if display_mode == 'weekly' and week_number not in weeks:
+            continue
+        
+        # Lấy thông tin giáo viên từ cache
+        gv_info = phan_cong_cache.get(tkb.ma_lop.ma_lop, {
+            'gv_name': 'N/A',
+            'gv_code': ''
+        })
+        
+        class_info = {
+            'ma_lop': tkb.ma_lop.ma_lop,
+            'mon_hoc': tkb.ma_lop.ma_mon_hoc.ten_mon_hoc,
+            'ma_mon': tkb.ma_lop.ma_mon_hoc.ma_mon_hoc,
+            'phong': tkb.ma_phong.ma_phong if tkb.ma_phong else 'TBA',
+            'gv_name': gv_info['gv_name'],
+            'gv_code': gv_info['gv_code'],
+            'weeks': weeks,
+            'week_display': format_weeks(weeks) if display_mode == 'general' else f'Tuần {week_number}',
+        }
+        
+        schedule[thu_key][ca]['classes'].append(class_info)
+    
+    # Chuyển dict thành list để dễ iterate trong template
+    result_schedule = {}
+    for thu_key, ca_dict in schedule.items():
+        result_schedule[thu_key] = [slot_data for ca_id, slot_data in sorted(ca_dict.items())]
+    
+    return {
+        'schedule': result_schedule,
+        'ca_list': list(ca_list.values('ma_khung_gio', 'ten_ca', 'gio_bat_dau', 'gio_ket_thuc'))
+    }
+
+
+def parse_tuan_hoc(tuan_hoc_pattern, week_number, display_mode):
+    """
+    Parse chuỗi pattern tuần học (VD: "1111111000000000") thành list các tuần
+    Returns: [1, 2, 3, 4, 5, 6, 7] cho pattern trên
+    """
+    if not tuan_hoc_pattern:
+        # Mặc định: tất cả 15 tuần
+        return list(range(1, 16))
+    
+    weeks = []
+    for i, char in enumerate(tuan_hoc_pattern):
+        if char == '1':
+            weeks.append(i + 1)
+    
+    return weeks if weeks else list(range(1, 16))
+
+
+def format_weeks(weeks):
+    """
+    Format danh sách tuần thành chuỗi ngắn gọn
+    VD: [1,2,3,4,5,7,8] -> "T1-5, 7-8"
+    """
+    if not weeks:
+        return ""
+    
+    weeks = sorted(weeks)
+    ranges = []
+    start = weeks[0]
+    end = weeks[0]
+    
+    for i in range(1, len(weeks)):
+        if weeks[i] == end + 1:
+            end = weeks[i]
+        else:
+            if start == end:
+                ranges.append(f"T{start}")
+            else:
+                ranges.append(f"T{start}-{end}")
+            start = weeks[i]
+            end = weeks[i]
+    
+    # Thêm range cuối cùng
+    if start == end:
+        ranges.append(f"T{start}")
+    else:
+        ranges.append(f"T{start}-{end}")
+    
+    return ", ".join(ranges)
+
+
+def get_week_dates(dot_xep, week_number):
+    """
+    Tính ngày cụ thể cho từng thứ trong tuần
+    Returns: {
+        2: {'date': datetime, 'display': '01/01'},
+        3: {'date': datetime, 'display': '02/01'},
+        ...
+        8: {'date': datetime, 'display': '07/01'}
+    }
+    """
+    # Lấy ngày bắt đầu từ DuKienDT
+    if not dot_xep.ma_du_kien_dt or not dot_xep.ma_du_kien_dt.ngay_bd:
+        return {}
+    
+    # Tính ngày bắt đầu của tuần (Thứ 2)
+    # week_number = 1 => tuần đầu tiên
+    start_date = dot_xep.ma_du_kien_dt.ngay_bd
+    days_to_add = (week_number - 1) * 7
+    week_start = start_date + timedelta(days=days_to_add)
+    
+    # Điều chỉnh để week_start là thứ 2
+    # weekday(): 0=Monday, 6=Sunday
+    weekday = week_start.weekday()
+    if weekday != 0:  # Nếu không phải thứ 2
+        week_start = week_start - timedelta(days=weekday)
+    
+    week_dates = {}
+    for thu in range(2, 9):  # Thứ 2-8 (8=CN)
+        if thu == 8:
+            # Chủ nhật
+            day_offset = 6
+        else:
+            # Thứ 2-7
+            day_offset = thu - 2
+        
+        day_date = week_start + timedelta(days=day_offset)
+        week_dates[thu] = {
+            'date': day_date,
+            'display': day_date.strftime('%d/%m')
+        }
+    
+    return week_dates
