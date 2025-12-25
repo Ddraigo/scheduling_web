@@ -110,6 +110,34 @@
     </div>
 </div>
 
+<!-- Schedule Table -->
+<div class="card" id="scheduleTableCard" style="display: none;">
+    <div class="card-header">
+        <h5>📅 Thời khóa biểu (<span id="scheduleCount">0</span> buổi học)</h5>
+    </div>
+    <div class="card-body">
+        <div style="overflow-x: auto;">
+            <table class="table table-bordered table-striped table-hover" id="scheduleTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã lớp</th>
+                        <th>Tên lớp</th>
+                        <th>Môn học</th>
+                        <th>Giảng viên</th>
+                        <th>Phòng</th>
+                        <th>Thứ</th>
+                        <th>Ca</th>
+                        <th>Giờ</th>
+                    </tr>
+                </thead>
+                <tbody id="scheduleTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block extrahead %}
@@ -147,6 +175,24 @@
         display: flex;
         gap: 10px;
         flex-wrap: wrap;
+    }
+    #scheduleTable {
+        font-size: 13px;
+        white-space: nowrap;
+    }
+    #scheduleTable th {
+        background-color: #343a40;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    #scheduleTable td {
+        vertical-align: middle;
+    }
+    .table-hover tbody tr:hover {
+        background-color: #f1f3f5;
+        cursor: pointer;
     }
 </style>
 {% endblock %}
@@ -230,11 +276,17 @@
                 
                 if (data.saved_to_db) {
                     log(`💾 Đã lưu ${data.details.lectures_scheduled} buổi học vào database`, 'success');
+                    
+                    // Tự động hiển thị kết quả sau 1 giây
+                    log(`📊 Đang tải bảng thời khóa biểu...`);
+                    setTimeout(() => {
+                        viewResult();
+                    }, 1000);
                 } else {
                     log(`⚠️ Lưu vào database thất bại hoặc bị tắt`, 'error');
                 }
                 
-                log(`� File solution: ${data.sol_file}`);
+                log(`📁 File solution: ${data.sol_file}`);
             } else {
                 log(`❌ Lỗi: ${data.message || 'Lỗi không xác định'}`, 'error');
             }
@@ -249,8 +301,86 @@
         const periodId = getSelectedPeriod();
         if (!periodId) return;
         
-        log(`Đang xem kết quả cho đợt: ${periodId}...`);
-        log(`ℹ️ Chạy "Chạy thuật toán" để tạo kết quả`);
+        log(`📊 Đang tải kết quả cho đợt: ${periodId}...`);
+        
+        fetch(`{% url 'sap_lich:algo_scheduler_view_result_api' %}?ma_dot=${periodId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                log(`✅ Tìm thấy ${data.total_schedules} buổi học trong database`, 'success');
+                log(`📅 Đợt: ${data.ten_dot}`);
+                
+                if (data.total_schedules > 0) {
+                    displayScheduleTable(data.schedules);
+                    log(`📊 Đã hiển thị bảng thời khóa biểu bên dưới`, 'success');
+                } else {
+                    log(`⚠️ Chưa có dữ liệu thời khóa biểu. Vui lòng chạy thuật toán trước!`, 'error');
+                    hideScheduleTable();
+                }
+            } else {
+                log(`❌ Lỗi: ${data.message || 'Lỗi không xác định'}`, 'error');
+                hideScheduleTable();
+            }
+        })
+        .catch(error => {
+            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
+            hideScheduleTable();
+        });
+    }
+    
+    function displayScheduleTable(schedules) {
+        const tableCard = document.getElementById('scheduleTableCard');
+        const tableBody = document.getElementById('scheduleTableBody');
+        const scheduleCount = document.getElementById('scheduleCount');
+        
+        // Clear old data
+        tableBody.innerHTML = '';
+        
+        // Update count
+        scheduleCount.textContent = schedules.length;
+        
+        // Mapping thứ
+        const dayMap = {
+            2: 'Thứ 2',
+            3: 'Thứ 3',
+            4: 'Thứ 4',
+            5: 'Thứ 5',
+            6: 'Thứ 6',
+            7: 'Thứ 7',
+            8: 'Chủ nhật'
+        };
+        
+        // Populate table
+        schedules.forEach((schedule, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td><strong>${schedule.ma_lop}</strong></td>
+                <td>${schedule.ten_lop}</td>
+                <td>${schedule.ten_mon}</td>
+                <td>${schedule.ten_gv}</td>
+                <td><span class="badge badge-info">${schedule.ma_phong}</span></td>
+                <td>${dayMap[schedule.thu] || schedule.thu}</td>
+                <td>Ca ${schedule.ca}</td>
+                <td><small>${schedule.gio_bat_dau} - ${schedule.gio_ket_thuc}</small></td>
+            `;
+            tableBody.appendChild(row);
+        });
+        
+        // Show table
+        tableCard.style.display = 'block';
+        
+        // Scroll to table
+        tableCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    function hideScheduleTable() {
+        document.getElementById('scheduleTableCard').style.display = 'none';
     }
     
     function getCookie(name) {
