@@ -234,13 +234,22 @@ class AlgorithmRunner:
             ThoiKhoaBieu.objects.filter(ma_dot=self.dot_xep).delete()
             logger.info(f"Deleted old schedules for {self.ma_dot}")
             
-            # Tạo mapping từ course_id (string) sang PhanCong
-            course_id_to_phancong = {}
-            for pc in PhanCong.objects.filter(ma_dot=self.dot_xep).select_related('ma_lop', 'ma_phong'):
-                course_id_to_phancong[pc.ma_lop.ma_lop] = pc
+            # Tạo base ID từ timestamp để unique (8 chữ số)
+            import time
+            from datetime import date, timedelta
+            base_id = int(time.time()) % 100000000  # 8 chữ số
+            
+            # Ngày bắt đầu mặc định (có thể lấy từ DotXep hoặc đặt mặc định)
+            # Giả sử học kỳ bắt đầu vào ngày hiện tại hoặc lấy từ semester info
+            ngay_bat_dau = date.today()  # Có thể thay bằng ngày cụ thể của học kỳ
+            
+            # Tạo mapping từ course_id (string) sang LopMonHoc
+            from ..models import PhongHoc, LopMonHoc
+            course_id_to_lop = {}
+            for lop in LopMonHoc.objects.all():
+                course_id_to_lop[lop.ma_lop] = lop
             
             # Tạo mapping từ room_id (string) sang PhongHoc
-            from ..models import PhongHoc
             room_id_to_phong = {p.ma_phong: p for p in PhongHoc.objects.all()}
             
             # Tạo ThoiKhoaBieu mới
@@ -265,12 +274,21 @@ class AlgorithmRunner:
                     logger.warning(f"TimeSlot not found for day={db_day}, period={db_period}")
                     continue
                 
-                # Tìm PhanCong
-                if course_id not in course_id_to_phancong:
-                    logger.warning(f"PhanCong not found for course_id={course_id}")
+                # Tìm LopMonHoc
+                if course_id not in course_id_to_lop:
+                    logger.warning(f"LopMonHoc not found for course_id={course_id}")
                     continue
                 
-                phan_cong = course_id_to_phancong[course_id]
+                lop_mon_hoc = course_id_to_lop[course_id]
+                
+                # Lấy số tuần học từ môn học
+                so_tuan = lop_mon_hoc.ma_mon_hoc.so_tuan if lop_mon_hoc.ma_mon_hoc.so_tuan else 15
+                # Tạo pattern tuần học: "111...1" (n lần với n = so_tuan)
+                # Tất cả môn đều bắt đầu từ tuần 1 và học liên tục
+                tuan_hoc_pattern = "1" * so_tuan
+                
+                # Tính ngày kết thúc dựa trên số tuần (1 tuần = 7 ngày)
+                ngay_ket_thuc = ngay_bat_dau + timedelta(weeks=so_tuan)
                 
                 # Tìm PhongHoc
                 if room_id not in room_id_to_phong:
@@ -279,12 +297,25 @@ class AlgorithmRunner:
                 
                 phong = room_id_to_phong[room_id]
                 
+                # Tạo mã TKB unique (max 15 chars)
+                # Format: TKB + base_id (8 digits) + counter (4 digits) = 15 chars
+                ma_tkb = f"TKB{base_id:08d}{created_count:04d}"
+                
+                # Kiểm tra độ dài (safety check)
+                if len(ma_tkb) > 15:
+                    # Fallback: chỉ dùng counter
+                    ma_tkb = f"TKB{(base_id + created_count):011d}"[:15]
+                
                 # Tạo ThoiKhoaBieu
                 ThoiKhoaBieu.objects.create(
+                    ma_tkb=ma_tkb,
                     ma_dot=self.dot_xep,
-                    ma_phan_cong=phan_cong,
+                    ma_lop=lop_mon_hoc,
                     time_slot_id=time_slot,
-                    ma_phong=phong
+                    ma_phong=phong,
+                    tuan_hoc=tuan_hoc_pattern,
+                    ngay_bd=ngay_bat_dau,
+                    ngay_kt=ngay_ket_thuc
                 )
                 created_count += 1
             
