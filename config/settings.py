@@ -124,13 +124,13 @@ DB_DRIVER   = os.getenv('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
 DB_USE_WINDOWS_AUTH = os.getenv('DB_USE_WINDOWS_AUTH', 'false').lower() == 'true'
 
 # DEBUG: In ra các giá trị để kiểm tra
-print(f"=== DATABASE CONFIG DEBUG ===")
-print(f"DB_ENGINE: {DB_ENGINE}")
-print(f"DB_HOST: {DB_HOST}")
-print(f"DB_NAME: {DB_NAME}")
-print(f"DB_USERNAME: {DB_USERNAME}")
-print(f"DB_DRIVER: {DB_DRIVER}")
-print(f"==============================")
+# print(f"=== DATABASE CONFIG DEBUG ===")
+# print(f"DB_ENGINE: {DB_ENGINE}")
+# print(f"DB_HOST: {DB_HOST}")
+# print(f"DB_NAME: {DB_NAME}")
+# print(f"DB_USERNAME: {DB_USERNAME}")
+# print(f"DB_DRIVER: {DB_DRIVER}")
+# print(f"==============================")
 
 if DB_ENGINE and DB_NAME and (DB_USERNAME or DB_USE_WINDOWS_AUTH):
     if DB_ENGINE == 'mssql':
@@ -278,6 +278,11 @@ JAZZMIN_SETTINGS = {
                 "name": "Chat bot hỗ trợ",
                 "url": "/admin/sap_lich/llm-scheduler/",
                 "icon": "fas fa-robot",
+            },
+            {
+                "name": "Xem thời khóa biểu",
+                "url": "/admin/sap_lich/thoikhoabieu/",
+                "icon": "fas fa-calendar-alt",
             }
         ]
     },
