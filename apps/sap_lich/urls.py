@@ -12,5 +12,6 @@ urlpatterns = [
     path('algo-scheduler/', views.algo_scheduler_view, name='algo_scheduler'),
     path('api/algo-scheduler/run/', views.algo_scheduler_run_api, name='algo_scheduler_run_api'),
     path('api/algo-scheduler/view-result/', views.algo_scheduler_view_result_api, name='algo_scheduler_view_result_api'),
+    path('api/algo-scheduler/weights/', views.algo_scheduler_get_weights_api, name='algo_scheduler_get_weights_api'),
     path('thoikhoabieu/', views.thoikhoabieu_view, name='thoikhoabieu'),
 ]

@@ -177,6 +177,8 @@ class AlgorithmRunner:
                     'curriculum_compactness': best_breakdown.curriculum_compactness,
                     'lecture_consecutiveness': best_breakdown.lecture_consecutiveness,
                     'room_stability': best_breakdown.room_stability,
+                    'teacher_lecture_consolidation': best_breakdown.teacher_lecture_consolidation,
+                    'teacher_working_days': best_breakdown.teacher_working_days,
                     'teacher_preferences': best_breakdown.teacher_preference_violations,
                 },
                 'sol_file': str(sol_file),

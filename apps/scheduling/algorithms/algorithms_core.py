@@ -11,24 +11,29 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
-# SOFT CONSTRAINT WEIGHTS - Tuning ưu tiên tối ưu hóa
-# Priority Order (HIGH to LOW):
-# 1. Teacher Preferences (2.0) - Nguyện vọng GV
-# 2. Teacher Lecture Consolidation (1.8) - GV dạy liên tiếp cùng phòng
-# 3. Lecture Consecutiveness (1.5) - Pattern xếp tiết học
-# 4. Room Stability (1.0) - Hard constraint priority
-# 5. Room Capacity (1.0) - Hard constraint priority
-# 6. Min Working Days (1.0) - Hard constraint priority
-# 7. Curriculum Compactness - REMOVED (conflicts with S7)
+# Import dynamic weight loader
+try:
+    from .weight_loader import WeightLoader, DEFAULT_WEIGHTS
+except ImportError:
+    # Fallback if weight_loader not available (standalone mode)
+    class WeightLoader:
+        @staticmethod
+        def load_weights(ma_dot=None):
+            return {
+                'MIN_WORKING_DAYS': 1.0,
+                'LECTURE_CONSECUTIVENESS': 1.5,
+                'ROOM_STABILITY': 1.0,
+                'TEACHER_LECTURE_CONSOLIDATION': 1.8,
+                'TEACHER_PREFERENCE': 2.0,
+                'TEACHER_WORKING_DAYS': 2.5,
+                'ROOM_CAPACITY': 1.0,
+            }
+    DEFAULT_WEIGHTS = WeightLoader.load_weights()
 
-WEIGHT_ROOM_CAPACITY = 1.0
-WEIGHT_MIN_WORKING_DAYS = 1.0
-WEIGHT_ROOM_STABILITY = 1.0
-WEIGHT_LECTURE_CONSECUTIVENESS = 1.5  # Medium priority
-WEIGHT_TEACHER_LECTURE_CONSOLIDATION = 1.8  # HIGH priority (GV dạy liên tiếp cùng phòng)
-# WEIGHT_CURRICULUM_COMPACTNESS = 0.0  # REMOVED: Conflicts with S7
-WEIGHT_TEACHER_PREFERENCE = 2.0  # Highest priority
-WEIGHT_TEACHER_WORKING_DAYS = 2.5  # S7: Increased to dominate
+# SOFT CONSTRAINT WEIGHTS - DEFAULT VALUES (Fallback only)
+# These are now loaded dynamically from database via WeightLoader
+# Soft constraint weights are now loaded dynamically via WeightLoader
+# from tb_RANG_BUOC_TRONG_DOT (per-dot) → tb_RANG_BUOC_MEM (global) → DEFAULT_WEIGHTS
 
 STRICT_SAMPLE_INSTANCE = """Name: Tiny
 Courses: 2
@@ -549,9 +554,8 @@ def parse_instance(path: Optional[str], enforce_room_per_course: bool = False) -
                                             course_preferred_room[course.index] = room_idx
                                             break
                                     break
-                print(f"[INFO] Enforce room per course ENABLED: Loaded {len(course_preferred_room)}/{len(courses)} preferred rooms")
             except Exception as e:
-                print(f"[WARNING] Could not load mapping file: {e}")
+                pass  # Silently fail if mapping file not found
     
     course_room_preference: List[List[int]] = []
     for course in courses:
@@ -622,9 +626,13 @@ def parse_instance(path: Optional[str], enforce_room_per_course: bool = False) -
 class TimetableState:
     """Mutable timetable with incremental scoring."""
 
-    def __init__(self, instance: CBCTTInstance) -> None:
+    def __init__(self, instance: CBCTTInstance, ma_dot: Optional[str] = None) -> None:
         self.instance = instance
         self.assignments: Dict[int, Tuple[int, int]] = {}
+        
+        # Load soft constraint weights dynamically from database (with fallback)
+        self.weights = WeightLoader.load_weights(ma_dot)
+        self.ma_dot = ma_dot  # Store for reference
         total_periods = instance.total_periods
         self.period_rooms: List[Dict[int, int]] = [dict() for _ in range(total_periods)]
         self.period_teachers: List[Set[str]] = [set() for _ in range(total_periods)]
@@ -1249,23 +1257,23 @@ class TimetableState:
         
         # Remove teacher preference cost
         self.soft_teacher_preference_violations -= pref_cost
-        delta -= pref_cost * WEIGHT_TEACHER_PREFERENCE
+        delta -= pref_cost * self.weights['TEACHER_PREFERENCE']
 
         # Track teacher lecture consolidation penalty change (S6)
         new_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
         consolidation_delta = new_consolidation_penalty - old_consolidation_penalty
         self.soft_teacher_lecture_consolidation += consolidation_delta
-        delta += consolidation_delta * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
+        delta += consolidation_delta * self.weights['TEACHER_LECTURE_CONSOLIDATION']
 
         # S7: Track teacher working days penalty change
         new_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
         working_days_delta = new_working_days_penalty - old_working_days_penalty
         self.soft_teacher_working_days += working_days_delta
-        delta += working_days_delta * WEIGHT_TEACHER_WORKING_DAYS
+        delta += working_days_delta * self.weights['TEACHER_WORKING_DAYS']
         
         old_room_penalty = self.lecture_room_penalty[lecture_id]
         self.soft_room_capacity -= old_room_penalty
-        delta -= old_room_penalty * WEIGHT_ROOM_CAPACITY
+        delta -= old_room_penalty * self.weights['ROOM_CAPACITY']
         self.lecture_room_penalty[lecture_id] = 0
         day, slot = self.instance.period_to_slot(period)
         old_penalty = self.course_mwd_penalty[course_idx]
@@ -1275,7 +1283,7 @@ class TimetableState:
         new_penalty = self._compute_course_mwd_penalty(course_idx)
         self.course_mwd_penalty[course_idx] = new_penalty
         self.soft_min_working_days += new_penalty - old_penalty
-        delta += (new_penalty - old_penalty) * WEIGHT_MIN_WORKING_DAYS
+        delta += (new_penalty - old_penalty) * self.weights['MIN_WORKING_DAYS']
         old_penalty = self.course_room_penalty[course_idx]
         counts = self.course_room_counts[course_idx]
         counts[room_idx] -= 1
@@ -1284,7 +1292,7 @@ class TimetableState:
         new_penalty = self._compute_course_room_penalty(course_idx)
         self.course_room_penalty[course_idx] = new_penalty
         self.soft_room_stability += new_penalty - old_penalty
-        delta += (new_penalty - old_penalty) * WEIGHT_ROOM_STABILITY
+        delta += (new_penalty - old_penalty) * self.weights['ROOM_STABILITY']
         for curriculum_idx in self.instance.course_curriculums[course_idx]:
             slots = self.curriculum_day_slots[curriculum_idx][day]
             old_penalty = self.curriculum_day_penalty[curriculum_idx][day]
@@ -1300,7 +1308,7 @@ class TimetableState:
         new_consec_penalty = self._compute_course_consecutiveness_penalty(course_idx)
         consec_delta = new_consec_penalty - old_consec_penalty
         self.soft_lecture_consecutiveness += consec_delta
-        delta += consec_delta * WEIGHT_LECTURE_CONSECUTIVENESS
+        delta += consec_delta * self.weights['LECTURE_CONSECUTIVENESS']
         return delta
 
     def _insert_assignment(self, lecture_id: int, period: int, room_idx: int) -> int:
@@ -1327,7 +1335,7 @@ class TimetableState:
         overflow = max(0, students - capacity)
         self.lecture_room_penalty[lecture_id] = overflow
         self.soft_room_capacity += overflow
-        delta += overflow * WEIGHT_ROOM_CAPACITY
+        delta += overflow * self.weights['ROOM_CAPACITY']
         day, slot = self.instance.period_to_slot(period)
         old_penalty = self.course_mwd_penalty[course_idx]
         self.course_day_counts[course_idx][day] += 1
@@ -1336,14 +1344,14 @@ class TimetableState:
         new_penalty = self._compute_course_mwd_penalty(course_idx)
         self.course_mwd_penalty[course_idx] = new_penalty
         self.soft_min_working_days += new_penalty - old_penalty
-        delta += (new_penalty - old_penalty) * WEIGHT_MIN_WORKING_DAYS
+        delta += (new_penalty - old_penalty) * self.weights['MIN_WORKING_DAYS']
         old_penalty = self.course_room_penalty[course_idx]
         counts = self.course_room_counts[course_idx]
         counts[room_idx] += 1
         new_penalty = self._compute_course_room_penalty(course_idx)
         self.course_room_penalty[course_idx] = new_penalty
         self.soft_room_stability += new_penalty - old_penalty
-        delta += (new_penalty - old_penalty) * WEIGHT_ROOM_STABILITY
+        delta += (new_penalty - old_penalty) * self.weights['ROOM_STABILITY']
         for curriculum_idx in self.instance.course_curriculums[course_idx]:
             slots = self.curriculum_day_slots[curriculum_idx][day]
             old_penalty = self.curriculum_day_penalty[curriculum_idx][day]
@@ -1360,37 +1368,37 @@ class TimetableState:
         new_consec_penalty = self._compute_course_consecutiveness_penalty(course_idx)
         consec_delta = new_consec_penalty - old_consec_penalty
         self.soft_lecture_consecutiveness += consec_delta
-        delta += consec_delta * WEIGHT_LECTURE_CONSECUTIVENESS
+        delta += consec_delta * self.weights['LECTURE_CONSECUTIVENESS']
         
         # Track teacher lecture consolidation penalty change (S6)
         new_consolidation_penalty = self._compute_teacher_lecture_consolidation_penalty(teacher)
         consolidation_delta = new_consolidation_penalty - old_consolidation_penalty
         self.soft_teacher_lecture_consolidation += consolidation_delta
-        delta += consolidation_delta * WEIGHT_TEACHER_LECTURE_CONSOLIDATION
+        delta += consolidation_delta * self.weights['TEACHER_LECTURE_CONSOLIDATION']
 
         # S7: Track teacher working days penalty change
         new_working_days_penalty = self._compute_teacher_working_days_penalty(teacher)
         working_days_delta = new_working_days_penalty - old_working_days_penalty
         self.soft_teacher_working_days += working_days_delta
-        delta += working_days_delta * WEIGHT_TEACHER_WORKING_DAYS
+        delta += working_days_delta * self.weights['TEACHER_WORKING_DAYS']
         
         # Check 8: Teacher Preferences (SOFT CONSTRAINT)
         pref_cost = self._compute_teacher_preference_cost(lecture_id)
         self.soft_teacher_preference_violations += pref_cost
-        delta += pref_cost * WEIGHT_TEACHER_PREFERENCE
+        delta += pref_cost * self.weights['TEACHER_PREFERENCE']
         
         return delta
 
     @property
     def current_cost(self) -> int:
-        return (self.soft_room_capacity * WEIGHT_ROOM_CAPACITY + 
-                self.soft_min_working_days * WEIGHT_MIN_WORKING_DAYS + 
+        return (self.soft_room_capacity * self.weights['ROOM_CAPACITY'] + 
+                self.soft_min_working_days * self.weights['MIN_WORKING_DAYS'] + 
                 # self.soft_curriculum_compactness * WEIGHT_CURRICULUM_COMPACTNESS +  # REMOVED: S2 conflicts with S7
-                self.soft_room_stability * WEIGHT_ROOM_STABILITY + 
-                self.soft_lecture_consecutiveness * WEIGHT_LECTURE_CONSECUTIVENESS + 
-                self.soft_teacher_preference_violations * WEIGHT_TEACHER_PREFERENCE + 
-                self.soft_teacher_lecture_consolidation * WEIGHT_TEACHER_LECTURE_CONSOLIDATION +
-                self.soft_teacher_working_days * WEIGHT_TEACHER_WORKING_DAYS)
+                self.soft_room_stability * self.weights['ROOM_STABILITY'] + 
+                self.soft_lecture_consecutiveness * self.weights['LECTURE_CONSECUTIVENESS'] + 
+                self.soft_teacher_preference_violations * self.weights['TEACHER_PREFERENCE'] + 
+                self.soft_teacher_lecture_consolidation * self.weights['TEACHER_LECTURE_CONSOLIDATION'] +
+                self.soft_teacher_working_days * self.weights['TEACHER_WORKING_DAYS'])
 
     def score_breakdown(self) -> ScoreBreakdown:
         # Calculate S6 and S7 on-the-fly from current assignments
@@ -2478,13 +2486,6 @@ class TeacherWorkingDaysNeighborhood(Neighborhood):
             return None
         
         teachers_with_penalty.sort(reverse=True)
-        
-        # Debug logging every 100 calls
-        if self._call_count % 100 == 0:
-            success_rate = (self._success_count / self._call_count * 100) if self._call_count > 0 else 0
-            print(f"[S7-DEBUG] Calls: {self._call_count}, Success: {self._success_count} ({success_rate:.1f}%), Threshold: {threshold:.1f}", file=sys.stderr)
-            print(f"[S7-DEBUG] Top failures: {sorted(self._failure_reasons.items(), key=lambda x: -x[1])[:3]}", file=sys.stderr)
-            print(f"[S7-DEBUG] Current S7 total: {sum(p for p, _ in teachers_with_penalty)}", file=sys.stderr)
         
         # Step 2: Xử lý từng teacher (ưu tiên penalty cao)
         for penalty, teacher_name in teachers_with_penalty[:10]:  # Top 10 teachers
