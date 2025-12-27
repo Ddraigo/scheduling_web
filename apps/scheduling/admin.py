@@ -396,9 +396,14 @@ class PhanCongAdmin(BaseAdmin):
 
 @admin.register(RangBuocTrongDot)
 class RangBuocTrongDotAdmin(BaseAdmin):
-    list_display = ['id', 'ma_dot', 'ma_rang_buoc']
+    list_display = ['id', 'ma_dot', 'ma_rang_buoc', 'trong_so', 'get_global_weight']
     list_filter = ['ma_dot']
     ordering = ['id']
+    
+    def get_global_weight(self, obj):
+        """Hiển thị trọng số global từ RangBuocMem để so sánh"""
+        return obj.ma_rang_buoc.trong_so
+    get_global_weight.short_description = 'Trọng số global'
 
 
 @admin.register(NguyenVong)

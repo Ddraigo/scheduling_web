@@ -382,12 +382,16 @@ class NgayNghiDot(models.Model):
 
 class RangBuocTrongDot(models.Model):
     """Ràng buộc mềm áp dụng trong đợt - tb_RANG_BUOC_TRONG_DOT
-    Updated: Now has auto-increment id as PK, composite key is UNIQUE constraint"""
+    Updated: Now has auto-increment id as PK, composite key is UNIQUE constraint
+    TrongSo: Trọng số override cho đợt cụ thể"""
     id = models.AutoField(primary_key=True)
     ma_dot = models.ForeignKey(DotXep, on_delete=models.CASCADE, db_column='MaDot',
                               related_name='rang_buoc_list', verbose_name="Đợt xếp")
     ma_rang_buoc = models.ForeignKey(RangBuocMem, on_delete=models.CASCADE, db_column='MaRangBuoc',
                                     related_name='dot_ap_dung_list', verbose_name="Ràng buộc")
+    trong_so = models.FloatField(db_column='TrongSo', default=1.0, 
+                                 verbose_name="Trọng số override",
+                                 help_text="Trọng số riêng cho đợt này (override trọng số global)")
     
     class Meta:
         db_table = 'tb_RANG_BUOC_TRONG_DOT'
@@ -396,7 +400,7 @@ class RangBuocTrongDot(models.Model):
         unique_together = [['ma_dot', 'ma_rang_buoc']]
     
     def __str__(self):
-        return f"{self.ma_dot.ma_dot} - {self.ma_rang_buoc.ten_rang_buoc}"
+        return f"{self.ma_dot.ma_dot} - {self.ma_rang_buoc.ten_rang_buoc} (Trọng số: {self.trong_so})"
 
 
 class NguyenVong(models.Model):
