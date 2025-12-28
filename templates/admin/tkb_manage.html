@@ -1,0 +1,1173 @@
+{% extends "admin/base.html" %}
+{% load static i18n %}
+
+{% block title %}Quản lý Thời Khoá Biểu{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary-color: #667eea;
+        --primary-dark: #5a67d8;
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-color: #48bb78;
+        --success-gradient: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        --warning-color: #ed8936;
+        --warning-gradient: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        --danger-color: #f56565;
+        --danger-gradient: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        --bg-light: #f7fafc;
+        --bg-card: #ffffff;
+        --text-dark: #2d3748;
+        --text-muted: #718096;
+        --border-color: #e2e8f0;
+        --shadow-3d: 0 10px 40px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+        --shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1);
+        --shadow-soft: 0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+    
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-attachment: fixed;
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    
+    #content-main {
+        padding: 0;
+    }
+    
+    .tkb-container {
+        max-width: 1800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .tkb-header {
+        background: var(--bg-card);
+        border-radius: 24px;
+        padding: 32px;
+        margin-bottom: 32px;
+        box-shadow: var(--shadow-3d);
+        border: none;
+        transform: translateY(0);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .tkb-header:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+    }
+    
+    .tkb-header h1 {
+        font-size: 32px;
+        font-weight: 800;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0 0 12px 0;
+        letter-spacing: -0.5px;
+    }
+    
+    .tkb-header p {
+        color: var(--text-muted);
+        margin: 0;
+        font-size: 15px;
+        font-weight: 500;
+    }
+    
+    .control-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+    }
+    
+    .control-group {
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .control-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-select {
+        width: 100%;
+        border: 2px solid transparent;
+        border-radius: 16px;
+        padding: 14px 18px;
+        font-size: 15px;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: white;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.08);
+        color: var(--text-dark);
+    }
+    
+    .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-soft);
+        outline: none;
+        transform: translateY(-2px);
+    }
+    
+    .form-select:hover {
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.12);
+    }
+    
+    .main-layout {
+        display: grid;
+        grid-template-columns: 1fr 550px;
+        gap: 24px;
+        align-items: start;
+    }
+    
+    .form-section {
+        background: var(--bg-card);
+        border-radius: 24px;
+        padding: 28px;
+        box-shadow: var(--shadow-3d);
+        border: none;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .form-section:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-hover);
+    }
+    
+    .tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+        background: var(--bg-light);
+        padding: 4px;
+        border-radius: 12px;
+    }
+    
+    .tab-btn {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s;
+        border-radius: 8px;
+    }
+    
+    .tab-btn:hover {
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--primary-color);
+    }
+    
+    .tab-btn.active {
+        background: var(--primary-color);
+        color: white;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .tab-content {
+        display: none;
+    }
+    
+    .tab-content.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-group select,
+    .form-group input[type="text"],
+    .form-group input[type="number"] {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid transparent;
+        border-radius: 16px;
+        font-size: 15px;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: white;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.08);
+    }
+    
+    .form-group select:focus,
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-soft);
+        transform: translateY(-2px);
+    }
+    
+    .btn {
+        padding: 14px 28px;
+        border: none;
+        border-radius: 16px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        letter-spacing: 0.3px;
+    }
+    
+    .btn-primary {
+        background: var(--primary-gradient);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+    }
+    
+    .btn-success {
+        background: var(--success-gradient);
+        color: white;
+    }
+    
+    .btn-success:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(72, 187, 120, 0.35);
+    }
+    
+    .btn-danger {
+        background: var(--danger-gradient);
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(245, 101, 101, 0.35);
+    }
+    
+    .btn-warning {
+        background: var(--warning-gradient);
+        color: white;
+    }
+    
+    .btn-warning:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(237, 137, 54, 0.35);
+    }
+    
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .schedule-panel {
+        background: var(--bg-card);
+        border-radius: 24px;
+        padding: 28px;
+        box-shadow: var(--shadow-3d);
+        border: none;
+        position: sticky;
+        top: 20px;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .schedule-panel:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-hover);
+    }
+    
+    .schedule-panel h3 {
+        font-size: 20px;
+        font-weight: 700;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0 0 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .mini-schedule {
+        overflow-x: auto;
+    }
+    
+    .mini-schedule table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 13px;
+    }
+    
+    .mini-schedule th {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        color: var(--text-dark);
+        padding: 12px 8px;
+        font-weight: 700;
+        text-align: center;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 3px solid var(--primary-color);
+        white-space: nowrap;
+    }
+    
+    .mini-schedule th:first-child {
+        border-top-left-radius: 12px;
+    }
+    
+    .mini-schedule th:last-child {
+        border-top-right-radius: 12px;
+    }
+    
+    .mini-schedule td {
+        border: 1px solid #e2e8f0;
+        padding: 10px 6px;
+        text-align: center;
+        min-height: 70px;
+        background: white;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+    }
+    
+    .mini-schedule td:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        z-index: 10;
+    }
+    
+    .mini-schedule td.has-class {
+        background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%);
+        font-weight: 600;
+        color: var(--primary-dark);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+    }
+    
+    .mini-schedule td.selected {
+        background: var(--primary-gradient);
+        color: white;
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        transform: scale(1.05);
+    }
+    
+    .class-info {
+        font-size: 11px;
+        line-height: 1.4;
+    }
+    
+    .class-code {
+        font-weight: 700;
+        display: block;
+        margin-bottom: 2px;
+    }
+    
+    .deleted-items {
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 2px solid var(--border-color);
+    }
+    
+    .deleted-items h4 {
+        color: var(--danger-color);
+        margin-bottom: 16px;
+        font-size: 16px;
+        font-weight: 700;
+    }
+    
+    .deleted-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .deleted-item {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .deleted-item-info {
+        font-size: 13px;
+    }
+    
+    .deleted-item strong {
+        color: var(--danger-color);
+        font-weight: 700;
+    }
+    
+    .message {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        font-weight: 500;
+        font-size: 14px;
+        animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .message.success {
+        background: #d1fae5;
+        color: #065f46;
+        border-left: 4px solid var(--success-color);
+    }
+    
+    .message.error {
+        background: #fee2e2;
+        color: #991b1b;
+        border-left: 4px solid var(--danger-color);
+    }
+    
+    .message.warning {
+        background: #fef3c7;
+        color: #92400e;
+        border-left: 4px solid var(--warning-color);
+    }
+    
+    .swap-mode {
+        background: #fffbeb;
+        border: 2px dashed var(--warning-color);
+        padding: 16px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .swap-mode p {
+        color: #92400e;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+    
+    .loading {
+        display: none;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .loading.active {
+        display: block;
+    }
+    
+    .spinner {
+        border: 4px solid rgba(99, 102, 241, 0.1);
+        border-top: 4px solid var(--primary-color);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 1400px) {
+        .main-layout {
+            grid-template-columns: 1fr;
+        }
+        
+        .schedule-panel {
+            position: relative;
+            top: 0;
+            max-height: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tkb-container">
+    <div class="tkb-header">
+        <h1>⚙️ Quản lý Thời Khoá Biểu</h1>
+        <p>Thêm mới, chỉnh sửa, xóa và phục hồi lịch học</p>
+        
+        <!-- Filters -->
+        <div class="control-row" style="margin-top: 16px;">
+            <div class="control-group">
+                <label class="control-label">📅 Đợt xếp lịch</label>
+                <select id="dotSelect" class="form-select" onchange="updateFilters()">
+                    <option value="">-- Chọn đợt --</option>
+                    {% for dot in dots %}
+                    <option value="{{ dot.ma_dot }}" {% if dot.ma_dot == ma_dot %}selected{% endif %}>
+                        {{ dot.ten_dot }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">🏛️ Khoa</label>
+                <select id="khoaSelect" class="form-select" onchange="updateFilters()">
+                    <option value="">-- Tất cả khoa --</option>
+                    {% for khoa in khoa_list %}
+                    <option value="{{ khoa.ma_khoa }}" {% if khoa.ma_khoa == ma_khoa %}selected{% endif %}>
+                        {{ khoa.ten_khoa }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">👁️ Xem theo</label>
+                <select id="viewTypeSelect" class="form-select" onchange="handleViewTypeChange()">
+                    <option value="teacher" {% if view_type == 'teacher' or not view_type %}selected{% endif %}>👨‍🏫 Giáo viên</option>
+                    <option value="room" {% if view_type == 'room' %}selected{% endif %}>🏢 Phòng học</option>
+                </select>
+            </div>
+            
+            <div class="control-group" id="teacherSelectGroup" style="{% if view_type == 'room' %}display: none;{% endif %}">
+                <label class="control-label">👨‍🏫 Giáo viên</label>
+                <select id="teacherSelect" class="form-select" onchange="updateFilters()">
+                    <option value="">-- Chọn giáo viên --</option>
+                    {% for gv in teachers %}
+                    <option value="{{ gv.ma_gv }}" {% if gv.ma_gv == selected_id %}selected{% endif %}>
+                        {{ gv.ma_gv }} - {{ gv.ten_gv }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="control-group" id="roomSelectGroup" style="{% if view_type != 'room' %}display: none;{% endif %}">
+                <label class="control-label">🏢 Phòng học</label>
+                <select id="roomSelect" class="form-select" onchange="updateFilters()">
+                    <option value="">-- Chọn phòng --</option>
+                    {% for phong in phongs %}
+                    <option value="{{ phong.ma_phong }}" {% if phong.ma_phong == selected_id %}selected{% endif %}>
+                        {{ phong.ma_phong }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <div id="message-container"></div>
+    
+    <div class="main-layout">
+        <!-- Left: Form Section -->
+        <div class="form-section">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="create">➕ Thêm mới</button>
+                <button class="tab-btn" data-tab="edit">✏️ Sửa</button>
+                <button class="tab-btn" data-tab="delete">🗑️ Xóa & Phục hồi</button>
+                <button class="tab-btn" data-tab="swap">🔄 Hoán đổi</button>
+            </div>
+            
+            <!-- Tab Thêm mới -->
+            <div class="tab-content active" id="tab-create">
+                <form id="form-create">
+                    <div class="form-group">
+                        <label>Đợt xếp lịch *</label>
+                        <select name="ma_dot" required>
+                            <option value="">-- Chọn đợt --</option>
+                            {% for dot in dots %}
+                            <option value="{{ dot.ma_dot }}">{{ dot.ten_dot }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Lớp môn học *</label>
+                        <select name="ma_lop" required>
+                            <option value="">-- Chọn lớp --</option>
+                            {% for lop in lops %}
+                            <option value="{{ lop.ma_lop }}">{{ lop.ma_lop }} - {{ lop.ten_mon }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Phòng học *</label>
+                        <select name="ma_phong" required>
+                            <option value="">-- Chọn phòng --</option>
+                            {% for phong in phongs %}
+                            <option value="{{ phong.ma_phong }}">{{ phong.ma_phong }} ({{ phong.suc_chua }} chỗ)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Thời gian *</label>
+                        <select name="time_slot_id" required>
+                            <option value="">-- Chọn thời gian --</option>
+                            {% for ts in timeslots %}
+                            <option value="{{ ts.time_slot_id }}">{{ ts.thu }} - Tiết {{ ts.tiet_bat_dau }}-{{ ts.tiet_ket_thuc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tuần học</label>
+                        <input type="text" name="tuan_hoc" placeholder="VD: 1,2,3-5,7">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">➕ Thêm lịch</button>
+                </form>
+            </div>
+            
+            <!-- Tab Sửa -->
+            <div class="tab-content" id="tab-edit">
+                <p style="color: #718096; margin-bottom: 20px;">💡 Nhấp vào ô lịch bên phải để chỉnh sửa</p>
+                <form id="form-edit">
+                    <input type="hidden" name="ma_tkb" id="edit-ma-tkb">
+                    
+                    <div class="form-group">
+                        <label>Lớp hiện tại</label>
+                        <input type="text" id="edit-lop-current" readonly style="background: #f7fafc;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Phòng học</label>
+                        <select name="ma_phong" id="edit-phong">
+                            <option value="">-- Chọn phòng --</option>
+                            {% for phong in phongs %}
+                            <option value="{{ phong.ma_phong }}">{{ phong.ma_phong }} ({{ phong.suc_chua }} chỗ)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Thời gian</label>
+                        <select name="time_slot_id" id="edit-timeslot">
+                            <option value="">-- Chọn thời gian --</option>
+                            {% for ts in timeslots %}
+                            <option value="{{ ts.time_slot_id }}">{{ ts.thu }} - Tiết {{ ts.tiet_bat_dau }}-{{ ts.tiet_ket_thuc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tuần học</label>
+                        <input type="text" name="tuan_hoc" id="edit-tuan">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">💾 Lưu thay đổi</button>
+                </form>
+            </div>
+            
+            <!-- Tab Xóa & Phục hồi -->
+            <div class="tab-content" id="tab-delete">
+                <p style="color: #718096; margin-bottom: 20px;">💡 Nhấp vào ô lịch bên phải để xóa</p>
+                <form id="form-delete">
+                    <input type="hidden" name="ma_tkb" id="delete-ma-tkb">
+                    
+                    <div class="form-group">
+                        <label>Lớp sẽ xóa</label>
+                        <input type="text" id="delete-lop" readonly style="background: #f7fafc;">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-danger">🗑️ Xóa lịch</button>
+                </form>
+            </div>
+            
+            <!-- Tab Hoán đổi -->
+            <div class="tab-content" id="tab-swap">
+                <div class="swap-mode" id="swap-instruction">
+                    <p>👆 Chọn 2 ô lịch bên phải để hoán đổi</p>
+                    <p style="font-size: 0.9rem; color: #a0aec0;">Đã chọn: <span id="swap-count">0</span>/2</p>
+                </div>
+                
+                <form id="form-swap" style="display: none;">
+                    <div class="form-group">
+                        <label>Lịch 1</label>
+                        <input type="text" id="swap-lop1" readonly style="background: #f7fafc;">
+                        <input type="hidden" id="swap-tkb1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Lịch 2</label>
+                        <input type="text" id="swap-lop2" readonly style="background: #f7fafc;">
+                        <input type="hidden" id="swap-tkb2">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-warning">🔄 Hoán đổi</button>
+                    <button type="button" class="btn" onclick="resetSwap()" style="background: #e2e8f0;">❌ Hủy</button>
+                </form>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px; color: #718096;">Đang xử lý...</p>
+            </div>
+        </div>
+        
+        <!-- Right: Mini Schedule -->
+        <div class="schedule-panel">
+            <h3>📅 Lịch hiện tại</h3>
+            
+            <div class="mini-schedule">
+                <table id="mini-schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Tiết</th>
+                            <th>T2</th>
+                            <th>T3</th>
+                            <th>T4</th>
+                            <th>T5</th>
+                            <th>T6</th>
+                            <th>T7</th>
+                            <th>CN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mini-schedule-body">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="deleted-items">
+                <h4>🗑️ Lịch đã xóa (có thể phục hồi)</h4>
+                <div class="deleted-list" id="deleted-list">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Global state
+    let currentTab = 'create';
+    let swapSelection = [];
+    let scheduleData = [];
+    let deletedData = [];
+    
+    // Update filters
+    function updateFilters() {
+        const ma_dot = document.getElementById('dotSelect').value;
+        const ma_khoa = document.getElementById('khoaSelect').value;
+        const view_type = document.getElementById('viewTypeSelect').value;
+        
+        let selected_id = '';
+        if (view_type === 'teacher') {
+            selected_id = document.getElementById('teacherSelect').value;
+        } else if (view_type === 'room') {
+            selected_id = document.getElementById('roomSelect').value;
+        }
+        
+        let url = '?';
+        if (ma_dot) url += `ma_dot=${ma_dot}`;
+        if (ma_khoa) url += (url.length > 1 ? '&' : '') + `ma_khoa=${ma_khoa}`;
+        if (view_type) url += (url.length > 1 ? '&' : '') + `view_type=${view_type}`;
+        if (selected_id) url += (url.length > 1 ? '&' : '') + `selected_id=${selected_id}`;
+        
+        window.location.href = url || '?';
+    }
+    
+    function handleViewTypeChange() {
+        const view_type = document.getElementById('viewTypeSelect').value;
+        
+        // Show/hide dropdowns
+        document.getElementById('teacherSelectGroup').style.display = 
+            view_type === 'teacher' ? 'block' : 'none';
+        document.getElementById('roomSelectGroup').style.display = 
+            view_type === 'room' ? 'block' : 'none';
+        
+        // Reset selected values
+        if (view_type !== 'teacher') {
+            document.getElementById('teacherSelect').value = '';
+        }
+        if (view_type !== 'room') {
+            document.getElementById('roomSelect').value = '';
+        }
+        
+        // Auto reload if view type changed
+        updateFilters();
+    }
+    
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab;
+            
+            // Update buttons
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            
+            currentTab = tab;
+            resetSwap();
+        });
+    });
+    
+    // Load schedule
+    async function loadSchedule() {
+        try {
+            const ma_dot = document.getElementById('dotSelect').value;
+            const ma_khoa = document.getElementById('khoaSelect').value;
+            const view_type = document.getElementById('viewTypeSelect').value;
+            
+            let selected_id = '';
+            if (view_type === 'teacher') {
+                selected_id = document.getElementById('teacherSelect').value;
+            } else if (view_type === 'room') {
+                selected_id = document.getElementById('roomSelect').value;
+            }
+            
+            let url = '/api/tkb/mini-schedule/?';
+            if (ma_dot) url += `ma_dot=${ma_dot}`;
+            if (ma_khoa) url += (ma_dot ? '&' : '') + `ma_khoa=${ma_khoa}`;
+            if (view_type) url += '&view_type=' + view_type;
+            if (selected_id) url += '&selected_id=' + selected_id;
+            
+            const response = await fetch(url);
+            const data = await response.json();
+            scheduleData = data.schedule || [];
+            deletedData = data.deleted || [];
+            
+            renderMiniSchedule();
+            renderDeletedList();
+        } catch (error) {
+            showMessage('error', 'Lỗi tải lịch: ' + error.message);
+        }
+    }
+    
+    // Render mini schedule
+    function renderMiniSchedule() {
+        const tbody = document.getElementById('mini-schedule-body');
+        tbody.innerHTML = '';
+        
+        // Group by timeslot (ca học)
+        const slots = {};
+        scheduleData.forEach(item => {
+            const key = `${item.thu}_${item.ca}`;
+            if (!slots[key]) slots[key] = [];
+            slots[key].push(item);
+        });
+        
+        // Generate rows (5 ca học per day)
+        for (let ca = 1; ca <= 5; ca++) {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td style="font-weight: 600;">${ca}</td>`;
+            
+            for (let day = 2; day <= 8; day++) {
+                const key = `${day}_${ca}`;
+                const classes = slots[key] || [];
+                
+                const td = document.createElement('td');
+                td.dataset.thu = day;
+                td.dataset.ca = ca;
+                
+                if (classes.length > 0) {
+                    td.classList.add('has-class');
+                    td.innerHTML = classes.map(c => `
+                        <div class="class-info" data-tkb="${c.ma_tkb}">
+                            <div style="font-weight: 600; color: #1e293b;">${c.mon_hoc || c.ma_lop}</div>
+                            <div style="font-size: 11px; color: #64748b;">${c.ma_lop} - ${c.ma_phong || 'N/A'}</div>
+                        </div>
+                    `).join('');
+                }
+                
+                td.addEventListener('click', () => handleCellClick(td, classes));
+                row.appendChild(td);
+            }
+            
+            tbody.appendChild(row);
+        }
+    }
+    
+    // Render deleted list
+    function renderDeletedList() {
+        const list = document.getElementById('deleted-list');
+        
+        if (deletedData.length === 0) {
+            list.innerHTML = '<p style="color: #a0aec0; text-align: center;">Không có lịch đã xóa</p>';
+            return;
+        }
+        
+        list.innerHTML = deletedData.map(item => `
+            <div class="deleted-item">
+                <div class="deleted-item-info">
+                    <strong>${item.mon_hoc || item.ma_lop}</strong><br>
+                    <small>${item.ma_lop} - ${item.ma_phong || 'N/A'} - Thứ ${item.thu}, Ca ${item.ca}</small>
+                </div>
+                <button class="btn btn-success" style="padding: 8px 16px; font-size: 0.9rem;" onclick="restoreSchedule('${item.ma_tkb}')">
+                    ♻️ Phục hồi
+                </button>
+            </div>
+        `).join('');
+    }
+    
+    // Handle cell click
+    function handleCellClick(td, classes) {
+        if (currentTab === 'swap') {
+            handleSwapClick(td, classes);
+        } else if (currentTab === 'edit' && classes.length > 0) {
+            populateEditForm(classes[0]);
+        } else if (currentTab === 'delete' && classes.length > 0) {
+            populateDeleteForm(classes[0]);
+        }
+    }
+    
+    // Handle swap selection
+    function handleSwapClick(td, classes) {
+        if (classes.length === 0) {
+            showMessage('warning', 'Ô này không có lịch');
+            return;
+        }
+        
+        const tkb = classes[0];
+        
+        // Check if already selected
+        const index = swapSelection.findIndex(s => s.ma_tkb === tkb.ma_tkb);
+        if (index >= 0) {
+            swapSelection.splice(index, 1);
+            td.classList.remove('selected');
+        } else if (swapSelection.length < 2) {
+            swapSelection.push(tkb);
+            td.classList.add('selected');
+        } else {
+            showMessage('warning', 'Chỉ chọn tối đa 2 lịch');
+            return;
+        }
+        
+        document.getElementById('swap-count').textContent = swapSelection.length;
+        
+        if (swapSelection.length === 2) {
+            document.getElementById('swap-instruction').style.display = 'none';
+            document.getElementById('form-swap').style.display = 'block';
+            document.getElementById('swap-lop1').value = `${swapSelection[0].ma_lop} - ${swapSelection[0].ma_phong}`;
+            document.getElementById('swap-lop2').value = `${swapSelection[1].ma_lop} - ${swapSelection[1].ma_phong}`;
+            document.getElementById('swap-tkb1').value = swapSelection[0].ma_tkb;
+            document.getElementById('swap-tkb2').value = swapSelection[1].ma_tkb;
+        } else {
+            document.getElementById('swap-instruction').style.display = 'block';
+            document.getElementById('form-swap').style.display = 'none';
+        }
+    }
+    
+    // Populate edit form
+    function populateEditForm(tkb) {
+        document.getElementById('edit-ma-tkb').value = tkb.ma_tkb;
+        document.getElementById('edit-lop-current').value = tkb.ma_lop;
+        document.getElementById('edit-phong').value = tkb.ma_phong || '';
+        document.getElementById('edit-timeslot').value = tkb.time_slot_id || '';
+        document.getElementById('edit-tuan').value = tkb.tuan_hoc || '';
+        
+        showMessage('success', 'Đã chọn lịch để sửa');
+    }
+    
+    // Populate delete form
+    function populateDeleteForm(tkb) {
+        document.getElementById('delete-ma-tkb').value = tkb.ma_tkb;
+        document.getElementById('delete-lop').value = `${tkb.ma_lop} - ${tkb.ma_phong} - Thứ ${tkb.thu}, Tiết ${tkb.tiet}`;
+        
+        showMessage('warning', 'Đã chọn lịch để xóa');
+    }
+    
+    // Reset swap
+    function resetSwap() {
+        swapSelection = [];
+        document.querySelectorAll('.mini-schedule td.selected').forEach(td => td.classList.remove('selected'));
+        document.getElementById('swap-count').textContent = '0';
+        document.getElementById('swap-instruction').style.display = 'block';
+        document.getElementById('form-swap').style.display = 'none';
+    }
+    
+    // Show message
+    function showMessage(type, text) {
+        const container = document.getElementById('message-container');
+        const msg = document.createElement('div');
+        msg.className = `message ${type}`;
+        msg.textContent = text;
+        container.appendChild(msg);
+        
+        setTimeout(() => msg.remove(), 5000);
+    }
+    
+    // Form submissions
+    document.getElementById('form-create').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        
+        try {
+            document.getElementById('loading').classList.add('active');
+            const response = await fetch('/api/tkb/create/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                showMessage('success', result.message);
+                e.target.reset();
+                await loadSchedule();
+            } else {
+                showMessage('error', result.message);
+            }
+        } catch (error) {
+            showMessage('error', 'Lỗi: ' + error.message);
+        } finally {
+            document.getElementById('loading').classList.remove('active');
+        }
+    });
+    
+    document.getElementById('form-edit').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        
+        try {
+            document.getElementById('loading').classList.add('active');
+            const response = await fetch('/api/tkb/update/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                showMessage('success', result.message);
+                e.target.reset();
+                await loadSchedule();
+            } else {
+                showMessage('error', result.message);
+            }
+        } catch (error) {
+            showMessage('error', 'Lỗi: ' + error.message);
+        } finally {
+            document.getElementById('loading').classList.remove('active');
+        }
+    });
+    
+    document.getElementById('form-delete').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const ma_tkb = document.getElementById('delete-ma-tkb').value;
+        
+        if (!confirm('Bạn có chắc muốn xóa lịch này?')) return;
+        
+        try {
+            document.getElementById('loading').classList.add('active');
+            const response = await fetch('/api/tkb/delete/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ma_tkb })
+            });
+            
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                showMessage('success', result.message);
+                e.target.reset();
+                await loadSchedule();
+            } else {
+                showMessage('error', result.message);
+            }
+        } catch (error) {
+            showMessage('error', 'Lỗi: ' + error.message);
+        } finally {
+            document.getElementById('loading').classList.remove('active');
+        }
+    });
+    
+    document.getElementById('form-swap').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const ma_tkb1 = document.getElementById('swap-tkb1').value;
+        const ma_tkb2 = document.getElementById('swap-tkb2').value;
+        
+        if (!confirm('Bạn có chắc muốn hoán đổi 2 lịch này?')) return;
+        
+        try {
+            document.getElementById('loading').classList.add('active');
+            const response = await fetch('/api/tkb/swap/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ma_tkb1, ma_tkb2 })
+            });
+            
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                showMessage('success', result.message);
+                resetSwap();
+                await loadSchedule();
+            } else {
+                showMessage('error', result.message);
+            }
+        } catch (error) {
+            showMessage('error', 'Lỗi: ' + error.message);
+        } finally {
+            document.getElementById('loading').classList.remove('active');
+        }
+    });
+    
+    // Restore function
+    async function restoreSchedule(ma_tkb) {
+        if (!confirm('Bạn có chắc muốn phục hồi lịch này?')) return;
+        
+        try {
+            document.getElementById('loading').classList.add('active');
+            const response = await fetch('/api/tkb/restore/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ma_tkb })
+            });
+            
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                showMessage('success', result.message);
+                await loadSchedule();
+            } else {
+                showMessage('error', result.message);
+            }
+        } catch (error) {
+            showMessage('error', 'Lỗi: ' + error.message);
+        } finally {
+            document.getElementById('loading').classList.remove('active');
+        }
+    }
+    
+    // Load on page load
+    window.addEventListener('DOMContentLoaded', loadSchedule);
+</script>
+{% endblock %}

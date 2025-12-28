@@ -6,26 +6,32 @@
 
 {% block extrastyle %}
 {{ block.super }}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
     :root {
-        --primary-color: #6366f1;
-        --primary-dark: #4f46e5;
-        --success-color: #10b981;
-        --warning-color: #f59e0b;
-        --danger-color: #ef4444;
-        --bg-light: #f8fafc;
+        --primary-color: #667eea;
+        --primary-dark: #5a67d8;
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-color: #48bb78;
+        --success-gradient: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        --warning-color: #ed8936;
+        --warning-gradient: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        --danger-color: #f56565;
+        --danger-gradient: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        --bg-light: #f7fafc;
         --bg-card: #ffffff;
-        --text-dark: #1e293b;
-        --text-muted: #64748b;
+        --text-dark: #2d3748;
+        --text-muted: #718096;
         --border-color: #e2e8f0;
-        --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        --shadow-3d: 0 10px 40px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+        --shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1);
+        --shadow-soft: 0 4px 20px rgba(102, 126, 234, 0.15);
     }
 
     body {
-        background: var(--bg-light);
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-attachment: fixed;
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
     #content-main {
@@ -42,11 +48,18 @@
     /* Header Controls */
     .tkb-header {
         background: var(--bg-card);
-        border-radius: 16px;
-        padding: 24px;
-        margin-bottom: 24px;
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        padding: 32px;
+        margin-bottom: 32px;
+        box-shadow: var(--shadow-3d);
+        border: none;
+        transform: translateY(0);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .tkb-header:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
     }
 
     .control-row {
@@ -73,54 +86,64 @@
     }
 
     .form-select, .form-control {
-        border: 2px solid var(--border-color);
-        border-radius: 10px;
-        padding: 10px 14px;
-        font-size: 14px;
-        transition: all 0.2s;
+        border: 2px solid transparent;
+        border-radius: 16px;
+        padding: 14px 18px;
+        font-size: 15px;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         background: white;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.08);
+        color: var(--text-dark);
     }
 
     .form-select:focus, .form-control:focus {
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        box-shadow: var(--shadow-soft);
         outline: none;
+        transform: translateY(-2px);
+    }
+    
+    .form-select:hover, .form-control:hover {
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.12);
     }
 
     /* View Toggle Buttons */
     .view-toggle {
         display: flex;
         gap: 8px;
-        background: var(--bg-light);
-        padding: 4px;
-        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 6px;
+        border-radius: 16px;
         width: fit-content;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     .toggle-btn {
-        padding: 10px 20px;
+        padding: 12px 24px;
         border: none;
         background: transparent;
         color: var(--text-muted);
         font-weight: 600;
-        font-size: 14px;
-        border-radius: 8px;
+        font-size: 15px;
+        border-radius: 12px;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
         gap: 8px;
     }
 
     .toggle-btn:hover {
-        background: rgba(99, 102, 241, 0.1);
+        background: rgba(102, 126, 234, 0.1);
         color: var(--primary-color);
+        transform: translateY(-2px);
     }
 
     .toggle-btn.active {
-        background: var(--primary-color);
+        background: var(--primary-gradient);
         color: white;
-        box-shadow: var(--shadow-sm);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
     /* Week Navigation */
@@ -128,32 +151,34 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        background: var(--bg-light);
-        padding: 8px;
-        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px;
+        border-radius: 16px;
         width: fit-content;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     .week-nav-btn {
-        width: 36px;
-        height: 36px;
+        width: 40px;
+        height: 40px;
         border: none;
         background: white;
-        border-radius: 8px;
+        border-radius: 12px;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s;
-        font-size: 16px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 18px;
         color: var(--text-dark);
-        box-shadow: var(--shadow-sm);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
-
-    .week-nav-btn:hover:not(:disabled) {
-        background: var(--primary-color);
+    
+    .week-nav-btn:hover {
+        background: var(--primary-gradient);
         color: white;
-        transform: scale(1.05);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
     .week-nav-btn:disabled {
@@ -163,27 +188,38 @@
 
     .week-display {
         font-weight: 700;
-        font-size: 16px;
-        color: var(--primary-color);
+        font-size: 17px;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         padding: 0 16px;
-        min-width: 100px;
+        min-width: 120px;
         text-align: center;
     }
 
     /* Info Cards */
     .info-card {
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        background: var(--primary-gradient);
         color: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: var(--shadow-md);
+        padding: 24px;
+        border-radius: 20px;
+        box-shadow: var(--shadow-3d);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
     }
 
     .info-card h3 {
         font-size: 14px;
-        font-weight: 500;
+        font-weight: 600;
         opacity: 0.9;
         margin: 0 0 8px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
     .info-card .value {
@@ -207,82 +243,92 @@
         border-collapse: separate;
         border-spacing: 0;
         min-width: 1200px;
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow-3d);
     }
 
     .schedule-table thead th {
-        background: var(--bg-light);
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
         color: var(--text-dark);
         font-weight: 700;
         font-size: 13px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        padding: 16px 12px;
+        padding: 18px 12px;
         text-align: center;
-        border-bottom: 2px solid var(--border-color);
+        border-bottom: 3px solid var(--primary-color);
         position: sticky;
         top: 0;
         z-index: 10;
     }
 
     .schedule-table thead th:first-child {
-        border-top-left-radius: 12px;
+        border-top-left-radius: 20px;
     }
 
     .schedule-table thead th:last-child {
-        border-top-right-radius: 12px;
+        border-top-right-radius: 20px;
+    }
+
+    .schedule-table tbody tr {
+        transition: all 0.3s ease;
     }
 
     .schedule-table tbody tr:hover {
-        background: var(--bg-light);
+        background: linear-gradient(90deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+        transform: scale(1.01);
     }
 
     .schedule-table td {
-        padding: 12px;
-        border-bottom: 1px solid var(--border-color);
+        padding: 14px;
+        border-bottom: 1px solid #f0f0f0;
         vertical-align: top;
     }
 
     .time-cell {
-        background: var(--bg-light);
-        font-weight: 600;
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        font-weight: 700;
         color: var(--text-dark);
         text-align: center;
-        min-width: 100px;
-        border-right: 2px solid var(--border-color);
+        min-width: 110px;
+        border-right: 3px solid var(--primary-color);
     }
 
     .time-label {
-        font-size: 14px;
+        font-size: 15px;
+        font-weight: 700;
         display: block;
     }
 
     .time-range {
-        font-size: 11px;
+        font-size: 12px;
         color: var(--text-muted);
         margin-top: 4px;
         display: block;
     }
 
     .class-cell {
-        min-height: 80px;
+        min-height: 90px;
         position: relative;
     }
 
     .class-card {
-        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-        border-left: 4px solid var(--primary-color);
-        border-radius: 8px;
-        padding: 12px;
-        margin-bottom: 8px;
-        transition: all 0.2s;
+        background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%);
+        border-left: 5px solid var(--primary-color);
+        border-radius: 16px;
+        padding: 14px;
+        margin-bottom: 10px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
-        box-shadow: var(--shadow-sm);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
     }
 
     .class-card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+        background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
     }
 
     .class-card.multiple {
@@ -426,6 +472,155 @@
     @keyframes spin {
         to { transform: rotate(360deg); }
     }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .modal-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: var(--text-muted);
+        line-height: 1;
+    }
+
+    .close-btn:hover {
+        color: var(--text-dark);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+
+    .form-input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-secondary {
+        background: var(--bg-light);
+        color: var(--text-dark);
+    }
+
+    .btn-secondary:hover {
+        background: var(--border-color);
+    }
+
+    /* Alert messages */
+    .alert {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        font-size: 14px;
+    }
+
+    .alert-success {
+        background: #d1fae5;
+        color: #065f46;
+        border: 1px solid #10b981;
+    }
+
+    .alert-error {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid var(--danger-color);
+    }
+
+    .alert-warning {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid var(--warning-color);
+    }
+
+    .alert-list {
+        margin: 8px 0 0 0;
+        padding-left: 20px;
+    }
 </style>
 {% endblock %}
 
@@ -441,6 +636,22 @@
 
 {% block content %}
 <div class="tkb-container">
+    <!-- Debug Info -->
+    {% if user_role %}
+    <div style="background: #fff3cd; padding: 10px; margin-bottom: 15px; border-radius: 5px; border-left: 4px solid #ffc107;">
+        <strong>🔍 Debug Info:</strong><br>
+        Role: <strong>{{ user_role }}</strong><br>
+        {% if user_role == 'truong_khoa' %}
+            Khoa: <strong>{{ role_info.ma_khoa }}</strong>
+        {% elif user_role == 'truong_bo_mon' %}
+            Khoa: <strong>{{ role_info.ma_khoa }}</strong><br>
+            Bộ môn: <strong>{{ role_info.ma_bo_mon }}</strong>
+        {% elif user_role == 'giang_vien' %}
+            Giảng viên: <strong>{{ role_info.ma_gv }}</strong>
+        {% endif %}
+    </div>
+    {% endif %}
+    
     <!-- Header Controls -->
     <div class="tkb-header">
         <div class="control-row">
@@ -456,8 +667,51 @@
                     {% endfor %}
                 </select>
             </div>
+            
+            <!-- Chọn khoa (ẩn nếu là Trưởng Bộ Môn hoặc Giáo Viên) -->
+            {% if user_role == 'admin' or user_role == 'truong_khoa' %}
+            <div class="control-group">
+                <label class="control-label">🏛️ Khoa</label>
+                {% if user_role == 'truong_khoa' %}
+                    <!-- Hiển thị khoa cố định cho Trưởng Khoa -->
+                    <input type="text" class="form-control" value="{{ khoa_list.0.ten_khoa }}" readonly style="background-color: #f5f5f5;">
+                    <input type="hidden" id="khoaSelect" value="{{ ma_khoa }}">
+                {% else %}
+                    <select id="khoaSelect" class="form-select" onchange="updateSchedule()">
+                        <option value="">-- Tất cả khoa --</option>
+                        {% for khoa in khoa_list %}
+                        <option value="{{ khoa.ma_khoa }}" {% if khoa.ma_khoa == ma_khoa %}selected{% endif %}>
+                            {{ khoa.ten_khoa }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+            </div>
+            {% endif %}
 
-            <!-- View Type Toggle -->
+            <!-- Chọn bộ môn (ẩn nếu là Giáo Viên) -->
+            {% if user_role == 'admin' or user_role == 'truong_khoa' or user_role == 'truong_bo_mon' %}
+            <div class="control-group">
+                <label class="control-label">📚 Bộ môn</label>
+                {% if user_role == 'truong_bo_mon' %}
+                    <!-- Hiển thị bộ môn cố định cho Trưởng Bộ Môn -->
+                    <input type="text" class="form-control" value="{{ bo_mon_list.0.ten_bo_mon }}" readonly style="background-color: #f5f5f5;">
+                    <input type="hidden" id="boMonSelect" value="{{ ma_bo_mon }}">
+                {% else %}
+                    <select id="boMonSelect" class="form-select" onchange="updateSchedule()" {% if not ma_khoa %}disabled{% endif %}>
+                        <option value="">-- Tất cả bộ môn --</option>
+                        {% for bo_mon in bo_mon_list %}
+                        <option value="{{ bo_mon.ma_bo_mon }}" {% if bo_mon.ma_bo_mon == ma_bo_mon %}selected{% endif %}>
+                            {{ bo_mon.ten_bo_mon }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- View Type Toggle (ẩn nếu là Giáo Viên) -->
+            {% if user_role != 'giang_vien' %}
             <div class="control-group">
                 <label class="control-label">👁️ Góc nhìn</label>
                 <div class="view-toggle">
@@ -471,6 +725,7 @@
                     </button>
                 </div>
             </div>
+            {% endif %}
 
             <!-- Display Mode Toggle -->
             <div class="control-group">
@@ -489,7 +744,8 @@
         </div>
 
         <div class="control-row">
-            <!-- Chọn GV/Phòng -->
+            <!-- Chọn GV/Phòng (ẩn chọn GV nếu là Giáo Viên) -->
+            {% if user_role != 'giang_vien' %}
             <div class="control-group">
                 {% if view_type == 'teacher' %}
                 <label class="control-label">👨‍🏫 Chọn giáo viên</label>
@@ -513,6 +769,17 @@
                 </select>
                 {% endif %}
             </div>
+            {% else %}
+            <!-- Giáo Viên: hiển thị tên cố định -->
+            <div class="control-group">
+                <label class="control-label">👨‍🏫 Giáo viên</label>
+                {% if teachers %}
+                    <input type="text" class="form-control" value="{{ teachers.0.ma_gv }} - {{ teachers.0.ten_gv }}" readonly style="background-color: #f5f5f5;">
+                {% else %}
+                    <input type="text" class="form-control" value="Không tìm thấy thông tin giáo viên" readonly style="background-color: #f5f5f5;">
+                {% endif %}
+            </div>
+            {% endif %}
 
             <!-- Week Navigation (chỉ hiện khi ở chế độ weekly) -->
             {% if display_mode == 'weekly' %}
@@ -673,7 +940,12 @@
                                 {% if slot.ca == ca.ma_khung_gio %}
                                     {% if slot.classes %}
                                         {% for class in slot.classes %}
-                                        <div class="class-card {% if slot.classes|length > 1 %}multiple{% endif %}">
+                                        <div class="class-card {% if slot.classes|length > 1 %}multiple{% endif %}" 
+                                             data-ma-tkb="{{ class.ma_tkb }}"
+                                             data-ma-lop="{{ class.ma_lop }}"
+                                             data-ma-phong="{{ class.phong }}"
+                                             data-time-slot="{{ slot.ca_info.ten_ca }}"
+                                             data-tuan-hoc="{{ class.tuan_hoc }}">
                                             <div class="class-title">
                                                 📚 {{ class.mon_hoc }}
                                             </div>
@@ -692,8 +964,6 @@
                                             <span class="class-badge">{{ class.week_display }}</span>
                                         </div>
                                         {% endfor %}
-                                    {% else %}
-                                        <div class="empty-cell">-</div>
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}
@@ -736,7 +1006,55 @@
     {% endif %}
 </div>
 
+<!-- Modal for Add/Edit TKB -->
+<div id="tkbModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle">Thêm lịch học</h2>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        
+        <div id="alertContainer"></div>
+        
+        <form id="tkbForm">
+            <input type="hidden" id="ma_tkb" name="ma_tkb">
+            <input type="hidden" id="ma_dot" name="ma_dot" value="{{ ma_dot }}">
+            <input type="hidden" id="time_slot_id" name="time_slot_id">
+            
+            <div class="form-group">
+                <label class="form-label">Lớp môn học *</label>
+                <select id="ma_lop" name="ma_lop" class="form-input" required>
+                    <option value="">-- Chọn lớp --</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Phòng học *</label>
+                <select id="ma_phong" name="ma_phong" class="form-input" required>
+                    <option value="">-- Chọn phòng --</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Thời gian</label>
+                <input type="text" id="time_display" class="form-input" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Tuần học (chọn nhiều tuần)</label>
+                <div id="weekSelector" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;"></div>
+            </div>
+            
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+// @ts-nocheck - Django template tags in JavaScript
 // Helper để truy cập dictionary trong template
 document.addEventListener('DOMContentLoaded', function() {
     // Register custom filter for dict access
@@ -747,38 +1065,65 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function updateSchedule() {
     const ma_dot = document.getElementById('dotSelect').value;
-    const id = document.getElementById('itemSelect').value;
+    
+    // Xử lý khoa và bộ môn cho các role khác nhau
+    let ma_khoa = '';
+    let ma_bo_mon = '';
+    
+    const khoaElement = document.getElementById('khoaSelect');
+    if (khoaElement) {
+        ma_khoa = khoaElement.value;
+    }
+    
+    const boMonElement = document.getElementById('boMonSelect');
+    if (boMonElement) {
+        ma_bo_mon = boMonElement.value;
+    }
+    
+    // Lấy giá trị từ dropdown GV/Phòng
+    const itemElement = document.getElementById('itemSelect');
+    const selected_id = itemElement ? itemElement.value : '';
+    
     const view = '{{ view_type }}';
     const mode = '{{ display_mode }}';
     const week = '{{ week_number }}';
     
-    if (ma_dot && id) {
-        window.location.href = `?ma_dot=${ma_dot}&view=${view}&mode=${mode}&week=${week}&id=${id}`;
-    } else if (ma_dot) {
-        window.location.href = `?ma_dot=${ma_dot}&view=${view}&mode=${mode}&week=${week}`;
-    }
+    let url = `?view=${view}&mode=${mode}&week=${week}`;
+    if (ma_dot) url += `&ma_dot=${ma_dot}`;
+    if (ma_khoa) url += `&ma_khoa=${ma_khoa}`;
+    if (ma_bo_mon) url += `&ma_bo_mon=${ma_bo_mon}`;
+    if (selected_id) url += `&id=${selected_id}`;
+    
+    window.location.href = url;
 }
 
 function changeView(newView) {
     const ma_dot = document.getElementById('dotSelect').value;
+    const ma_khoa = document.getElementById('khoaSelect').value;
+    const ma_bo_mon = document.getElementById('boMonSelect').value;
     const mode = '{{ display_mode }}';
     const week = '{{ week_number }}';
     
-    if (ma_dot) {
-        window.location.href = `?ma_dot=${ma_dot}&view=${newView}&mode=${mode}&week=${week}`;
-    } else {
-        window.location.href = `?view=${newView}&mode=${mode}&week=${week}`;
-    }
+    let url = `?view=${newView}&mode=${mode}&week=${week}`;
+    if (ma_dot) url += `&ma_dot=${ma_dot}`;
+    if (ma_khoa) url += `&ma_khoa=${ma_khoa}`;
+    if (ma_bo_mon) url += `&ma_bo_mon=${ma_bo_mon}`;
+    
+    window.location.href = url;
 }
 
 function changeMode(newMode) {
     const ma_dot = document.getElementById('dotSelect').value;
+    const ma_khoa = document.getElementById('khoaSelect').value;
+    const ma_bo_mon = document.getElementById('boMonSelect').value;
     const view = '{{ view_type }}';
     const id = '{{ selected_id }}';
     const week = '{{ week_number }}';
     
     let url = `?view=${view}&mode=${newMode}&week=${week}`;
     if (ma_dot) url += `&ma_dot=${ma_dot}`;
+    if (ma_khoa) url += `&ma_khoa=${ma_khoa}`;
+    if (ma_bo_mon) url += `&ma_bo_mon=${ma_bo_mon}`;
     if (id) url += `&id=${id}`;
     
     window.location.href = url;
@@ -786,16 +1131,20 @@ function changeMode(newMode) {
 
 function changeWeek(delta) {
     const ma_dot = document.getElementById('dotSelect').value;
+    const ma_khoa = document.getElementById('khoaSelect').value;
+    const ma_bo_mon = document.getElementById('boMonSelect').value;
     const view = '{{ view_type }}';
     const mode = '{{ display_mode }}';
     const id = '{{ selected_id }}';
-    const currentWeek = {{ week_number }};
+    const currentWeek = {{ week_number|default:1 }};
     const newWeek = currentWeek + delta;
     
     if (newWeek < 1 || newWeek > 15) return;
     
     let url = `?view=${view}&mode=${mode}&week=${newWeek}`;
     if (ma_dot) url += `&ma_dot=${ma_dot}`;
+    if (ma_khoa) url += `&ma_khoa=${ma_khoa}`;
+    if (ma_bo_mon) url += `&ma_bo_mon=${ma_bo_mon}`;
     if (id) url += `&id=${id}`;
     
     window.location.href = url;
@@ -805,15 +1154,278 @@ function changeWeek(delta) {
 document.addEventListener('keydown', function(e) {
     if (e.ctrlKey || e.metaKey) return;
     
-    {% if display_mode == 'weekly' %}
-    if (e.key === 'ArrowLeft') {
-        const week = {{ week_number }};
-        if (week > 1) changeWeek(-1);
-    } else if (e.key === 'ArrowRight') {
-        const week = {{ week_number }};
-        if (week < 15) changeWeek(1);
+    const displayMode = '{{ display_mode }}';
+    const weekNumber = {{ week_number|default:1 }};
+    
+    if (displayMode === 'weekly') {
+        if (e.key === 'ArrowLeft' && weekNumber > 1) {
+            changeWeek(-1);
+        } else if (e.key === 'ArrowRight' && weekNumber < 15) {
+            changeWeek(1);
+        }
     }
-    {% endif %}
+});
+
+// ==================== MODAL & CRUD FUNCTIONS ====================
+
+let isEditMode = false;
+let currentThu = null;
+let currentCa = null;
+
+// Load danh sách lớp và phòng
+async function loadLopVaPhong() {
+    const ma_dot = '{{ ma_dot }}';
+    if (!ma_dot) return;
+    
+    try {
+        // Lấy danh sách lớp chưa xếp lịch hoặc của đợt này
+        const lopResponse = await fetch(`/api/scheduling/lop-mon-hoc/?ma_dot=${ma_dot}`);
+        const lopData = await lopResponse.json();
+        
+        const lopSelect = document.getElementById('ma_lop');
+        lopSelect.innerHTML = '<option value="">-- Chọn lớp --</option>';
+        lopData.results.forEach(lop => {
+            lopSelect.innerHTML += `<option value="${lop.ma_lop}">${lop.ma_lop} - ${lop.ma_mon_hoc_display}</option>`;
+        });
+        
+        // Lấy danh sách phòng
+        const phongResponse = await fetch('/api/scheduling/phong-hoc/');
+        const phongData = await phongResponse.json();
+        
+        const phongSelect = document.getElementById('ma_phong');
+        phongSelect.innerHTML = '<option value="">-- Chọn phòng --</option>';
+        phongData.results.forEach(phong => {
+            const loaiPhong = phong.loai_phong ? ` (${phong.loai_phong})` : '';
+            phongSelect.innerHTML += `<option value="${phong.ma_phong}">${phong.ma_phong}${loaiPhong}</option>`;
+        });
+    } catch (error) {
+        console.error('Error loading data:', error);
+    }
+}
+
+// Tạo week selector
+function createWeekSelector() {
+    const container = document.getElementById('weekSelector');
+    container.innerHTML = '';
+    
+    for (let i = 1; i <= 15; i++) {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `week_${i}`;
+        checkbox.value = i;
+        checkbox.style.display = 'none';
+        
+        const label = document.createElement('label');
+        label.htmlFor = `week_${i}`;
+        label.textContent = `T${i}`;
+        label.style.cssText = `
+            padding: 8px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        `;
+        
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                label.style.background = 'var(--primary-color)';
+                label.style.color = 'white';
+                label.style.borderColor = 'var(--primary-color)';
+            } else {
+                label.style.background = 'transparent';
+                label.style.color = 'var(--text-dark)';
+                label.style.borderColor = 'var(--border-color)';
+            }
+        });
+        
+        container.appendChild(checkbox);
+        container.appendChild(label);
+    }
+}
+
+// Hiển thị modal thêm
+function addTKB(thu, ca) {
+    isEditMode = false;
+    currentThu = thu;
+    currentCa = ca;
+    
+    document.getElementById('modalTitle').textContent = 'Thêm lịch học';
+    document.getElementById('ma_tkb').value = '';
+    document.getElementById('ma_lop').value = '';
+    document.getElementById('ma_phong').value = '';
+    document.getElementById('time_slot_id').value = `Thu${thu}-Ca${ca}`;
+    document.getElementById('time_display').value = `Thứ ${thu == 8 ? 'CN' : thu} - Ca ${ca}`;
+    document.getElementById('alertContainer').innerHTML = '';
+    
+    // Reset week selector
+    for (let i = 1; i <= 15; i++) {
+        const checkbox = document.getElementById(`week_${i}`);
+        checkbox.checked = true;
+        checkbox.dispatchEvent(new Event('change'));
+    }
+    
+    document.getElementById('tkbModal').classList.add('show');
+}
+
+// Hiển thị modal sửa
+function editTKB(ma_tkb, ma_lop, ma_phong, thu, ca, tuan_hoc) {
+    isEditMode = true;
+    currentThu = thu;
+    currentCa = ca;
+    
+    document.getElementById('modalTitle').textContent = 'Sửa lịch học';
+    document.getElementById('ma_tkb').value = ma_tkb;
+    document.getElementById('ma_lop').value = ma_lop;
+    document.getElementById('ma_phong').value = ma_phong;
+    document.getElementById('time_slot_id').value = `Thu${thu}-Ca${ca}`;
+    document.getElementById('time_display').value = `Thứ ${thu == 8 ? 'CN' : thu} - Ca ${ca}`;
+    document.getElementById('alertContainer').innerHTML = '';
+    
+    // Disable lớp khi sửa (không cho đổi lớp)
+    document.getElementById('ma_lop').disabled = true;
+    
+    // Set tuần học
+    const weeks = tuan_hoc ? tuan_hoc.split('').map((v, i) => v === '1' ? i + 1 : null).filter(v => v) : [];
+    for (let i = 1; i <= 15; i++) {
+        const checkbox = document.getElementById(`week_${i}`);
+        checkbox.checked = weeks.includes(i);
+        checkbox.dispatchEvent(new Event('change'));
+    }
+    
+    document.getElementById('tkbModal').classList.add('show');
+}
+
+// Xóa TKB
+async function deleteTKB(ma_tkb, ma_lop) {
+    if (!confirm(`Bạn có chắc muốn xóa lịch của lớp ${ma_lop}?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/tkb/delete/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ma_tkb })
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            alert('✅ ' + data.message);
+            window.location.reload();
+        } else {
+            alert('❌ ' + data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Có lỗi xảy ra khi xóa lịch');
+    }
+}
+
+// Đóng modal
+function closeModal() {
+    document.getElementById('tkbModal').classList.remove('show');
+    document.getElementById('ma_lop').disabled = false;
+}
+
+// Submit form
+document.getElementById('tkbForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {};
+    
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+    
+    // Lấy tuần học
+    const weeks = [];
+    for (let i = 1; i <= 15; i++) {
+        weeks.push(document.getElementById(`week_${i}`).checked ? '1' : '0');
+    }
+    data.tuan_hoc = weeks.join('');
+    
+    const url = isEditMode ? '/api/tkb/update/' : '/api/tkb/create/';
+    
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        const alertContainer = document.getElementById('alertContainer');
+        
+        if (result.status === 'success') {
+            let alertHTML = `<div class="alert alert-success">${result.message}</div>`;
+            
+            if (result.warnings && result.warnings.length > 0) {
+                alertHTML += '<div class="alert alert-warning">';
+                alertHTML += '<strong>Cảnh báo:</strong>';
+                alertHTML += '<ul class="alert-list">';
+                result.warnings.forEach(warning => {
+                    alertHTML += `<li>${warning}</li>`;
+                });
+                alertHTML += '</ul></div>';
+            }
+            
+            alertContainer.innerHTML = alertHTML;
+            
+            // Reload trang sau 2 giây
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        } else {
+            let alertHTML = '<div class="alert alert-error">';
+            alertHTML += '<strong>Lỗi:</strong>';
+            alertHTML += '<ul class="alert-list">';
+            if (result.errors) {
+                result.errors.forEach(error => {
+                    alertHTML += `<li>${error}</li>`;
+                });
+            } else {
+                alertHTML += `<li>${result.message}</li>`;
+            }
+            alertHTML += '</ul></div>';
+            
+            if (result.warnings && result.warnings.length > 0) {
+                alertHTML += '<div class="alert alert-warning">';
+                alertHTML += '<strong>Cảnh báo:</strong>';
+                alertHTML += '<ul class="alert-list">';
+                result.warnings.forEach(warning => {
+                    alertHTML += `<li>${warning}</li>`;
+                });
+                alertHTML += '</ul></div>';
+            }
+            
+            alertContainer.innerHTML = alertHTML;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('alertContainer').innerHTML = 
+            '<div class="alert alert-error">❌ Có lỗi xảy ra khi lưu dữ liệu</div>';
+    }
+});
+
+// Đóng modal khi click bên ngoài
+document.getElementById('tkbModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
+    }
+});
+
+// Load data khi trang load
+document.addEventListener('DOMContentLoaded', function() {
+    createWeekSelector();
+    loadLopVaPhong();
 });
 </script>
 

@@ -445,6 +445,8 @@ class ThoiKhoaBieu(models.Model):
                                    verbose_name="Ngày tạo")
     ghi_chu = models.CharField(max_length=200, null=True, blank=True, db_column='GhiChu',
                               verbose_name="Ghi chú")
+    is_deleted = models.BooleanField(default=False, db_column='IsDeleted', 
+                                     verbose_name="Đã xóa (soft delete)")
     
     class Meta:
         db_table = 'tb_TKB'
@@ -458,8 +460,49 @@ class ThoiKhoaBieu(models.Model):
             models.Index(fields=['time_slot_id'], name='IX_TKB_TimeSlotID'),
             models.Index(fields=['ngay_bd'], name='IX_TKB_NgayBD'),
             models.Index(fields=['ma_dot', 'ma_lop'], name='IX_TKB_MaDot_MaLop'),
+            models.Index(fields=['is_deleted'], name='IX_TKB_IsDeleted'),
         ]
     
     def __str__(self):
         phong = self.ma_phong.ma_phong if self.ma_phong else "Chưa xác định"
         return f"{self.ma_lop.ma_lop} - {phong} - {self.time_slot_id}"
+
+
+class TKBLog(models.Model):
+    """Log lịch sử thao tác TKB - tb_TKB_LOG"""
+    ACTION_CHOICES = [
+        ('CREATE', 'Tạo mới'),
+        ('UPDATE', 'Cập nhật'),
+        ('DELETE', 'Xóa'),
+        ('RESTORE', 'Phục hồi'),
+        ('SWAP', 'Hoán đổi'),
+    ]
+    
+    id = models.AutoField(primary_key=True)
+    ma_tkb = models.CharField(max_length=15, db_column='MaTKB', verbose_name="Mã TKB")
+    action = models.CharField(max_length=10, choices=ACTION_CHOICES, db_column='Action',
+                             verbose_name="Hành động")
+    user = models.CharField(max_length=100, null=True, blank=True, db_column='User',
+                           verbose_name="Người thực hiện")
+    timestamp = models.DateTimeField(auto_now_add=True, db_column='Timestamp',
+                                    verbose_name="Thời gian")
+    old_data = models.JSONField(null=True, blank=True, db_column='OldData',
+                               verbose_name="Dữ liệu cũ (JSON)")
+    new_data = models.JSONField(null=True, blank=True, db_column='NewData',
+                               verbose_name="Dữ liệu mới (JSON)")
+    reason = models.CharField(max_length=500, null=True, blank=True, db_column='Reason',
+                             verbose_name="Lý do")
+    
+    class Meta:
+        db_table = 'tb_TKB_LOG'
+        verbose_name = "Log TKB"
+        verbose_name_plural = "Log TKB"
+        ordering = ['-timestamp']
+        indexes = [
+            models.Index(fields=['ma_tkb'], name='IX_TKBLOG_MaTKB'),
+            models.Index(fields=['timestamp'], name='IX_TKBLOG_Time'),
+            models.Index(fields=['action'], name='IX_TKBLOG_Action'),
+        ]
+    
+    def __str__(self):
+        return f"{self.action} - {self.ma_tkb} - {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
