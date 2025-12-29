@@ -3,6 +3,9 @@
 Gunicorn configuration for Azure App Service deployment
 """
 
+# Working directory - CRITICAL for Azure
+chdir = '/home/site/wwwroot'
+
 # Azure App Service expects port 8000
 bind = '0.0.0.0:8000'
 

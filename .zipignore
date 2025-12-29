@@ -1,19 +1,63 @@
+# Version control
 .git
+.gitignore
+
+# Virtual environments
 .venv
 venv
 env
+
+# Python cache
 __pycache__
 *.pyc
 *.pyo
 *.pyd
 .Python
+
+# Logs
 *.log
+
+# Environment files
 .env
-.env.local
+.env.*
+
+# Dependencies
 node_modules
+
+# Build outputs
 staticfiles
 output
+
+# IDE
 .vscode
 .idea
-*.md
 
+# Documentation (không deploy)
+*.md
+*.txt
+!requirements.txt
+
+# Deployment files (không cần cho Azure)
+build.sh
+render.yaml
+docker-compose.yml
+Dockerfile
+
+# Test & Debug
+test_*.py
+debug_*.py
+analyze_*.py
+check_*.py
+validate_*.py
+verify_*.py
+quick_*.py
+*.exe
+*.o
+
+# Database
+db.sqlite3
+*.sql
+
+# Archives
+*.zip
+*.tar.gz

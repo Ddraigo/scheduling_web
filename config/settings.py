@@ -34,7 +34,8 @@ DEBUG = str2bool(os.environ.get('DEBUG', 'false'))
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '*.azurewebsites.net',  # Azure App Service (wildcard covers all)
+    'scheduling-web.azurewebsites.net',  # Azure App Service - short domain
+    'scheduling-web-dzd2dedxcwe2d3hx.southeastasia-01.azurewebsites.net',  # Azure App Service - full domain
 ]
 
 # Add here your deployment HOSTS
@@ -43,7 +44,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5085', 
     'http://127.0.0.1:8000', 
     'http://127.0.0.1:5085',
-    'https://*.azurewebsites.net',  # Azure App Service
+    'https://scheduling-web.azurewebsites.net',  # Azure App Service
+    'https://scheduling-web-dzd2dedxcwe2d3hx.southeastasia-01.azurewebsites.net',  # Azure App Service - full domain
 ]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')

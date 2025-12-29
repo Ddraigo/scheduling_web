@@ -158,9 +158,22 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# Documentation - không track
 *.md
 *.txt 
 !requirements.txt
 !README.md
+!ENV_CONFIG.md
+!QUICK_START.md
+
+# Source (if exists)
 src/
+
+# Environment files
+.env
 .env.local
+.env.*.local
+
+# Deployment
+deploy.zip
+output.tar.gz
