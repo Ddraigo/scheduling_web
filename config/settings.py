@@ -130,7 +130,26 @@ DB_PASSWORD = os.getenv('DB_PASS')      # Azure uses DB_PASS
 DB_HOST     = os.getenv('DB_HOST')
 DB_PORT     = os.getenv('DB_PORT', '1433')
 DB_NAME     = os.getenv('DB_NAME')
-DB_DRIVER   = os.getenv('DB_DRIVER', 'ODBC Driver 18 for SQL Server')
+
+# Auto-detect ODBC driver (try 18 first, fallback to 17)
+DB_DRIVER = os.getenv('DB_DRIVER')
+if not DB_DRIVER:
+    try:
+        import pyodbc
+        available_drivers = [d for d in pyodbc.drivers() if 'ODBC Driver' in d and 'SQL Server' in d]
+        if available_drivers:
+            # Prefer version 18, then 17
+            for driver in ['ODBC Driver 18 for SQL Server', 'ODBC Driver 17 for SQL Server']:
+                if driver in available_drivers:
+                    DB_DRIVER = driver
+                    break
+            if not DB_DRIVER:
+                DB_DRIVER = available_drivers[0]  # Use first available
+        else:
+            DB_DRIVER = 'ODBC Driver 18 for SQL Server'  # Default for Azure
+    except:
+        DB_DRIVER = 'ODBC Driver 18 for SQL Server'  # Default
+
 DB_USE_WINDOWS_AUTH = os.getenv('DB_USE_WINDOWS_AUTH', 'false').lower() == 'true'
 
 if DB_ENGINE and DB_NAME and (DB_USER or DB_USE_WINDOWS_AUTH):
