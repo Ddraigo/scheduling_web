@@ -1,0 +1,75 @@
+# Azure App Service deployment ignore file
+# Extension sẽ đọc file này khi deploy từ VS Code
+
+# Version control
+.git/
+.gitignore
+.gitattributes
+
+# Virtual environments
+.venv/
+venv/
+env/
+antenv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Static files (Azure sẽ tự chạy collectstatic)
+staticfiles/
+
+# Build outputs
+output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation
+*.md
+*.txt
+!requirements.txt
+
+# Deployment files khác
+build.sh
+render.yaml
+docker-compose.yml
+Dockerfile
+
+# Test & Debug scripts
+test_*.py
+debug_*.py
+analyze_*.py
+check_*.py
+validate_*.py
+verify_*.py
+quick_*.py
+fix_*.py
+
+# Database local
+db.sqlite3
+*.sql
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.*
+
+# Archives
+*.zip
+*.tar.gz
+
+# Node modules (nếu có)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db

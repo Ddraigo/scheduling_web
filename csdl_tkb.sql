@@ -9,6 +9,11 @@ USE CSDL_TKB
 
 GO
 
+SELECT name FROM sys.databases;
+ALTER DATABASE CSDL_TKB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+GO
+
+
 
 /* ===== Danh mục khoa ===== */
 CREATE TABLE tb_KHOA(
