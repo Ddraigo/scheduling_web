@@ -27,14 +27,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'Super_Secr3t_9999')
 
 # Enable/Disable DEBUG Mode
-DEBUG = str2bool(os.environ.get('DEBUG'))
+DEBUG = str2bool(os.environ.get('DEBUG', 'false'))
 #print(' DEBUG -> ' + str(DEBUG) ) 
 
 # Docker HOST
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'scheduling-web.azurewebsites.net',  # Azure App Service - short domain
+    'scheduling-web-dzd2dedxcwe2d3hx.southeastasia-01.azurewebsites.net',  # Azure App Service - full domain
+]
 
 # Add here your deployment HOSTS
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://localhost:5085', 'http://127.0.0.1:8000', 'http://127.0.0.1:5085']
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000', 
+    'http://localhost:5085', 
+    'http://127.0.0.1:8000', 
+    'http://127.0.0.1:5085',
+    'https://scheduling-web.azurewebsites.net',  # Azure App Service
+    'https://scheduling-web-dzd2dedxcwe2d3hx.southeastasia-01.azurewebsites.net',  # Azure App Service - full domain
+]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:    
@@ -114,32 +126,54 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-# Migrated from src/config.py - DatabaseConfig
+# Support both Azure SQL and local SQL Server
 
-DB_ENGINE   = os.getenv('DB_ENGINE', None)
-DB_USERNAME = os.getenv('DB_USERNAME', os.getenv('DB_USER', 'sa'))
-DB_PASS     = os.getenv('DB_PASS', os.getenv('DB_PASSWORD', 'sa123'))
-DB_HOST     = os.getenv('DB_HOST', os.getenv('DB_SERVER', '.\\SQLEXPRESS'))
-DB_PORT     = os.getenv('DB_PORT', '')
-DB_NAME     = os.getenv('DB_NAME', os.getenv('DB_DATABASE', 'CSDL_TKB'))
-DB_DRIVER   = os.getenv('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
+DB_ENGINE   = os.getenv('DB_ENGINE')
+DB_USER     = os.getenv('DB_USERNAME')  # Azure uses DB_USERNAME
+DB_PASSWORD = os.getenv('DB_PASS')      # Azure uses DB_PASS
+DB_HOST     = os.getenv('DB_HOST')
+DB_PORT     = os.getenv('DB_PORT', '1433')
+DB_NAME     = os.getenv('DB_NAME')
+
+# Auto-detect ODBC driver (try 18 first, fallback to 17)
+DB_DRIVER = os.getenv('DB_DRIVER')
+if not DB_DRIVER:
+    try:
+        import pyodbc
+        available_drivers = [d for d in pyodbc.drivers() if 'ODBC Driver' in d and 'SQL Server' in d]
+        if available_drivers:
+            # Prefer version 18, then 17
+            for driver in ['ODBC Driver 18 for SQL Server', 'ODBC Driver 17 for SQL Server']:
+                if driver in available_drivers:
+                    DB_DRIVER = driver
+                    break
+            if not DB_DRIVER:
+                DB_DRIVER = available_drivers[0]  # Use first available
+        else:
+            DB_DRIVER = 'ODBC Driver 18 for SQL Server'  # Default for Azure
+    except:
+        DB_DRIVER = 'ODBC Driver 18 for SQL Server'  # Default
+
 DB_USE_WINDOWS_AUTH = os.getenv('DB_USE_WINDOWS_AUTH', 'false').lower() == 'true'
 
-# DEBUG: In ra các giá trị để kiểm tra
-# print(f"=== DATABASE CONFIG DEBUG ===")
-# print(f"DB_ENGINE: {DB_ENGINE}")
-# print(f"DB_HOST: {DB_HOST}")
-# print(f"DB_NAME: {DB_NAME}")
-# print(f"DB_USERNAME: {DB_USERNAME}")
-# print(f"DB_DRIVER: {DB_DRIVER}")
-# print(f"==============================")
-
-if DB_ENGINE and DB_NAME and (DB_USERNAME or DB_USE_WINDOWS_AUTH):
+if DB_ENGINE and DB_NAME and (DB_USER or DB_USE_WINDOWS_AUTH):
     if DB_ENGINE == 'mssql':
-        _mssql_options = {
-            'driver': DB_DRIVER,
-            'extra_params': 'TrustServerCertificate=yes',
-        }
+        # Detect Azure SQL by checking if hostname contains '.database.windows.net'
+        is_azure_sql = '.database.windows.net' in DB_HOST
+        
+        if is_azure_sql:
+            # Azure SQL: Must explicitly set Encrypt=yes
+            _mssql_options = {
+                'driver': DB_DRIVER,
+                'extra_params': 'Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;',
+            }
+        else:
+            # Local SQL Server
+            _mssql_options = {
+                'driver': DB_DRIVER,
+                'extra_params': 'TrustServerCertificate=yes',
+            }
+        
         # With Windows Authentication we should not pass user/password
         if DB_USE_WINDOWS_AUTH:
             _mssql_options.pop('extra_params', None)
@@ -149,10 +183,10 @@ if DB_ENGINE and DB_NAME and (DB_USERNAME or DB_USE_WINDOWS_AUTH):
             'default': {
                 'ENGINE': 'mssql',
                 'NAME': DB_NAME,
-                'USER': None if DB_USE_WINDOWS_AUTH else DB_USERNAME,
-                'PASSWORD': None if DB_USE_WINDOWS_AUTH else DB_PASS,
+                'USER': None if DB_USE_WINDOWS_AUTH else DB_USER,
+                'PASSWORD': None if DB_USE_WINDOWS_AUTH else DB_PASSWORD,
                 'HOST': DB_HOST,
-                'PORT': DB_PORT or None,  # Avoid empty PORT causing invalid attribute
+                'PORT': DB_PORT or None,
                 'OPTIONS': _mssql_options,
             },
         }

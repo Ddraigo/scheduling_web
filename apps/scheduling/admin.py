@@ -11,6 +11,9 @@ from datetime import datetime
 from django.contrib import admin, messages
 from django.contrib.admin.helpers import ACTION_CHECKBOX_NAME
 from django.utils.html import format_html
+from django.urls import path
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from .models import (
     Khoa, BoMon, GiangVien, MonHoc, PhongHoc,
     LopMonHoc, DotXep, PhanCong, TimeSlot, ThoiKhoaBieu,
@@ -18,6 +21,7 @@ from .models import (
     NgayNghiCoDinh, NgayNghiDot
 )
 from .utils.excel_export import ExcelExporter
+from .utils.excel_import import ExcelImporter
 
 # Rename "Scheduling System" app label to "Dữ liệu" in admin
 class CustomAdminSite(admin.AdminSite):
@@ -47,7 +51,7 @@ admin.site.app_index = patched_app_index
 class BaseAdmin(admin.ModelAdmin):
     """Base admin class with common settings"""
     date_hierarchy = None
-    change_list_template = 'admin/scheduling/change_list.html'
+    change_list_template = 'admin/scheduling/change_list_with_import.html'
     actions = ['export_to_excel', 'delete_selected_custom']
 
     def has_module_permission(self, request):
@@ -77,6 +81,36 @@ class BaseAdmin(admin.ModelAdmin):
         
         # Giang_Vien không thấy models
         return False
+    def get_urls(self):
+        """Add custom URLs for import"""
+        urls = super().get_urls()
+        custom_urls = [
+            path('download-template/', self.admin_site.admin_view(self.download_template), name=f'{self.model._meta.app_label}_{self.model._meta.model_name}_download_template'),
+            path('import-excel/', self.admin_site.admin_view(self.import_excel_view), name=f'{self.model._meta.app_label}_{self.model._meta.model_name}_import_excel'),
+        ]
+        return custom_urls + urls
+
+    def download_template(self, request):
+        """Download Excel template for this model"""
+        return ExcelImporter.generate_template(self.model)
+
+    def import_excel_view(self, request):
+        """Handle Excel file upload and import"""
+        print(f"=== IMPORT VIEW CALLED ===")
+        print(f"Method: {request.method}")
+        print(f"FILES: {request.FILES}")
+        print(f"POST: {request.POST}")
+        
+        if request.method == 'POST':
+            if request.FILES.get('excel_file'):
+                file = request.FILES['excel_file']
+                print(f"File received: {file.name}")
+                ExcelImporter.validate_and_import(file, self.model, request)
+            else:
+                messages.error(request, "Không tìm thấy file Excel trong request")
+        else:
+            messages.warning(request, "Phương thức không hợp lệ (cần POST)")
+        return redirect('..')
 
     @staticmethod
     def _safe_filename(name: str) -> str:
@@ -389,9 +423,14 @@ class PhanCongAdmin(BaseAdmin):
 
 @admin.register(RangBuocTrongDot)
 class RangBuocTrongDotAdmin(BaseAdmin):
-    list_display = ['id', 'ma_dot', 'ma_rang_buoc']
+    list_display = ['id', 'ma_dot', 'ma_rang_buoc', 'trong_so', 'get_global_weight']
     list_filter = ['ma_dot']
     ordering = ['id']
+    
+    def get_global_weight(self, obj):
+        """Hiển thị trọng số global từ RangBuocMem để so sánh"""
+        return obj.ma_rang_buoc.trong_so
+    get_global_weight.short_description = 'Trọng số global'
 
 
 @admin.register(NguyenVong)

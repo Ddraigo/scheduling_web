@@ -9,6 +9,11 @@ USE CSDL_TKB
 
 GO
 
+SELECT name FROM sys.databases;
+ALTER DATABASE CSDL_TKB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+GO
+
+
 
 /* ===== Danh mục khoa ===== */
 CREATE TABLE tb_KHOA(
@@ -170,13 +175,19 @@ GO
 CREATE TABLE tb_RANG_BUOC_TRONG_DOT (
     id          INT         IDENTITY(1,1) NOT NULL PRIMARY KEY,
     MaDot       VARCHAR(20) NOT NULL,
-    MaRangBuoc  VARCHAR(15) NOT NULL, 
+    MaRangBuoc  VARCHAR(15) NOT NULL,
+	TrongSo		FLOAT NOT NULL,
     UNIQUE (MaDot, MaRangBuoc),
     FOREIGN KEY (MaDot)      REFERENCES tb_DOT_XEP(MaDot),
     FOREIGN KEY (MaRangBuoc) REFERENCES tb_RANG_BUOC_MEM(MaRangBuoc)
 );
 
 GO
+
+--ALTER TABLE dbo.tb_RANG_BUOC_TRONG_DOT
+--ADD TrongSo FLOAT NOT NULL
+--    CONSTRAINT DF_tb_RANG_BUOC_TRONG_DOT_TrongSo DEFAULT (1.0);
+--GO 
 
 CREATE TABLE tb_NGUYEN_VONG(
     id          INT         IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -796,59 +807,72 @@ FROM dbo.tb_PHONG_HOC;
 -----------THEM RANG BUOC MEM--------------
 MERGE dbo.tb_RANG_BUOC_MEM AS T
 USING (VALUES
-  -- RBM-001: Giới hạn ca/ngày cho GV
+
+  /* =========================
+     S7 – Teacher Working Days
+     PRIORITY: HIGHEST (2.5)
+     ========================= */
   ('RBM-001',
-   N'Giới hạn số ca/ngày cho giảng viên',
-   N'Giới hạn tổng số ca dạy tối đa trong một ngày cho mỗi giảng viên (ví dụ ≤ 4 ca/ngày) nhằm tránh quá tải.',
-   0.90),
+   N'Giảm số ngày giảng viên lên trường',
+   N'Giảm thiểu số ngày giảng viên phải đến trường dạy. Giảng viên được ưu tiên xếp lịch tập trung vào ít ngày nhất có thể; mỗi ngày dạy bổ sung ngoài số ngày tối thiểu khả thi sẽ phát sinh chi phí.',
+   2.5),
 
-  -- RBM-002: Giảm số ngày lên trường của GV
+  /* =========================
+     S2 – Minimum Working Days
+     ========================= */
   ('RBM-002',
-   N'Giảm số ngày lên trường của giảng viên',
-   N'Tối thiểu hóa số ngày phải lên trường (gom ca trong ít ngày hơn) nếu không vi phạm các ràng buộc cứng.',
-   0.70),
+   N'Số ngày giảng dạy tối thiểu của môn học',
+   N'Mỗi môn học nên được phân bố trên ít nhất một số ngày khác nhau theo yêu cầu. Nếu số ngày thực tế nhỏ hơn số ngày tối thiểu, phần chênh lệch sẽ bị phạt.',
+   1.0),
 
-  -- RBM-003: Gom ca trong ngày (liên tục)
+  /* =========================
+     S4 – Lecture Consecutiveness
+     ========================= */
   ('RBM-003',
-   N'Tối ưu tính liên tục (Gom ca trong ngày)',
-   N'Giảm khoảng trống trong lịch của giảng viên trong cùng một ngày (ưu tiên ca liền kề).',
-   0.80),
+   N'Tính liên tiếp của các tiết học cùng môn',
+   N'Ưu tiên xếp các tiết học của cùng một môn liên tiếp trong ngày. Mỗi khoảng trống giữa các tiết học cùng ngày sẽ phát sinh chi phí.',
+   1.5),
 
-  -- RBM-004: Phạt xếp ngoài nguyện vọng
+  /* =========================
+     S5 – Room Stability
+     ========================= */
   ('RBM-004',
-   N'Phạt khi xếp lịch ngoài nguyện vọng',
-   N'Phạt khi xếp giảng viên vào khe thời gian không có trong danh sách nguyện vọng.',
-   0.90),
+   N'Ổn định phòng học cho môn học',
+   N'Ưu tiên xếp toàn bộ các tiết học của cùng một môn trong cùng một phòng. Mỗi phòng bổ sung được sử dụng sẽ bị phạt.',
+   1.0),
 
-  /* ====== BỔ SUNG THEO YÊU CẦU ====== */
-
-  -- RBM-005: Tôn trọng ngày nghỉ/không dạy của giảng viên
+  /* =========================
+     S6 – Teacher Lecture Consolidation
+     ========================= */
   ('RBM-005',
-   N'Tôn trọng ngày nghỉ/không dạy của giảng viên',
-   N'Ưu tiên tránh xếp ca vào các ngày/khung giờ giảng viên đã đăng ký nghỉ trước; nếu buộc phải xếp thì bị phạt theo trọng số.',
-   0.90),
+   N'Gom tiết dạy liên tiếp của giảng viên',
+   N'Ưu tiên giảng viên dạy các tiết liên tiếp trong cùng một phòng. Mỗi lần đổi phòng giữa hai tiết liên tiếp trong cùng ngày sẽ phát sinh chi phí.',
+   1.8),
 
-  -- RBM-006: Môn > 3 tín chỉ ưu tiên buổi sáng
+  /* =========================
+     S8 – Teacher Preferences
+     ========================= */
   ('RBM-006',
-   N'Ưu tiên xếp môn > 3 tín chỉ vào buổi sáng',
-   N'Ưu tiên xếp các học phần có số tín chỉ > 3 vào các time-slot buổi sáng (định nghĩa buổi sáng dựa trên bảng time-slot của hệ thống).',
-   0.80),
+   N'Nguyện vọng thời gian giảng dạy của giảng viên',
+   N'Phạt khi xếp tiết dạy vào các khung thời gian không nằm trong danh sách nguyện vọng đã đăng ký của giảng viên. Trường hợp thiếu khung nguyện vọng, hệ thống cho phép vi phạm và tích lũy chi phí.',
+   2.0)
 
-  -- RBM-007: Môn ≤ 2 tín chỉ ưu tiên buổi chiều/tối
-  ('RBM-007',
-   N'Ưu tiên xếp môn ≤ 2 tín chỉ vào buổi chiều/tối',
-   N'Ưu tiên xếp các học phần có số tín chỉ ≤ 2 vào các time-slot buổi chiều/tối (định nghĩa theo bảng time-slot).',
-   0.60)
-) AS S(MaRangBuoc, TenRangBuoc, MoTa, TrongSo)
+) AS S (MaRangBuoc, TenRangBuoc, MoTa, TrongSo)
+
 ON T.MaRangBuoc = S.MaRangBuoc
+
 WHEN MATCHED THEN
-  UPDATE SET T.TenRangBuoc = S.TenRangBuoc,
-             T.MoTa        = S.MoTa,
-             T.TrongSo     = S.TrongSo
+  UPDATE SET
+    T.TenRangBuoc = S.TenRangBuoc,
+    T.MoTa        = S.MoTa,
+    T.TrongSo     = S.TrongSo
+
 WHEN NOT MATCHED THEN
   INSERT (MaRangBuoc, TenRangBuoc, MoTa, TrongSo)
   VALUES (S.MaRangBuoc, S.TenRangBuoc, S.MoTa, S.TrongSo);
+
 GO
+
 
 
   /* ===== TẠO LỚP CHO DANH SÁCH MÔN ĐÃ CHO (mỗi môn >= 2 nhóm) ===== */
@@ -912,18 +936,20 @@ DECORATED AS (
                    END,
         -- Ngôn ngữ theo nhóm, bám quy tắc hệ đào tạo
         NgonNgu = CASE ((g.rn_grp - 1) % 5)
-                    WHEN 2 THEN N'Tiếng Anh'                                        -- Liên kết
-                    WHEN 4 THEN N'Tiếng Anh'                                        -- ĐHTA
-                    WHEN 3 THEN CASE WHEN g.rn_grp % 2 = 1 THEN N'Tiếng Anh' ELSE N'Tiếng Việt' END -- CTCLC: luân phiên theo nhóm
-                    ELSE N'Tiếng Việt'                                              -- Tiêu chuẩn, 4+1
+                    WHEN 2 THEN N'Tiếng Anh'
+                    WHEN 4 THEN N'Tiếng Anh'
+                    WHEN 3 THEN CASE WHEN g.rn_grp % 2 = 1 THEN N'Tiếng Anh' ELSE N'Tiếng Việt' END
+                    ELSE N'Tiếng Việt'
                   END,
-        SoLuongSV      = CASE WHEN (p.SoTinChi >= 4 AND p.To_MH = 0 AND p.SoTietTH > 0) THEN 80 ELSE 40 END,
+        SoLuongSV = CASE WHEN (p.SoTinChi >= 4 AND p.To_MH = 0 AND p.SoTietTH > 0) THEN 80 ELSE 40 END,
+        -- ĐÃ SỬA: ThietBiYeuCau khớp với logic LoaiLop
         ThietBiYeuCau = CASE 
-    WHEN p.To_MH > 0 THEN N'PC'                    -- Tổ TH (1,2) → PC (khớp với phòng TH)
-    WHEN p.SoTietTH > 0 THEN N'PC'                 -- LT nhưng có TH → PC
-    ELSE N'TV, Máy chiếu'                          -- Chỉ LT thuần túy → TV, Máy chiếu
-END,
-        SoCaTuan       = CASE WHEN (p.SoTinChi >= 4 AND p.SoTietLT >= 60) THEN 2 ELSE 1 END
+            WHEN p.SoTietTH = 0 THEN N'TV, Máy chiếu'                                    -- Môn chỉ LT → LT → TV, Máy chiếu
+            WHEN p.SoTietLT = 0 AND p.SoTietTH > 0 THEN N'PC'                            -- Môn chỉ TH → TH → PC
+            WHEN p.SoTietLT > 0 AND p.SoTietTH > 0 AND p.To_MH = 0 THEN N'TV, Máy chiếu' -- Tổ 0 của môn LT+TH → LT → TV, Máy chiếu
+            ELSE N'PC'                                                                   -- Tổ 1,2 → TH → PC
+        END,
+        SoCaTuan = CASE WHEN (p.SoTinChi >= 4 AND p.SoTietLT >= 60) THEN 2 ELSE 1 END
     FROM PLAN_CTE p
     JOIN GROUPS g ON g.MaMonHoc = p.MaMonHoc AND g.Nhom_MH = p.Nhom_MH
 ),

@@ -1,0 +1,346 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    
+    {# Import Excel Button #}
+    <li style="list-style: none; margin-left: 8px;">
+        <button type="button" onclick="openImportModal()" 
+           style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; 
+                  background: linear-gradient(135deg, #0056b3, #007bff); color: white; 
+                  border: none; border-radius: 5px; cursor: pointer; font-weight: 500; 
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+           onmouseover="this.style.background='linear-gradient(135deg, #004085, #0056b3)'; this.style.transform='translateY(-2px)';"
+           onmouseout="this.style.background='linear-gradient(135deg, #0056b3, #007bff)'; this.style.transform='translateY(0)';">
+            <i class="fas fa-file-upload"></i> Nhập Excel
+        </button>
+    </li>
+    
+    {# Custom Export Excel Button #}
+    <li style="list-style: none; margin-left: 8px;">
+        <a href="#" onclick="submitAction('export_to_excel', event)" 
+           style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; 
+                  background: linear-gradient(135deg, #1e7e34, #28a745); color: white; 
+                  border-radius: 5px; text-decoration: none; font-weight: 500; 
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+           onmouseover="this.style.background='linear-gradient(135deg, #155724, #1e7e34)'; this.style.transform='translateY(-2px)';"
+           onmouseout="this.style.background='linear-gradient(135deg, #1e7e34, #28a745)'; this.style.transform='translateY(0)';">
+            <i class="fas fa-file-excel"></i> Xuất Excel
+        </a>
+    </li>
+    
+    {# Custom Delete Button #}
+    <li style="list-style: none; margin-left: 8px;">
+        <a href="#" onclick="submitAction('delete_selected_custom', event)" 
+           style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; 
+                  background: linear-gradient(135deg, #c82333, #dc3545); color: white; 
+                  border-radius: 5px; text-decoration: none; font-weight: 500; 
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+           onmouseover="this.style.background='linear-gradient(135deg, #a71d2a, #c82333)'; this.style.transform='translateY(-2px)';"
+           onmouseout="this.style.background='linear-gradient(135deg, #c82333, #dc3545)'; this.style.transform='translateY(0)';">
+            <i class="fas fa-trash-alt"></i> Xóa đã chọn
+        </a>
+    </li>
+{% endblock %}
+
+{% block result_list %}
+    <style>
+        /* Hide action dropdown bar */
+        #changelist-form .actions {
+            display: none !important;
+        }
+        
+        /* Import Modal Styles */
+        .import-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+        }
+        
+        .import-modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 700px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .import-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #007bff;
+        }
+        
+        .import-modal-header h2 {
+            margin: 0;
+            color: #007bff;
+        }
+        
+        .close-modal {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: #000;
+        }
+        
+        .import-step {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .import-step h3 {
+            margin-top: 0;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        .import-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white !important;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none !important;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .import-btn:hover {
+            background: #0056b3;
+            color: white !important;
+            text-decoration: none !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .import-btn:visited {
+            color: white !important;
+        }
+        
+        .import-btn:active {
+            color: white !important;
+        }
+        
+        .import-btn-success {
+            background: #28a745;
+        }
+        
+        .import-btn-success:hover {
+            background: #1e7e34;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .file-input-wrapper:hover .import-btn {
+            background: #0056b3;
+            color: white !important;
+            text-decoration: none !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .selected-file {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+    
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {{ block.super }}
+    
+    <!-- Import Modal - OUTSIDE of changelist-form to avoid nested form issue -->
+    <div id="importModal" class="import-modal">
+        <div class="import-modal-content">
+            <div class="import-modal-header">
+                <h2><i class="fas fa-file-upload"></i> Nhập dữ liệu từ Excel</h2>
+                <span class="close-modal" onclick="closeImportModal()">&times;</span>
+            </div>
+            
+            <div class="import-step">
+                <h3><i class="fas fa-download"></i> Bước 1: Tải mẫu Excel</h3>
+                <p>Tải file Excel mẫu với các cột đã được định dạng sẵn.</p>
+                <a href="download-template/" class="import-btn">
+                    <i class="fas fa-download"></i> Tải mẫu Excel
+                </a>
+                <div class="alert-info" style="margin-top: 15px;">
+                    <strong><i class="fas fa-info-circle"></i> Lưu ý:</strong>
+                    <ul style="margin: 10px 0 0 20px; padding: 0;">
+                        <li>Các cột in đậm màu đỏ là <strong>bắt buộc</strong></li>
+                        <li>Xem sheet "Hướng dẫn" để biết chi tiết về từng cột</li>
+                        <li>Không thay đổi tên các cột trong file mẫu</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="import-step">
+                <h3><i class="fas fa-upload"></i> Bước 2: Tải lên và Import</h3>
+                <p>Chọn file Excel đã điền dữ liệu để import vào hệ thống.</p>
+                <form id="importForm" method="post" action="import-excel/" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="file-input-wrapper">
+                        <button type="button" class="import-btn">
+                            <i class="fas fa-folder-open"></i> Chọn file Excel
+                        </button>
+                        <input type="file" name="excel_file" id="excelFileInput" accept=".xlsx,.xls" onchange="fileSelected()" required>
+                    </div>
+                    <div id="selectedFile" class="selected-file"></div>
+                    <div style="margin-top: 20px;">
+                        <button type="submit" class="import-btn import-btn-success" id="importButton" disabled>
+                            <i class="fas fa-database"></i> Import vào Database
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script>
+        function openImportModal() {
+            document.getElementById('importModal').style.display = 'block';
+        }
+        
+        function closeImportModal() {
+            document.getElementById('importModal').style.display = 'none';
+            document.getElementById('importForm').reset();
+            document.getElementById('selectedFile').style.display = 'none';
+            document.getElementById('importButton').disabled = true;
+        }
+        
+        function fileSelected() {
+            const input = document.getElementById('excelFileInput');
+            const selectedFile = document.getElementById('selectedFile');
+            const importButton = document.getElementById('importButton');
+            
+            if (input.files && input.files[0]) {
+                selectedFile.innerHTML = '<i class="fas fa-file-excel"></i> <strong>File đã chọn:</strong> ' + input.files[0].name;
+                selectedFile.style.display = 'block';
+                importButton.disabled = false;
+            } else {
+                selectedFile.style.display = 'none';
+                importButton.disabled = true;
+            }
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('importModal');
+            if (event.target == modal) {
+                closeImportModal();
+            }
+        }
+    
+        function submitAction(actionName, event) {
+            event.preventDefault();
+            
+            const form = document.querySelector('#changelist-form');
+            if (!form) {
+                alert('Không tìm thấy form!');
+                return;
+            }
+
+            const checkboxes = document.querySelectorAll('input[name="_selected_action"]:checked');
+
+            if (actionName === 'delete_selected_custom') {
+                if (checkboxes.length === 0) {
+                    alert('Hãy chọn bản ghi trước khi xóa.');
+                    return;
+                }
+                if (!confirm(`Bạn có chắc chắn muốn xóa ${checkboxes.length} bản ghi đã chọn?`)) {
+                    return;
+                }
+            }
+
+            // Đặt giá trị vào select action nếu tồn tại; nếu không thì tạo hidden
+            const actionSelect = form.querySelector('select[name="action"]');
+            if (actionSelect) {
+                actionSelect.value = actionName;
+            } else {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'action';
+                input.value = actionName;
+                form.appendChild(input);
+            }
+
+            // Bổ sung các trường admin action để tránh lỗi thiếu tham số
+            const ensureHidden = (name, value) => {
+                let el = form.querySelector(`input[name="${name}"]`);
+                if (!el) {
+                    el = document.createElement('input');
+                    el.type = 'hidden';
+                    el.name = name;
+                    form.appendChild(el);
+                }
+                el.value = value;
+            };
+
+            ensureHidden('index', '0');
+            ensureHidden('select_across', '0');
+            // Đảm bảo một checkbox ẩn để Django không cảnh báo thiếu selection, nhưng action backend sẽ lấy theo filter
+            if (checkboxes.length === 0) {
+                ensureHidden('_selected_action', 'dummy');
+            }
+
+            // Giữ nguyên querystring hiện tại để action nhận đúng filter
+            form.action = window.location.pathname + window.location.search;
+            form.submit();
+        }
+    </script>
+{% endblock %}
