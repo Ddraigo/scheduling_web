@@ -403,16 +403,148 @@ def algo_scheduler_view_result_api(request):
         
         logger.info(f"Retrieved {len(schedules)} schedules for {ma_dot}")
         
-        return JsonResponse({
+        # Chạy validator để lấy breakdown costs từ file .sol đã lưu
+        breakdown = None
+        initial_cost = None
+        final_cost = None
+        
+        try:
+            from pathlib import Path
+            import subprocess
+            import re
+            from django.conf import settings
+            
+            # Path to .ctt and .sol files
+            ctt_file = Path(settings.BASE_DIR) / 'output' / 'test_web_algo' / 'ctt_files' / f'{ma_dot}.ctt'
+            sol_file = Path(settings.BASE_DIR) / 'output' / 'test_web_algo' / f'solution_{ma_dot}.sol'
+            
+            if ctt_file.exists() and sol_file.exists():
+                # Run validator
+                result = subprocess.run(
+                    ['python', 'apps/scheduling/utils/validator.py', str(ctt_file), str(sol_file)],
+                    capture_output=True,
+                    text=True,
+                    cwd=settings.BASE_DIR
+                )
+                
+                if result.returncode == 0:
+                    output = result.stdout
+                    
+                    # Parse costs from validator output
+                    breakdown = {}
+                    cost_patterns = {
+                        'min_working_days': r'Cost of MinWorkingDays \(soft\)\s*:\s*(\d+)',
+                        'curriculum_compactness': r'Cost of CurriculumCompactness \(soft\)\s*:\s*(\d+)',
+                        'lecture_consecutiveness': r'Cost of LectureConsecutiveness \(soft\)\s*:\s*(\d+)',
+                        'room_stability': r'Cost of RoomStability \(soft\)\s*:\s*(\d+)',
+                        'teacher_lecture_consolidation': r'Cost of TeacherLectureConsolidation \(soft - extended\)\s*:\s*(\d+)',
+                        'teacher_working_days': r'Cost of TeacherWorkingDays \(soft - extended\)\s*:\s*(\d+)',
+                        'teacher_preferences': r'Cost of TeacherPreferences \(soft - extended\)\s*:\s*(\d+)',
+                        'room_capacity': r'Cost of RoomCapacity \(soft\)\s*:\s*(\d+)',
+                    }
+                    
+                    for key, pattern in cost_patterns.items():
+                        match = re.search(pattern, output)
+                        if match:
+                            breakdown[key] = int(match.group(1))
+                    
+                    # Parse total cost
+                    total_match = re.search(r'Total Cost = (\d+)', output)
+                    if total_match:
+                        final_cost = int(total_match.group(1))
+                        initial_cost = final_cost  # Không có initial cost khi load từ DB
+                    
+                    logger.info(f"Validator breakdown: {breakdown}")
+                else:
+                    logger.warning(f"Validator failed with code {result.returncode}: {result.stderr}")
+        except Exception as e:
+            logger.warning(f"Could not run validator: {e}")
+        
+        response = {
             'status': 'success',
             'ma_dot': ma_dot,
             'ten_dot': dot_xep.ten_dot,
             'total_schedules': len(schedules),
             'schedules': schedules
-        })
+        }
+        
+        # Add breakdown if available
+        if breakdown:
+            response['breakdown'] = breakdown
+            response['final_cost'] = final_cost
+            response['initial_cost'] = initial_cost
+        
+        return JsonResponse(response)
     
     except Exception as e:
         logger.exception(f"Lỗi khi xem kết quả: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+
+
+@require_http_methods(["GET"])
+def algo_scheduler_get_weights_api(request):
+    """
+    API endpoint để lấy trọng số của các ràng buộc cho đợt xếp lịch
+    
+    Expected GET parameters:
+    - ma_dot: Mã đợt xếp lịch (optional)
+    
+    Returns:
+    {
+        "status": "success",
+        "weights": {
+            "RBM-001": {"name": "...", "weight": 2.5, "source": "dot"},
+            "RBM-002": {"name": "...", "weight": 1.0, "source": "global"},
+            ...
+        }
+    }
+    """
+    try:
+        from apps.scheduling.algorithms.weight_loader import WeightLoader
+        from apps.scheduling.models import RangBuocMem, RangBuocTrongDot
+        
+        ma_dot = request.GET.get('ma_dot')
+        
+        # Load weights using WeightLoader (3-tier priority)
+        weights = WeightLoader.load_weights(ma_dot)
+        
+        # Get mapping from RBM codes to friendly names
+        rang_buoc_map = {}
+        for rb in RangBuocMem.objects.all():
+            rang_buoc_map[rb.ma_rang_buoc] = rb.ten_rang_buoc
+        
+        # Get dot-specific overrides if ma_dot provided
+        dot_overrides = set()
+        if ma_dot:
+            dot_overrides = set(
+                RangBuocTrongDot.objects.filter(ma_dot=ma_dot)
+                .values_list('ma_rang_buoc__ma_rang_buoc', flat=True)
+            )
+        
+        # Map internal keys back to RBM codes with weight values
+        # Reverse lookup from CONSTRAINT_MAPPING
+        from apps.scheduling.algorithms.weight_loader import CONSTRAINT_MAPPING
+        rbm_weights = {}
+        
+        for rbm_code, internal_key in CONSTRAINT_MAPPING.items():
+            if internal_key in weights:
+                source = 'dot' if rbm_code in dot_overrides else 'global'
+                rbm_weights[rbm_code] = {
+                    'name': rang_buoc_map.get(rbm_code, internal_key),
+                    'weight': weights[internal_key],
+                    'source': source
+                }
+        
+        return JsonResponse({
+            'status': 'success',
+            'weights': rbm_weights
+        })
+    
+    except Exception as e:
+        logger.exception(f"Lỗi khi lấy weights: {e}")
         return JsonResponse({
             'status': 'error',
             'message': f'Lỗi: {str(e)}'

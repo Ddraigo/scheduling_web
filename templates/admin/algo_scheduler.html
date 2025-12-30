@@ -86,10 +86,10 @@
         
         <div class="btn-group" role="group">
             <button type="button" class="btn btn-primary" onclick="runAlgorithm()">
-                🧮 Chạy thuật toán V2 (Fixed)
+                🧮 Chạy thuật toán
             </button>
             <button type="button" class="btn btn-info" onclick="viewResult()">
-                📊 Xem kết quả
+                📊 Tải kết quả có sẵn
             </button>
             <button type="button" class="btn btn-secondary" onclick="clearLog()">
                 🗑️ Xóa log
@@ -101,40 +101,241 @@
 <!-- Output Console -->
 <div class="card">
     <div class="card-header">
-        <h5>📊 Kết quả</h5>
+        <h5>📋 Log thực thi</h5>
     </div>
     <div class="card-body">
-        <div id="outputConsole" style="background-color: #1e1e1e; color: #00ff00; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; max-height: 600px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word;">
+        <!-- Progress Bar -->
+        <div id="progressBarContainer" style="display: none; margin-bottom: 15px;">
+            <div class="progress" style="height: 25px;">
+                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                    <span id="progressText" style="font-weight: bold;">0%</span>
+                </div>
+            </div>
+        </div>
+        <div id="outputConsole" style="background-color: #1e1e1e; color: #00ff00; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word;">
             Đang chờ thực hiện lệnh...
+        </div>
+    </div>
+</div>
+
+<!-- Results Summary (Hidden initially) -->
+<div class="card" id="resultsSummaryCard" style="display: none;">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">✅ Kết quả xếp lịch</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- Main Metrics -->
+            <div class="col-md-3 mb-3">
+                <div class="metric-card">
+                    <div class="metric-icon bg-primary">📊</div>
+                    <div class="metric-info">
+                        <small class="text-muted">Cost ban đầu</small>
+                        <h4 id="initialCost">-</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="metric-card">
+                    <div class="metric-icon bg-success">✅</div>
+                    <div class="metric-info">
+                        <small class="text-muted">Cost cuối cùng</small>
+                        <h4 id="finalCost">-</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="metric-card">
+                    <div class="metric-icon bg-info">📈</div>
+                    <div class="metric-info">
+                        <small class="text-muted">Cải thiện</small>
+                        <h4 id="improvement">-</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="metric-card">
+                    <div class="metric-icon bg-warning">⏱️</div>
+                    <div class="metric-info">
+                        <small class="text-muted">Thời gian</small>
+                        <h4 id="timeElapsed">-</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cost Breakdown -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <h6 class="border-bottom pb-2 mb-3">📊 Các tiêu chí đánh giá chất lượng lịch học</h6>
+                <div class="row">
+                    <!-- RBM-001 (S7): Highest Priority -->
+                    <div class="col-md-6 mb-2">
+                        <div class="breakdown-item" style="border-left-color: #dc3545;">
+                            <div class="breakdown-content">
+                                <div>
+                                    <span class="badge badge-danger">1</span>
+                                    <strong>Giảm ngày lên trường giảng viên</strong>
+                                    <small id="weightTeacherWorkingDays" class="text-muted d-block">Trọng số: 2.5</small>
+                                </div>
+                                <span id="costTeacherWorkingDays" class="cost-value text-danger font-weight-bold">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- RBM-002 (S2): Base Priority -->
+                    <div class="col-md-6 mb-2">
+                        <div class="breakdown-item" style="border-left-color: #6c757d;">
+                            <div class="breakdown-content">
+                                <div>
+                                    <span class="badge badge-secondary">2</span>
+                                    <strong>Đảm bảo số ngày giảng dạy tối thiểu</strong>
+                                    <small id="weightMinWorkingDays" class="text-muted d-block">Trọng số: 1.0</small>
+                                </div>
+                                <span id="costMinWorkingDays" class="cost-value text-danger">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- RBM-003 (S4): Medium Priority -->
+                    <div class="col-md-6 mb-2">
+                        <div class="breakdown-item" style="border-left-color: #17a2b8;">
+                            <div class="breakdown-content">
+                                <div>
+                                    <span class="badge badge-info">3</span>
+                                    <strong>Xếp tiết học liên tiếp trong ngày</strong>
+                                    <small id="weightLectureConsecutiveness" class="text-muted d-block">Trọng số: 1.5</small>
+                                </div>
+                                <span id="costLectureConsecutiveness" class="cost-value text-danger">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- RBM-004 (S5): Base Priority -->
+                    <div class="col-md-6 mb-2">
+                        <div class="breakdown-item" style="border-left-color: #6c757d;">
+                            <div class="breakdown-content">
+                                <div>
+                                    <span class="badge badge-secondary">4</span>
+                                    <strong>Giữ ổn định phòng học cho môn</strong>
+                                    <small id="weightRoomStability" class="text-muted d-block">Trọng số: 1.0</small>
+                                </div>
+                                <span id="costRoomStability" class="cost-value text-danger">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- RBM-005 (S6): High Priority -->
+                    <div class="col-md-6 mb-2">
+                        <div class="breakdown-item" style="border-left-color: #ffc107;">
+                            <div class="breakdown-content">
+                                <div>
+                                    <span class="badge badge-warning">5</span>
+                                    <strong>Giảng viên dạy liên tiếp tại cùng phòng</strong>
+                                    <small id="weightTeacherConsolidation" class="text-muted d-block">Trọng số: 1.8</small>
+                                </div>
+                                <span id="costTeacherConsolidation" class="cost-value text-danger">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- RBM-006 (S8): Very High Priority -->
+                    <div class="col-md-6 mb-2">
+                        <div class="breakdown-item" style="border-left-color: #fd7e14;">
+                            <div class="breakdown-content">
+                                <div>
+                                    <span class="badge badge-warning">6</span>
+                                    <strong>Tôn trọng nguyện vọng giảng viên</strong>
+                                    <small id="weightTeacherPreferences" class="text-muted d-block">Trọng số: 2.0</small>
+                                </div>
+                                <span id="costTeacherPreferences" class="cost-value text-danger font-weight-bold">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Validation Status -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <h6 class="border-bottom pb-2 mb-3">✅ Kiểm tra tính hợp lệ của lịch học</h6>
+                <div id="validationStatus">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Chạy thuật toán để xem kết quả validation
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Schedule Table -->
 <div class="card" id="scheduleTableCard" style="display: none;">
-    <div class="card-header">
-        <h5>📅 Thời khóa biểu (<span id="scheduleCount">0</span> buổi học)</h5>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">📅 Thời khóa biểu (<span id="scheduleCount">0</span> buổi học)</h5>
+        <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-primary" onclick="exportToExcel()">
+                <i class="fas fa-file-excel"></i> Xuất Excel
+            </button>
+            <button class="btn btn-outline-secondary" onclick="filterSchedule()">
+                <i class="fas fa-filter"></i> Lọc
+            </button>
+        </div>
     </div>
     <div class="card-body">
+        <!-- Filter Section -->
+        <div class="row mb-3" id="filterSection" style="display: none;">
+            <div class="col-md-3">
+                <input type="text" id="filterLop" class="form-control form-control-sm" placeholder="Mã lớp...">
+            </div>
+            <div class="col-md-3">
+                <input type="text" id="filterGV" class="form-control form-control-sm" placeholder="Giảng viên...">
+            </div>
+            <div class="col-md-2">
+                <select id="filterThu" class="form-control form-control-sm">
+                    <option value="">Tất cả thứ</option>
+                    <option value="2">Thứ 2</option>
+                    <option value="3">Thứ 3</option>
+                    <option value="4">Thứ 4</option>
+                    <option value="5">Thứ 5</option>
+                    <option value="6">Thứ 6</option>
+                    <option value="7">Thứ 7</option>
+                    <option value="8">Chủ nhật</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="text" id="filterPhong" class="form-control form-control-sm" placeholder="Phòng...">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary btn-sm btn-block" onclick="applyFilter()">
+                    Áp dụng
+                </button>
+            </div>
+        </div>
+        
         <div style="overflow-x: auto;">
-            <table class="table table-bordered table-striped table-hover" id="scheduleTable">
+            <table class="table table-bordered table-striped table-hover table-sm" id="scheduleTable">
                 <thead class="thead-dark">
                     <tr>
-                        <th>STT</th>
+                        <th style="width: 50px;">STT</th>
                         <th>Mã lớp</th>
                         <th>Tên lớp</th>
                         <th>Môn học</th>
                         <th>Giảng viên</th>
                         <th>Phòng</th>
-                        <th>Thứ</th>
-                        <th>Ca</th>
-                        <th>Giờ</th>
+                        <th style="width: 70px;">Sức chứa</th>
+                        <th>Loại phòng</th>
+                        <th style="width: 80px;">Thứ</th>
+                        <th style="width: 60px;">Ca</th>
+                        <th style="width: 130px;">Giờ</th>
                     </tr>
                 </thead>
                 <tbody id="scheduleTableBody">
                 </tbody>
             </table>
         </div>
+        
+        <!-- Pagination -->
+        <nav id="paginationNav" style="display: none;">
+            <ul class="pagination pagination-sm justify-content-center" id="pagination">
+            </ul>
+        </nav>
     </div>
 </div>
 
@@ -142,6 +343,7 @@
 
 {% block extrahead %}
 {{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <style>
     /* Force vertical stacking */
     #content-main {
@@ -150,32 +352,165 @@
     }
     
     .card {
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
         margin-bottom: 20px;
         width: 100% !important;
         display: block !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .card-header {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #ddd;
-        padding: 10px 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-bottom: none;
+        padding: 12px 20px;
+        border-radius: 8px 8px 0 0;
+    }
+    .card-header.bg-success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
     }
     .card-header h5 {
         margin: 0;
+        font-weight: 600;
     }
     .card-body {
-        padding: 15px;
+        padding: 20px;
     }
+    
+    /* Metric Cards */
+    .metric-card {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.3s;
+    }
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .metric-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: white;
+    }
+    .metric-icon.bg-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .metric-icon.bg-success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+    .metric-icon.bg-info {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+    .metric-icon.bg-warning {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+    .metric-info {
+        flex: 1;
+    }
+    .metric-info h4 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    .metric-info small {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Breakdown Items */
+    .breakdown-item {
+        background: #f8f9fa;
+        padding: 12px 15px;
+        border-radius: 6px;
+        border-left: 4px solid #667eea;
+        position: relative;
+        transition: all 0.3s;
+    }
+    .breakdown-item:hover {
+        background: #e9ecef;
+        transform: translateX(3px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .breakdown-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+    .breakdown-content > div {
+        flex: 1;
+    }
+    .cost-value {
+        font-size: 24px;
+        min-width: 50px;
+        text-align: right;
+        font-weight: bold;
+    }
+    .breakdown-item .badge {
+        font-size: 11px;
+        padding: 4px 8px;
+        margin-right: 5px;
+    }
+    .breakdown-item small {
+        font-size: 10px;
+        color: #6c757d;
+        margin-top: 2px;
+    }
+    .badge-danger {
+        background: #dc3545 !important;
+    }
+    .badge-warning {
+        background: #ffc107 !important;
+        color: #212529 !important;
+    }
+    .badge-info {
+        background: #17a2b8 !important;
+    }
+    .badge-secondary {
+        background: #6c757d !important;
+    }
+    
+    /* Console */
     #outputConsole {
         font-size: 12px;
-        line-height: 1.4;
+        line-height: 1.5;
+        background: #1e1e1e !important;
+        color: #00ff00 !important;
     }
+    
+    /* Buttons */
     .btn-group {
         display: flex;
         gap: 10px;
         flex-wrap: wrap;
     }
+    .btn {
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Table */
     #scheduleTable {
         font-size: 13px;
         white-space: nowrap;
@@ -186,13 +521,56 @@
         position: sticky;
         top: 0;
         z-index: 10;
+        font-weight: 600;
+        text-align: center;
+        vertical-align: middle;
     }
     #scheduleTable td {
         vertical-align: middle;
+        padding: 8px 12px;
     }
     .table-hover tbody tr:hover {
-        background-color: #f1f3f5;
+        background-color: #e3f2fd;
         cursor: pointer;
+    }
+    
+    /* Badges */
+    .badge-room {
+        background: #667eea;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+    .badge-teacher {
+        background: #11998e;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+    }
+    
+    /* Validation Status */
+    #validationStatus .alert {
+        margin-bottom: 0;
+    }
+    .validation-pass {
+        background: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+    .validation-fail {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+    
+    /* Filter Section */
+    #filterSection {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
     }
 </style>
 {% endblock %}
@@ -201,6 +579,16 @@
 {{ block.super }}
 <script>
     const apiBaseUrl = '/api/scheduling';
+    
+    // Weight display mapping (RBM code -> element ID)
+    const weightDisplayMap = {
+        'RBM-001': 'weightTeacherWorkingDays',
+        'RBM-002': 'weightMinWorkingDays',
+        'RBM-003': 'weightLectureConsecutiveness',
+        'RBM-004': 'weightRoomStability',
+        'RBM-005': 'weightTeacherConsolidation',
+        'RBM-006': 'weightTeacherPreferences'
+    };
     
     function log(message, type = 'info') {
         const console = document.getElementById('outputConsole');
@@ -212,6 +600,71 @@
     
     function clearLog() {
         document.getElementById('outputConsole').innerHTML = '';
+        hideProgressBar();
+    }
+    
+    function loadWeights(ma_dot) {
+        if (!ma_dot) return;
+        
+        fetch(`{% url 'sap_lich:algo_scheduler_get_weights_api' %}?ma_dot=${ma_dot}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update weight displays
+                    for (const [rbmCode, info] of Object.entries(data.weights)) {
+                        const elementId = weightDisplayMap[rbmCode];
+                        if (elementId) {
+                            const element = document.getElementById(elementId);
+                            if (element) {
+                                const sourceLabel = info.source === 'dot' ? ' (Áp dụng trong đợt)' : '';
+                                element.textContent = `Trọng số: ${info.weight}${sourceLabel}`;
+                            }
+                        }
+                    }
+                    console.log('Weights loaded:', data.weights);
+                } else {
+                    console.warn('Failed to load weights:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading weights:', error);
+            });
+    }
+    
+    function showProgressBar() {
+        document.getElementById('progressBarContainer').style.display = 'block';
+    }
+    
+    function hideProgressBar() {
+        document.getElementById('progressBarContainer').style.display = 'none';
+        updateProgress(0);
+    }
+    
+    function updateProgress(percent) {
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        if (progressBar && progressText) {
+            progressBar.style.width = percent + '%';
+            progressBar.setAttribute('aria-valuenow', percent);
+            progressText.textContent = Math.round(percent) + '%';
+        }
+    }
+    
+    function simulateProgress(duration) {
+        let progress = 0;
+        const interval = 100; // Update every 100ms
+        const increment = (interval / (duration * 1000)) * 100; // Calculate increment per interval
+        
+        const timer = setInterval(() => {
+            progress += increment;
+            if (progress >= 95) {
+                progress = 95; // Stop at 95% until actual completion
+                clearInterval(timer);
+            }
+            updateProgress(progress);
+        }, interval);
+        
+        return timer;
     }
     
     function getSelectedPeriod() {
@@ -234,6 +687,13 @@
         const timeLimit = parseFloat(document.getElementById('timeLimitInput').value) || 180;
         const seed = document.getElementById('seedInput').value ? parseInt(document.getElementById('seedInput').value) : 42;
         const saveToDb = document.getElementById('saveToDbCheck').checked;
+        
+        // Hide results summary initially
+        document.getElementById('resultsSummaryCard').style.display = 'none';
+        
+        // Show and start progress bar
+        showProgressBar();
+        const progressTimer = simulateProgress(timeLimit);
         
         log(`🚀 Bắt đầu xếp lịch cho đợt: ${periodId}`);
         log(`⚙️ Tham số: Strategy=${strategy}, Init=${initMethod}, Time=${timeLimit}s, Seed=${seed}`);
@@ -258,45 +718,127 @@
         })
         .then(response => response.json())
         .then(data => {
+            // Stop progress timer and set to 100%
+            clearInterval(progressTimer);
+            updateProgress(100);
+            
             if (data.status === 'success') {
                 log(`✅ Xếp lịch thành công!`, 'success');
-                log(`⏱️ Thời gian: ${data.time_elapsed.toFixed(2)}s`);
-                log(`📈 Cost: ${data.initial_cost} → ${data.final_cost} (Cải thiện: ${data.improvement_percent.toFixed(1)}%)`);
+                log(`⏱️ Thời gian: ${data.time_elapsed}s`);
+                log(`📈 Cost: ${data.initial_cost} → ${data.final_cost} (Cải thiện: ${data.improvement_percent}%)`);
                 
-                // Cost breakdown
+                // Show results summary card
+                displayResultsSummary(data);
+                
+                // Cost breakdown log
                 log(`📊 Chi tiết cost:`);
                 const breakdown = data.breakdown;
-                log(`  - Quá tải phòng: ${breakdown.room_capacity}`);
-                log(`  - Ngày làm việc tối thiểu: ${breakdown.min_working_days}`);
-                log(`  - Compactness: ${breakdown.curriculum_compactness}`);
-                log(`  - Liên tiếp buổi học: ${breakdown.lecture_consecutiveness}`);
-                log(`  - Ổn định phòng: ${breakdown.room_stability}`);
-                log(`  - Ưu tiên giáo viên: ${breakdown.teacher_preferences}`);
-                log(`  - Tổng: ${data.final_cost}`);
+                log(`  - 1. Giảm ngày lên trường GV: ${breakdown.teacher_working_days || 0}`);
+                log(`  - 2. Ngày giảng dạy tối thiểu: ${breakdown.min_working_days}`);
+                log(`  - 3. Liên tiếp tiết học: ${breakdown.lecture_consecutiveness}`);
+                log(`  - 4. Ổn định phòng: ${breakdown.room_stability}`);
+                log(`  - 5. GV dạy liên tiếp cùng phòng: ${breakdown.teacher_lecture_consolidation || 0}`);
+                log(`  - 6. Nguyện vọng GV: ${breakdown.teacher_preferences || breakdown.teacher_preference_violations || 0}`);
+                log(`  - TỔNG: ${data.final_cost}`);
                 
                 if (data.saved_to_db) {
                     log(`💾 Đã lưu ${data.details.lectures_scheduled} buổi học vào database`, 'success');
                     
-                    // Tự động hiển thị kết quả sau 1 giây
+                    // Auto load schedule table (without re-displaying breakdown)
                     log(`📊 Đang tải bảng thời khóa biểu...`);
                     setTimeout(() => {
-                        viewResult();
+                        viewResult(true);  // Pass skipBreakdown=true
                     }, 1000);
                 } else {
                     log(`⚠️ Lưu vào database thất bại hoặc bị tắt`, 'error');
                 }
                 
                 log(`📁 File solution: ${data.sol_file}`);
+                
+                // Hide progress bar after 2 seconds
+                setTimeout(() => {
+                    hideProgressBar();
+                }, 2000);
             } else {
                 log(`❌ Lỗi: ${data.message || 'Lỗi không xác định'}`, 'error');
+                hideProgressBar();
             }
         })
         .catch(error => {
+            clearInterval(progressTimer);
             log(`❌ Lỗi kết nối: ${error.message}`, 'error');
+            hideProgressBar();
         });
     }
     
-    function viewResult() {
+    function displayResultsSummary(data) {
+        const card = document.getElementById('resultsSummaryCard');
+        
+        // Debug: Log breakdown data
+        console.log('=== BREAKDOWN DATA ===');
+        console.log('Full breakdown:', data.breakdown);
+        
+        // Update metrics
+        document.getElementById('initialCost').textContent = data.initial_cost;
+        document.getElementById('finalCost').textContent = data.final_cost;
+        document.getElementById('improvement').innerHTML = `${data.improvement} <small style="font-size: 0.75em;">(-${data.improvement_percent.toFixed(2)}%)</small>`;
+        document.getElementById('timeElapsed').textContent = `${data.time_elapsed}s`;
+        
+        // Update cost breakdown (only update elements that exist in HTML)
+        const breakdown = data.breakdown;
+        
+        // Debug: Log individual values
+        console.log('1. teacher_working_days:', breakdown.teacher_working_days);
+        console.log('2. min_working_days:', breakdown.min_working_days);
+        console.log('3. lecture_consecutiveness:', breakdown.lecture_consecutiveness);
+        console.log('4. room_stability:', breakdown.room_stability);
+        console.log('5. teacher_lecture_consolidation:', breakdown.teacher_lecture_consolidation);
+        console.log('6. teacher_preferences:', breakdown.teacher_preferences);
+        console.log('6. teacher_preference_violations:', breakdown.teacher_preference_violations);
+        
+        document.getElementById('costTeacherWorkingDays').textContent = breakdown.teacher_working_days || 0;
+        document.getElementById('costMinWorkingDays').textContent = breakdown.min_working_days || 0;
+        document.getElementById('costLectureConsecutiveness').textContent = breakdown.lecture_consecutiveness || 0;
+        document.getElementById('costRoomStability').textContent = breakdown.room_stability || 0;
+        document.getElementById('costTeacherConsolidation').textContent = breakdown.teacher_lecture_consolidation || 0;
+        document.getElementById('costTeacherPreferences').textContent = breakdown.teacher_preferences || breakdown.teacher_preference_violations || 0;
+        
+        // Update validation status
+        const validationDiv = document.getElementById('validationStatus');
+        const hardConstraintsPassed = breakdown.room_capacity === 0;
+        
+        if (hardConstraintsPassed) {
+            validationDiv.innerHTML = `
+                <div class="alert validation-pass">
+                    <i class="fas fa-check-circle"></i> <strong>PASS:</strong> Tất cả ràng buộc cứng đều được thỏa mãn
+                    <ul class="mb-0 mt-2">
+                        <li>✅ HC-01: Không giảng viên nào bị trùng lịch</li>
+                        <li>✅ HC-02: Không phòng học nào bị trùng lịch</li>
+                        <li>✅ HC-03: Phòng học đủ sức chứa</li>
+                        <li>✅ HC-04: Giảng viên chỉ dạy đúng môn được phân công</li>
+                        <li>✅ HC-05: Phòng học phù hợp với loại môn</li>
+                    </ul>
+                </div>
+            `;
+        } else {
+            validationDiv.innerHTML = `
+                <div class="alert validation-fail">
+                    <i class="fas fa-exclamation-triangle"></i> <strong>FAIL:</strong> Có ${breakdown.room_capacity} vi phạm ràng buộc cứng
+                    <ul class="mb-0 mt-2">
+                        <li>❌ HC-03: ${breakdown.room_capacity} phòng không đủ sức chứa</li>
+                    </ul>
+                </div>
+            `;
+        }
+        
+        // Show card
+        card.style.display = 'block';
+        
+        // Scroll to results
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    function viewResult(skipBreakdown = false) {
         clearLog();
         const periodId = getSelectedPeriod();
         if (!periodId) return;
@@ -314,6 +856,24 @@
             if (data.status === 'success') {
                 log(`✅ Tìm thấy ${data.total_schedules} buổi học trong database`, 'success');
                 log(`📅 Đợt: ${data.ten_dot}`);
+                
+                // Hiển thị breakdown nếu có VÀ không bị skip
+                if (!skipBreakdown && data.breakdown && data.final_cost !== undefined) {
+                    log(`📊 Đã tính toán breakdown costs từ validator`, 'success');
+                    
+                    // Hiển thị results summary
+                    const displayData = {
+                        initial_cost: data.initial_cost || data.final_cost,
+                        final_cost: data.final_cost,
+                        improvement: 0,
+                        improvement_percent: 0,
+                        time_elapsed: 0,
+                        breakdown: data.breakdown
+                    };
+                    
+                    displayResultsSummary(displayData);
+                    log(`📈 Cost hiện tại: ${data.final_cost}`, 'success');
+                }
                 
                 if (data.total_schedules > 0) {
                     displayScheduleTable(data.schedules);
@@ -338,6 +898,9 @@
         const tableBody = document.getElementById('scheduleTableBody');
         const scheduleCount = document.getElementById('scheduleCount');
         
+        // Store all schedules globally for filtering
+        window.allSchedules = schedules;
+        
         // Clear old data
         tableBody.innerHTML = '';
         
@@ -352,23 +915,33 @@
             5: 'Thứ 5',
             6: 'Thứ 6',
             7: 'Thứ 7',
-            8: 'Chủ nhật'
+            8: 'CN'
         };
         
         // Populate table
         schedules.forEach((schedule, index) => {
             const row = document.createElement('tr');
+            
+            // Color code for room capacity status
+            const capacityClass = schedule.suc_chua > 0 ? 'text-success' : 'text-danger';
+            
             row.innerHTML = `
-                <td>${index + 1}</td>
-                <td><strong>${schedule.ma_lop}</strong></td>
+                <td class="text-center">${index + 1}</td>
+                <td><strong class="text-primary">${schedule.ma_lop}</strong></td>
                 <td>${schedule.ten_lop}</td>
-                <td>${schedule.ten_mon}</td>
-                <td>${schedule.ten_gv}</td>
-                <td><span class="badge badge-info">${schedule.ma_phong}</span></td>
-                <td>${dayMap[schedule.thu] || schedule.thu}</td>
-                <td>Ca ${schedule.ca}</td>
-                <td><small>${schedule.gio_bat_dau} - ${schedule.gio_ket_thuc}</small></td>
+                <td><small class="text-muted">${schedule.ten_mon}</small></td>
+                <td><span class="badge badge-teacher">${schedule.ten_gv}</span></td>
+                <td><span class="badge badge-room">${schedule.ma_phong}</span></td>
+                <td class="text-center ${capacityClass}"><strong>${schedule.suc_chua || 'N/A'}</strong></td>
+                <td><small>${schedule.loai_phong || 'N/A'}</small></td>
+                <td class="text-center"><strong>${dayMap[schedule.thu] || schedule.thu}</strong></td>
+                <td class="text-center">Ca ${schedule.ca}</td>
+                <td class="text-center"><small>${schedule.gio_bat_dau} - ${schedule.gio_ket_thuc}</small></td>
             `;
+            
+            // Add hover effect with details
+            row.title = `Nhấp để xem chi tiết: ${schedule.ma_lop} - ${schedule.ten_mon}`;
+            
             tableBody.appendChild(row);
         });
         
@@ -377,6 +950,37 @@
         
         // Scroll to table
         tableCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    function filterSchedule() {
+        const filterSection = document.getElementById('filterSection');
+        filterSection.style.display = filterSection.style.display === 'none' ? 'flex' : 'none';
+    }
+    
+    function applyFilter() {
+        const filterLop = document.getElementById('filterLop').value.toLowerCase();
+        const filterGV = document.getElementById('filterGV').value.toLowerCase();
+        const filterThu = document.getElementById('filterThu').value;
+        const filterPhong = document.getElementById('filterPhong').value.toLowerCase();
+        
+        if (!window.allSchedules) return;
+        
+        const filtered = window.allSchedules.filter(schedule => {
+            const matchLop = !filterLop || schedule.ma_lop.toLowerCase().includes(filterLop);
+            const matchGV = !filterGV || schedule.ten_gv.toLowerCase().includes(filterGV);
+            const matchThu = !filterThu || schedule.thu.toString() === filterThu;
+            const matchPhong = !filterPhong || schedule.ma_phong.toLowerCase().includes(filterPhong);
+            
+            return matchLop && matchGV && matchThu && matchPhong;
+        });
+        
+        displayScheduleTable(filtered);
+        log(`🔍 Lọc: Tìm thấy ${filtered.length}/${window.allSchedules.length} buổi học`);
+    }
+    
+    function exportToExcel() {
+        log('📥 Tính năng xuất Excel đang được phát triển...', 'info');
+        // TODO: Implement Excel export
     }
     
     function hideScheduleTable() {
@@ -397,5 +1001,22 @@
         }
         return cookieValue;
     }
+    
+    // Load weights when period changes
+    document.addEventListener('DOMContentLoaded', function() {
+        const periodSelect = document.getElementById('periodSelect');
+        
+        // Load weights for initial selected period
+        if (periodSelect.value) {
+            loadWeights(periodSelect.value);
+        }
+        
+        // Load weights when period changes
+        periodSelect.addEventListener('change', function() {
+            if (this.value) {
+                loadWeights(this.value);
+            }
+        });
+    });
 </script>
 {% endblock %}
