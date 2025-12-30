@@ -54,6 +54,33 @@ class BaseAdmin(admin.ModelAdmin):
     change_list_template = 'admin/scheduling/change_list_with_import.html'
     actions = ['export_to_excel', 'delete_selected_custom']
 
+    def has_module_permission(self, request):
+        """
+        Override để check permission dựa trên user groups
+        """
+        user = request.user
+        
+        # Superuser thấy tất cả
+        if user.is_superuser:
+            return True
+        
+        # Kiểm tra groups
+        groups = user.groups.values_list('name', flat=True)
+        is_truong_khoa = 'Truong_Khoa' in groups
+        is_truong_bo_mon = 'Truong_Bo_Mon' in groups
+        
+        # Truong_Khoa thấy tất cả models
+        if is_truong_khoa:
+            return True
+        
+        # Truong_Bo_Mon chỉ thấy một số models
+        if is_truong_bo_mon:
+            model_name = self.model.__name__.lower()
+            allowed_models = ['monhoc', 'giangvien', 'nguyenvong', 'gvdaymon', 'phancong']
+            return model_name in allowed_models
+        
+        # Giang_Vien không thấy models
+        return False
     def get_urls(self):
         """Add custom URLs for import"""
         urls = super().get_urls()
