@@ -912,18 +912,20 @@ DECORATED AS (
                    END,
         -- Ngôn ngữ theo nhóm, bám quy tắc hệ đào tạo
         NgonNgu = CASE ((g.rn_grp - 1) % 5)
-                    WHEN 2 THEN N'Tiếng Anh'                                        -- Liên kết
-                    WHEN 4 THEN N'Tiếng Anh'                                        -- ĐHTA
-                    WHEN 3 THEN CASE WHEN g.rn_grp % 2 = 1 THEN N'Tiếng Anh' ELSE N'Tiếng Việt' END -- CTCLC: luân phiên theo nhóm
-                    ELSE N'Tiếng Việt'                                              -- Tiêu chuẩn, 4+1
+                    WHEN 2 THEN N'Tiếng Anh'
+                    WHEN 4 THEN N'Tiếng Anh'
+                    WHEN 3 THEN CASE WHEN g.rn_grp % 2 = 1 THEN N'Tiếng Anh' ELSE N'Tiếng Việt' END
+                    ELSE N'Tiếng Việt'
                   END,
-        SoLuongSV      = CASE WHEN (p.SoTinChi >= 4 AND p.To_MH = 0 AND p.SoTietTH > 0) THEN 80 ELSE 40 END,
+        SoLuongSV = CASE WHEN (p.SoTinChi >= 4 AND p.To_MH = 0 AND p.SoTietTH > 0) THEN 80 ELSE 40 END,
+        -- ĐÃ SỬA: ThietBiYeuCau khớp với logic LoaiLop
         ThietBiYeuCau = CASE 
-    WHEN p.To_MH > 0 THEN N'PC'                    -- Tổ TH (1,2) → PC (khớp với phòng TH)
-    WHEN p.SoTietTH > 0 THEN N'PC'                 -- LT nhưng có TH → PC
-    ELSE N'TV, Máy chiếu'                          -- Chỉ LT thuần túy → TV, Máy chiếu
-END,
-        SoCaTuan       = CASE WHEN (p.SoTinChi >= 4 AND p.SoTietLT >= 60) THEN 2 ELSE 1 END
+            WHEN p.SoTietTH = 0 THEN N'TV, Máy chiếu'                                    -- Môn chỉ LT → LT → TV, Máy chiếu
+            WHEN p.SoTietLT = 0 AND p.SoTietTH > 0 THEN N'PC'                            -- Môn chỉ TH → TH → PC
+            WHEN p.SoTietLT > 0 AND p.SoTietTH > 0 AND p.To_MH = 0 THEN N'TV, Máy chiếu' -- Tổ 0 của môn LT+TH → LT → TV, Máy chiếu
+            ELSE N'PC'                                                                   -- Tổ 1,2 → TH → PC
+        END,
+        SoCaTuan = CASE WHEN (p.SoTinChi >= 4 AND p.SoTietLT >= 60) THEN 2 ELSE 1 END
     FROM PLAN_CTE p
     JOIN GROUPS g ON g.MaMonHoc = p.MaMonHoc AND g.Nhom_MH = p.Nhom_MH
 ),
