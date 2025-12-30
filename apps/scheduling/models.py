@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError
 
 class Khoa(models.Model):
     """Khoa - Faculty/Department - tb_KHOA"""
-    ma_khoa = models.CharField(max_length=12, primary_key=True, db_column='MaKhoa', verbose_name="Mã khoa")
+    ma_khoa = models.CharField(max_length=12, primary_key=True, blank=True, db_column='MaKhoa', verbose_name="Mã khoa")
     ten_khoa = models.CharField(max_length=200, db_column='TenKhoa', verbose_name="Tên khoa")
     
     class Meta:
@@ -20,13 +20,24 @@ class Khoa(models.Model):
         verbose_name_plural = "Các Khoa"
         ordering = ['ma_khoa']
     
+    def save(self, *args, **kwargs):
+        """Auto-generate ma_khoa: KHOA-001, KHOA-002, ..."""
+        if not self.ma_khoa:
+            last = Khoa.objects.filter(ma_khoa__startswith='KHOA-').order_by('-ma_khoa').first()
+            if last and last.ma_khoa[5:].isdigit():
+                num = int(last.ma_khoa[5:]) + 1
+                self.ma_khoa = f'KHOA-{num:03d}'
+            else:
+                self.ma_khoa = 'KHOA-001'
+        super().save(*args, **kwargs)
+    
     def __str__(self):
         return f"{self.ma_khoa} - {self.ten_khoa}"
 
 
 class BoMon(models.Model):
     """Bộ môn - Subject Department - tb_BO_MON"""
-    ma_bo_mon = models.CharField(max_length=12, primary_key=True, db_column='MaBoMon', verbose_name="Mã bộ môn")
+    ma_bo_mon = models.CharField(max_length=12, primary_key=True, blank=True, db_column='MaBoMon', verbose_name="Mã bộ môn")
     ma_khoa = models.ForeignKey(Khoa, on_delete=models.CASCADE, db_column='MaKhoa', 
                                 related_name='bo_mon_list', verbose_name="Khoa")
     ten_bo_mon = models.CharField(max_length=200, db_column='TenBoMon', verbose_name="Tên bộ môn")
@@ -38,13 +49,27 @@ class BoMon(models.Model):
         ordering = ['ma_bo_mon']
         unique_together = [['ma_khoa', 'ten_bo_mon']]  # UQ_BM_Ten_Trong_Khoa
     
+    def save(self, *args, **kwargs):
+        """Auto-generate ma_bo_mon: BM-{khoa_number}-{3 digits}"""
+        if not self.ma_bo_mon:
+            # Extract khoa number from ma_khoa (e.g., KHOA-001 -> 001)
+            khoa_num = self.ma_khoa_id.split('-')[-1] if '-' in self.ma_khoa_id else '000'
+            prefix = f'BM-{khoa_num}-'
+            last = BoMon.objects.filter(ma_bo_mon__startswith=prefix).order_by('-ma_bo_mon').first()
+            if last and last.ma_bo_mon[len(prefix):].isdigit():
+                num = int(last.ma_bo_mon[len(prefix):]) + 1
+                self.ma_bo_mon = f'{prefix}{num:03d}'
+            else:
+                self.ma_bo_mon = f'{prefix}001'
+        super().save(*args, **kwargs)
+    
     def __str__(self):
         return f"{self.ma_bo_mon} - {self.ten_bo_mon}"
 
 
 class GiangVien(models.Model):
     """Giảng viên - Teacher/Lecturer - tb_GIANG_VIEN"""
-    ma_gv = models.CharField(max_length=12, primary_key=True, db_column='MaGV', verbose_name="Mã giảng viên")
+    ma_gv = models.CharField(max_length=12, primary_key=True, blank=True, db_column='MaGV', verbose_name="Mã giảng viên")
     ma_bo_mon = models.ForeignKey(BoMon, on_delete=models.CASCADE, db_column='MaBoMon',
                                   related_name='giang_vien_list', verbose_name="Bộ môn")
     ten_gv = models.CharField(max_length=200, db_column='TenGV', verbose_name="Tên giảng viên")
@@ -61,6 +86,17 @@ class GiangVien(models.Model):
             models.Index(fields=['ma_bo_mon'], name='IX_GV_MaBoMon'),
         ]
     
+    def save(self, *args, **kwargs):
+        """Auto-generate ma_gv: GV001, GV002, ..."""
+        if not self.ma_gv:
+            last = GiangVien.objects.filter(ma_gv__startswith='GV').order_by('-ma_gv').first()
+            if last and last.ma_gv[2:].isdigit():
+                num = int(last.ma_gv[2:]) + 1
+                self.ma_gv = f'GV{num:03d}'
+            else:
+                self.ma_gv = 'GV001'
+        super().save(*args, **kwargs)
+    
     def __str__(self):
         return f"{self.ma_gv} - {self.ten_gv}"
 
@@ -73,7 +109,7 @@ class DuKienDT(models.Model):
         (3, 'Học kỳ Hè'),
     ]
     
-    ma_du_kien_dt = models.CharField(max_length=15, primary_key=True, db_column='MaDuKienDT', 
+    ma_du_kien_dt = models.CharField(max_length=15, primary_key=True, blank=True, db_column='MaDuKienDT', 
                                      verbose_name="Mã dự kiến ĐT")  # VD: 2025-2026_HK1
     nam_hoc = models.CharField(max_length=9, null=True, blank=True, db_column='NamHoc', verbose_name="Năm học")
     hoc_ky = models.SmallIntegerField(choices=HOCKY_CHOICES, db_column='HocKy', verbose_name="Học kỳ")
@@ -87,6 +123,16 @@ class DuKienDT(models.Model):
         verbose_name = "Dự kiến đào tạo"
         verbose_name_plural = "Dự kiến đào tạo"
         ordering = ['-nam_hoc', '-hoc_ky']
+    
+    def save(self, *args, **kwargs):
+        """Auto-generate ma_du_kien_dt: {NamHoc}_HK{HocKy}"""
+        if not self.ma_du_kien_dt:
+            if self.nam_hoc and self.hoc_ky:
+                self.ma_du_kien_dt = f"{self.nam_hoc}_HK{self.hoc_ky}"
+            else:
+                import uuid
+                self.ma_du_kien_dt = f"DK_{uuid.uuid4().hex[:8].upper()}"
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return f"{self.ma_du_kien_dt} - {self.mo_ta_hoc_ky or ''}"
@@ -197,7 +243,7 @@ class PhongHoc(models.Model):
 
 class RangBuocMem(models.Model):
     """Ràng buộc mềm - tb_RANG_BUOC_MEM"""
-    ma_rang_buoc = models.CharField(max_length=15, primary_key=True, db_column='MaRangBuoc', 
+    ma_rang_buoc = models.CharField(max_length=15, primary_key=True, blank=True, db_column='MaRangBuoc', 
                                    verbose_name="Mã ràng buộc")
     ten_rang_buoc = models.CharField(max_length=200, db_column='TenRangBuoc', verbose_name="Tên ràng buộc")
     mo_ta = models.CharField(max_length=500, null=True, blank=True, db_column='MoTa', verbose_name="Mô tả")
@@ -209,13 +255,24 @@ class RangBuocMem(models.Model):
         verbose_name_plural = "Ràng buộc mềm"
         ordering = ['ma_rang_buoc']
     
+    def save(self, *args, **kwargs):
+        """Auto-generate ma_rang_buoc: RBM-001, RBM-002, ..."""
+        if not self.ma_rang_buoc:
+            last = RangBuocMem.objects.filter(ma_rang_buoc__startswith='RBM-').order_by('-ma_rang_buoc').first()
+            if last and last.ma_rang_buoc[4:].isdigit():
+                num = int(last.ma_rang_buoc[4:]) + 1
+                self.ma_rang_buoc = f'RBM-{num:03d}'
+            else:
+                self.ma_rang_buoc = 'RBM-001'
+        super().save(*args, **kwargs)
+    
     def __str__(self):
         return f"{self.ma_rang_buoc} - {self.ten_rang_buoc}"
 
 
 class LopMonHoc(models.Model):
     """Lớp môn học - Class - tb_LOP_MONHOC"""
-    ma_lop = models.CharField(max_length=12, primary_key=True, db_column='MaLop', verbose_name="Mã lớp")
+    ma_lop = models.CharField(max_length=12, primary_key=True, blank=True, db_column='MaLop', verbose_name="Mã lớp")
     ma_mon_hoc = models.ForeignKey(MonHoc, on_delete=models.CASCADE, db_column='MaMonHoc',
                                    related_name='lop_list', verbose_name="Môn học")
     nhom_mh = models.SmallIntegerField(db_column='Nhom_MH', validators=[MinValueValidator(1)],
@@ -244,6 +301,17 @@ class LopMonHoc(models.Model):
             models.Index(fields=['ma_mon_hoc'], name='IX_LMH_MaMonHoc'),
         ]
     
+    def save(self, *args, **kwargs):
+        """Auto-generate ma_lop: LOP-00000001, LOP-00000002, ..."""
+        if not self.ma_lop:
+            last = LopMonHoc.objects.filter(ma_lop__startswith='LOP-').order_by('-ma_lop').first()
+            if last and last.ma_lop[4:].isdigit():
+                num = int(last.ma_lop[4:]) + 1
+                self.ma_lop = f'LOP-{num:08d}'
+            else:
+                self.ma_lop = 'LOP-00000001'
+        super().save(*args, **kwargs)
+    
     def __str__(self):
         return f"{self.ma_lop}"
 
@@ -257,7 +325,7 @@ class DotXep(models.Model):
         ('PUBLISHED', 'Published'),
     ]
     
-    ma_dot = models.CharField(max_length=20, primary_key=True, db_column='MaDot', verbose_name="Mã đợt")
+    ma_dot = models.CharField(max_length=20, primary_key=True, blank=True, db_column='MaDot', verbose_name="Mã đợt")
     ma_du_kien_dt = models.ForeignKey(DuKienDT, on_delete=models.CASCADE, db_column='MaDuKienDT',
                                       related_name='dot_xep_list', verbose_name="Dự kiến ĐT")
     ten_dot = models.CharField(max_length=200, null=True, blank=True, db_column='TenDot', 
@@ -273,6 +341,20 @@ class DotXep(models.Model):
         verbose_name = "Đợt xếp lịch"
         verbose_name_plural = "Đợt xếp lịch"
         ordering = ['-ngay_tao']
+    
+    def save(self, *args, **kwargs):
+        """Auto-generate ma_dot: DOT{n}_{NamHoc}_HK{HocKy}"""
+        if not self.ma_dot:
+            du_kien = self.ma_du_kien_dt
+            if du_kien and du_kien.nam_hoc and du_kien.hoc_ky:
+                # Count existing dots for this du_kien
+                prefix = f"DOT%_{du_kien.nam_hoc}_HK{du_kien.hoc_ky}"
+                count = DotXep.objects.filter(ma_dot__contains=f"{du_kien.nam_hoc}_HK{du_kien.hoc_ky}").count()
+                self.ma_dot = f"DOT{count + 1}_{du_kien.nam_hoc}_HK{du_kien.hoc_ky}"
+            else:
+                import uuid
+                self.ma_dot = f"DOT_{uuid.uuid4().hex[:8].upper()}"
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return f"{self.ma_dot} - {self.ten_dot or ''}"
@@ -429,7 +511,7 @@ class ThoiKhoaBieu(models.Model):
     Lưu lịch dạy cụ thể cho mỗi buổi học
     - TuanHoc: Pattern tuần học (VD: "1111010100000000" = tuần 1-4, 6-8 học)
     - NgayBD, NgayKT: Ngày bắt đầu/kết thúc toàn bộ khoá học (không phải từng buổi)"""
-    ma_tkb = models.CharField(max_length=15, primary_key=True, db_column='MaTKB', verbose_name="Mã TKB")
+    ma_tkb = models.CharField(max_length=15, primary_key=True, blank=True, db_column='MaTKB', verbose_name="Mã TKB")
     ma_dot = models.ForeignKey(DotXep, on_delete=models.CASCADE, db_column='MaDot',
                               related_name='tkb_list', verbose_name="Đợt xếp")
     ma_lop = models.ForeignKey(LopMonHoc, on_delete=models.CASCADE, db_column='MaLop',
@@ -463,6 +545,17 @@ class ThoiKhoaBieu(models.Model):
             models.Index(fields=['ngay_bd'], name='IX_TKB_NgayBD'),
             models.Index(fields=['ma_dot', 'ma_lop'], name='IX_TKB_MaDot_MaLop'),
         ]
+    
+    def save(self, *args, **kwargs):
+        """Auto-generate ma_tkb: TKB-00000001, TKB-00000002, ..."""
+        if not self.ma_tkb:
+            last = ThoiKhoaBieu.objects.filter(ma_tkb__startswith='TKB-').order_by('-ma_tkb').first()
+            if last and last.ma_tkb[4:].isdigit():
+                num = int(last.ma_tkb[4:]) + 1
+                self.ma_tkb = f'TKB-{num:08d}'
+            else:
+                self.ma_tkb = 'TKB-00000001'
+        super().save(*args, **kwargs)
     
     def __str__(self):
         phong = self.ma_phong.ma_phong if self.ma_phong else "Chưa xác định"

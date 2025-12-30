@@ -104,12 +104,22 @@ class ExcelImporter:
         
         output.seek(0)
         
-        model_name = model_class._meta.verbose_name_plural.replace(' ', '_')
+        # Generate consistent filename: remove spaces, Vietnamese chars, lowercase
+        model_name = model_class._meta.verbose_name_plural
+        # Remove Vietnamese accents and special chars
+        import unicodedata
+        model_name = unicodedata.normalize('NFKD', model_name).encode('ascii', 'ignore').decode('ascii')
+        # Replace spaces and special chars with underscore, lowercase
+        model_name = re.sub(r'[^\w\s-]', '', model_name).strip().lower()
+        model_name = re.sub(r'[-\s]+', '_', model_name)
+        
+        filename = f'template_{model_name}.xlsx'
+        
         response = HttpResponse(
             output.read(),
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
-        response['Content-Disposition'] = f'attachment; filename="{model_name}_template.xlsx"'
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
         
         return response
     
@@ -247,12 +257,11 @@ class ExcelImporter:
                             model_class.objects.create(**data)
                             created_count += 1
                     else:
-                        # Create new - let Django auto-generate PK if auto field
-                        if pk_field.auto_created:
-                            model_class.objects.create(**data)
-                            created_count += 1
-                        else:
-                            raise ValueError(f"Thiếu giá trị cho trường khóa chính '{pk_field.verbose_name}'")
+                        # PK is empty - let model's save() auto-generate it
+                        # Remove PK from data to allow auto-generation
+                        data.pop(pk_field.name, None)
+                        model_class.objects.create(**data)
+                        created_count += 1
                         
                 except Exception as e:
                     error_count += 1
