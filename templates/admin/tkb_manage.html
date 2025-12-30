@@ -374,6 +374,34 @@
         box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
     }
     
+    .mini-schedule td.clickable-empty {
+        background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        border: 2px dashed #d1d5db;
+        position: relative;
+    }
+    
+    .mini-schedule td.clickable-empty::after {
+        content: '+';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        color: #9ca3af;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .mini-schedule td.clickable-empty:hover {
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        border-color: #9ca3af;
+    }
+    
+    .mini-schedule td.clickable-empty:hover::after {
+        opacity: 1;
+        color: #6b7280;
+    }
+    
     .mini-schedule td.selected {
         background: var(--primary-gradient);
         color: white;
@@ -460,6 +488,12 @@
         background: #fef3c7;
         color: #92400e;
         border-left: 4px solid var(--warning-color);
+    }
+    
+    .message.info {
+        background: #dbeafe;
+        color: #1e40af;
+        border-left: 4px solid #3b82f6;
     }
     
     .swap-mode {
@@ -609,28 +643,76 @@
                     </div>
                     
                     <div class="form-group">
-                        <label>Lớp môn học *</label>
-                        <select name="ma_lop" required>
-                            <option value="">-- Chọn lớp --</option>
-                            {% for lop in lops %}
-                            <option value="{{ lop.ma_lop }}">{{ lop.ma_lop }} - {{ lop.ten_mon }}</option>
+                        <label>Môn học *</label>
+                        <select name="ma_mon_hoc" id="create-mon-hoc" required onchange="handleMonHocChange()">
+                            <option value="">-- Chọn môn học --</option>
+                            {% for mon in mon_hoc_list %}
+                            <option value="{{ mon.ma_mon_hoc }}">{{ mon.ma_mon_hoc }} - {{ mon.ten_mon_hoc }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     
+                    <div id="mon-hoc-info" style="display: none; background: #e0f2fe; border-left: 4px solid #0284c7; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px;">
+                        <div style="font-weight: 600; margin-bottom: 4px;">📚 Thông tin môn học:</div>
+                        <div id="mon-hoc-details"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Giáo viên *</label>
+                        <select name="ma_gv" id="create-gv" required>
+                            <option value="">-- Chọn giáo viên --</option>
+                            {% for gv in teachers %}
+                            <option value="{{ gv.ma_gv }}">{{ gv.ma_gv }} - {{ gv.ten_gv }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                        <div class="form-group">
+                            <label>Nhóm * <span id="nhom-hint" style="font-size: 11px; color: #64748b;"></span></label>
+                            <select name="nhom_mh" id="create-nhom" required>
+                                <option value="">-- Chọn nhóm --</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tổ <span id="to-hint" style="font-size: 11px; color: #64748b;"></span></label>
+                            <select name="to_mh" id="create-to" required>
+                                <option value="0">0 (LT)</option>
+                                <option value="1">1 (TH)</option>
+                                <option value="2">2 (TH)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Số SV</label>
+                            <input type="number" name="so_luong_sv" id="create-soluongsv" min="1" value="40">
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label>Phòng học *</label>
-                        <select name="ma_phong" required>
+                        <select name="ma_phong" id="create-phong" required>
                             <option value="">-- Chọn phòng --</option>
                             {% for phong in phongs %}
-                            <option value="{{ phong.ma_phong }}">{{ phong.ma_phong }} ({{ phong.suc_chua }} chỗ)</option>
+                            <option value="{{ phong.ma_phong }}" data-loai="{{ phong.loai_phong|default:'' }}">
+                                {{ phong.ma_phong }} ({{ phong.suc_chua }} chỗ){% if phong.loai_phong %} - {{ phong.loai_phong }}{% endif %}
+                            </option>
                             {% endfor %}
                         </select>
                     </div>
                     
                     <div class="form-group">
                         <label>Thời gian *</label>
-                        <select name="time_slot_id" required>
+                        <select name="time_slot_id" id="create-timeslot" required>
                             <option value="">-- Chọn thời gian --</option>
                             {% for ts in timeslots %}
                             <option value="{{ ts.time_slot_id }}">{{ ts.thu }} - Tiết {{ ts.tiet_bat_dau }}-{{ ts.tiet_ket_thuc }}</option>
@@ -773,6 +855,7 @@
     let swapSelection = [];
     let scheduleData = [];
     let deletedData = [];
+    let allScheduleData = []; // Lưu TẤT CẢ lịch trong đợt để filter phòng
     
     // Update filters
     function updateFilters() {
@@ -832,6 +915,9 @@
             
             currentTab = tab;
             resetSwap();
+            
+            // Re-render schedule to update clickable cells
+            renderMiniSchedule();
         });
     });
     
@@ -849,6 +935,7 @@
                 selected_id = document.getElementById('roomSelect').value;
             }
             
+            // Load schedule for selected GV/room
             let url = '/api/tkb/mini-schedule/?';
             if (ma_dot) url += `ma_dot=${ma_dot}`;
             if (ma_khoa) url += (ma_dot ? '&' : '') + `ma_khoa=${ma_khoa}`;
@@ -860,9 +947,22 @@
             scheduleData = data.schedule || [];
             deletedData = data.deleted || [];
             
+            // Load ALL schedules in this period (for room filtering)
+            if (ma_dot) {
+                let allUrl = '/api/tkb/mini-schedule/?';
+                allUrl += `ma_dot=${ma_dot}`;
+                // Don't filter by selected_id to get ALL schedules
+                
+                const allResponse = await fetch(allUrl);
+                const allData = await allResponse.json();
+                allScheduleData = allData.schedule || [];
+                console.log('Loaded ALL schedules for filtering:', allScheduleData.length);
+            }
+            
             renderMiniSchedule();
             renderDeletedList();
         } catch (error) {
+            console.error('Load schedule error:', error);
             showMessage('error', 'Lỗi tải lịch: ' + error.message);
         }
     }
@@ -872,13 +972,28 @@
         const tbody = document.getElementById('mini-schedule-body');
         tbody.innerHTML = '';
         
+        // Debug log
+        console.log('Rendering schedule with data:', scheduleData);
+        
         // Group by timeslot (ca học)
         const slots = {};
         scheduleData.forEach(item => {
-            const key = `${item.thu}_${item.ca}`;
+            // Extract number from ca (e.g., "S1" -> 1, "C1" -> 1, or just 1 -> 1)
+            let caNumber = item.ca;
+            if (typeof caNumber === 'string') {
+                // Extract number from string like "S1", "C1", etc.
+                const match = caNumber.match(/\d+/);
+                caNumber = match ? parseInt(match[0]) : caNumber;
+            }
+            
+            const key = `${item.thu}_${caNumber}`;
+            console.log(`Item: thu=${item.thu}, ca=${item.ca}, caNumber=${caNumber}, key=${key}, mon_hoc=${item.mon_hoc}`);
+            
             if (!slots[key]) slots[key] = [];
             slots[key].push(item);
         });
+        
+        console.log('Grouped slots:', slots);
         
         // Generate rows (5 ca học per day)
         for (let ca = 1; ca <= 5; ca++) {
@@ -897,10 +1012,13 @@
                     td.classList.add('has-class');
                     td.innerHTML = classes.map(c => `
                         <div class="class-info" data-tkb="${c.ma_tkb}">
-                            <div style="font-weight: 600; color: #1e293b;">${c.mon_hoc || c.ma_lop}</div>
-                            <div style="font-size: 11px; color: #64748b;">${c.ma_lop} - ${c.ma_phong || 'N/A'}</div>
+                            <div style="font-weight: 600; color: #1e293b;">${c.mon_hoc || c.ma_lop || 'N/A'}</div>
+                            <div style="font-size: 11px; color: #64748b;">${c.ma_lop || 'N/A'} - ${c.ma_phong || 'N/A'}</div>
                         </div>
                     `).join('');
+                } else if (currentTab === 'create') {
+                    // Highlight empty cells when in create mode
+                    td.classList.add('clickable-empty');
                 }
                 
                 td.addEventListener('click', () => handleCellClick(td, classes));
@@ -935,7 +1053,13 @@
     
     // Handle cell click
     function handleCellClick(td, classes) {
-        if (currentTab === 'swap') {
+        const thu = td.dataset.thu;
+        const ca = td.dataset.ca;
+        
+        if (currentTab === 'create') {
+            // Allow clicking both empty and filled cells in create mode
+            populateCreateForm(thu, ca, classes.length > 0 ? classes[0] : null);
+        } else if (currentTab === 'swap') {
             handleSwapClick(td, classes);
         } else if (currentTab === 'edit' && classes.length > 0) {
             populateEditForm(classes[0]);
@@ -981,6 +1105,120 @@
         }
     }
     
+    // Populate create form from cell click
+    function populateCreateForm(thu, ca, existingTkb) {
+        // Find matching timeslot
+        const timeslotSelect = document.getElementById('create-timeslot');
+        const options = Array.from(timeslotSelect.options);
+        
+        console.log('Looking for timeslot: Thứ', thu, 'Ca', ca);
+        
+        // Try to find timeslot by matching value format: "Thu2-Ca1", "Thu3-Ca2", etc.
+        let matchFound = false;
+        for (let option of options) {
+            const value = option.value;
+            
+            if (!value) continue; // Skip empty option
+            
+            // Parse value format: "Thu2-Ca1" or "CN-Ca1"
+            const valueMatch = value.match(/Thu(\d+)-Ca(\d+)|CN-Ca(\d+)/i);
+            
+            if (valueMatch) {
+                const optionThu = valueMatch[1] || '8'; // CN = 8
+                const optionCa = valueMatch[2] || valueMatch[3];
+                
+                console.log(`  Checking value="${value}": Thu=${optionThu}, Ca=${optionCa} vs Target Thu=${thu}, Ca=${ca}`);
+                
+                // Compare with clicked cell
+                if (optionThu == thu && optionCa == ca) {
+                    timeslotSelect.value = value;
+                    matchFound = true;
+                    console.log('✓ MATCH FOUND! Selected:', value);
+                    break;
+                }
+            }
+        }
+        
+        if (matchFound) {
+            // Trigger change event to filter available rooms
+            filterRoomsByTimeslot(timeslotSelect.value);
+            
+            if (existingTkb) {
+                showMessage('info', `📌 Đã chọn Thứ ${thu}, Ca ${ca} (ô này có lớp ${existingTkb.ma_lop}). Phòng trống đã được lọc.`);
+            } else {
+                showMessage('success', `✓ Đã chọn Thứ ${thu}, Ca ${ca}. Chỉ hiện phòng trống - hãy chọn lớp và phòng!`);
+            }
+        } else {
+            showMessage('warning', `⚠️ Không tìm thấy timeslot cho Thứ ${thu}, Ca ${ca}. Vui lòng chọn thủ công.`);
+        }
+        
+        // Scroll to create form
+        document.getElementById('tab-create').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    // Filter rooms by selected timeslot
+    async function filterRoomsByTimeslot(timeslotId) {
+        console.log('=== FILTER ROOMS DEBUG ===');
+        console.log('Selected timeslot ID:', timeslotId);
+        
+        const roomSelect = document.getElementById('create-phong');
+        
+        if (!timeslotId) {
+            // No timeslot selected, show all rooms
+            Array.from(roomSelect.options).forEach(option => {
+                if (option.value) option.style.display = '';
+            });
+            return;
+        }
+        
+        try {
+            // Call API to get ALL occupied rooms for this timeslot (not just current teacher/room)
+            const ma_dot = document.getElementById('dotSelect').value;
+            const response = await fetch(`/api/tkb/occupied-rooms/?ma_dot=${ma_dot}&time_slot_id=${encodeURIComponent(timeslotId)}`);
+            const data = await response.json();
+            
+            console.log('API Response:', data);
+            
+            const occupiedRooms = new Set(data.occupied_rooms || []);
+            console.log('Occupied rooms:', Array.from(occupiedRooms));
+            
+            // Filter room dropdown
+            let hiddenCount = 0;
+            Array.from(roomSelect.options).forEach(option => {
+                if (!option.value) return; // Skip empty option
+                
+                if (occupiedRooms.has(option.value)) {
+                    // Hide occupied rooms
+                    option.style.display = 'none';
+                    hiddenCount++;
+                    console.log(`  Hidden room: ${option.value}`);
+                } else {
+                    // Show available rooms
+                    option.style.display = '';
+                }
+            });
+            
+            console.log(`Total: ${hiddenCount} rooms hidden, ${roomSelect.options.length - hiddenCount - 1} available`);
+            
+            // Show feedback message
+            if (hiddenCount > 0) {
+                showMessage('info', `✓ Đã lọc: ${roomSelect.options.length - hiddenCount - 1} phòng trống, ${hiddenCount} phòng đã có lớp`);
+            } else {
+                showMessage('success', `✓ Tất cả ${roomSelect.options.length - 1} phòng đều trống!`);
+            }
+        } catch (error) {
+            console.error('Error filtering rooms:', error);
+            showMessage('warning', 'Không thể lọc phòng trống. Hiển thị tất cả phòng.');
+            
+            // Show all rooms on error
+            Array.from(roomSelect.options).forEach(option => {
+                if (option.value) option.style.display = '';
+            });
+        }
+        
+        console.log('=== END FILTER DEBUG ===');
+    }
+    
     // Populate edit form
     function populateEditForm(tkb) {
         document.getElementById('edit-ma-tkb').value = tkb.ma_tkb;
@@ -1007,6 +1245,267 @@
         document.getElementById('swap-count').textContent = '0';
         document.getElementById('swap-instruction').style.display = 'block';
         document.getElementById('form-swap').style.display = 'none';
+    }
+    
+    // Handle môn học change - filter nhóm/tổ
+    async function handleMonHocChange() {
+        const maMonHoc = document.getElementById('create-mon-hoc').value;
+        const infoDiv = document.getElementById('mon-hoc-info');
+        const detailsDiv = document.getElementById('mon-hoc-details');
+        const nhomSelect = document.getElementById('create-nhom');
+        const toSelect = document.getElementById('create-to');
+        const nhomHint = document.getElementById('nhom-hint');
+        const toHint = document.getElementById('to-hint');
+        
+        if (!maMonHoc) {
+            infoDiv.style.display = 'none';
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/tkb/mon-hoc-info/?ma_mon_hoc=${maMonHoc}`);
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                const mon = data.mon_hoc;
+                const suggested = data.suggested;
+                const usedGroups = data.used_groups;
+                
+                // Hiển thị thông tin môn
+                infoDiv.style.display = 'block';
+                detailsDiv.innerHTML = `
+                    <strong>${mon.ten_mon_hoc}</strong> (${mon.ma_mon_hoc})<br>
+                    Loại: <span style="background: ${mon.loai === 'TH' ? '#dcfce7' : '#dbeafe'}; padding: 2px 8px; border-radius: 4px; font-weight: 600;">
+                        ${mon.loai === 'TH' ? '🔬 Thực hành' : '📖 Lý thuyết'}
+                    </span><br>
+                    Tiết LT: ${mon.so_tiet_lt}, Tiết TH: ${mon.so_tiet_th}
+                `;
+                
+                // Tự động chọn nhóm/tổ được suggest
+                if (suggested.nhom) {
+                    nhomSelect.value = suggested.nhom;
+                    toSelect.value = suggested.to;
+                    
+                    nhomHint.textContent = `(Gợi ý: ${suggested.nhom})`;
+                    nhomHint.style.color = '#16a34a';
+                    
+                    if (mon.loai === 'TH') {
+                        toHint.textContent = `(TH: 1 hoặc 2)`;
+                    } else {
+                        toHint.textContent = `(LT: chỉ dùng 0)`;
+                    }
+                } else {
+                    showMessage('warning', '⚠️ Đã hết nhóm trống (1-10). Vui lòng kiểm tra lại!');
+                }
+                
+                // Disable các option nhóm/tổ đã dùng
+                Array.from(nhomSelect.options).forEach(option => {
+                    const nhom = parseInt(option.value);
+                    if (usedGroups[nhom]) {
+                        const tosUsed = usedGroups[nhom].map(item => item.to).join(', ');
+                        option.text = `${nhom} (Đã có tổ: ${tosUsed})`;
+                        option.style.color = '#64748b';
+                        
+                        // Nếu là môn LT và nhóm đã có to=0, disable luôn
+                        if (mon.loai === 'LT' && usedGroups[nhom].some(item => item.to === 0)) {
+                            option.disabled = true;
+                            option.text = `${nhom} (Đã đầy)`;
+                        }
+                        
+                        // Nếu là môn TH và nhóm đã có 2 tổ, disable
+                        if (mon.loai === 'TH' && usedGroups[nhom].length >= 2) {
+                            option.disabled = true;
+                            option.text = `${nhom} (Đã đầy 2 tổ)`;
+                        }
+                    } else {
+                        option.text = `${nhom}`;
+                        option.disabled = false;
+                        option.style.color = '';
+                    }
+                });
+                
+                // Filter tổ theo loại môn
+                if (mon.loai === 'LT') {
+                    // Môn LT: chỉ cho chọn tổ 0
+                    toSelect.value = 0;
+                    Array.from(toSelect.options).forEach(opt => {
+                        opt.disabled = opt.value !== '0';
+                    });
+                } else {
+                    // Môn TH: chỉ cho chọn tổ 1, 2
+                    if (toSelect.value === '0') toSelect.value = 1;
+                    Array.from(toSelect.options).forEach(opt => {
+                        opt.disabled = opt.value === '0';
+                    });
+                }
+                
+                // Filter phòng theo loại môn
+                filterRoomsByMonHoc(mon);
+                
+            } else {
+                showMessage('error', data.message);
+            }
+        } catch (error) {
+            console.error('Error fetching mon hoc info:', error);
+            showMessage('error', 'Lỗi khi lấy thông tin môn học');
+        }
+    }
+    
+    // Filter phòng theo loại môn (LT/TH) và số lượng SV
+    function filterRoomsByMonHoc(monHoc) {
+        const roomSelect = document.getElementById('create-phong');
+        const soLuongSV = parseInt(document.getElementById('create-soluongsv').value) || 0;
+        
+        // Lấy tất cả options (trừ option rỗng)
+        const allOptions = Array.from(roomSelect.options).slice(1);
+        
+        console.log('=== FILTER PHÒNG DEBUG ===');
+        console.log('Loại môn:', monHoc.loai);
+        console.log('Số lượng SV:', soLuongSV);
+        console.log('Tổng số phòng:', allOptions.length);
+        
+        // Phân loại phòng
+        const suitableRooms = [];
+        const tooSmallRooms = [];
+        const otherRooms = [];
+        
+        allOptions.forEach(option => {
+            const loaiPhong = (option.dataset.loai || '').toUpperCase();
+            const roomCode = option.value.toUpperCase();
+            const roomText = option.text;
+            
+            // Lưu text gốc nếu chưa có
+            if (!option.dataset.originalText) {
+                option.dataset.originalText = roomText.replace(/^❌\s*/, '');
+            }
+            
+            // Restore text gốc
+            const originalText = option.dataset.originalText;
+            
+            // Debug: Log 3 phòng đầu tiên
+            if (suitableRooms.length + otherRooms.length + tooSmallRooms.length < 3) {
+                console.log(`Phòng: ${roomCode}, Loại: "${loaiPhong}", Text: ${originalText}`);
+            }
+            
+            // Lấy sức chứa từ text gốc (số trong ngoặc)
+            const capacityMatch = originalText.match(/\((\d+)\s*chỗ\)/);
+            const sucChua = capacityMatch ? parseInt(capacityMatch[1]) : 999;
+            
+            // Kiểm tra loại phòng từ DATABASE (loai_phong)
+            const isLabRoom = loaiPhong.includes('THỰC HÀNH') || 
+                             loaiPhong.includes('TH') || 
+                             loaiPhong.includes('MÁY') || 
+                             loaiPhong.includes('LAB') ||
+                             loaiPhong.includes('COMPUTER');
+            
+            const isLectureRoom = loaiPhong.includes('LÝ THUYẾT') ||
+                                 loaiPhong.includes('LT') ||
+                                 loaiPhong.includes('PHÒNG HỌC') ||
+                                 loaiPhong.includes('GIẢNG ĐƯỜNG');
+            
+            // Nếu không có loại rõ ràng, dựa vào mã phòng
+            let finalIsLab = isLabRoom;
+            if (!isLabRoom && !isLectureRoom && loaiPhong === '') {
+                // Fallback: dựa vào mã phòng
+                finalIsLab = roomCode.startsWith('TH') || 
+                            roomCode.startsWith('LAB') || 
+                            roomCode.includes('MAY');
+            }
+            
+            // Debug
+            if (suitableRooms.length + otherRooms.length + tooSmallRooms.length < 3) {
+                console.log(`  → isLabRoom: ${isLabRoom}, isLectureRoom: ${isLectureRoom}, finalIsLab: ${finalIsLab}`);
+            }
+            
+            // Check sức chứa
+            const isTooSmall = soLuongSV > 0 && sucChua < soLuongSV;
+            
+            // Reset style và text
+            option.style.fontWeight = 'normal';
+            option.disabled = false;
+            option.text = originalText; // Reset về text gốc
+            
+            if (isTooSmall) {
+                // Phòng quá nhỏ → màu đỏ, disabled, có icon ❌
+                option.style.color = '#dc2626';
+                option.style.background = '#fef2f2';
+                option.style.fontWeight = 'normal';
+                option.disabled = true;
+                option.text = `❌ ${originalText}`;
+                tooSmallRooms.push(option);
+            } else if (monHoc.loai === 'TH') {
+                // Môn TH: phòng lab/TH = xanh, phòng LT = xám
+                if (finalIsLab || (!isLectureRoom && !isLabRoom)) {
+                    option.style.fontWeight = '700';
+                    option.style.color = '#16a34a';
+                    option.style.background = '#f0fdf4';
+                    suitableRooms.push(option);
+                } else {
+                    option.style.fontWeight = 'normal';
+                    option.style.color = '#94a3b8';
+                    option.style.background = 'white';
+                    otherRooms.push(option);
+                }
+            } else {
+                // Môn LT: phòng LT = xanh, phòng lab/TH = xám
+                if (isLectureRoom || (!isLectureRoom && !isLabRoom)) {
+                    option.style.fontWeight = '700';
+                    option.style.color = '#16a34a';
+                    option.style.background = '#f0fdf4';
+                    suitableRooms.push(option);
+                } else {
+                    option.style.fontWeight = 'normal';
+                    option.style.color = '#94a3b8';
+                    option.style.background = 'white';
+                    otherRooms.push(option);
+                }
+            }
+        });
+        
+        // Xóa tất cả options (trừ option rỗng)
+        while (roomSelect.options.length > 1) {
+            roomSelect.remove(1);
+        }
+        
+        // Thêm lại: phòng phù hợp → phòng khác → phòng quá nhỏ
+        suitableRooms.forEach(opt => roomSelect.add(opt));
+        
+        if (suitableRooms.length > 0 && (otherRooms.length > 0 || tooSmallRooms.length > 0)) {
+            const separator1 = document.createElement('option');
+            separator1.disabled = true;
+            separator1.text = '────── Phòng ít phù hợp ──────';
+            separator1.style.color = '#cbd5e1';
+            roomSelect.add(separator1);
+        }
+        
+        otherRooms.forEach(opt => roomSelect.add(opt));
+        
+        if (tooSmallRooms.length > 0 && (suitableRooms.length > 0 || otherRooms.length > 0)) {
+            const separator2 = document.createElement('option');
+            separator2.disabled = true;
+            separator2.text = '────── Phòng quá nhỏ ──────';
+            separator2.style.color = '#ef4444';
+            roomSelect.add(separator2);
+        }
+        
+        tooSmallRooms.forEach(opt => roomSelect.add(opt));
+        
+        // Debug summary
+        console.log(`Kết quả: ${suitableRooms.length} phù hợp (xanh), ${otherRooms.length} khác (xám), ${tooSmallRooms.length} quá nhỏ (đỏ)`);
+        console.log('=== END DEBUG ===');
+        
+        // Hiển thị thông báo
+        const suitableCount = suitableRooms.length;
+        const totalCount = allOptions.length;
+        const roomType = monHoc.loai === 'TH' ? 'phòng thực hành/máy' : 'phòng lý thuyết';
+        
+        let message = `✓ ${suitableCount} ${roomType} phù hợp`;
+        if (tooSmallRooms.length > 0) {
+            message += `, ${tooSmallRooms.length} phòng quá nhỏ (< ${soLuongSV} SV)`;
+        }
+        message += ` / ${totalCount} phòng`;
+        
+        showMessage('success', message);
     }
     
     // Show message
@@ -1167,7 +1666,66 @@
         }
     }
     
-    // Load on page load
-    window.addEventListener('DOMContentLoaded', loadSchedule);
+    // Filter available rooms based on selected timeslot
+    async function filterAvailableRooms() {
+        const timeslotId = document.getElementById('create-timeslot').value;
+        const roomSelect = document.getElementById('create-phong');
+        
+        if (!timeslotId) {
+            // No timeslot selected, show all rooms
+            return;
+        }
+        
+        // Get all rooms
+        const allRooms = Array.from(roomSelect.options).map(opt => ({
+            value: opt.value,
+            text: opt.text,
+            element: opt
+        }));
+        
+        // Find which rooms are occupied at this timeslot
+        const occupiedRooms = scheduleData
+            .filter(tkb => tkb.time_slot_id == timeslotId)
+            .map(tkb => tkb.ma_phong);
+        
+        // Update room dropdown - disable occupied rooms
+        allRooms.forEach(room => {
+            if (room.value && occupiedRooms.includes(room.value)) {
+                room.element.disabled = true;
+                room.element.text = room.text.replace(' (Đã có lớp)', '') + ' (Đã có lớp)';
+                room.element.style.color = '#ef4444';
+            } else {
+                room.element.disabled = false;
+                room.element.text = room.text.replace(' (Đã có lớp)', '');
+                room.element.style.color = '';
+            }
+        });
+        
+        // Show message
+        const availableCount = allRooms.filter(r => r.value && !occupiedRooms.includes(r.value)).length;
+        console.log(`Có ${availableCount} phòng trống trong tiết này`);
+    }
+    
+    // Add event listener for timeslot change when DOM is ready
+    window.addEventListener('DOMContentLoaded', function() {
+        loadSchedule();
+        
+        const timeslotSelect = document.getElementById('create-timeslot');
+        if (timeslotSelect) {
+            timeslotSelect.addEventListener('change', filterAvailableRooms);
+        }
+        
+        // Re-filter phòng khi thay đổi số SV
+        const soLuongSVInput = document.getElementById('create-soluongsv');
+        if (soLuongSVInput) {
+            soLuongSVInput.addEventListener('input', function() {
+                const maMonHoc = document.getElementById('create-mon-hoc').value;
+                if (maMonHoc) {
+                    // Re-trigger filter với môn học hiện tại
+                    handleMonHocChange();
+                }
+            });
+        }
+    });
 </script>
 {% endblock %}

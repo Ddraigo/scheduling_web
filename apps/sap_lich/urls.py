@@ -22,4 +22,6 @@ urlpatterns = [
     path('api/tkb/restore/', views.tkb_restore_api, name='tkb_restore'),
     path('api/tkb/swap/', views.tkb_swap_api, name='tkb_swap'),
     path('api/tkb/mini-schedule/', views.tkb_mini_schedule_api, name='tkb_mini_schedule'),
+    path('api/tkb/occupied-rooms/', views.tkb_occupied_rooms_api, name='tkb_occupied_rooms'),
+    path('api/tkb/mon-hoc-info/', views.tkb_mon_hoc_info_api, name='tkb_mon_hoc_info'),
 ]
