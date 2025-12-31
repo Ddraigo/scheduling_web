@@ -1,0 +1,10 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+    <li>
+        <a href="{% url 'scheduling_assign_roles' %}" class="addlink" style="background: #10b981; padding: 8px 16px; border-radius: 4px;">
+            🔑 Gán vai trò hàng loạt
+        </a>
+    </li>
+    {{ block.super }}
+{% endblock %}

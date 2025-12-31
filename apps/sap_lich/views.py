@@ -1310,22 +1310,55 @@ def tkb_create_api(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def tkb_update_api(request):
-    """API cập nhật TKB"""
+    """API cập nhật TKB - cho phép thay đổi môn học, phòng, timeslot"""
     try:
         data = json.loads(request.body)
         ma_tkb = data.get('ma_tkb')
+        ma_mon_hoc = data.get('ma_mon_hoc')
+        nhom = data.get('nhom')
+        to = data.get('to')
+        so_luong_sv = data.get('so_luong_sv')
         ma_phong = data.get('ma_phong')
         time_slot_id = data.get('time_slot_id')
-        tuan_hoc = data.get('tuan_hoc')
+        tuan_hoc = data.get('tuan_hoc', '')
         
-        tkb = ThoiKhoaBieu.objects.get(ma_tkb=ma_tkb)
+        tkb = ThoiKhoaBieu.objects.get(ma_tkb=ma_tkb, is_deleted=False)
+        old_ma_lop = tkb.ma_lop.ma_lop
+        
+        # Nếu thay đổi môn học → tạo mã lớp mới
+        new_ma_lop = old_ma_lop
+        if ma_mon_hoc and nhom and to is not None:
+            new_ma_lop = f"{ma_mon_hoc}_{nhom}_{to}"
+            
+            # Kiểm tra xem lớp mới đã tồn tại chưa (ngoại trừ lớp hiện tại)
+            if new_ma_lop != old_ma_lop:
+                existing_lop = LopMonHoc.objects.filter(ma_lop=new_ma_lop).first()
+                if not existing_lop:
+                    # Tạo lớp mới
+                    mon_hoc = MonHoc.objects.get(ma_mon_hoc=ma_mon_hoc)
+                    existing_lop = LopMonHoc.objects.create(
+                        ma_lop=new_ma_lop,
+                        ma_mon_hoc=mon_hoc,
+                        nhom=int(nhom),
+                        to=int(to),
+                        so_luong_sv=int(so_luong_sv) if so_luong_sv else None
+                    )
+                    logger.info(f"Tạo lớp mới khi edit: {new_ma_lop}")
+                
+                # Cập nhật lớp
+                tkb.ma_lop = existing_lop
+        
+        # Cập nhật số lượng SV nếu có
+        if so_luong_sv and tkb.ma_lop:
+            tkb.ma_lop.so_luong_sv = int(so_luong_sv)
+            tkb.ma_lop.save()
         
         # Validate với exclude current
         validation = validate_tkb_constraints(
             tkb.ma_dot.ma_dot,
             tkb.ma_lop.ma_lop,
-            ma_phong or tkb.ma_phong.ma_phong,
-            time_slot_id or tkb.time_slot_id.time_slot_id,
+            ma_phong if ma_phong else (tkb.ma_phong.ma_phong if tkb.ma_phong else None),
+            time_slot_id if time_slot_id else tkb.time_slot_id.time_slot_id,
             exclude_ma_tkb=ma_tkb
         )
         
@@ -1339,27 +1372,37 @@ def tkb_update_api(request):
         
         # Lưu old data
         old_data = {
+            'ma_lop': old_ma_lop,
             'ma_phong': tkb.ma_phong.ma_phong if tkb.ma_phong else None,
             'time_slot_id': tkb.time_slot_id.time_slot_id,
             'tuan_hoc': tkb.tuan_hoc,
         }
         
-        # Update
+        # Update phòng và timeslot
         if ma_phong:
             tkb.ma_phong_id = ma_phong
         if time_slot_id:
             tkb.time_slot_id_id = time_slot_id
-        if tuan_hoc:
+        if tuan_hoc is not None:
             tkb.tuan_hoc = tuan_hoc
         
         tkb.save()
         
         # Log
         new_data = {
+            'ma_lop': tkb.ma_lop.ma_lop,
             'ma_phong': tkb.ma_phong.ma_phong if tkb.ma_phong else None,
             'time_slot_id': tkb.time_slot_id.time_slot_id,
             'tuan_hoc': tkb.tuan_hoc,
         }
+        
+        change_summary = []
+        if old_ma_lop != tkb.ma_lop.ma_lop:
+            change_summary.append(f"Lớp: {old_ma_lop} → {tkb.ma_lop.ma_lop}")
+        if old_data['ma_phong'] != new_data['ma_phong']:
+            change_summary.append(f"Phòng: {old_data['ma_phong']} → {new_data['ma_phong']}")
+        if old_data['time_slot_id'] != new_data['time_slot_id']:
+            change_summary.append(f"Timeslot: {old_data['time_slot_id']} → {new_data['time_slot_id']}")
         
         TKBLog.objects.create(
             ma_tkb=ma_tkb,
@@ -1367,12 +1410,16 @@ def tkb_update_api(request):
             user=request.user.username if request.user.is_authenticated else 'anonymous',
             old_data=old_data,
             new_data=new_data,
-            reason='Cập nhật lịch học'
+            reason='Cập nhật: ' + ', '.join(change_summary)
         )
+        
+        message = 'Cập nhật lịch thành công'
+        if change_summary:
+            message += ': ' + ', '.join(change_summary)
         
         return JsonResponse({
             'status': 'success',
-            'message': 'Cập nhật lịch thành công',
+            'message': message,
             'warnings': validation['warnings']
         })
         
@@ -1380,6 +1427,11 @@ def tkb_update_api(request):
         return JsonResponse({
             'status': 'error',
             'message': 'Không tìm thấy lịch học'
+        }, status=404)
+    except MonHoc.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Không tìm thấy môn học'
         }, status=404)
     except Exception as e:
         logger.exception(f"Lỗi khi cập nhật TKB: {e}")
@@ -1457,12 +1509,20 @@ def tkb_restore_api(request):
                 'message': 'Lịch này chưa bị xóa'
             }, status=400)
         
-        # Validate xem slot có bị trùng không
+        # Lấy GV từ phân công
+        phan_cong = PhanCong.objects.filter(
+            ma_dot=tkb.ma_dot,
+            ma_lop=tkb.ma_lop
+        ).first()
+        ma_gv = phan_cong.ma_gv.ma_gv if phan_cong and phan_cong.ma_gv else None
+        
+        # Validate xem slot có bị trùng không (cả phòng và GV)
         validation = validate_tkb_constraints(
             tkb.ma_dot.ma_dot,
             tkb.ma_lop.ma_lop,
             tkb.ma_phong.ma_phong if tkb.ma_phong else None,
             tkb.time_slot_id.time_slot_id,
+            ma_gv=ma_gv,
             exclude_ma_tkb=ma_tkb
         )
         
@@ -1509,55 +1569,173 @@ def tkb_restore_api(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def tkb_swap_api(request):
-    """API hoán đổi 2 TKB"""
+    """API hoán đổi 2 TKB với tùy chọn swap phòng"""
     try:
         data = json.loads(request.body)
         ma_tkb_1 = data.get('ma_tkb_1')
         ma_tkb_2 = data.get('ma_tkb_2')
+        swap_phong = data.get('swap_phong', True)  # Mặc định có swap phòng
         
         tkb1 = ThoiKhoaBieu.objects.get(ma_tkb=ma_tkb_1, is_deleted=False)
         tkb2 = ThoiKhoaBieu.objects.get(ma_tkb=ma_tkb_2, is_deleted=False)
         
+        # Kiểm tra xem 2 TKB có cùng GV không
+        gv1 = PhanCong.objects.filter(ma_dot=tkb1.ma_dot, ma_lop=tkb1.ma_lop).first()
+        gv2 = PhanCong.objects.filter(ma_dot=tkb2.ma_dot, ma_lop=tkb2.ma_lop).first()
+        
+        same_teacher = gv1 and gv2 and gv1.ma_gv == gv2.ma_gv
+        
         # Lưu data cũ
         old_data_1 = {
             'ma_phong': tkb1.ma_phong.ma_phong if tkb1.ma_phong else None,
-            'time_slot_id': tkb1.time_slot_id.time_slot_id
+            'time_slot_id': tkb1.time_slot_id.time_slot_id,
+            'ma_lop': tkb1.ma_lop.ma_lop,
+            'gv': gv1.ma_gv.ma_gv if gv1 and gv1.ma_gv else None
         }
         old_data_2 = {
             'ma_phong': tkb2.ma_phong.ma_phong if tkb2.ma_phong else None,
-            'time_slot_id': tkb2.time_slot_id.time_slot_id
+            'time_slot_id': tkb2.time_slot_id.time_slot_id,
+            'ma_lop': tkb2.ma_lop.ma_lop,
+            'gv': gv2.ma_gv.ma_gv if gv2 and gv2.ma_gv else None
         }
         
-        # Hoán đổi
-        temp_phong = tkb1.ma_phong
+        warnings = []
+        errors = []
+        
+        # Hoán đổi timeslot (luôn luôn)
         temp_slot = tkb1.time_slot_id
-        
-        tkb1.ma_phong = tkb2.ma_phong
         tkb1.time_slot_id = tkb2.time_slot_id
-        
-        tkb2.ma_phong = temp_phong
         tkb2.time_slot_id = temp_slot
         
-        # Validate cả 2
-        val1 = validate_tkb_constraints(
-            tkb1.ma_dot.ma_dot, tkb1.ma_lop.ma_lop,
-            tkb1.ma_phong.ma_phong if tkb1.ma_phong else None,
-            tkb1.time_slot_id.time_slot_id,
-            exclude_ma_tkb=ma_tkb_1
-        )
+        # Hoán đổi phòng (tùy chọn)
+        if swap_phong:
+            temp_phong = tkb1.ma_phong
+            tkb1.ma_phong = tkb2.ma_phong
+            tkb2.ma_phong = temp_phong
+            
+            # Validate phòng mới
+            # 1. Kiểm tra phòng trùng timeslot
+            if tkb1.ma_phong:
+                conflict1 = ThoiKhoaBieu.objects.filter(
+                    ma_dot=tkb1.ma_dot,
+                    ma_phong=tkb1.ma_phong,
+                    time_slot_id=tkb1.time_slot_id,
+                    is_deleted=False
+                ).exclude(ma_tkb=ma_tkb_1)
+                
+                if conflict1.exists():
+                    errors.append(f"❌ Phòng {tkb1.ma_phong.ma_phong} đã bị trùng tại {tkb1.time_slot_id}")
+            
+            if tkb2.ma_phong:
+                conflict2 = ThoiKhoaBieu.objects.filter(
+                    ma_dot=tkb2.ma_dot,
+                    ma_phong=tkb2.ma_phong,
+                    time_slot_id=tkb2.time_slot_id,
+                    is_deleted=False
+                ).exclude(ma_tkb=ma_tkb_2)
+                
+                if conflict2.exists():
+                    errors.append(f"❌ Phòng {tkb2.ma_phong.ma_phong} đã bị trùng tại {tkb2.time_slot_id}")
+            
+            # 2. Kiểm tra loại phòng phù hợp (chỉ warning)
+            if tkb1.ma_phong:
+                mon1 = tkb1.ma_lop.ma_mon_hoc
+                loai_phong1 = tkb1.ma_phong.loai_phong or ''
+                
+                if mon1.so_tiet_th and mon1.so_tiet_th > 0:
+                    # Môn TH nên dùng phòng TH
+                    if 'TH' not in loai_phong1.upper() and 'MÁY' not in loai_phong1.upper() and 'LAB' not in loai_phong1.upper():
+                        warnings.append(f"⚠️ Lớp {tkb1.ma_lop.ma_lop} (TH) đang dùng phòng {tkb1.ma_phong.ma_phong} ({loai_phong1 or 'không xác định'})")
+                else:
+                    # Môn LT nên dùng phòng LT
+                    if 'TH' in loai_phong1.upper() or 'MÁY' in loai_phong1.upper() or 'LAB' in loai_phong1.upper():
+                        warnings.append(f"⚠️ Lớp {tkb1.ma_lop.ma_lop} (LT) đang dùng phòng {tkb1.ma_phong.ma_phong} ({loai_phong1})")
+            
+            if tkb2.ma_phong:
+                mon2 = tkb2.ma_lop.ma_mon_hoc
+                loai_phong2 = tkb2.ma_phong.loai_phong or ''
+                
+                if mon2.so_tiet_th and mon2.so_tiet_th > 0:
+                    if 'TH' not in loai_phong2.upper() and 'MÁY' not in loai_phong2.upper() and 'LAB' not in loai_phong2.upper():
+                        warnings.append(f"⚠️ Lớp {tkb2.ma_lop.ma_lop} (TH) đang dùng phòng {tkb2.ma_phong.ma_phong} ({loai_phong2 or 'không xác định'})")
+                else:
+                    if 'TH' in loai_phong2.upper() or 'MÁY' in loai_phong2.upper() or 'LAB' in loai_phong2.upper():
+                        warnings.append(f"⚠️ Lớp {tkb2.ma_lop.ma_lop} (LT) đang dùng phòng {tkb2.ma_phong.ma_phong} ({loai_phong2})")
+            
+            # 3. Kiểm tra sức chứa phòng
+            if tkb1.ma_phong and tkb1.ma_phong.suc_chua and tkb1.ma_lop.so_luong_sv:
+                if tkb1.ma_lop.so_luong_sv > tkb1.ma_phong.suc_chua:
+                    errors.append(f"❌ Lớp {tkb1.ma_lop.ma_lop} có {tkb1.ma_lop.so_luong_sv} SV nhưng phòng {tkb1.ma_phong.ma_phong} chỉ chứa {tkb1.ma_phong.suc_chua}")
+            
+            if tkb2.ma_phong and tkb2.ma_phong.suc_chua and tkb2.ma_lop.so_luong_sv:
+                if tkb2.ma_lop.so_luong_sv > tkb2.ma_phong.suc_chua:
+                    errors.append(f"❌ Lớp {tkb2.ma_lop.ma_lop} có {tkb2.ma_lop.so_luong_sv} SV nhưng phòng {tkb2.ma_phong.ma_phong} chỉ chứa {tkb2.ma_phong.suc_chua}")
         
-        val2 = validate_tkb_constraints(
-            tkb2.ma_dot.ma_dot, tkb2.ma_lop.ma_lop,
-            tkb2.ma_phong.ma_phong if tkb2.ma_phong else None,
-            tkb2.time_slot_id.time_slot_id,
-            exclude_ma_tkb=ma_tkb_2
-        )
+        # Nếu không swap phòng, giữ nguyên phòng và validate
+        else:
+            # Kiểm tra phòng cũ có phù hợp với timeslot mới không
+            if tkb1.ma_phong:
+                conflict1 = ThoiKhoaBieu.objects.filter(
+                    ma_dot=tkb1.ma_dot,
+                    ma_phong=tkb1.ma_phong,
+                    time_slot_id=tkb1.time_slot_id,
+                    is_deleted=False
+                ).exclude(ma_tkb=ma_tkb_1)
+                
+                if conflict1.exists():
+                    errors.append(f"❌ Phòng {tkb1.ma_phong.ma_phong} đã bị trùng tại timeslot mới {tkb1.time_slot_id}")
+            
+            if tkb2.ma_phong:
+                conflict2 = ThoiKhoaBieu.objects.filter(
+                    ma_dot=tkb2.ma_dot,
+                    ma_phong=tkb2.ma_phong,
+                    time_slot_id=tkb2.time_slot_id,
+                    is_deleted=False
+                ).exclude(ma_tkb=ma_tkb_2)
+                
+                if conflict2.exists():
+                    errors.append(f"❌ Phòng {tkb2.ma_phong.ma_phong} đã bị trùng tại timeslot mới {tkb2.time_slot_id}")
         
-        if not val1['valid'] or not val2['valid']:
+        # Validate ràng buộc GV (không được trùng timeslot)
+        if gv1 and gv1.ma_gv:
+            other_classes = PhanCong.objects.filter(
+                ma_dot=tkb1.ma_dot,
+                ma_gv=gv1.ma_gv
+            ).exclude(ma_lop=tkb1.ma_lop).values_list('ma_lop__ma_lop', flat=True)
+            
+            conflict_gv1 = ThoiKhoaBieu.objects.filter(
+                ma_dot=tkb1.ma_dot,
+                ma_lop__ma_lop__in=other_classes,
+                time_slot_id=tkb1.time_slot_id,
+                is_deleted=False
+            )
+            
+            if conflict_gv1.exists():
+                errors.append(f"❌ GV {gv1.ma_gv.ten_gv} đã có lịch dạy tại {tkb1.time_slot_id}")
+        
+        if gv2 and gv2.ma_gv:
+            other_classes = PhanCong.objects.filter(
+                ma_dot=tkb2.ma_dot,
+                ma_gv=gv2.ma_gv
+            ).exclude(ma_lop=tkb2.ma_lop).values_list('ma_lop__ma_lop', flat=True)
+            
+            conflict_gv2 = ThoiKhoaBieu.objects.filter(
+                ma_dot=tkb2.ma_dot,
+                ma_lop__ma_lop__in=other_classes,
+                time_slot_id=tkb2.time_slot_id,
+                is_deleted=False
+            )
+            
+            if conflict_gv2.exists():
+                errors.append(f"❌ GV {gv2.ma_gv.ten_gv} đã có lịch dạy tại {tkb2.time_slot_id}")
+        
+        # Nếu có lỗi, trả về lỗi
+        if errors:
             return JsonResponse({
                 'status': 'error',
                 'message': 'Không thể hoán đổi vì vi phạm ràng buộc',
-                'errors': val1['errors'] + val2['errors']
+                'errors': errors,
+                'warnings': warnings
             }, status=400)
         
         # Lưu
@@ -1566,14 +1744,21 @@ def tkb_swap_api(request):
         
         # Log
         user = request.user.username if request.user.is_authenticated else 'anonymous'
+        swap_type = "cùng GV" if same_teacher else "khác GV"
+        swap_room_str = "có swap phòng" if swap_phong else "giữ nguyên phòng"
+        
         TKBLog.objects.create(
             ma_tkb=ma_tkb_1,
             action='SWAP',
             user=user,
             old_data=old_data_1,
-            new_data={'ma_phong': tkb1.ma_phong.ma_phong if tkb1.ma_phong else None,
-                     'time_slot_id': tkb1.time_slot_id.time_slot_id},
-            reason=f'Hoán đổi với {ma_tkb_2}'
+            new_data={
+                'ma_phong': tkb1.ma_phong.ma_phong if tkb1.ma_phong else None,
+                'time_slot_id': tkb1.time_slot_id.time_slot_id,
+                'swap_type': swap_type,
+                'swap_phong': swap_phong
+            },
+            reason=f'Hoán đổi với {ma_tkb_2} ({swap_type}, {swap_room_str})'
         )
         
         TKBLog.objects.create(
@@ -1581,15 +1766,37 @@ def tkb_swap_api(request):
             action='SWAP',
             user=user,
             old_data=old_data_2,
-            new_data={'ma_phong': tkb2.ma_phong.ma_phong if tkb2.ma_phong else None,
-                     'time_slot_id': tkb2.time_slot_id.time_slot_id},
-            reason=f'Hoán đổi với {ma_tkb_1}'
+            new_data={
+                'ma_phong': tkb2.ma_phong.ma_phong if tkb2.ma_phong else None,
+                'time_slot_id': tkb2.time_slot_id.time_slot_id,
+                'swap_type': swap_type,
+                'swap_phong': swap_phong
+            },
+            reason=f'Hoán đổi với {ma_tkb_1} ({swap_type}, {swap_room_str})'
         )
+        
+        message = f'Hoán đổi lịch thành công ({swap_type}, {swap_room_str})'
+        if warnings:
+            message += f' với {len(warnings)} cảnh báo'
         
         return JsonResponse({
             'status': 'success',
-            'message': 'Hoán đổi lịch thành công',
-            'warnings': val1['warnings'] + val2['warnings']
+            'message': message,
+            'warnings': warnings,
+            'swap_info': {
+                'same_teacher': same_teacher,
+                'swap_phong': swap_phong,
+                'tkb1': {
+                    'lop': tkb1.ma_lop.ma_lop,
+                    'phong': tkb1.ma_phong.ma_phong if tkb1.ma_phong else None,
+                    'timeslot': str(tkb1.time_slot_id)
+                },
+                'tkb2': {
+                    'lop': tkb2.ma_lop.ma_lop,
+                    'phong': tkb2.ma_phong.ma_phong if tkb2.ma_phong else None,
+                    'timeslot': str(tkb2.time_slot_id)
+                }
+            }
         })
         
     except ThoiKhoaBieu.DoesNotExist:
@@ -1776,6 +1983,15 @@ def tkb_mini_schedule_api(request):
         
         schedule = []
         for tkb in tkb_list:
+            # Lấy tên GV từ PhanCong
+            phan_cong = PhanCong.objects.filter(
+                ma_dot=dot_xep,
+                ma_lop=tkb.ma_lop
+            ).select_related('ma_gv').first()
+            
+            ten_gv = phan_cong.ma_gv.ten_gv if phan_cong and phan_cong.ma_gv else 'N/A'
+            ma_gv = phan_cong.ma_gv.ma_gv if phan_cong and phan_cong.ma_gv else None
+            
             schedule.append({
                 'ma_tkb': tkb.ma_tkb,
                 'ma_lop': tkb.ma_lop.ma_lop,
@@ -1787,6 +2003,8 @@ def tkb_mini_schedule_api(request):
                 'ten_ca': tkb.time_slot_id.ca.ten_ca,
                 'time_slot_id': tkb.time_slot_id.time_slot_id,
                 'tuan_hoc': tkb.tuan_hoc or '',
+                'ten_gv': ten_gv,
+                'ma_gv': ma_gv,
             })
         
         # Lấy TKB đã xóa (cũng filter theo khoa nếu có)
@@ -2012,3 +2230,126 @@ def tkb_mon_hoc_info_api(request):
             'message': f'Lỗi: {str(e)}'
         }, status=500)
 
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def tkb_gv_list_api(request):
+    """API lấy danh sách giáo viên có lịch trong đợt xếp"""
+    try:
+        ma_dot = request.GET.get('ma_dot', '')
+        
+        if not ma_dot:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Thiếu mã đợt xếp lịch'
+            }, status=400)
+        
+        dot_xep = DotXep.objects.get(ma_dot=ma_dot)
+        
+        # Lấy danh sách GV có phân công trong đợt này
+        gv_list = PhanCong.objects.filter(
+            ma_dot=dot_xep,
+            ma_gv__isnull=False
+        ).select_related('ma_gv', 'ma_gv__ma_bo_mon').values(
+            'ma_gv__ma_gv',
+            'ma_gv__ten_gv',
+            'ma_gv__ma_bo_mon__ten_bo_mon'
+        ).distinct()
+        
+        # Chuyển thành list để sort theo TÊN (không phải họ)
+        teachers = [
+            {
+                'ma_gv': gv['ma_gv__ma_gv'],
+                'ten_gv': gv['ma_gv__ten_gv'],
+                'bo_mon': gv['ma_gv__ma_bo_mon__ten_bo_mon'] or 'N/A'
+            }
+            for gv in gv_list
+        ]
+        
+        # Sort theo TÊN (lấy từ cuối cùng của họ tên)
+        # VD: "Nguyễn Văn A" → sort theo "A", "Trần Thị Bích" → sort theo "Bích"
+        def get_first_name(full_name):
+            parts = full_name.strip().split()
+            return parts[-1] if parts else full_name
+        
+        teachers.sort(key=lambda x: get_first_name(x['ten_gv']))
+        
+        return JsonResponse({
+            'status': 'success',
+            'teachers': teachers
+        })
+        
+    except DotXep.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Không tìm thấy đợt xếp lịch'
+        }, status=404)
+    except Exception as e:
+        logger.exception(f"Lỗi khi lấy danh sách GV: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def tkb_gv_schedule_api(request):
+    """API lấy thời khóa biểu của 1 giáo viên"""
+    try:
+        ma_dot = request.GET.get('ma_dot', '')
+        ma_gv = request.GET.get('ma_gv', '')
+        
+        if not ma_dot or not ma_gv:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Thiếu mã đợt xếp lịch hoặc mã giáo viên'
+            }, status=400)
+        
+        dot_xep = DotXep.objects.get(ma_dot=ma_dot)
+        
+        # Lấy các lớp mà GV dạy
+        lop_gv = PhanCong.objects.filter(
+            ma_dot=dot_xep,
+            ma_gv__ma_gv=ma_gv
+        ).values_list('ma_lop__ma_lop', flat=True)
+        
+        # Lấy TKB của các lớp đó
+        tkb_list = ThoiKhoaBieu.objects.filter(
+            ma_dot=dot_xep,
+            ma_lop__ma_lop__in=lop_gv,
+            is_deleted=False
+        ).select_related(
+            'ma_lop', 'ma_lop__ma_mon_hoc',
+            'ma_phong', 'time_slot_id', 'time_slot_id__ca'
+        ).order_by('time_slot_id__thu', 'time_slot_id__ca')
+        
+        schedule = []
+        for tkb in tkb_list:
+            schedule.append({
+                'ma_tkb': tkb.ma_tkb,
+                'ma_lop': tkb.ma_lop.ma_lop,
+                'mon_hoc': tkb.ma_lop.ma_mon_hoc.ten_mon_hoc,
+                'ma_phong': tkb.ma_phong.ma_phong if tkb.ma_phong else None,
+                'thu': tkb.time_slot_id.thu,
+                'ca': tkb.time_slot_id.ca.ma_khung_gio,
+                'time_slot_id': tkb.time_slot_id.time_slot_id,
+                'timeslot_str': f"Thứ {tkb.time_slot_id.thu}, Ca {tkb.time_slot_id.ca.ma_khung_gio}"
+            })
+        
+        return JsonResponse({
+            'status': 'success',
+            'schedule': schedule
+        })
+        
+    except DotXep.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Không tìm thấy đợt xếp lịch'
+        }, status=404)
+    except Exception as e:
+        logger.exception(f"Lỗi khi lấy lịch GV: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
