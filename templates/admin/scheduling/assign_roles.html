@@ -1,0 +1,149 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load scheduling_extras %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <h1 style="color: #1e293b; margin-bottom: 24px;">🔑 Gán vai trò hàng loạt</h1>
+    
+    <form method="post" id="role-assignment-form">
+        {% csrf_token %}
+        
+        <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+            <h3 style="margin: 0 0 12px 0; color: #475569;">1️⃣ Chọn vai trò</h3>
+            <select name="role" id="role-select" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px;">
+                <option value="">-- Chọn vai trò --</option>
+                {% for group in groups %}
+                <option value="{{ group.name }}">
+                    {% if group.name == 'Truong_Khoa' %}👔 Trưởng Khoa
+                    {% elif group.name == 'Truong_Bo_Mon' %}📚 Trưởng Bộ Môn
+                    {% elif group.name == 'Giang_Vien' %}👨‍🏫 Giảng Viên
+                    {% else %}{{ group.name }}{% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+            <h3 style="margin: 0 0 12px 0; color: #475569;">2️⃣ Chọn users</h3>
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <button type="button" onclick="selectAll()" style="padding: 6px 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">Chọn tất cả</button>
+                <button type="button" onclick="deselectAll()" style="padding: 6px 12px; background: #6b7280; color: white; border: none; border-radius: 4px; cursor: pointer;">Bỏ chọn tất cả</button>
+                <input type="text" id="search-box" placeholder="🔍 Tìm kiếm..." style="flex: 1; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 4px;">
+            </div>
+            
+            <div id="users-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 4px; background: white;">
+                {% for user in users %}
+                {% with gv=giang_vien_map|lookup:user.username %}
+                <label style="display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #e2e8f0; cursor: pointer; transition: background 0.2s;" 
+                       class="user-item"
+                       data-username="{{ user.username|lower }}"
+                       data-name="{% if gv %}{{ gv.ten_gv|lower }}{% endif %}"
+                       onmouseover="this.style.background='#f1f5f9'" 
+                       onmouseout="this.style.background='white'">
+                    <input type="checkbox" name="users" value="{{ user.username }}" style="margin-right: 12px; width: 18px; height: 18px;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: #1e293b;">
+                            {{ user.username }}
+                            {% if gv %}
+                            - {{ gv.ten_gv }}
+                            {% endif %}
+                        </div>
+                        <div style="font-size: 12px; color: #64748b;">
+                            {% if user.groups.all %}
+                                Hiện tại: 
+                                {% for group in user.groups.all %}
+                                    <span style="background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 3px;">{{ group.name }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span style="color: #9ca3af;">Chưa có role</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </label>
+                {% endwith %}
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 12px;">
+            <button type="submit" style="padding: 12px 24px; background: #10b981; color: white; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 14px;">
+                ✅ Gán vai trò
+            </button>
+            <a href="{% url 'admin:auth_user_changelist' %}" style="padding: 12px 24px; background: #f1f5f9; color: #475569; border: none; border-radius: 4px; font-weight: 600; text-decoration: none; display: inline-block;">
+                ← Quay lại
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+function selectAll() {
+    document.querySelectorAll('#users-container input[type="checkbox"]').forEach(cb => {
+        if (cb.parentElement.style.display !== 'none') {
+            cb.checked = true;
+        }
+    });
+}
+
+function deselectAll() {
+    document.querySelectorAll('#users-container input[type="checkbox"]').forEach(cb => cb.checked = false);
+}
+
+// Search functionality
+document.getElementById('search-box').addEventListener('input', function(e) {
+    const search = e.target.value.toLowerCase();
+    document.querySelectorAll('.user-item').forEach(item => {
+        const username = item.dataset.username || '';
+        const name = item.dataset.name || '';
+        if (username.includes(search) || name.includes(search)) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
+
+// Form validation
+document.getElementById('role-assignment-form').addEventListener('submit', function(e) {
+    const role = document.getElementById('role-select').value;
+    const checked = document.querySelectorAll('#users-container input[type="checkbox"]:checked').length;
+    
+    if (!role) {
+        alert('Vui lòng chọn vai trò!');
+        e.preventDefault();
+        return;
+    }
+    
+    if (checked === 0) {
+        alert('Vui lòng chọn ít nhất 1 user!');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!confirm(`Bạn chắc chắn muốn gán role "${role}" cho ${checked} users?`)) {
+        e.preventDefault();
+    }
+});
+</script>
+
+<style>
+/* Custom scrollbar */
+#users-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+#users-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+#users-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+#users-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+</style>
+{% endblock %}

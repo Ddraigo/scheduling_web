@@ -23,6 +23,9 @@ from .models import (
 from .utils.excel_export import ExcelExporter
 from .utils.excel_import import ExcelImporter
 
+# Import custom permission admin (phải import sau khi đăng ký các model khác)
+# Sẽ được import ở cuối file
+
 # Rename "Scheduling System" app label to "Dữ liệu" in admin
 class CustomAdminSite(admin.AdminSite):
     pass
@@ -502,5 +505,10 @@ class NgayNghiDotAdmin(BaseAdmin):
         """Hiển thị thông tin tuần tham khảo"""
         if obj.tuan_bd and obj.tuan_kt:
             return f"Tuần {obj.tuan_bd}-{obj.tuan_kt}"
-        return "N/A"
+        return '-'
     tuan_info.short_description = 'Tuần (tham khảo)'
+
+
+# Import custom permission admin at the end
+# This will override default User and Group admin with custom ones
+from . import permission_admin

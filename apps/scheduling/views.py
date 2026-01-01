@@ -503,3 +503,58 @@ def chatbot_clear_api(request):
             'success': False,
             'error': str(e)
         }, status=status.HTTP_400_BAD_REQUEST)
+
+
+def assign_roles_view(request):
+    """View để gán role hàng loạt cho users"""
+    from django.contrib.auth.models import User, Group
+    from django.shortcuts import render, redirect
+    from django.contrib import messages
+    
+    if request.method == 'POST':
+        usernames = request.POST.getlist('users')
+        role = request.POST.get('role')
+        
+        if not usernames or not role:
+            messages.error(request, 'Vui lòng chọn users và role!')
+            return redirect('admin:auth_user_changelist')
+        
+        try:
+            group = Group.objects.get(name=role)
+            users = User.objects.filter(username__in=usernames)
+            
+            count = 0
+            for user in users:
+                user.groups.clear()
+                user.groups.add(group)
+                count += 1
+            
+            role_display = {
+                'Truong_Khoa': '👔 Trưởng Khoa',
+                'Truong_Bo_Mon': '📚 Trưởng Bộ Môn',
+                'Giang_Vien': '👨‍🏫 Giảng Viên'
+            }.get(role, role)
+            
+            messages.success(request, f'✅ Đã gán role {role_display} cho {count} users!')
+        except Group.DoesNotExist:
+            messages.error(request, f'Không tìm thấy role: {role}')
+        except Exception as e:
+            messages.error(request, f'Lỗi: {str(e)}')
+        
+        return redirect('admin:auth_user_changelist')
+    
+    # GET request - show form
+    users = User.objects.all().order_by('username')
+    groups = Group.objects.all()
+    giang_vien_map = {gv.ma_gv: gv for gv in GiangVien.objects.all()}
+    
+    context = {
+        'users': users,
+        'groups': groups,
+        'giang_vien_map': giang_vien_map,
+        'title': 'Gán vai trò hàng loạt',
+        'site_header': 'Quản lý phân quyền',
+        'site_title': 'Phân quyền',
+    }
+    
+    return render(request, 'admin/scheduling/assign_roles.html', context)

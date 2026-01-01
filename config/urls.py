@@ -54,6 +54,9 @@ urlpatterns = [
     path('admin/sap_lich/thoikhoabieu/', admin.site.admin_view(views_sap_lich.thoikhoabieu_view), name='sap_lich_thoikhoabieu'),
     path('admin/sap_lich/tkb-manage/', admin.site.admin_view(views_sap_lich.tkb_manage_view), name='sap_lich_tkb_manage'),
     
+    # Permission management
+    path('admin/scheduling/assign-roles/', admin.site.admin_view(views_scheduling.assign_roles_view), name='scheduling_assign_roles'),
+    
     path("admin/", admin.site.urls),
     path("", include('admin_black.urls')),
 ]
