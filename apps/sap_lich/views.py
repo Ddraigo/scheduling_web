@@ -8,6 +8,7 @@ import logging
 import random
 import time
 from datetime import datetime, timedelta
+from functools import wraps
 from django.contrib import admin
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseForbidden
@@ -59,6 +60,29 @@ def get_user_role_info(user):
     else:
         # Mặc định là giáo viên nếu không có group
         return {'role': 'giang_vien', 'ma_khoa': None, 'ma_bo_mon': None, 'ma_gv': ma_gv}
+
+
+def require_role(*allowed_roles):
+    """
+    Decorator để kiểm tra role của user
+    Usage: @require_role('admin', 'truong_khoa')
+    """
+    def decorator(view_func):
+        @wraps(view_func)
+        def wrapper(request, *args, **kwargs):
+            if not request.user.is_authenticated:
+                return HttpResponseForbidden("Bạn cần đăng nhập để truy cập trang này")
+            
+            user_role_info = get_user_role_info(request.user)
+            user_role = user_role_info['role']
+            
+            if user_role not in allowed_roles:
+                return HttpResponseForbidden(f"Bạn không có quyền truy cập trang này. Yêu cầu role: {', '.join(allowed_roles)}")
+            
+            return view_func(request, *args, **kwargs)
+        return wrapper
+    return decorator
+
 
 @csrf_exempt
 @require_http_methods(["GET"])
