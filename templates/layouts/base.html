@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-{% load i18n static admin_black %}
+{% load i18n static %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_current_language_bidi as LANGUAGE_BIDI %}
-{% get_direction as direction %}
-{% get_admin_setting as admin_setting %}
 <html lang="en">
 
 <head>
-    <title>{% block title %}{% endblock title %} | Django Black Dashboard </title>
-    <link rel="canonical" href="https://app-generator.dev/product/black-dashboard/" />
+    <title>{% block title %}{% endblock title %} | Hệ thống quản lý lịch dạy học </title>
+    <link rel="canonical" href="/" />
 
     {% include 'includes/head.html' %}
     {% block extrahead %}{% endblock extrahead %}
@@ -25,9 +23,6 @@
             {% include 'includes/navigation.html' %}
             {% endblock navigation %}
             {% block content %}{% endblock content %}
-            {% block footer %}
-            {% include 'includes/footer.html' %}
-            {% endblock footer %}
         </div>
     </div>
     {% block fixed-plugin %}

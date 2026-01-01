@@ -1,206 +1,46 @@
 {% extends "admin/base.html" %}
-{% load static %}
 
-{% block sidebar %}
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
-    <a href="{% url 'admin:index' %}" class="brand-link">
-        <span class="brand-text font-weight-light">{{ site_header|default:'Django Admin' }}</span>
-    </a>
+{# Ẩn hoàn toàn footer và fix sidebar scroll #}
+{% block extrastyle %}
+{{ block.super }}
+<style>
+	/* Ẩn footer */
+	.main-footer,
+	footer,
+	.content-footer,
+	#footer,
+	footer.main-footer {
+		display: none !important;
+		visibility: hidden !important;
+		height: 0 !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		border: 0 !important;
+	}
+	
+	/* Fix sidebar scroll độc lập */
+	.main-sidebar {
+		height: 100vh !important;
+		max-height: 100vh !important;
+		position: fixed !important;
+		top: 0 !important;
+		left: 0 !important;
+		overflow: hidden !important;
+		z-index: 1038 !important;
+        min-width: fit-content !important;
+	}
+	
+	.main-sidebar .sidebar {
+		height: calc(100vh - 57px) !important;
+		overflow-y: auto !important;
+		overflow-x: hidden !important;min-width: fit-content !important;
+	}
+	
+	/* Content scroll độc lập, không bị sidebar ảnh hưởng */
+	.content-wrapper {
+		min-height: 100vh !important;
+	}
+</style>
+{% endblock extrastyle %}
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <!-- Sidebar Menu -->
-        <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                
-                {% comment %} Menu Sắp lịch {% endcomment %}
-                <li class="nav-header">Sắp lịch</li>
-                
-                {% comment %} Admin và Truong_Khoa thấy tất cả {% endcomment %}
-                {% if is_admin or is_truong_khoa %}
-                    <li class="nav-item">
-                        <a href="/admin/sap_lich/algo-scheduler/" class="nav-link">
-                            <i class="nav-icon fas fa-cogs"></i>
-                            <p>Sắp lịch bằng thuật toán</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/admin/sap_lich/llm-scheduler/" class="nav-link">
-                            <i class="nav-icon fas fa-robot"></i>
-                            <p>Chat bot hỗ trợ</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/admin/sap_lich/tkb-manage/" class="nav-link">
-                            <i class="nav-icon fas fa-edit"></i>
-                            <p>Quản lý TKB (Thêm/Sửa/Xóa)</p>
-                        </a>
-                    </li>
-                {% endif %}
-                
-                {% comment %} Tất cả users thấy Xem TKB {% endcomment %}
-                <li class="nav-item">
-                    <a href="/admin/sap_lich/thoikhoabieu/" class="nav-link">
-                        <i class="nav-icon fas fa-calendar-alt"></i>
-                        <p>Xem thời khóa biểu</p>
-                    </a>
-                </li>
-
-                {% comment %} Menu Dữ liệu (Models) {% endcomment %}
-                {% if is_admin or is_truong_khoa %}
-                    <li class="nav-header">Dữ liệu</li>
-                    
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_khoa_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-building"></i>
-                            <p>Khoa</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_bomon_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-sitemap"></i>
-                            <p>Bộ môn</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_giangvien_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-chalkboard-user"></i>
-                            <p>Giảng viên</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_monhoc_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-book"></i>
-                            <p>Môn học</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_phonghoc_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-door-open"></i>
-                            <p>Phòng học</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_lopmonhoc_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-graduation-cap"></i>
-                            <p>Lớp môn học</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_dotxep_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-calendar-days"></i>
-                            <p>Đợt xếp lịch</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_phancong_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-handshake"></i>
-                            <p>Phân công</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_khungtg_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-hourglass-half"></i>
-                            <p>Khung thời gian</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_rangbuocmem_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-wave-square"></i>
-                            <p>Ràng buộc mềm</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_rangbuoctrongdot_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-shield-alt"></i>
-                            <p>Ràng buộc trong đợt</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_dukiendt_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-clipboard-check"></i>
-                            <p>Dự kiến dạy-học</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_ngaynghicodinh_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-calendar-xmark"></i>
-                            <p>Ngày nghỉ cố định</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_ngaynghidot_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-calendar-minus"></i>
-                            <p>Ngày nghỉ theo đợt</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_nguyenvong_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-heart"></i>
-                            <p>Nguyện vọng</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_timeslot_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-hourglass-end"></i>
-                            <p>Time slots</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_thoikhoabieu_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-calendar-check"></i>
-                            <p>Thời khóa biểu</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_gvdaymon_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-user-tie"></i>
-                            <p>GV dạy môn</p>
-                        </a>
-                    </li>
-                {% elif is_truong_bo_mon %}
-                    {% comment %} Truong Bo Mon chỉ thấy một số model {% endcomment %}
-                    <li class="nav-header">Dữ liệu</li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_monhoc_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-book"></i>
-                            <p>Môn học</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_giangvien_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-chalkboard-user"></i>
-                            <p>Giảng viên</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:scheduling_nguyenvong_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-heart"></i>
-                            <p>Nguyện vọng</p>
-                        </a>
-                    </li>
-                {% endif %}
-
-                {% comment %} Menu Quản lý hệ thống - chỉ admin thấy {% endcomment %}
-                {% if is_admin %}
-                    <li class="nav-header">Quản lý hệ thống</li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:auth_user_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-user"></i>
-                            <p>Users</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin:auth_group_changelist' %}" class="nav-link">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>Groups</p>
-                        </a>
-                    </li>
-                {% endif %}
-
-            </ul>
-        </nav>
-    </div>
-</aside>
-{% endblock %}
+{% block footer %}{% endblock %}

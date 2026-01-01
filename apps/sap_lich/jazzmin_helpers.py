@@ -34,7 +34,7 @@ def get_custom_links_for_user(request):
                 "icon": "fas fa-robot",
             },
             {
-                "name": "Quản lý TKB (Thêm/Sửa/Xóa)",
+                "name": "Quản lý TKB",
                 "url": "/admin/sap_lich/tkb-manage/",
                 "icon": "fas fa-edit",
             },

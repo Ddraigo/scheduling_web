@@ -60,3 +60,31 @@
     color: #fff !important;
     margin-bottom: 18px;
 }
+
+/* Fix sidebar: height 100vh fixed, scroll inside sidebar only */
+.main-sidebar {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    overflow: hidden !important;
+    z-index: 1038;
+}
+
+.main-sidebar .sidebar {
+    height: calc(100vh - 57px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-top: 18px;
+    padding-bottom: 48px;
+}
+
+.main-footer {
+    display: none !important;
+}
+
+/* Content min-height only, let AdminLTE handle margin */
+.content-wrapper {
+    min-height: 100vh !important;
+}
