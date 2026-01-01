@@ -200,6 +200,7 @@
         box-shadow: var(--shadow-sm);
         border: 1px solid var(--border-color);
         overflow-x: auto;
+        width: 100%;
     }
 
     .schedule-table {
@@ -207,6 +208,19 @@
         border-collapse: separate;
         border-spacing: 0;
         min-width: 1200px;
+    }
+
+    /* No data state - match table width */
+    .no-data-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-muted);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 1200px;
+        min-height: 350px;
     }
 
     .schedule-table thead th {
@@ -326,13 +340,6 @@
         font-size: 13px;
         padding: 20px;
         font-style: italic;
-    }
-
-    /* Error/No Data State */
-    .no-data-state {
-        text-align: center;
-        padding: 60px 20px;
-        color: var(--text-muted);
     }
 
     .no-data-state .icon {

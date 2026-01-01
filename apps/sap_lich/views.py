@@ -16,10 +16,105 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q, Prefetch
 from apps.scheduling.models import (
     DotXep, ThoiKhoaBieu, GiangVien, PhongHoc, 
-    TimeSlot, KhungTG, PhanCong, LopMonHoc, MonHoc
+    TimeSlot, KhungTG, PhanCong, LopMonHoc, MonHoc, NguyenVong
 )
 
 logger = logging.getLogger(__name__)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def algo_scheduler_get_stats_api(request):
+    """
+    API endpoint để lấy thống kê đầu vào của đợt xếp lịch
+    
+    Query params:
+        ma_dot: Mã đợt xếp lịch
+    
+    Returns:
+        {
+            "status": "success",
+            "stats": {
+                "phan_cong": 150,
+                "lop_mon_hoc": 120,
+                "giang_vien": 45,
+                "phong_hoc": 30,
+                "mon_hoc": 60,
+                "time_slots": 50,
+                "tkb_existing": 0
+            }
+        }
+    """
+    try:
+        ma_dot = request.GET.get('ma_dot')
+        
+        if not ma_dot:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Vui lòng cung cấp ma_dot'
+            }, status=400)
+        
+        # Get the scheduling period
+        try:
+            dot_xep = DotXep.objects.get(ma_dot=ma_dot)
+        except DotXep.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Không tìm thấy đợt xếp với mã: {ma_dot}'
+            }, status=404)
+        
+        # Get statistics - Lấy theo đợt xếp cụ thể
+        phan_cong_count = PhanCong.objects.filter(ma_dot=dot_xep).count()
+        
+        # Lớp môn học trong đợt (từ PhanCong)
+        lop_mon_hoc_ids = PhanCong.objects.filter(ma_dot=dot_xep).values_list('ma_lop', flat=True).distinct()
+        lop_mon_hoc_count = len(lop_mon_hoc_ids)
+        
+        # Giảng viên tham gia trong đợt (từ PhanCong)
+        giang_vien_ids = PhanCong.objects.filter(ma_dot=dot_xep).values_list('ma_gv', flat=True).distinct()
+        giang_vien_count = len([gv for gv in giang_vien_ids if gv])
+        
+        # Môn học trong đợt (từ LopMonHoc của PhanCong)
+        from apps.scheduling.models import LopMonHoc
+        mon_hoc_ids = LopMonHoc.objects.filter(ma_lop__in=lop_mon_hoc_ids).values_list('ma_mon_hoc', flat=True).distinct()
+        mon_hoc_count = len(mon_hoc_ids)
+        
+        # Phòng học - tổng số có thể dùng (toàn bộ vì phòng không thuộc đợt)
+        phong_hoc_count = PhongHoc.objects.count()
+        
+        # Phòng theo loại (dùng đúng giá trị trong DB: "Lý thuyết", "Thực hành")
+        phong_ly_thuyet = PhongHoc.objects.filter(loai_phong='Lý thuyết').count()
+        phong_thuc_hanh = PhongHoc.objects.filter(loai_phong='Thực hành').count()
+        
+        # Time slots
+        time_slots_count = TimeSlot.objects.count()
+        
+        # Nguyện vọng trong đợt
+        nguyen_vong_count = NguyenVong.objects.filter(ma_dot=dot_xep).count()
+        
+        return JsonResponse({
+            'status': 'success',
+            'ma_dot': ma_dot,
+            'ten_dot': dot_xep.ten_dot,
+            'stats': {
+                'phan_cong': phan_cong_count,
+                'lop_mon_hoc': lop_mon_hoc_count,
+                'giang_vien': giang_vien_count,
+                'phong_hoc': phong_hoc_count,
+                'phong_ly_thuyet': phong_ly_thuyet,
+                'phong_thuc_hanh': phong_thuc_hanh,
+                'mon_hoc': mon_hoc_count,
+                'time_slots': time_slots_count,
+                'nguyen_vong': nguyen_vong_count
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting stats: {str(e)}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
 
 
 def llm_scheduler_view(request):
@@ -482,6 +577,150 @@ def algo_scheduler_get_weights_api(request):
     
     except Exception as e:
         logger.exception(f"Lỗi khi lấy weights: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+
+
+@require_http_methods(["GET"])
+def algo_scheduler_export_excel_api(request):
+    """
+    API endpoint để xuất thời khóa biểu ra file Excel
+    
+    Expected GET parameters:
+    - ma_dot: Mã đợt xếp lịch
+    
+    Returns:
+        Excel file download
+    """
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+    from openpyxl.utils import get_column_letter
+    
+    try:
+        ma_dot = request.GET.get('ma_dot')
+        
+        if not ma_dot:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Vui lòng cung cấp ma_dot'
+            }, status=400)
+        
+        # Kiểm tra đợt xếp có tồn tại không
+        try:
+            dot_xep = DotXep.objects.get(ma_dot=ma_dot)
+        except DotXep.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Không tìm thấy đợt xếp {ma_dot}'
+            }, status=404)
+        
+        # Lấy tất cả thời khóa biểu của đợt
+        tkb_list = ThoiKhoaBieu.objects.filter(
+            ma_dot=dot_xep
+        ).select_related(
+            'ma_lop',
+            'ma_lop__ma_mon_hoc',
+            'ma_phong',
+            'time_slot_id__ca'
+        ).order_by('time_slot_id__thu', 'time_slot_id__ca__ma_khung_gio')
+        
+        # Lấy mapping từ ma_lop sang giảng viên qua PhanCong
+        lop_to_gv = {}
+        for pc in PhanCong.objects.filter(ma_dot=dot_xep).select_related('ma_lop', 'ma_gv'):
+            lop_to_gv[pc.ma_lop.ma_lop] = pc.ma_gv
+        
+        # Create workbook
+        wb = Workbook()
+        ws = wb.active
+        ws.title = f"TKB_{ma_dot}"
+        
+        # Styling
+        header_fill = PatternFill(start_color="0066CC", end_color="0066CC", fill_type="solid")
+        header_font = Font(bold=True, color="FFFFFF", size=11)
+        border = Border(
+            left=Side(style='thin'),
+            right=Side(style='thin'),
+            top=Side(style='thin'),
+            bottom=Side(style='thin')
+        )
+        
+        # Headers
+        headers = ['STT', 'Mã Lớp', 'Tên Môn Học', 'Nhóm', 'Mã GV', 'Tên GV', 
+                   'Mã Phòng', 'Loại Phòng', 'Sức Chứa', 'Thứ', 'Ca', 'Giờ BĐ', 'Giờ KT', 'Tuần Học']
+        
+        for col_num, header in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col_num)
+            cell.value = header
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+            cell.border = border
+        
+        # Mapping thứ
+        day_map = {
+            2: 'Thứ 2', 3: 'Thứ 3', 4: 'Thứ 4', 5: 'Thứ 5',
+            6: 'Thứ 6', 7: 'Thứ 7', 8: 'Chủ Nhật'
+        }
+        
+        # Write data
+        for row_num, tkb in enumerate(tkb_list, 2):
+            gv = lop_to_gv.get(tkb.ma_lop.ma_lop)
+            
+            row_data = [
+                row_num - 1,  # STT
+                tkb.ma_lop.ma_lop,
+                tkb.ma_lop.ma_mon_hoc.ten_mon_hoc,
+                tkb.ma_lop.nhom_mh,
+                gv.ma_gv if gv else 'N/A',
+                gv.ten_gv if gv else 'Chưa phân công',
+                tkb.ma_phong.ma_phong if tkb.ma_phong else 'N/A',
+                tkb.ma_phong.loai_phong if tkb.ma_phong else 'N/A',
+                tkb.ma_phong.suc_chua if tkb.ma_phong else 0,
+                day_map.get(tkb.time_slot_id.thu, tkb.time_slot_id.thu),
+                f"Ca {tkb.time_slot_id.ca.ma_khung_gio}",
+                str(tkb.time_slot_id.ca.gio_bat_dau),
+                str(tkb.time_slot_id.ca.gio_ket_thuc),
+                tkb.tuan_hoc if tkb.tuan_hoc else '1-15'
+            ]
+            
+            for col_num, value in enumerate(row_data, 1):
+                cell = ws.cell(row=row_num, column=col_num)
+                cell.value = str(value) if value is not None else ''
+                cell.border = border
+                cell.alignment = Alignment(vertical='center')
+        
+        # Auto-adjust column widths
+        for col_num in range(1, len(headers) + 1):
+            column_letter = get_column_letter(col_num)
+            max_length = len(headers[col_num - 1])
+            
+            for row_num in range(2, min(102, ws.max_row + 1)):
+                cell_value = ws[f'{column_letter}{row_num}'].value
+                if cell_value:
+                    max_length = max(max_length, len(str(cell_value)))
+            
+            adjusted_width = min(max_length + 2, 50)
+            ws.column_dimensions[column_letter].width = adjusted_width
+        
+        # Freeze header row
+        ws.freeze_panes = 'A2'
+        
+        # Create response
+        from django.http import HttpResponse
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        filename = f'TKB_{ma_dot}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        wb.save(response)
+        logger.info(f"Exported {tkb_list.count()} schedules for {ma_dot} to Excel")
+        return response
+        
+    except Exception as e:
+        logger.exception(f"Lỗi khi xuất Excel: {e}")
         return JsonResponse({
             'status': 'error',
             'message': f'Lỗi: {str(e)}'
