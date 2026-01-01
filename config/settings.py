@@ -97,6 +97,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "apps.sap_lich.middleware.AdminMenuFilterMiddleware",  # Custom middleware cho filter menu
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -114,6 +115,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "apps.sap_lich.context_processors.user_role_context",  # Custom context processor
             ],
         },
     },
@@ -298,6 +300,8 @@ JAZZMIN_SETTINGS = {
     "order_with_respect_to": ["sap_lich", "scheduling", "auth", "authtoken", "data_table"],
     # Hide the dummy model, only show custom links
     "hide_models": ["sap_lich.saplich"],
+    # Hide entire apps from specific groups
+    "hide_apps": [],
     # Show all apps including new ones
     "show_ui_builder": False,
     # Custom links under "Sắp lịch" in sidebar
@@ -307,16 +311,25 @@ JAZZMIN_SETTINGS = {
                 "name": "Sắp lịch bằng thuật toán",
                 "url": "/admin/sap_lich/algo-scheduler/",
                 "icon": "fas fa-cogs",
+                "permissions": ["auth.view_user"]  # Admin và Truong_Khoa only
             },
             {
                 "name": "Chat bot hỗ trợ",
                 "url": "/admin/sap_lich/llm-scheduler/",
                 "icon": "fas fa-robot",
+                "permissions": ["auth.view_user"]  # Admin và Truong_Khoa only
             },
             {
                 "name": "Xem thời khóa biểu",
                 "url": "/admin/sap_lich/thoikhoabieu/",
                 "icon": "fas fa-calendar-alt",
+                "permissions": ["auth.view_user"]  # Tất cả users
+            },
+            {
+                "name": "Quản lý TKB (Thêm/Sửa/Xóa)",
+                "url": "/admin/sap_lich/tkb-manage/",
+                "icon": "fas fa-edit",
+                "permissions": ["auth.view_user"]  # Admin và Truong_Khoa only
             }
         ]
     },

@@ -10,17 +10,55 @@ import time
 from datetime import datetime, timedelta
 from django.contrib import admin
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q, Prefetch
 from apps.scheduling.models import (
     DotXep, ThoiKhoaBieu, GiangVien, PhongHoc, 
-    TimeSlot, KhungTG, PhanCong, LopMonHoc, MonHoc, NguyenVong
+    TimeSlot, KhungTG, PhanCong, LopMonHoc, MonHoc,
+    NguyenVong, GVDayMon, TKBLog
 )
 
 logger = logging.getLogger(__name__)
 
+def get_user_role_info(user):
+    """
+    Xác định role và thông tin liên quan của user
+    Returns: {
+        'role': 'admin' | 'truong_khoa' | 'truong_bo_mon' | 'giang_vien',
+        'ma_khoa': str | None,
+        'ma_bo_mon': str | None,
+        'ma_gv': str | None,
+    }
+    """
+    if user.is_superuser:
+        return {'role': 'admin', 'ma_khoa': None, 'ma_bo_mon': None, 'ma_gv': None}
+    
+    # Lấy groups của user
+    groups = user.groups.values_list('name', flat=True)
+    
+    # Tìm GiangVien theo username (giả định username = ma_gv)
+    try:
+        giang_vien = GiangVien.objects.select_related('ma_bo_mon', 'ma_bo_mon__ma_khoa').get(ma_gv=user.username)
+        ma_gv = giang_vien.ma_gv
+        ma_bo_mon = giang_vien.ma_bo_mon.ma_bo_mon if giang_vien.ma_bo_mon else None
+        ma_khoa = giang_vien.ma_bo_mon.ma_khoa.ma_khoa if giang_vien.ma_bo_mon and giang_vien.ma_bo_mon.ma_khoa else None
+    except GiangVien.DoesNotExist:
+        ma_gv = None
+        ma_bo_mon = None
+        ma_khoa = None
+    
+    # Xác định role dựa trên group
+    if 'Truong_Khoa' in groups:
+        return {'role': 'truong_khoa', 'ma_khoa': ma_khoa, 'ma_bo_mon': None, 'ma_gv': ma_gv}
+    elif 'Truong_Bo_Mon' in groups:
+        return {'role': 'truong_bo_mon', 'ma_khoa': ma_khoa, 'ma_bo_mon': ma_bo_mon, 'ma_gv': ma_gv}
+    elif 'Giang_Vien' in groups:
+        return {'role': 'giang_vien', 'ma_khoa': None, 'ma_bo_mon': None, 'ma_gv': ma_gv}
+    else:
+        # Mặc định là giáo viên nếu không có group
+        return {'role': 'giang_vien', 'ma_khoa': None, 'ma_bo_mon': None, 'ma_gv': ma_gv}
 
 @csrf_exempt
 @require_http_methods(["GET"])
@@ -144,6 +182,7 @@ def llm_scheduler_view(request):
     return render(request, 'admin/llm_scheduler.html', context)
 
 
+@require_role('admin', 'truong_khoa')
 def algo_scheduler_view(request):
     """Admin view for algorithm-based scheduler"""
     try:
@@ -396,7 +435,8 @@ def algo_scheduler_view_result_api(request):
         from apps.scheduling.models import ThoiKhoaBieu, PhanCong
         
         tkb_list = ThoiKhoaBieu.objects.filter(
-            ma_dot=dot_xep
+            ma_dot=dot_xep,
+            is_deleted=False
         ).select_related(
             'ma_lop',
             'ma_lop__ma_mon_hoc',
@@ -733,15 +773,63 @@ def thoikhoabieu_view(request):
     - Góc nhìn: theo giáo viên, theo phòng
     - Dạng hiển thị: tổng quát (tất cả tuần), chi tiết (theo tuần)
     """
+    # Lấy thông tin phân quyền
+    role_info = get_user_role_info(request.user)
+    user_role = role_info['role']
+    
     # Lấy các tham số từ request
     view_type = request.GET.get('view', 'teacher')  # 'teacher' hoặc 'room'
     display_mode = request.GET.get('mode', 'general')  # 'general' hoặc 'weekly'
     week_number = int(request.GET.get('week', 1))  # Tuần hiện tại (1-15)
     ma_dot = request.GET.get('ma_dot', '')  # Đợt xếp lịch
+    ma_khoa = request.GET.get('ma_khoa', '')  # Khoa
+    ma_bo_mon = request.GET.get('ma_bo_mon', '')  # Bộ môn
     selected_id = request.GET.get('id', '')  # Mã GV hoặc mã phòng
+    
+    # Áp dụng ràng buộc theo phân quyền
+    if user_role == 'truong_khoa':
+        # Trưởng khoa chỉ thấy khoa mình
+        ma_khoa = role_info['ma_khoa']
+    elif user_role == 'truong_bo_mon':
+        # Trưởng bộ môn chỉ thấy bộ môn mình
+        ma_khoa = role_info['ma_khoa']
+        ma_bo_mon = role_info['ma_bo_mon']
+    elif user_role == 'giang_vien':
+        # Giáo viên chỉ thấy TKB của mình
+        view_type = 'teacher'
+        selected_id = role_info['ma_gv']
+        if role_info['ma_khoa']:
+            ma_khoa = role_info['ma_khoa']
+        if role_info['ma_bo_mon']:
+            ma_bo_mon = role_info['ma_bo_mon']
     
     # Lấy danh sách đợt xếp lịch
     dot_list = DotXep.objects.all().order_by('-ma_dot')
+    
+    # Lấy danh sách khoa (filter theo quyền)
+    from apps.scheduling.models import Khoa, BoMon
+    if user_role == 'truong_khoa':
+        khoa_list = Khoa.objects.filter(ma_khoa=role_info['ma_khoa']).order_by('ma_khoa')
+    elif user_role in ['truong_bo_mon', 'giang_vien'] and role_info['ma_khoa']:
+        khoa_list = Khoa.objects.filter(ma_khoa=role_info['ma_khoa']).order_by('ma_khoa')
+    else:
+        khoa_list = Khoa.objects.all().order_by('ma_khoa')
+    
+    # Lấy danh sách bộ môn theo khoa đã chọn (filter theo quyền)
+    bo_mon_list = []
+    if ma_khoa:
+        if user_role == 'truong_bo_mon':
+            bo_mon_list = BoMon.objects.filter(
+                ma_khoa__ma_khoa=ma_khoa,
+                ma_bo_mon=role_info['ma_bo_mon']
+            ).order_by('ma_bo_mon')
+        elif user_role == 'giang_vien' and role_info['ma_bo_mon']:
+            bo_mon_list = BoMon.objects.filter(
+                ma_khoa__ma_khoa=ma_khoa,
+                ma_bo_mon=role_info['ma_bo_mon']
+            ).order_by('ma_bo_mon')
+        else:
+            bo_mon_list = BoMon.objects.filter(ma_khoa__ma_khoa=ma_khoa).order_by('ma_bo_mon')
     
     # Nếu không có ma_dot, lấy đợt mới nhất
     if not ma_dot and dot_list.exists():
@@ -755,9 +843,15 @@ def thoikhoabieu_view(request):
         'display_mode': display_mode,
         'week_number': week_number,
         'ma_dot': ma_dot,
+        'ma_khoa': ma_khoa,
+        'ma_bo_mon': ma_bo_mon,
         'selected_id': selected_id,
         'dot_list': dot_list,
+        'khoa_list': khoa_list,
+        'bo_mon_list': bo_mon_list,
         'weeks': range(1, 16),  # 15 tuần
+        'user_role': user_role,  # Thêm role vào context
+        'role_info': role_info,  # Thêm role_info vào context
         'app_label': 'sap_lich',
         'opts': {
             'app_label': 'sap_lich',
@@ -776,21 +870,35 @@ def thoikhoabieu_view(request):
         if view_type == 'teacher':
             # Lấy danh sách giáo viên CÓ LỊCH DẠY THỰC TẾ trong đợt này
             # Lấy từ TKB thông qua PhanCong
-            gv_co_lich = PhanCong.objects.filter(
+            gv_query = PhanCong.objects.filter(
                 ma_dot=dot_xep,
                 ma_gv__isnull=False,
-                ma_lop__tkb_list__ma_dot=dot_xep  # Lớp phải có TKB
-            ).select_related('ma_gv').values(
-                'ma_gv__ma_gv', 'ma_gv__ten_gv'
-            ).distinct().order_by('ma_gv__ma_gv')
+                ma_lop__tkb_list__ma_dot=dot_xep,
+                ma_lop__tkb_list__is_deleted=False
+            ).select_related('ma_gv', 'ma_gv__ma_bo_mon', 'ma_gv__ma_bo_mon__ma_khoa')
             
-            teachers = [{'ma_gv': gv['ma_gv__ma_gv'], 'ten_gv': gv['ma_gv__ten_gv']} 
-                       for gv in gv_co_lich]
+            # Filter theo khoa nếu có
+            if ma_khoa:
+                gv_query = gv_query.filter(ma_gv__ma_bo_mon__ma_khoa__ma_khoa=ma_khoa)
+            
+            # Filter theo bộ môn nếu có
+            if ma_bo_mon:
+                gv_query = gv_query.filter(ma_gv__ma_bo_mon__ma_bo_mon=ma_bo_mon)
+            
+            gv_co_lich = gv_query.distinct().values(
+                'ma_gv__ma_gv', 'ma_gv__ten_gv', 'ma_gv__ma_bo_mon__ma_khoa__ten_khoa'
+            ).order_by('ma_gv__ma_gv')
+            
+            teachers = [{
+                'ma_gv': gv['ma_gv__ma_gv'], 
+                'ten_gv': gv['ma_gv__ten_gv'],
+                'ten_khoa': gv['ma_gv__ma_bo_mon__ma_khoa__ten_khoa']
+            } for gv in gv_co_lich]
             context['teachers'] = teachers
             
-            # Nếu chưa chọn GV, chọn GV đầu tiên
-            if not selected_id and teachers:
-                selected_id = teachers[0]['ma_gv']
+            # Không tự động chọn GV, bắt buộc phải chọn thủ công
+            # Nếu chưa chọn GV, không hiển thị lịch
+            if selected_id:
                 context['selected_id'] = selected_id
             
             if selected_id:
@@ -806,7 +914,8 @@ def thoikhoabieu_view(request):
                     # Lấy TKB của các lớp đó
                     tkb_list = ThoiKhoaBieu.objects.filter(
                         ma_dot=dot_xep,
-                        ma_lop__ma_lop__in=lop_gv
+                        ma_lop__ma_lop__in=lop_gv,
+                        is_deleted=False
                     ).select_related(
                         'ma_lop', 'ma_lop__ma_mon_hoc', 'ma_phong', 
                         'time_slot_id', 'time_slot_id__ca'
@@ -825,14 +934,31 @@ def thoikhoabieu_view(request):
                 
         else:  # view_type == 'room'
             # Lấy danh sách phòng CÓ LỊCH SỬ DỤNG trong đợt này
-            rooms = PhongHoc.objects.filter(
-                tkb_list__ma_dot=dot_xep
-            ).distinct().order_by('ma_phong')
+            room_query = PhongHoc.objects.filter(
+                tkb_list__ma_dot=dot_xep,
+                tkb_list__is_deleted=False
+            )
+            
+            # Filter theo khoa nếu có (qua PhanCong của lớp)
+            if ma_khoa:
+                room_query = room_query.filter(
+                    tkb_list__ma_lop__phan_cong_list__ma_gv__ma_bo_mon__ma_khoa__ma_khoa=ma_khoa,
+                    tkb_list__ma_lop__phan_cong_list__ma_dot=dot_xep
+                )
+            
+            # Filter theo bộ môn nếu có
+            if ma_bo_mon:
+                room_query = room_query.filter(
+                    tkb_list__ma_lop__phan_cong_list__ma_gv__ma_bo_mon__ma_bo_mon=ma_bo_mon,
+                    tkb_list__ma_lop__phan_cong_list__ma_dot=dot_xep
+                )
+            
+            rooms = room_query.distinct().order_by('ma_phong')
             context['rooms'] = rooms
             
-            # Nếu chưa chọn phòng, chọn phòng đầu tiên
-            if not selected_id and rooms.exists():
-                selected_id = rooms.first().ma_phong
+            # Không tự động chọn phòng, bắt buộc phải chọn thủ công
+            # Nếu chưa chọn phòng, không hiển thị lịch
+            if selected_id:
                 context['selected_id'] = selected_id
             
             if selected_id:
@@ -843,7 +969,8 @@ def thoikhoabieu_view(request):
                     # Lấy TKB của phòng
                     tkb_list = ThoiKhoaBieu.objects.filter(
                         ma_dot=dot_xep,
-                        ma_phong=phong
+                        ma_phong=phong,
+                        is_deleted=False
                     ).select_related(
                         'ma_lop', 'ma_lop__ma_mon_hoc', 'ma_phong',
                         'time_slot_id', 'time_slot_id__ca'
@@ -940,6 +1067,7 @@ def build_schedule_data(tkb_list, display_mode, week_number, dot_xep):
         })
         
         class_info = {
+            'ma_tkb': tkb.ma_tkb,  # Thêm mã TKB để có thể edit/delete
             'ma_lop': tkb.ma_lop.ma_lop,
             'mon_hoc': tkb.ma_lop.ma_mon_hoc.ten_mon_hoc,
             'ma_mon': tkb.ma_lop.ma_mon_hoc.ma_mon_hoc,
@@ -948,6 +1076,7 @@ def build_schedule_data(tkb_list, display_mode, week_number, dot_xep):
             'gv_code': gv_info['gv_code'],
             'weeks': weeks,
             'week_display': format_weeks(weeks) if display_mode == 'general' else f'Tuần {week_number}',
+            'tuan_hoc': tkb.tuan_hoc or ('1' * 15),  # Pattern tuần học để edit
         }
         
         schedule[thu_key][ca]['classes'].append(class_info)
@@ -1055,3 +1184,1047 @@ def get_week_dates(dot_xep, week_number):
         }
     
     return week_dates
+
+
+# ==================== VALIDATION FUNCTIONS ====================
+
+def validate_tkb_constraints(ma_dot, ma_lop, ma_phong, time_slot_id, ma_gv=None, exclude_ma_tkb=None):
+    """
+    Kiểm tra các ràng buộc khi thêm/sửa TKB
+    Returns: {
+        'valid': True/False,
+        'errors': [],  # Ràng buộc cứng bị vi phạm
+        'warnings': []  # Ràng buộc mềm bị vi phạm
+    }
+    """
+    errors = []
+    warnings = []
+    
+    try:
+        dot_xep = DotXep.objects.get(ma_dot=ma_dot)
+        lop_mon_hoc = LopMonHoc.objects.get(ma_lop=ma_lop)
+        phong_hoc = PhongHoc.objects.get(ma_phong=ma_phong) if ma_phong else None
+        time_slot = TimeSlot.objects.get(time_slot_id=time_slot_id)
+        
+        # Lấy GV từ phân công nếu không truyền vào
+        if not ma_gv:
+            phan_cong = PhanCong.objects.filter(
+                ma_dot=dot_xep, ma_lop=lop_mon_hoc
+            ).first()
+            if phan_cong and phan_cong.ma_gv:
+                ma_gv = phan_cong.ma_gv.ma_gv
+        
+        giang_vien = GiangVien.objects.get(ma_gv=ma_gv) if ma_gv else None
+        
+        # 1. RÀNG BUỘC CỨNG: Kiểm tra trùng phòng cùng thời gian
+        if phong_hoc:
+            conflicting_room = ThoiKhoaBieu.objects.filter(
+                ma_dot=dot_xep,
+                ma_phong=phong_hoc,
+                time_slot_id=time_slot,
+                is_deleted=False
+            )
+            if exclude_ma_tkb:
+                conflicting_room = conflicting_room.exclude(ma_tkb=exclude_ma_tkb)
+            
+            if conflicting_room.exists():
+                conflict = conflicting_room.first()
+                errors.append(
+                    f"❌ Phòng {phong_hoc.ma_phong} đã bị trùng với lớp "
+                    f"{conflict.ma_lop.ma_lop} ({conflict.ma_lop.ma_mon_hoc.ten_mon_hoc}) "
+                    f"vào {time_slot}"
+                )
+        
+        # 2. RÀNG BUỘC CỨNG: Kiểm tra trùng giáo viên cùng thời gian
+        if giang_vien:
+            # Lấy tất cả các lớp GV dạy trong đợt này
+            lop_cua_gv = PhanCong.objects.filter(
+                ma_dot=dot_xep, ma_gv=giang_vien
+            ).values_list('ma_lop__ma_lop', flat=True)
+            
+            conflicting_teacher = ThoiKhoaBieu.objects.filter(
+                ma_dot=dot_xep,
+                ma_lop__ma_lop__in=lop_cua_gv,
+                time_slot_id=time_slot,
+                is_deleted=False
+            )
+            if exclude_ma_tkb:
+                conflicting_teacher = conflicting_teacher.exclude(ma_tkb=exclude_ma_tkb)
+            
+            if conflicting_teacher.exists():
+                conflict = conflicting_teacher.first()
+                errors.append(
+                    f"❌ GV {giang_vien.ten_gv} đã có lịch dạy lớp "
+                    f"{conflict.ma_lop.ma_lop} ({conflict.ma_lop.ma_mon_hoc.ten_mon_hoc}) "
+                    f"vào {time_slot}"
+                )
+        
+        # 3. RÀNG BUỘC CỨNG: Kiểm tra phòng phù hợp với loại môn (LT/TH)
+        if phong_hoc and lop_mon_hoc:
+            mon_hoc = lop_mon_hoc.ma_mon_hoc
+            # Kiểm tra nếu môn có thực hành nhưng phòng không phải phòng TH
+            if mon_hoc.so_tiet_th and mon_hoc.so_tiet_th > 0:
+                if phong_hoc.loai_phong and 'TH' not in phong_hoc.loai_phong.upper() and 'MÁY' not in phong_hoc.loai_phong.upper():
+                    warnings.append(
+                        f"⚠️ Môn {mon_hoc.ten_mon_hoc} có {mon_hoc.so_tiet_th} tiết TH "
+                        f"nhưng phòng {phong_hoc.ma_phong} là {phong_hoc.loai_phong or 'không xác định'}"
+                    )
+            
+            # Kiểm tra nếu chỉ có lý thuyết nhưng lại dùng phòng máy
+            if (not mon_hoc.so_tiet_th or mon_hoc.so_tiet_th == 0) and mon_hoc.so_tiet_lt:
+                if phong_hoc.loai_phong and ('TH' in phong_hoc.loai_phong.upper() or 'MÁY' in phong_hoc.loai_phong.upper()):
+                    warnings.append(
+                        f"⚠️ Môn {mon_hoc.ten_mon_hoc} chỉ có lý thuyết "
+                        f"nhưng đang xếp vào phòng {phong_hoc.ma_phong} ({phong_hoc.loai_phong})"
+                    )
+        
+        # 4. RÀNG BUỘC CỨNG: Kiểm tra sức chứa phòng
+        if phong_hoc and phong_hoc.suc_chua and lop_mon_hoc.so_luong_sv:
+            if lop_mon_hoc.so_luong_sv > phong_hoc.suc_chua:
+                errors.append(
+                    f"❌ Lớp có {lop_mon_hoc.so_luong_sv} SV nhưng phòng "
+                    f"{phong_hoc.ma_phong} chỉ chứa được {phong_hoc.suc_chua} người"
+                )
+        
+        # 5. RÀNG BUỘC MỀM: Kiểm tra giờ làm việc của GV (số tiết/tuần)
+        if giang_vien:
+            # Đếm số tiết GV đã dạy trong tuần
+            total_slots = ThoiKhoaBieu.objects.filter(
+                ma_dot=dot_xep,
+                ma_lop__ma_lop__in=lop_cua_gv,
+                is_deleted=False
+            ).count()
+            
+            if exclude_ma_tkb:
+                # Nếu đang sửa, không tính slot hiện tại
+                pass
+            else:
+                # Nếu đang thêm mới
+                total_slots += 1
+            
+            # Giả sử mỗi slot = 1 ca = 3 tiết, tối đa 10 ca/tuần = 30 tiết
+            MAX_SLOTS_PER_WEEK = 10
+            if total_slots > MAX_SLOTS_PER_WEEK:
+                warnings.append(
+                    f"⚠️ GV {giang_vien.ten_gv} đã có {total_slots - 1} ca dạy, "
+                    f"nếu thêm ca này sẽ là {total_slots} ca (khuyến nghị tối đa {MAX_SLOTS_PER_WEEK} ca/tuần)"
+                )
+        
+        # 6. RÀNG BUỘC MỀM: Kiểm tra nguyện vọng của GV
+        if giang_vien:
+            nguyen_vong = NguyenVong.objects.filter(
+                ma_dot=dot_xep,
+                ma_gv=giang_vien,
+                time_slot_id=time_slot
+            ).exists()
+            
+            if nguyen_vong:
+                # GV đã đăng ký nguyện vọng muốn dạy slot này
+                pass
+            else:
+                # GV chưa đăng ký nguyện vọng cho slot này
+                warnings.append(
+                    f"ℹ️ GV {giang_vien.ten_gv} chưa đăng ký nguyện vọng cho {time_slot}"
+                )
+        
+        # 7. Kiểm tra xem GV có đủ điều kiện dạy môn không
+        if giang_vien and lop_mon_hoc:
+            can_teach = GVDayMon.objects.filter(
+                ma_gv=giang_vien,
+                ma_mon_hoc=lop_mon_hoc.ma_mon_hoc
+            ).exists()
+            
+            if not can_teach:
+                warnings.append(
+                    f"⚠️ GV {giang_vien.ten_gv} chưa được đăng ký là người có thể dạy "
+                    f"môn {lop_mon_hoc.ma_mon_hoc.ten_mon_hoc}"
+                )
+        
+    except (DotXep.DoesNotExist, LopMonHoc.DoesNotExist, PhongHoc.DoesNotExist, 
+            TimeSlot.DoesNotExist, GiangVien.DoesNotExist) as e:
+        errors.append(f"❌ Lỗi dữ liệu: {str(e)}")
+    
+    return {
+        'valid': len(errors) == 0,
+        'errors': errors,
+        'warnings': warnings
+    }
+
+
+# ==================== API ENDPOINTS FOR CRUD ====================
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def tkb_create_api(request):
+    """API tạo mới một bản ghi TKB - tự động tạo lớp môn học mới"""
+    try:
+        data = json.loads(request.body)
+        ma_dot = data.get('ma_dot')
+        ma_mon_hoc = data.get('ma_mon_hoc')  # Đổi từ ma_lop sang ma_mon_hoc
+        ma_gv = data.get('ma_gv')  # Mã giáo viên
+        nhom_mh = int(data.get('nhom_mh', 1))
+        to_mh = int(data.get('to_mh', 0))
+        so_luong_sv = int(data.get('so_luong_sv', 40))
+        ma_phong = data.get('ma_phong')
+        time_slot_id = data.get('time_slot_id')
+        tuan_hoc = data.get('tuan_hoc', '1' * 15)  # Mặc định tất cả 15 tuần
+        
+        if not all([ma_dot, ma_mon_hoc, ma_gv, ma_phong, time_slot_id]):
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Thiếu thông tin bắt buộc'
+            }, status=400)
+        
+        # Lấy objects
+        dot_xep = DotXep.objects.get(ma_dot=ma_dot)
+        mon_hoc = MonHoc.objects.get(ma_mon_hoc=ma_mon_hoc)
+        giang_vien = GiangVien.objects.get(ma_gv=ma_gv)
+        ts = TimeSlot.objects.get(time_slot_id=time_slot_id)
+        
+        # Tạo mã lớp: MAHOC_Nhom_To (VD: TOAN_1_0, CNTT_2_1)
+        if to_mh > 0:
+            ma_lop = f"{ma_mon_hoc}_{nhom_mh}_{to_mh}"
+        else:
+            ma_lop = f"{ma_mon_hoc}_{nhom_mh}"
+        
+        # Kiểm tra lớp đã tồn tại chưa
+        lop, created = LopMonHoc.objects.get_or_create(
+            ma_lop=ma_lop,
+            defaults={
+                'ma_mon_hoc': mon_hoc,
+                'nhom_mh': nhom_mh,
+                'to_mh': to_mh,
+                'so_luong_sv': so_luong_sv,
+                'so_ca_tuan': 1,
+            }
+        )
+        
+        if not created:
+            # Lớp đã tồn tại, cập nhật thông tin
+            lop.so_luong_sv = so_luong_sv
+            lop.save()
+        
+        # Tạo hoặc cập nhật phân công
+        phan_cong, pc_created = PhanCong.objects.get_or_create(
+            ma_dot=dot_xep,
+            ma_lop=lop,
+            defaults={
+                'ma_gv': giang_vien,
+            }
+        )
+        
+        if not pc_created and phan_cong.ma_gv != giang_vien:
+            phan_cong.ma_gv = giang_vien
+            phan_cong.save()
+        
+        # Validate ràng buộc
+        validation = validate_tkb_constraints(
+            ma_dot, lop.ma_lop, ma_phong, time_slot_id
+        )
+        
+        if not validation['valid']:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Vi phạm ràng buộc cứng',
+                'errors': validation['errors'],
+                'warnings': validation['warnings']
+            }, status=400)
+        
+        # Tạo mã TKB siêu ngắn (max 15 ký tự)
+        # Vì cột MaTKB chỉ có max_length=15 trong database
+        # Format: {thu}{ca}{hash6}
+        # VD: 21A3F5B8 = Thứ 2, Ca 1, Hash 6 ký tự
+        
+        import hashlib
+        import re
+        
+        # Lấy thứ và ca từ timeslot (VD: Thu2-Ca1 → 2, 1)
+        ts_match = re.match(r'Thu(\d+)-Ca(\d+)', time_slot_id)
+        if ts_match:
+            thu = ts_match.group(1)
+            ca = ts_match.group(2)
+        else:
+            # Fallback nếu format khác (CN-Ca1 → 8, 1)
+            thu = '8' if 'CN' in time_slot_id else '0'
+            ca_match = re.search(r'Ca(\d+)', time_slot_id)
+            ca = ca_match.group(1) if ca_match else '0'
+        
+        # Hash từ đợt + lớp để đảm bảo unique
+        hash_input = f"{ma_dot}_{ma_lop}_{time_slot_id}".encode()
+        hash_hex = hashlib.md5(hash_input).hexdigest()[:6].upper()
+        
+        # Mã TKB: {thu}{ca}{hash} (VD: 21A3F5B8 = 8 ký tự)
+        ma_tkb = f"{thu}{ca}{hash_hex}"
+        
+        # Kiểm tra TKB đã tồn tại chưa
+        if ThoiKhoaBieu.objects.filter(ma_tkb=ma_tkb, is_deleted=False).exists():
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Lịch này đã tồn tại: {ma_lop} - {time_slot_id}'
+            }, status=400)
+        
+        # Lấy ngày bắt đầu/kết thúc từ đợt
+        ngay_bd = dot_xep.ma_du_kien_dt.ngay_bd if dot_xep.ma_du_kien_dt else None
+        ngay_kt = dot_xep.ma_du_kien_dt.ngay_kt if dot_xep.ma_du_kien_dt else None
+        
+        # Tạo TKB
+        tkb = ThoiKhoaBieu.objects.create(
+            ma_tkb=ma_tkb,
+            ma_dot=dot_xep,
+            ma_lop=lop,
+            ma_phong_id=ma_phong,
+            time_slot_id=ts,
+            tuan_hoc=tuan_hoc,
+            ngay_bd=ngay_bd,
+            ngay_kt=ngay_kt,
+            is_deleted=False
+        )
+        
+        # Log
+        new_data = {
+            'ma_tkb': tkb.ma_tkb,
+            'ma_lop': tkb.ma_lop.ma_lop,
+            'ma_mon_hoc': mon_hoc.ma_mon_hoc,
+            'ma_gv': giang_vien.ma_gv,
+            'ma_phong': tkb.ma_phong.ma_phong if tkb.ma_phong else None,
+            'time_slot_id': tkb.time_slot_id.time_slot_id,
+            'tuan_hoc': tkb.tuan_hoc,
+        }
+        
+        TKBLog.objects.create(
+            ma_tkb=ma_tkb,
+            action='CREATE',
+            user=request.user.username if request.user.is_authenticated else 'anonymous',
+            old_data=None,
+            new_data=new_data,
+            reason='Tạo lịch mới'
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': f'Thêm lịch thành công! Lớp: {ma_lop}, GV: {giang_vien.ten_gv}',
+            'warnings': validation.get('warnings', []),
+            'data': {
+                'ma_tkb': tkb.ma_tkb,
+                'ma_lop': tkb.ma_lop.ma_lop,
+                'ma_mon_hoc': mon_hoc.ten_mon_hoc,
+                'ma_gv': giang_vien.ten_gv,
+                'ma_phong': tkb.ma_phong.ma_phong if tkb.ma_phong else None,
+                'time_slot': str(tkb.time_slot_id),
+                'created_new_class': created
+            }
+        })
+        
+    except Exception as e:
+        logger.exception(f"Lỗi khi tạo TKB: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def tkb_update_api(request):
+    """API cập nhật TKB"""
+    try:
+        data = json.loads(request.body)
+        ma_tkb = data.get('ma_tkb')
+        ma_phong = data.get('ma_phong')
+        time_slot_id = data.get('time_slot_id')
+        tuan_hoc = data.get('tuan_hoc')
+        
+        tkb = ThoiKhoaBieu.objects.get(ma_tkb=ma_tkb)
+        
+        # Validate với exclude current
+        validation = validate_tkb_constraints(
+            tkb.ma_dot.ma_dot,
+            tkb.ma_lop.ma_lop,
+            ma_phong or tkb.ma_phong.ma_phong,
+            time_slot_id or tkb.time_slot_id.time_slot_id,
+            exclude_ma_tkb=ma_tkb
+        )
+        
+        if not validation['valid']:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Vi phạm ràng buộc cứng',
+                'errors': validation['errors'],
+                'warnings': validation['warnings']
+            }, status=400)
+        
+        # Lưu old data
+        old_data = {
+            'ma_phong': tkb.ma_phong.ma_phong if tkb.ma_phong else None,
+            'time_slot_id': tkb.time_slot_id.time_slot_id,
+            'tuan_hoc': tkb.tuan_hoc,
+        }
+        
+        # Update
+        if ma_phong:
+            tkb.ma_phong_id = ma_phong
+        if time_slot_id:
+            tkb.time_slot_id_id = time_slot_id
+        if tuan_hoc:
+            tkb.tuan_hoc = tuan_hoc
+        
+        tkb.save()
+        
+        # Log
+        new_data = {
+            'ma_phong': tkb.ma_phong.ma_phong if tkb.ma_phong else None,
+            'time_slot_id': tkb.time_slot_id.time_slot_id,
+            'tuan_hoc': tkb.tuan_hoc,
+        }
+        
+        TKBLog.objects.create(
+            ma_tkb=ma_tkb,
+            action='UPDATE',
+            user=request.user.username if request.user.is_authenticated else 'anonymous',
+            old_data=old_data,
+            new_data=new_data,
+            reason='Cập nhật lịch học'
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Cập nhật lịch thành công',
+            'warnings': validation['warnings']
+        })
+        
+    except ThoiKhoaBieu.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Không tìm thấy lịch học'
+        }, status=404)
+    except Exception as e:
+        logger.exception(f"Lỗi khi cập nhật TKB: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def tkb_delete_api(request):
+    """API xóa TKB (soft delete)"""
+    try:
+        data = json.loads(request.body)
+        ma_tkb = data.get('ma_tkb')
+        reason = data.get('reason', '')
+        
+        tkb = ThoiKhoaBieu.objects.get(ma_tkb=ma_tkb)
+        
+        # Lưu dữ liệu cũ trước khi xóa
+        old_data = {
+            'ma_tkb': tkb.ma_tkb,
+            'ma_lop': tkb.ma_lop.ma_lop,
+            'ma_phong': tkb.ma_phong.ma_phong if tkb.ma_phong else None,
+            'time_slot_id': tkb.time_slot_id.time_slot_id,
+            'tuan_hoc': tkb.tuan_hoc,
+        }
+        
+        # Soft delete
+        tkb.is_deleted = True
+        tkb.save()
+        
+        # Log
+        TKBLog.objects.create(
+            ma_tkb=ma_tkb,
+            action='DELETE',
+            user=request.user.username if request.user.is_authenticated else 'anonymous',
+            old_data=old_data,
+            new_data={'is_deleted': True},
+            reason=reason
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Xóa lịch thành công (có thể phục hồi)'
+        })
+        
+    except ThoiKhoaBieu.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Không tìm thấy lịch học'
+        }, status=404)
+    except Exception as e:
+        logger.exception(f"Lỗi khi xóa TKB: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def tkb_restore_api(request):
+    """API phục hồi TKB đã xóa"""
+    try:
+        data = json.loads(request.body)
+        ma_tkb = data.get('ma_tkb')
+        
+        tkb = ThoiKhoaBieu.objects.get(ma_tkb=ma_tkb)
+        
+        if not tkb.is_deleted:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Lịch này chưa bị xóa'
+            }, status=400)
+        
+        # Validate xem slot có bị trùng không
+        validation = validate_tkb_constraints(
+            tkb.ma_dot.ma_dot,
+            tkb.ma_lop.ma_lop,
+            tkb.ma_phong.ma_phong if tkb.ma_phong else None,
+            tkb.time_slot_id.time_slot_id,
+            exclude_ma_tkb=ma_tkb
+        )
+        
+        if not validation['valid']:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Không thể phục hồi vì vi phạm ràng buộc',
+                'errors': validation['errors']
+            }, status=400)
+        
+        # Phục hồi
+        tkb.is_deleted = False
+        tkb.save()
+        
+        # Log
+        TKBLog.objects.create(
+            ma_tkb=ma_tkb,
+            action='RESTORE',
+            user=request.user.username if request.user.is_authenticated else 'anonymous',
+            old_data={'is_deleted': True},
+            new_data={'is_deleted': False},
+            reason='Phục hồi lịch đã xóa'
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Phục hồi lịch thành công',
+            'warnings': validation['warnings']
+        })
+        
+    except ThoiKhoaBieu.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Không tìm thấy lịch học'
+        }, status=404)
+    except Exception as e:
+        logger.exception(f"Lỗi khi phục hồi TKB: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def tkb_swap_api(request):
+    """API hoán đổi 2 TKB"""
+    try:
+        data = json.loads(request.body)
+        ma_tkb_1 = data.get('ma_tkb_1')
+        ma_tkb_2 = data.get('ma_tkb_2')
+        
+        tkb1 = ThoiKhoaBieu.objects.get(ma_tkb=ma_tkb_1, is_deleted=False)
+        tkb2 = ThoiKhoaBieu.objects.get(ma_tkb=ma_tkb_2, is_deleted=False)
+        
+        # Lưu data cũ
+        old_data_1 = {
+            'ma_phong': tkb1.ma_phong.ma_phong if tkb1.ma_phong else None,
+            'time_slot_id': tkb1.time_slot_id.time_slot_id
+        }
+        old_data_2 = {
+            'ma_phong': tkb2.ma_phong.ma_phong if tkb2.ma_phong else None,
+            'time_slot_id': tkb2.time_slot_id.time_slot_id
+        }
+        
+        # Hoán đổi
+        temp_phong = tkb1.ma_phong
+        temp_slot = tkb1.time_slot_id
+        
+        tkb1.ma_phong = tkb2.ma_phong
+        tkb1.time_slot_id = tkb2.time_slot_id
+        
+        tkb2.ma_phong = temp_phong
+        tkb2.time_slot_id = temp_slot
+        
+        # Validate cả 2
+        val1 = validate_tkb_constraints(
+            tkb1.ma_dot.ma_dot, tkb1.ma_lop.ma_lop,
+            tkb1.ma_phong.ma_phong if tkb1.ma_phong else None,
+            tkb1.time_slot_id.time_slot_id,
+            exclude_ma_tkb=ma_tkb_1
+        )
+        
+        val2 = validate_tkb_constraints(
+            tkb2.ma_dot.ma_dot, tkb2.ma_lop.ma_lop,
+            tkb2.ma_phong.ma_phong if tkb2.ma_phong else None,
+            tkb2.time_slot_id.time_slot_id,
+            exclude_ma_tkb=ma_tkb_2
+        )
+        
+        if not val1['valid'] or not val2['valid']:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Không thể hoán đổi vì vi phạm ràng buộc',
+                'errors': val1['errors'] + val2['errors']
+            }, status=400)
+        
+        # Lưu
+        tkb1.save()
+        tkb2.save()
+        
+        # Log
+        user = request.user.username if request.user.is_authenticated else 'anonymous'
+        TKBLog.objects.create(
+            ma_tkb=ma_tkb_1,
+            action='SWAP',
+            user=user,
+            old_data=old_data_1,
+            new_data={'ma_phong': tkb1.ma_phong.ma_phong if tkb1.ma_phong else None,
+                     'time_slot_id': tkb1.time_slot_id.time_slot_id},
+            reason=f'Hoán đổi với {ma_tkb_2}'
+        )
+        
+        TKBLog.objects.create(
+            ma_tkb=ma_tkb_2,
+            action='SWAP',
+            user=user,
+            old_data=old_data_2,
+            new_data={'ma_phong': tkb2.ma_phong.ma_phong if tkb2.ma_phong else None,
+                     'time_slot_id': tkb2.time_slot_id.time_slot_id},
+            reason=f'Hoán đổi với {ma_tkb_1}'
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Hoán đổi lịch thành công',
+            'warnings': val1['warnings'] + val2['warnings']
+        })
+        
+    except ThoiKhoaBieu.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Không tìm thấy một trong hai lịch học'
+        }, status=404)
+    except Exception as e:
+        logger.exception(f"Lỗi khi hoán đổi TKB: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+
+
+@require_role('admin', 'truong_khoa')
+def tkb_manage_view(request):
+    """Trang quản lý TKB với layout 2 cột"""
+    # Lấy thông tin phân quyền
+    role_info = get_user_role_info(request.user)
+    user_role = role_info['role']
+    
+    ma_dot = request.GET.get('ma_dot', '')
+    ma_khoa = request.GET.get('ma_khoa', '')
+    view_type = request.GET.get('view_type', 'teacher')  # Default là 'teacher'
+    selected_id = request.GET.get('selected_id', '')  # ma_gv hoặc ma_phong
+    
+    # Áp dụng ràng buộc theo phân quyền
+    if user_role == 'truong_khoa':
+        ma_khoa = role_info['ma_khoa']
+    elif user_role == 'truong_bo_mon':
+        ma_khoa = role_info['ma_khoa']
+    elif user_role == 'giang_vien':
+        # Giáo viên không được phép truy cập trang quản lý
+        from django.contrib import messages
+        messages.error(request, 'Bạn không có quyền truy cập trang quản lý TKB')
+        from django.shortcuts import redirect
+        return redirect('/admin/sap_lich/thoikhoabieu/')
+    
+    from apps.scheduling.models import Khoa
+    
+    dot_list = DotXep.objects.all().order_by('-ma_dot')
+    
+    # Lấy danh sách khoa (filter theo quyền)
+    if user_role == 'truong_khoa':
+        khoa_list = Khoa.objects.filter(ma_khoa=role_info['ma_khoa']).order_by('ma_khoa')
+    elif user_role == 'truong_bo_mon' and role_info['ma_khoa']:
+        khoa_list = Khoa.objects.filter(ma_khoa=role_info['ma_khoa']).order_by('ma_khoa')
+    else:
+        khoa_list = Khoa.objects.all().order_by('ma_khoa')
+    
+    if not ma_dot and dot_list.exists():
+        ma_dot = dot_list.first().ma_dot
+    
+    context = {
+        **admin.site.each_context(request),
+        'title': 'Quản lý Thời Khóa Biểu',
+        'ma_dot': ma_dot,
+        'ma_khoa': ma_khoa,
+        'view_type': view_type,
+        'selected_id': selected_id,
+        'dots': dot_list,
+        'khoa_list': khoa_list,
+        'user_role': user_role,
+        'role_info': role_info,
+        'app_label': 'sap_lich',
+        'opts': {
+            'app_label': 'sap_lich',
+            'model_name': 'tkbmanage',
+            'verbose_name_plural': 'Quản lý TKB',
+        },
+    }
+    
+    if ma_dot:
+        try:
+            dot_xep = DotXep.objects.get(ma_dot=ma_dot)
+            context['dot_xep'] = dot_xep
+            
+            # Lấy danh sách lớp (filter theo khoa nếu có)
+            lop_query = LopMonHoc.objects.filter(
+                phan_cong_list__ma_dot=dot_xep
+            ).select_related('ma_mon_hoc')
+            
+            if ma_khoa:
+                lop_query = lop_query.filter(
+                    phan_cong_list__ma_gv__ma_bo_mon__ma_khoa__ma_khoa=ma_khoa
+                )
+            
+            # Thêm filter theo bộ môn nếu là Trưởng Bộ Môn
+            if user_role == 'truong_bo_mon' and role_info['ma_bo_mon']:
+                lop_query = lop_query.filter(
+                    phan_cong_list__ma_gv__ma_bo_mon__ma_bo_mon=role_info['ma_bo_mon']
+                )
+            
+            lop_list = lop_query.distinct()
+            context['lops'] = lop_list
+            
+            # Lấy danh sách giáo viên (có lịch dạy trong đợt này)
+            gv_query = PhanCong.objects.filter(
+                ma_dot=dot_xep,
+                ma_gv__isnull=False
+            ).select_related('ma_gv', 'ma_gv__ma_bo_mon', 'ma_gv__ma_bo_mon__ma_khoa')
+            
+            if ma_khoa:
+                gv_query = gv_query.filter(ma_gv__ma_bo_mon__ma_khoa__ma_khoa=ma_khoa)
+            
+            if user_role == 'truong_bo_mon' and role_info['ma_bo_mon']:
+                gv_query = gv_query.filter(ma_gv__ma_bo_mon__ma_bo_mon=role_info['ma_bo_mon'])
+            
+            gv_list = gv_query.distinct().values_list('ma_gv__ma_gv', 'ma_gv__ten_gv').order_by('ma_gv__ma_gv')
+            context['teachers'] = [{'ma_gv': gv[0], 'ten_gv': gv[1]} for gv in gv_list]
+            
+            # Lấy danh sách môn học (để tạo lớp mới)
+            mon_hoc_query = MonHoc.objects.all()
+            if ma_khoa:
+                # Filter môn học theo khoa (qua bộ môn -> GV -> môn dạy)
+                mon_hoc_query = mon_hoc_query.filter(
+                    gv_day_list__ma_gv__ma_bo_mon__ma_khoa__ma_khoa=ma_khoa
+                ).distinct()
+            context['mon_hoc_list'] = mon_hoc_query.order_by('ma_mon_hoc')
+            
+            # Lấy danh sách phòng (tất cả phòng, kèm loại phòng)
+            phong_query = PhongHoc.objects.all()
+            phong_list = phong_query.order_by('ma_phong').values('ma_phong', 'suc_chua', 'loai_phong')
+            context['phongs'] = list(phong_list)
+            
+            # Lấy danh sách timeslots
+            timeslot_list = TimeSlot.objects.all().order_by('thu', 'ca')
+            context['timeslots'] = timeslot_list
+            
+        except DotXep.DoesNotExist:
+            context['error'] = f'Không tìm thấy đợt {ma_dot}'
+    
+    return render(request, 'admin/tkb_manage.html', context)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def tkb_mini_schedule_api(request):
+    """API lấy mini schedule cho trang quản lý"""
+    try:
+        ma_dot = request.GET.get('ma_dot', '')
+        ma_khoa = request.GET.get('ma_khoa', '')
+        view_type = request.GET.get('view_type', '')  # 'teacher' hoặc 'room'
+        selected_id = request.GET.get('selected_id', '')  # ma_gv hoặc ma_phong
+        
+        if not ma_dot:
+            dot_xep = DotXep.objects.order_by('-ngay_tao').first()
+            if dot_xep:
+                ma_dot = dot_xep.ma_dot
+        else:
+            dot_xep = DotXep.objects.get(ma_dot=ma_dot)
+        
+        if not dot_xep:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Không tìm thấy đợt xếp lịch'
+            }, status=404)
+        
+        # Lấy TKB hiện tại (chưa xóa)
+        tkb_query = ThoiKhoaBieu.objects.filter(
+            ma_dot=dot_xep,
+            is_deleted=False
+        ).select_related(
+            'ma_lop', 'ma_lop__ma_mon_hoc', 'ma_phong',
+            'time_slot_id', 'time_slot_id__ca'
+        )
+        
+        # Chỉ hiển thị khi đã chọn GV hoặc phòng cụ thể
+        if view_type == 'teacher' and selected_id:
+            # Lấy các lớp mà GV dạy
+            lop_gv = PhanCong.objects.filter(
+                ma_dot=dot_xep, ma_gv__ma_gv=selected_id
+            ).values_list('ma_lop__ma_lop', flat=True)
+            tkb_query = tkb_query.filter(ma_lop__ma_lop__in=lop_gv)
+        elif view_type == 'room' and selected_id:
+            # Lấy TKB của phòng
+            tkb_query = tkb_query.filter(ma_phong__ma_phong=selected_id)
+        else:
+            # Nếu chưa chọn GV hoặc phòng, trả về empty
+            tkb_query = tkb_query.none()
+        
+        tkb_list = tkb_query.order_by('time_slot_id__thu', 'time_slot_id__ca')
+        
+        schedule = []
+        for tkb in tkb_list:
+            schedule.append({
+                'ma_tkb': tkb.ma_tkb,
+                'ma_lop': tkb.ma_lop.ma_lop,
+                'mon_hoc': tkb.ma_lop.ma_mon_hoc.ten_mon_hoc,
+                'ma_mon': tkb.ma_lop.ma_mon_hoc.ma_mon_hoc,
+                'ma_phong': tkb.ma_phong.ma_phong if tkb.ma_phong else None,
+                'thu': tkb.time_slot_id.thu,
+                'ca': tkb.time_slot_id.ca.ma_khung_gio,
+                'ten_ca': tkb.time_slot_id.ca.ten_ca,
+                'time_slot_id': tkb.time_slot_id.time_slot_id,
+                'tuan_hoc': tkb.tuan_hoc or '',
+            })
+        
+        # Lấy TKB đã xóa (cũng filter theo khoa nếu có)
+        deleted_query = ThoiKhoaBieu.objects.filter(
+            ma_dot=dot_xep,
+            is_deleted=True
+        ).select_related(
+            'ma_lop', 'ma_phong', 'time_slot_id'
+        )
+        
+        if ma_khoa:
+            deleted_query = deleted_query.filter(
+                ma_lop__phan_cong_list__ma_gv__ma_bo_mon__ma_khoa__ma_khoa=ma_khoa
+            ).distinct()
+        
+        deleted_list = deleted_query.order_by('-ngay_tao')[:20]
+        
+        deleted = []
+        for tkb in deleted_list:
+            deleted.append({
+                'ma_tkb': tkb.ma_tkb,
+                'ma_lop': tkb.ma_lop.ma_lop,
+                'mon_hoc': tkb.ma_lop.ma_mon_hoc.ten_mon_hoc,
+                'ma_phong': tkb.ma_phong.ma_phong if tkb.ma_phong else 'N/A',
+                'thu': tkb.time_slot_id.thu,
+                'ca': tkb.time_slot_id.ca.ma_khung_gio,
+            })
+        
+        return JsonResponse({
+            'status': 'success',
+            'schedule': schedule,
+            'deleted': deleted
+        })
+        
+    except Exception as e:
+        logger.exception(f"Lỗi khi lấy mini schedule: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+
+
+
+def build_mini_schedule(tkb_list):
+    """Xây dựng mini schedule cho sidebar"""
+    schedule = {}
+    for thu in range(2, 9):
+        schedule[thu] = {}
+    
+    for tkb in tkb_list:
+        thu = tkb.time_slot_id.thu
+        ca = tkb.time_slot_id.ca.ma_khung_gio
+        
+        if ca not in schedule[thu]:
+            schedule[thu][ca] = []
+        
+        schedule[thu][ca].append({
+            'ma_tkb': tkb.ma_tkb,
+            'ma_lop': tkb.ma_lop.ma_lop,
+            'mon_hoc': tkb.ma_lop.ma_mon_hoc.ten_mon_hoc,
+            'phong': tkb.ma_phong.ma_phong if tkb.ma_phong else 'TBA'
+        })
+    
+    return schedule
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def tkb_occupied_rooms_api(request):
+    """API lấy danh sách phòng đã được sử dụng cho 1 timeslot"""
+    try:
+        ma_dot = request.GET.get('ma_dot', '')
+        time_slot_id = request.GET.get('time_slot_id', '')
+        
+        if not ma_dot or not time_slot_id:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Thiếu tham số ma_dot hoặc time_slot_id'
+            }, status=400)
+        
+        # Lấy tất cả phòng đang được sử dụng trong timeslot này (không xóa)
+        occupied_rooms = ThoiKhoaBieu.objects.filter(
+            ma_dot__ma_dot=ma_dot,
+            time_slot_id__time_slot_id=time_slot_id,
+            is_deleted=False,
+            ma_phong__isnull=False
+        ).values_list('ma_phong__ma_phong', flat=True).distinct()
+        
+        return JsonResponse({
+            'status': 'success',
+            'occupied_rooms': list(occupied_rooms),
+            'count': len(occupied_rooms)
+        })
+        
+    except Exception as e:
+        logger.exception(f"Lỗi khi lấy occupied rooms: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def tkb_mon_hoc_info_api(request):
+    """API lấy thông tin môn học và các nhóm/tổ đã sử dụng"""
+    try:
+        ma_mon_hoc = request.GET.get('ma_mon_hoc', '')
+        
+        if not ma_mon_hoc:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Thiếu tham số ma_mon_hoc'
+            }, status=400)
+        
+        # Lấy thông tin môn học
+        mon_hoc = MonHoc.objects.get(ma_mon_hoc=ma_mon_hoc)
+        
+        # Lấy tất cả lớp môn học đã tồn tại cho môn này
+        existing_classes = LopMonHoc.objects.filter(
+            ma_mon_hoc=mon_hoc
+        ).values('nhom_mh', 'to_mh', 'ma_lop').order_by('nhom_mh', 'to_mh')
+        
+        # Phân tích nhóm đã dùng (1-10)
+        used_groups = {}
+        for lop in existing_classes:
+            nhom = lop['nhom_mh']
+            to = lop['to_mh']
+            
+            if nhom not in used_groups:
+                used_groups[nhom] = []
+            used_groups[nhom].append({
+                'to': to,
+                'ma_lop': lop['ma_lop']
+            })
+        
+        # Tìm nhóm trống (1-10)
+        available_groups = []
+        for nhom in range(1, 11):
+            if nhom not in used_groups:
+                available_groups.append({
+                    'nhom': nhom,
+                    'status': 'empty',
+                    'can_add_to': []
+                })
+            else:
+                # Kiểm tra nhóm này còn chỗ cho tổ mới không
+                existing_tos = [item['to'] for item in used_groups[nhom]]
+                
+                # Nếu là môn TH, mỗi nhóm tối đa 2 tổ (to=1, to=2)
+                if mon_hoc.so_tiet_th and mon_hoc.so_tiet_th > 0:
+                    can_add = []
+                    if 1 not in existing_tos:
+                        can_add.append(1)
+                    if 2 not in existing_tos:
+                        can_add.append(2)
+                    
+                    if can_add:
+                        available_groups.append({
+                            'nhom': nhom,
+                            'status': 'partial',
+                            'existing': used_groups[nhom],
+                            'can_add_to': can_add
+                        })
+                else:
+                    # Môn LT: mỗi nhóm chỉ có 1 lớp (to=0)
+                    # Nếu đã có to=0 thì không thêm được nữa
+                    pass
+        
+        # Suggest nhóm tiếp theo nên dùng
+        suggested_group = None
+        suggested_to = 0
+        
+        if mon_hoc.so_tiet_th and mon_hoc.so_tiet_th > 0:
+            # Môn TH: Ưu tiên dùng hết tổ của nhóm cũ trước khi tạo nhóm mới
+            for item in available_groups:
+                if item['status'] == 'partial' and item['can_add_to']:
+                    suggested_group = item['nhom']
+                    suggested_to = item['can_add_to'][0]
+                    break
+            
+            if not suggested_group:
+                # Không có nhóm nào còn chỗ, tạo nhóm mới
+                for item in available_groups:
+                    if item['status'] == 'empty':
+                        suggested_group = item['nhom']
+                        suggested_to = 1
+                        break
+        else:
+            # Môn LT: Tổ = 0, tìm nhóm trống đầu tiên
+            for item in available_groups:
+                if item['status'] == 'empty':
+                    suggested_group = item['nhom']
+                    suggested_to = 0
+                    break
+        
+        return JsonResponse({
+            'status': 'success',
+            'mon_hoc': {
+                'ma_mon_hoc': mon_hoc.ma_mon_hoc,
+                'ten_mon_hoc': mon_hoc.ten_mon_hoc,
+                'so_tiet_lt': mon_hoc.so_tiet_lt or 0,
+                'so_tiet_th': mon_hoc.so_tiet_th or 0,
+                'loai': 'TH' if (mon_hoc.so_tiet_th and mon_hoc.so_tiet_th > 0) else 'LT'
+            },
+            'used_groups': used_groups,
+            'available_groups': available_groups,
+            'suggested': {
+                'nhom': suggested_group,
+                'to': suggested_to
+            }
+        })
+        
+    except MonHoc.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Không tìm thấy môn học: {ma_mon_hoc}'
+        }, status=404)
+    except Exception as e:
+        logger.exception(f"Lỗi khi lấy thông tin môn học: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+

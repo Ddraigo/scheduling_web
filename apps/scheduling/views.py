@@ -52,18 +52,18 @@ class KhoaViewSet(viewsets.ModelViewSet):
 
 class BoMonViewSet(viewsets.ModelViewSet):
     """ViewSet for BoMon (Department)"""
-    queryset = BoMon.objects.select_related('khoa').all()
+    queryset = BoMon.objects.select_related('ma_khoa').all()
     serializer_class = BoMonSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ['khoa']
+    filterset_fields = ['ma_khoa']
 
 
 class GiangVienViewSet(viewsets.ModelViewSet):
     """ViewSet for GiangVien (Teacher)"""
-    queryset = GiangVien.objects.select_related('bo_mon').all()
+    queryset = GiangVien.objects.select_related('ma_bo_mon').all()
     serializer_class = GiangVienSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ['bo_mon']
+    filterset_fields = ['ma_bo_mon']
     search_fields = ['ma_gv', 'ten_gv', 'email']
 
 
@@ -80,17 +80,17 @@ class PhongHocViewSet(viewsets.ModelViewSet):
     queryset = PhongHoc.objects.all()
     serializer_class = PhongHocSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ['loai_phong', 'toa_nha']
-    search_fields = ['ma_phong', 'ten_phong']
+    filterset_fields = ['loai_phong']
+    search_fields = ['ma_phong']
 
 
 class LopMonHocViewSet(viewsets.ModelViewSet):
     """ViewSet for LopMonHoc (Class)"""
-    queryset = LopMonHoc.objects.select_related('mon_hoc').all()
+    queryset = LopMonHoc.objects.select_related('ma_mon_hoc').all()
     serializer_class = LopMonHocSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ['mon_hoc', 'loai_lop', 'hoc_ky', 'nam_hoc']
-    search_fields = ['ma_lop', 'ten_lop']
+    filterset_fields = ['ma_mon_hoc', 'nhom_mh', 'to_mh', 'he_dao_tao']
+    search_fields = ['ma_lop']
 
 
 class DotXepViewSet(viewsets.ModelViewSet):
@@ -104,11 +104,11 @@ class DotXepViewSet(viewsets.ModelViewSet):
 class PhanCongViewSet(viewsets.ModelViewSet):
     """ViewSet for PhanCong (Teaching Assignment)"""
     queryset = PhanCong.objects.select_related(
-        'dot_xep', 'lop_mon_hoc', 'giang_vien', 'lop_mon_hoc__mon_hoc'
+        'ma_dot', 'ma_lop', 'ma_gv', 'ma_lop__ma_mon_hoc'
     ).all()
     serializer_class = PhanCongSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ['dot_xep', 'giang_vien', 'lop_mon_hoc']
+    filterset_fields = ['ma_dot', 'ma_gv', 'ma_lop']
 
 
 class TimeSlotViewSet(viewsets.ReadOnlyModelViewSet):
@@ -122,12 +122,11 @@ class TimeSlotViewSet(viewsets.ReadOnlyModelViewSet):
 class ThoiKhoaBieuViewSet(viewsets.ModelViewSet):
     """ViewSet for ThoiKhoaBieu (Schedule)"""
     queryset = ThoiKhoaBieu.objects.select_related(
-        'dot_xep', 'phan_cong', 'lop_mon_hoc', 
-        'phong_hoc', 'time_slot', 'lop_mon_hoc__mon_hoc'
+        'ma_dot', 'ma_lop', 'ma_phong', 'time_slot_id', 'ma_lop__ma_mon_hoc'
     ).all()
     serializer_class = ThoiKhoaBieuSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ['dot_xep', 'lop_mon_hoc', 'phong_hoc', 'tuan_hoc']
+    filterset_fields = ['ma_dot', 'ma_lop', 'ma_phong', 'tuan_hoc']
     
     @action(detail=False, methods=['get'])
     def by_period(self, request):

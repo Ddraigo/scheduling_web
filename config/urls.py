@@ -52,6 +52,7 @@ urlpatterns = [
     path('admin/sap_lich/llm-scheduler/', admin.site.admin_view(views_sap_lich.llm_scheduler_view), name='sap_lich_llm_scheduler'),
     path('admin/sap_lich/algo-scheduler/', admin.site.admin_view(views_sap_lich.algo_scheduler_view), name='sap_lich_algo_scheduler'),
     path('admin/sap_lich/thoikhoabieu/', admin.site.admin_view(views_sap_lich.thoikhoabieu_view), name='sap_lich_thoikhoabieu'),
+    path('admin/sap_lich/tkb-manage/', admin.site.admin_view(views_sap_lich.tkb_manage_view), name='sap_lich_tkb_manage'),
     
     path("admin/", admin.site.urls),
     path("", include('admin_black.urls')),
