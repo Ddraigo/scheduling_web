@@ -80,7 +80,7 @@
         <div class="form-check mb-3">
             <input type="checkbox" id="saveToDbCheck" class="form-check-input" checked>
             <label class="form-check-label" for="saveToDbCheck">
-                Lưu kết quả vào database (ThoiKhoaBieu)
+                Lưu TKB vào Cơ sở dữ liệu
             </label>
         </div>
         
@@ -91,29 +91,108 @@
             <button type="button" class="btn btn-info" onclick="viewResult()">
                 📊 Tải kết quả có sẵn
             </button>
-            <button type="button" class="btn btn-secondary" onclick="clearLog()">
-                🗑️ Xóa log
-            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification Container -->
+<div id="toastContainer" style="position: fixed; top: 80px; right: 20px; z-index: 9999; max-width: 400px;"></div>
+
+<!-- Input Statistics Card -->
+<div class="card mb-4" id="statsCard" style="display: none;">
+    <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <h5 class="mb-0 text-white"><i class="fas fa-chart-bar"></i> Thống kê đầu vào</h5>
+    </div>
+    <div class="card-body">
+        <div class="row text-center" id="statsContent">
+            <div class="col-md-3 col-6 mb-3">
+                <div class="p-3 rounded" style="background: #e3f2fd;">
+                    <i class="fas fa-tasks fa-2x mb-2" style="color: #1976d2;"></i>
+                    <h4 class="mb-0" id="statPhanCong">-</h4>
+                    <small class="text-muted">Phân công</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="p-3 rounded" style="background: #e8f5e9;">
+                    <i class="fas fa-book fa-2x mb-2" style="color: #388e3c;"></i>
+                    <h4 class="mb-0" id="statLopMonHoc">-</h4>
+                    <small class="text-muted">Lớp môn học</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="p-3 rounded" style="background: #fff3e0;">
+                    <i class="fas fa-chalkboard-teacher fa-2x mb-2" style="color: #f57c00;"></i>
+                    <h4 class="mb-0" id="statGiangVien">-</h4>
+                    <small class="text-muted">Giảng viên</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="p-3 rounded" style="background: #fce4ec;">
+                    <i class="fas fa-door-open fa-2x mb-2" style="color: #c2185b;"></i>
+                    <h4 class="mb-0" id="statPhongHoc">-</h4>
+                    <small class="text-muted">Phòng học</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="p-3 rounded" style="background: #f3e5f5;">
+                    <i class="fas fa-building fa-2x mb-2" style="color: #7b1fa2;"></i>
+                    <h4 class="mb-0" id="statPhongLT">-</h4>
+                    <small class="text-muted">Phòng lý thuyết</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="p-3 rounded" style="background: #e0f7fa;">
+                    <i class="fas fa-flask fa-2x mb-2" style="color: #0097a7;"></i>
+                    <h4 class="mb-0" id="statPhongTH">-</h4>
+                    <small class="text-muted">Phòng thực hành</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="p-3 rounded" style="background: #fff8e1;">
+                    <i class="fas fa-clock fa-2x mb-2" style="color: #ffa000;"></i>
+                    <h4 class="mb-0" id="statTimeSlots">-</h4>
+                    <small class="text-muted">Tiết học</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="p-3 rounded" style="background: #e8eaf6;">
+                    <i class="fas fa-heart fa-2x mb-2" style="color: #3f51b5;"></i>
+                    <h4 class="mb-0" id="statNguyenVong">-</h4>
+                    <small class="text-muted">Nguyện vọng</small>
+                </div>
+            </div>
+        </div>
+        <div id="statsLoading" class="text-center py-4" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Đang tải...</span>
+            </div>
+            <p class="mt-2 text-muted">Đang tải thống kê...</p>
         </div>
     </div>
 </div>
 
 <!-- Output Console -->
-<div class="card">
-    <div class="card-header">
-        <h5>📋 Log thực thi</h5>
+<div class="card" id="logCard">
+    <div class="card-header d-flex align-items-center" style="background: #2c3e50;">
+        <h5 class="mb-0" style="color: white;"><i class="fas fa-clipboard-list"></i> Nhật ký hoạt động</h5>
+        <button type="button" class="btn btn-sm ml-auto" onclick="clearLog()" style="background: rgba(255,255,255,0.2); color: white; border: none; margin-left: auto;">
+            <i class="fas fa-eraser"></i> Xóa
+        </button>
     </div>
-    <div class="card-body">
+    <div class="card-body" style="padding: 0; background: #1a252f;">
         <!-- Progress Bar -->
-        <div id="progressBarContainer" style="display: none; margin-bottom: 15px;">
-            <div class="progress" style="height: 25px;">
-                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                    <span id="progressText" style="font-weight: bold;">0%</span>
+        <div id="progressBarContainer" style="display: none; padding: 15px; padding-bottom: 10px; background: #2c3e50;">
+            <div class="progress" style="height: 20px; background: #1a252f; border-radius: 10px;">
+                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%; background: linear-gradient(90deg, #3498db 0%, #2ecc71 100%); border-radius: 10px;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                    <span id="progressText" style="font-weight: bold; font-size: 12px;">0%</span>
                 </div>
             </div>
         </div>
-        <div id="outputConsole" style="background-color: #1e1e1e; color: #00ff00; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word;">
-            Đang chờ thực hiện lệnh...
+        <div id="outputConsole">
+            <div class="log-item">
+                <span class="log-icon">⏳</span>
+                <span class="log-text">Đang chờ thực hiện lệnh...</span>
+            </div>
         </div>
     </div>
 </div>
@@ -269,14 +348,9 @@
 <div class="card" id="scheduleTableCard" style="display: none;">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">📅 Thời khóa biểu (<span id="scheduleCount">0</span> buổi học)</h5>
-        <div class="btn-group btn-group-sm">
-            <button class="btn btn-outline-primary" onclick="exportToExcel()">
-                <i class="fas fa-file-excel"></i> Xuất Excel
-            </button>
-            <button class="btn btn-outline-secondary" onclick="filterSchedule()">
-                <i class="fas fa-filter"></i> Lọc
-            </button>
-        </div>
+        <button class="btn btn-success btn-sm ml-auto" onclick="exportToExcel()" style="margin-left: auto !important;">
+            <i class="fas fa-file-excel"></i> Xuất Excel
+        </button>
     </div>
     <div class="card-body">
         <!-- Filter Section -->
@@ -512,7 +586,7 @@
     
     /* Table */
     #scheduleTable {
-        font-size: 13px;
+        font-size: 14px;
         white-space: nowrap;
     }
     #scheduleTable th {
@@ -522,12 +596,19 @@
         top: 0;
         z-index: 10;
         font-weight: 600;
+        font-size: 13px;
         text-align: center;
         vertical-align: middle;
+        padding: 10px 12px;
     }
     #scheduleTable td {
         vertical-align: middle;
-        padding: 8px 12px;
+        padding: 10px 12px;
+        font-size: 14px;
+        font-weight: 400;
+    }
+    #scheduleTable td.text-center {
+        text-align: center;
     }
     .table-hover tbody tr:hover {
         background-color: #e3f2fd;
@@ -538,16 +619,36 @@
     .badge-room {
         background: #667eea;
         color: white;
-        padding: 4px 10px;
+        padding: 5px 12px;
         border-radius: 12px;
-        font-weight: 600;
+        font-weight: 500;
+        font-size: 13px;
+        display: inline-block;
     }
     .badge-teacher {
         background: #11998e;
         color: white;
-        padding: 4px 10px;
+        padding: 5px 12px;
         border-radius: 12px;
-        font-size: 11px;
+        font-weight: 500;
+        font-size: 13px;
+        display: inline-block;
+    }
+    .badge-day {
+        background: #3498db;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 13px;
+    }
+    .badge-time {
+        background: #95a5a6;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-weight: 400;
+        font-size: 12px;
     }
     
     /* Validation Status */
@@ -572,6 +673,166 @@
         border-radius: 6px;
         border: 1px solid #dee2e6;
     }
+    
+    /* Log Console */
+    #logCard {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    #outputConsole {
+        background: linear-gradient(180deg, #1a252f 0%, #2c3e50 100%);
+        padding: 20px;
+        min-height: 200px;
+        max-height: 400px;
+        overflow-y: auto;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        border-radius: 0 0 12px 12px;
+    }
+    #outputConsole::-webkit-scrollbar {
+        width: 8px;
+    }
+    #outputConsole::-webkit-scrollbar-track {
+        background: #1a252f;
+    }
+    #outputConsole::-webkit-scrollbar-thumb {
+        background: #3498db;
+        border-radius: 4px;
+    }
+    
+    /* Log Items */
+    .log-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 10px 15px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.05);
+        border-left: 3px solid #3498db;
+        color: #ecf0f1;
+        transition: all 0.2s;
+    }
+    .log-item:hover {
+        background: rgba(255,255,255,0.1);
+    }
+    .log-item:last-child {
+        margin-bottom: 0;
+    }
+    .log-icon {
+        margin-right: 12px;
+        font-size: 14px;
+        min-width: 20px;
+        text-align: center;
+    }
+    .log-text {
+        flex: 1;
+        word-break: break-word;
+        color: #ecf0f1;
+    }
+    .log-time {
+        font-size: 11px;
+        color: #7f8c8d;
+        margin-left: 15px;
+        white-space: nowrap;
+        font-family: 'Consolas', monospace;
+    }
+    .log-success {
+        border-left-color: #2ecc71;
+        background: rgba(46, 204, 113, 0.15);
+    }
+    .log-success .log-text {
+        color: #2ecc71;
+    }
+    .log-error {
+        border-left-color: #e74c3c;
+        background: rgba(231, 76, 60, 0.15);
+    }
+    .log-error .log-text {
+        color: #e74c3c;
+    }
+    .log-warning {
+        border-left-color: #f39c12;
+        background: rgba(243, 156, 18, 0.15);
+    }
+    .log-warning .log-text {
+        color: #f39c12;
+    }
+    .log-info {
+        border-left-color: #3498db;
+    }
+    
+    /* Toast Notifications */
+    .toast-notification {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        padding: 16px 20px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: flex-start;
+        animation: slideIn 0.3s ease;
+        border-left: 5px solid #667eea;
+    }
+    .toast-notification.toast-success {
+        border-left-color: #28a745;
+    }
+    .toast-notification.toast-error {
+        border-left-color: #dc3545;
+    }
+    .toast-notification.toast-warning {
+        border-left-color: #ffc107;
+    }
+    .toast-icon {
+        font-size: 24px;
+        margin-right: 12px;
+    }
+    .toast-content {
+        flex: 1;
+    }
+    .toast-title {
+        font-weight: 600;
+        font-size: 15px;
+        margin-bottom: 4px;
+    }
+    .toast-message {
+        font-size: 13px;
+        color: #666;
+    }
+    .toast-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #999;
+        cursor: pointer;
+        padding: 0;
+        margin-left: 10px;
+    }
+    .toast-close:hover {
+        color: #333;
+    }
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -591,15 +852,81 @@
     };
     
     function log(message, type = 'info') {
-        const console = document.getElementById('outputConsole');
-        const timestamp = new Date().toLocaleTimeString();
-        const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
-        console.innerHTML += `[${timestamp}] ${prefix} ${message}\n`;
-        console.scrollTop = console.scrollHeight;
+        const consoleEl = document.getElementById('outputConsole');
+        const time = new Date().toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+        
+        let icon = 'ℹ️';
+        let logClass = 'log-info';
+        
+        if (type === 'success') {
+            icon = '✅';
+            logClass = 'log-success';
+        } else if (type === 'error') {
+            icon = '❌';
+            logClass = 'log-error';
+        } else if (type === 'warning') {
+            icon = '⚠️';
+            logClass = 'log-warning';
+        }
+        
+        const logItem = document.createElement('div');
+        logItem.className = `log-item ${logClass}`;
+        logItem.innerHTML = `
+            <span class="log-icon">${icon}</span>
+            <span class="log-text">${message}</span>
+            <span class="log-time">${time}</span>
+        `;
+        
+        consoleEl.appendChild(logItem);
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+    
+    function showToast(title, message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        
+        let icon = 'ℹ️';
+        let toastClass = '';
+        
+        if (type === 'success') {
+            icon = '✅';
+            toastClass = 'toast-success';
+        } else if (type === 'error') {
+            icon = '❌';
+            toastClass = 'toast-error';
+        } else if (type === 'warning') {
+            icon = '⚠️';
+            toastClass = 'toast-warning';
+        }
+        
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${toastClass}`;
+        toast.innerHTML = `
+            <span class="toast-icon">${icon}</span>
+            <div class="toast-content">
+                <div class="toast-title">${title}</div>
+                <div class="toast-message">${message}</div>
+            </div>
+            <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+        `;
+        
+        container.appendChild(toast);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 5000);
     }
     
     function clearLog() {
-        document.getElementById('outputConsole').innerHTML = '';
+        document.getElementById('outputConsole').innerHTML = `
+            <div class="log-item">
+                <span class="log-icon">⏳</span>
+                <span class="log-text">Đang chờ thực hiện lệnh...</span>
+            </div>
+        `;
         hideProgressBar();
     }
     
@@ -671,7 +998,7 @@
         const select = document.getElementById('periodSelect');
         const periodId = select.value;
         if (!periodId) {
-            log('⚠️ Vui lòng chọn đợt xếp!', 'error');
+            showToast('Thiếu thông tin', 'Vui lòng chọn đợt xếp trước khi thực hiện!', 'warning');
             return null;
         }
         return periodId;
@@ -695,9 +1022,9 @@
         showProgressBar();
         const progressTimer = simulateProgress(timeLimit);
         
-        log(`🚀 Bắt đầu xếp lịch cho đợt: ${periodId}`);
-        log(`⚙️ Tham số: Strategy=${strategy}, Init=${initMethod}, Time=${timeLimit}s, Seed=${seed}`);
-        log(`⏳ Đang xử lý...`);
+        log(`Bắt đầu xếp lịch cho đợt: ${periodId}`);
+        log(`Tham số: Chiến lược=${strategy}, Khởi tạo=${initMethod}, Thời gian=${timeLimit}s`);
+        log(`Đang xử lý, vui lòng đợi...`);
         
         const payload = {
             ma_dot: periodId,
@@ -723,50 +1050,56 @@
             updateProgress(100);
             
             if (data.status === 'success') {
-                log(`✅ Xếp lịch thành công!`, 'success');
-                log(`⏱️ Thời gian: ${data.time_elapsed}s`);
-                log(`📈 Cost: ${data.initial_cost} → ${data.final_cost} (Cải thiện: ${data.improvement_percent}%)`);
+                log(`Xếp lịch thành công!`, 'success');
+                log(`Thời gian chạy: ${data.time_elapsed} giây`);
+                log(`Cost: ${data.initial_cost} → ${data.final_cost} (Cải thiện: ${data.improvement_percent}%)`);
+                
+                // Show toast notification
+                showToast('Xếp lịch thành công!', `Cost giảm từ ${data.initial_cost} xuống ${data.final_cost} (${data.improvement_percent}%)`, 'success');
                 
                 // Show results summary card
                 displayResultsSummary(data);
                 
                 // Cost breakdown log
-                log(`📊 Chi tiết cost:`);
+                log(`Chi tiết đánh giá chất lượng:`);
                 const breakdown = data.breakdown;
-                log(`  - 1. Giảm ngày lên trường GV: ${breakdown.teacher_working_days || 0}`);
-                log(`  - 2. Ngày giảng dạy tối thiểu: ${breakdown.min_working_days}`);
-                log(`  - 3. Liên tiếp tiết học: ${breakdown.lecture_consecutiveness}`);
-                log(`  - 4. Ổn định phòng: ${breakdown.room_stability}`);
-                log(`  - 5. GV dạy liên tiếp cùng phòng: ${breakdown.teacher_lecture_consolidation || 0}`);
-                log(`  - 6. Nguyện vọng GV: ${breakdown.teacher_preferences || breakdown.teacher_preference_violations || 0}`);
-                log(`  - TỔNG: ${data.final_cost}`);
+                log(`• Giảm ngày lên trường GV: ${breakdown.teacher_working_days || 0}`);
+                log(`• Ngày giảng dạy tối thiểu: ${breakdown.min_working_days}`);
+                log(`• Liên tiếp tiết học: ${breakdown.lecture_consecutiveness}`);
+                log(`• Ổn định phòng: ${breakdown.room_stability}`);
+                log(`• GV dạy liên tiếp cùng phòng: ${breakdown.teacher_lecture_consolidation || 0}`);
+                log(`• Nguyện vọng GV: ${breakdown.teacher_preferences || breakdown.teacher_preference_violations || 0}`);
+                log(`TỔNG COST: ${data.final_cost}`, 'success');
                 
                 if (data.saved_to_db) {
-                    log(`💾 Đã lưu ${data.details.lectures_scheduled} buổi học vào database`, 'success');
+                    log(`Đã lưu ${data.details.lectures_scheduled} buổi học vào database`, 'success');
                     
                     // Auto load schedule table (without re-displaying breakdown)
-                    log(`📊 Đang tải bảng thời khóa biểu...`);
+                    log(`Đang tải bảng thời khóa biểu...`);
                     setTimeout(() => {
                         viewResult(true);  // Pass skipBreakdown=true
                     }, 1000);
                 } else {
-                    log(`⚠️ Lưu vào database thất bại hoặc bị tắt`, 'error');
+                    log(`Lưu vào database thất bại hoặc bị tắt`, 'warning');
+                    showToast('Cảnh báo', 'Dữ liệu không được lưu vào database', 'warning');
                 }
                 
-                log(`📁 File solution: ${data.sol_file}`);
+                log(`File solution: ${data.sol_file}`);
                 
                 // Hide progress bar after 2 seconds
                 setTimeout(() => {
                     hideProgressBar();
                 }, 2000);
             } else {
-                log(`❌ Lỗi: ${data.message || 'Lỗi không xác định'}`, 'error');
+                log(`Lỗi: ${data.message || 'Lỗi không xác định'}`, 'error');
+                showToast('Lỗi xếp lịch', data.message || 'Có lỗi xảy ra khi xếp lịch', 'error');
                 hideProgressBar();
             }
         })
         .catch(error => {
             clearInterval(progressTimer);
-            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
+            log(`Lỗi kết nối: ${error.message}`, 'error');
+            showToast('Lỗi kết nối', 'Không thể kết nối đến server', 'error');
             hideProgressBar();
         });
     }
@@ -843,7 +1176,7 @@
         const periodId = getSelectedPeriod();
         if (!periodId) return;
         
-        log(`📊 Đang tải kết quả cho đợt: ${periodId}...`);
+        log(`Đang tải kết quả cho đợt: ${periodId}...`);
         
         fetch(`{% url 'sap_lich:algo_scheduler_view_result_api' %}?ma_dot=${periodId}`, {
             method: 'GET',
@@ -854,41 +1187,54 @@
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                log(`✅ Tìm thấy ${data.total_schedules} buổi học trong database`, 'success');
-                log(`📅 Đợt: ${data.ten_dot}`);
+                log(`Tìm thấy ${data.total_schedules} buổi học trong database`, 'success');
+                log(`Đợt: ${data.ten_dot}`);
                 
-                // Hiển thị breakdown nếu có VÀ không bị skip
-                if (!skipBreakdown && data.breakdown && data.final_cost !== undefined) {
-                    log(`📊 Đã tính toán breakdown costs từ validator`, 'success');
-                    
-                    // Hiển thị results summary
+                // Hiển thị results summary nếu có dữ liệu và không skip
+                if (!skipBreakdown && data.total_schedules > 0) {
+                    // Tạo displayData với breakdown nếu có, hoặc giá trị mặc định
                     const displayData = {
-                        initial_cost: data.initial_cost || data.final_cost,
-                        final_cost: data.final_cost,
+                        initial_cost: data.initial_cost || data.final_cost || 0,
+                        final_cost: data.final_cost || 0,
                         improvement: 0,
                         improvement_percent: 0,
                         time_elapsed: 0,
-                        breakdown: data.breakdown
+                        breakdown: data.breakdown || {
+                            teacher_working_days: 0,
+                            min_working_days: 0,
+                            lecture_consecutiveness: 0,
+                            room_stability: 0,
+                            teacher_lecture_consolidation: 0,
+                            teacher_preferences: 0,
+                            room_capacity: 0
+                        }
                     };
                     
                     displayResultsSummary(displayData);
-                    log(`📈 Cost hiện tại: ${data.final_cost}`, 'success');
+                    
+                    if (data.final_cost !== undefined) {
+                        log(`Cost hiện tại: ${data.final_cost}`, 'success');
+                    }
                 }
                 
                 if (data.total_schedules > 0) {
                     displayScheduleTable(data.schedules);
-                    log(`📊 Đã hiển thị bảng thời khóa biểu bên dưới`, 'success');
+                    log(`Đã hiển thị bảng thời khóa biểu`, 'success');
+                    showToast('Tải thành công', `Đã tải ${data.total_schedules} buổi học`, 'success');
                 } else {
-                    log(`⚠️ Chưa có dữ liệu thời khóa biểu. Vui lòng chạy thuật toán trước!`, 'error');
+                    log(`Chưa có dữ liệu thời khóa biểu`, 'warning');
+                    showToast('Không có dữ liệu', 'Vui lòng chạy thuật toán để tạo thời khóa biểu', 'warning');
                     hideScheduleTable();
                 }
             } else {
-                log(`❌ Lỗi: ${data.message || 'Lỗi không xác định'}`, 'error');
+                log(`Lỗi: ${data.message || 'Lỗi không xác định'}`, 'error');
+                showToast('Lỗi', data.message || 'Không thể tải dữ liệu', 'error');
                 hideScheduleTable();
             }
         })
         .catch(error => {
-            log(`❌ Lỗi kết nối: ${error.message}`, 'error');
+            log(`Lỗi kết nối: ${error.message}`, 'error');
+            showToast('Lỗi kết nối', 'Không thể kết nối đến server', 'error');
             hideScheduleTable();
         });
     }
@@ -927,16 +1273,16 @@
             
             row.innerHTML = `
                 <td class="text-center">${index + 1}</td>
-                <td><strong class="text-primary">${schedule.ma_lop}</strong></td>
+                <td class="text-primary" style="font-weight: 500;">${schedule.ma_lop}</td>
                 <td>${schedule.ten_lop}</td>
-                <td><small class="text-muted">${schedule.ten_mon}</small></td>
+                <td>${schedule.ten_mon}</td>
                 <td><span class="badge badge-teacher">${schedule.ten_gv}</span></td>
                 <td><span class="badge badge-room">${schedule.ma_phong}</span></td>
-                <td class="text-center ${capacityClass}"><strong>${schedule.suc_chua || 'N/A'}</strong></td>
-                <td><small>${schedule.loai_phong || 'N/A'}</small></td>
-                <td class="text-center"><strong>${dayMap[schedule.thu] || schedule.thu}</strong></td>
+                <td class="text-center ${capacityClass}">${schedule.suc_chua || 'N/A'}</td>
+                <td>${schedule.loai_phong || 'N/A'}</td>
+                <td class="text-center"><span class="badge badge-day">${dayMap[schedule.thu] || schedule.thu}</span></td>
                 <td class="text-center">Ca ${schedule.ca}</td>
-                <td class="text-center"><small>${schedule.gio_bat_dau} - ${schedule.gio_ket_thuc}</small></td>
+                <td class="text-center"><span class="badge badge-time">${schedule.gio_bat_dau} - ${schedule.gio_ket_thuc}</span></td>
             `;
             
             // Add hover effect with details
@@ -979,8 +1325,17 @@
     }
     
     function exportToExcel() {
-        log('📥 Tính năng xuất Excel đang được phát triển...', 'info');
-        // TODO: Implement Excel export
+        const periodId = getSelectedPeriod();
+        if (!periodId) return;
+        
+        log('Đang xuất file Excel...', 'info');
+        showToast('Xuất Excel', 'Đang tải file Excel...', 'info');
+        
+        // Open download in new window
+        const exportUrl = `{% url 'sap_lich:algo_scheduler_export_excel_api' %}?ma_dot=${periodId}`;
+        window.open(exportUrl, '_blank');
+        
+        log('File Excel đã được tải xuống', 'success');
     }
     
     function hideScheduleTable() {
@@ -1006,17 +1361,80 @@
     document.addEventListener('DOMContentLoaded', function() {
         const periodSelect = document.getElementById('periodSelect');
         
-        // Load weights for initial selected period
+        // Load weights and stats for initial selected period
         if (periodSelect.value) {
             loadWeights(periodSelect.value);
+            loadStats(periodSelect.value);
         }
         
-        // Load weights when period changes
+        // Load weights and stats when period changes
         periodSelect.addEventListener('change', function() {
             if (this.value) {
                 loadWeights(this.value);
+                loadStats(this.value);
+            } else {
+                // Hide stats if no period selected
+                document.getElementById('statsCard').style.display = 'none';
             }
         });
     });
+    
+    // Load input statistics for the selected period
+    function loadStats(maDot) {
+        const statsCard = document.getElementById('statsCard');
+        const statsContent = document.getElementById('statsContent');
+        const statsLoading = document.getElementById('statsLoading');
+        
+        // Show card with loading state
+        statsCard.style.display = 'block';
+        statsContent.style.display = 'none';
+        statsLoading.style.display = 'block';
+        
+        const statsUrl = `{% url 'sap_lich:algo_scheduler_get_stats_api' %}?ma_dot=${encodeURIComponent(maDot)}`;
+        console.log('Fetching stats from:', statsUrl);
+        
+        fetch(statsUrl, {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                statsLoading.style.display = 'none';
+                statsContent.style.display = 'flex';
+                
+                if (data.status === 'success') {
+                    const stats = data.stats;
+                    document.getElementById('statPhanCong').textContent = stats.phan_cong.toLocaleString();
+                    document.getElementById('statLopMonHoc').textContent = stats.lop_mon_hoc.toLocaleString();
+                    document.getElementById('statGiangVien').textContent = stats.giang_vien.toLocaleString();
+                    document.getElementById('statPhongHoc').textContent = stats.phong_hoc.toLocaleString();
+                    document.getElementById('statPhongLT').textContent = stats.phong_ly_thuyet.toLocaleString();
+                    document.getElementById('statPhongTH').textContent = stats.phong_thuc_hanh.toLocaleString();
+                    document.getElementById('statTimeSlots').textContent = stats.time_slots.toLocaleString();
+                    document.getElementById('statNguyenVong').textContent = stats.nguyen_vong.toLocaleString();
+                    
+                    log(`📊 Đã tải thống kê: ${stats.phan_cong} phân công, ${stats.lop_mon_hoc} lớp môn học`, 'info');
+                } else {
+                    // Just log to console, don't show toast on initial load
+                    console.warn('Stats API error:', data.message);
+                    log(`⚠️ Không thể tải thống kê: ${data.message || 'Lỗi không xác định'}`, 'warning');
+                }
+            })
+            .catch(error => {
+                statsLoading.style.display = 'none';
+                statsContent.style.display = 'flex';
+                console.error('Error loading stats:', error);
+                // Just log to console, don't show toast for network errors
+                log('⚠️ Không thể kết nối để tải thống kê', 'warning');
+            });
+    }
 </script>
 {% endblock %}
