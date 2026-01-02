@@ -29,9 +29,9 @@ def user_can_see_menu_item(context, menu_url):
         return True
     
     groups = user.groups.values_list('name', flat=True)
-    is_truong_khoa = 'Truong_Khoa' in groups
-    is_truong_bo_mon = 'Truong_Bo_Mon' in groups
-    is_giang_vien = 'Giang_Vien' in groups or (not is_truong_khoa and not is_truong_bo_mon)
+    is_truong_khoa = 'Trưởng Khoa' in groups
+    is_truong_bo_mon = 'Trưởng Bộ Môn' in groups
+    is_giang_vien = 'Giảng Viên' in groups or (not is_truong_khoa and not is_truong_bo_mon)
     
     # Check permissions theo URL
     if 'algo-scheduler' in menu_url or 'llm-scheduler' in menu_url or 'tkb-manage' in menu_url:
@@ -76,11 +76,11 @@ def user_role_display(user):
         return "Admin"
     
     groups = user.groups.values_list('name', flat=True)
-    if 'Truong_Khoa' in groups:
+    if 'Trưởng Khoa' in groups:
         return "Trưởng Khoa"
-    elif 'Truong_Bo_Mon' in groups:
+    elif 'Trưởng Bộ Môn' in groups:
         return "Trưởng Bộ Môn"
-    elif 'Giang_Vien' in groups:
+    elif 'Giảng Viên' in groups:
         return "Giảng Viên"
     
     return "User"

@@ -51,11 +51,11 @@ def get_user_role_info(user):
         ma_khoa = None
     
     # Xác định role dựa trên group
-    if 'Truong_Khoa' in groups:
+    if 'Trưởng Khoa' in groups:
         return {'role': 'truong_khoa', 'ma_khoa': ma_khoa, 'ma_bo_mon': None, 'ma_gv': ma_gv}
-    elif 'Truong_Bo_Mon' in groups:
+    elif 'Trưởng Bộ Môn' in groups:
         return {'role': 'truong_bo_mon', 'ma_khoa': ma_khoa, 'ma_bo_mon': ma_bo_mon, 'ma_gv': ma_gv}
-    elif 'Giang_Vien' in groups:
+    elif 'Giảng Viên' in groups:
         return {'role': 'giang_vien', 'ma_khoa': None, 'ma_bo_mon': None, 'ma_gv': ma_gv}
     else:
         # Mặc định là giáo viên nếu không có group
