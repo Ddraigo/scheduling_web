@@ -23,9 +23,9 @@ def user_role_context(request):
     
     # Kiểm tra groups
     groups = user.groups.values_list('name', flat=True)
-    is_truong_khoa = 'Truong_Khoa' in groups
-    is_truong_bo_mon = 'Truong_Bo_Mon' in groups
-    is_giang_vien = 'Giang_Vien' in groups
+    is_truong_khoa = 'Trưởng Khoa' in groups
+    is_truong_bo_mon = 'Trưởng Bộ Môn' in groups
+    is_giang_vien = 'Giảng Viên' in groups
     
     # Xác định role chính
     if is_admin:
