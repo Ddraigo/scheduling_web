@@ -56,7 +56,6 @@ if RENDER_EXTERNAL_HOSTNAME:
 
 INSTALLED_APPS = [
     'jazzmin',
-    'admin_black.apps.AdminBlackConfig',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -285,7 +284,7 @@ JAZZMIN_SETTINGS = {
     "site_header": "Hệ thống quản lý lịch dạy học",
     "site_brand": "TKB",
     "welcome_sign": "Chào mừng đến hệ thống quản lý lịch dạy học",
-    "copyright": "2025 - Scheduling System",
+    "copyright": "",
     "search_model": "auth.User",
     "topmenu_links": [
         {"name": "Trang chủ", "url": "/", "permissions": ["auth.view_user"]},
@@ -326,7 +325,7 @@ JAZZMIN_SETTINGS = {
                 "permissions": ["auth.view_user"]  # Tất cả users
             },
             {
-                "name": "Quản lý TKB (Thêm/Sửa/Xóa)",
+                "name": "Quản lý TKB",
                 "url": "/admin/sap_lich/tkb-manage/",
                 "icon": "fas fa-edit",
                 "permissions": ["auth.view_user"]  # Admin và Truong_Khoa only

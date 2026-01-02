@@ -58,7 +58,6 @@ urlpatterns = [
     path('admin/scheduling/assign-roles/', admin.site.admin_view(views_scheduling.assign_roles_view), name='scheduling_assign_roles'),
     
     path("admin/", admin.site.urls),
-    path("", include('admin_black.urls')),
 ]
 
 # Lazy-load on routing is needed
