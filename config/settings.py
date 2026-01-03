@@ -287,8 +287,8 @@ JAZZMIN_SETTINGS = {
     "copyright": "",
     "search_model": "auth.User",
     "topmenu_links": [
-        {"name": "Trang chủ", "url": "/", "permissions": ["auth.view_user"]},
-        {"name": "Dữ liệu", "url": "/data_table/", "permissions": ["auth.view_user"]},
+        {"name": "Trang chủ", "url": "/"},
+        {"name": "Dữ liệu", "url": "/data_table/"},
     ],
     "usermenu_links": [
         {"name": "Hồ sơ", "url": "/admin/auth/user/", "icon": "fas fa-cogs"},
@@ -297,38 +297,40 @@ JAZZMIN_SETTINGS = {
     "navigation_expanded": False,
     # Order apps - put "Sắp lịch" first
     "order_with_respect_to": ["sap_lich", "scheduling", "auth", "authtoken", "data_table"],
-    # Hide the dummy model, only show custom links
-    "hide_models": ["sap_lich.saplich"],
+    # Don't hide the dummy model - Jazzmin needs at least one visible model to show the app
+    "hide_models": [],
     # Hide entire apps from specific groups
     "hide_apps": [],
     # Show all apps including new ones
     "show_ui_builder": False,
     # Custom links under "Sắp lịch" in sidebar
+    # CHỈ ADMIN mới thấy "Sắp lịch thuật toán" và "Chat bot"
+    # Các role khác chỉ thấy "Xem thời khóa biểu"
     "custom_links": {
         "sap_lich": [
             {
-                "name": "Sắp lịch bằng thuật toán",
+                "name": "📊 Sắp lịch bằng thuật toán",
                 "url": "/admin/sap_lich/algo-scheduler/",
                 "icon": "fas fa-cogs",
-                "permissions": ["auth.view_user"]  # Admin và Truong_Khoa only
+                "permissions": ["auth.add_user"],  # Chỉ superuser có quyền này
             },
             {
-                "name": "Chat bot hỗ trợ",
+                "name": "🤖 Chat bot hỗ trợ",
                 "url": "/admin/sap_lich/llm-scheduler/",
                 "icon": "fas fa-robot",
-                "permissions": ["auth.view_user"]  # Admin và Truong_Khoa only
+                "permissions": ["auth.add_user"],  # Chỉ superuser có quyền này
             },
             {
-                "name": "Xem thời khóa biểu",
+                "name": "📅 Xem thời khóa biểu",
                 "url": "/admin/sap_lich/thoikhoabieu/",
                 "icon": "fas fa-calendar-alt",
-                "permissions": ["auth.view_user"]  # Tất cả users
+                # Không có permissions = tất cả đều thấy
             },
             {
-                "name": "Quản lý TKB",
+                "name": "✏️ Quản lý TKB",
                 "url": "/admin/sap_lich/tkb-manage/",
                 "icon": "fas fa-edit",
-                "permissions": ["auth.view_user"]  # Admin và Truong_Khoa only
+                "permissions": ["scheduling.change_thoikhoabieu"],  # Admin và Trưởng Khoa
             }
         ]
     },

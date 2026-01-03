@@ -179,8 +179,9 @@ def algo_scheduler_get_stats_api(request):
         }, status=500)
 
 
+@require_role('admin')
 def llm_scheduler_view(request):
-    """Admin view for LLM Chatbot Assistant"""
+    """Admin view for LLM Chatbot Assistant - CHỈ ADMIN"""
     try:
         periods = list(DotXep.objects.all().values('ma_dot', 'ten_dot', 'trang_thai'))
     except Exception:
@@ -206,9 +207,9 @@ def llm_scheduler_view(request):
     return render(request, 'admin/llm_scheduler.html', context)
 
 
-@require_role('admin', 'truong_khoa')
+@require_role('admin')
 def algo_scheduler_view(request):
-    """Admin view for algorithm-based scheduler"""
+    """Admin view for algorithm-based scheduler - CHỈ ADMIN"""
     try:
         periods = list(DotXep.objects.all().values('ma_dot', 'ten_dot', 'trang_thai'))
     except Exception:
@@ -233,11 +234,12 @@ def algo_scheduler_view(request):
     return render(request, 'admin/algo_scheduler.html', context)
 
 
+@require_role('admin')
 @csrf_exempt
 @require_http_methods(["POST"])
 def algo_scheduler_run_api(request):
     """
-    API endpoint để chạy thuật toán xếp lịch với improved algorithm (fixed teacher preference bug)
+    API endpoint để chạy thuật toán xếp lịch - CHỈ ADMIN
     
     Expected POST data:
     {
@@ -2054,7 +2056,7 @@ def tkb_swap_api(request):
 
 @require_role('admin', 'truong_khoa')
 def tkb_manage_view(request):
-    """Trang quản lý TKB với layout 2 cột"""
+    """Trang quản lý TKB với layout 2 cột - Admin và Trưởng Khoa (chỉ khoa mình)"""
     # Lấy thông tin phân quyền
     role_info = get_user_role_info(request.user)
     user_role = role_info['role']
