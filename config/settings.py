@@ -96,7 +96,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "apps.sap_lich.middleware.AdminMenuFilterMiddleware",  # Custom middleware cho filter menu
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -115,6 +114,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "apps.sap_lich.context_processors.user_role_context",  # Custom context processor
+                "apps.sap_lich.jazzmin_helpers.jazzmin_menu_context",  # Jazzmin menu filter
             ],
         },
     },
@@ -249,6 +249,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# Auth settings
+LOGIN_URL = '/login/'  # Trang login cho users thông thường
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
 # ### DYNAMIC_DATATB Settings ###
 DYNAMIC_DATATB = {
     # SLUG -> Import_PATH 
@@ -287,54 +292,210 @@ JAZZMIN_SETTINGS = {
     "copyright": "",
     "search_model": "auth.User",
     "topmenu_links": [
-        {"name": "Trang chủ", "url": "/", "permissions": ["auth.view_user"]},
-        {"name": "Dữ liệu", "url": "/data_table/", "permissions": ["auth.view_user"]},
+        {"name": "Trang chủ", "url": "/"},
+        {"name": "Dữ liệu", "url": "/data_table/"},
     ],
     "usermenu_links": [
-        {"name": "Hồ sơ", "url": "/admin/auth/user/", "icon": "fas fa-cogs"},
+        {"name": "Hồ sơ", "url": "/user-profile/", "icon": "fas fa-user-circle"},
     ],
     "show_sidebar": True,
     "navigation_expanded": False,
     # Order apps - put "Sắp lịch" first
-    "order_with_respect_to": ["sap_lich", "scheduling", "auth", "authtoken", "data_table"],
-    # Hide the dummy model, only show custom links
-    "hide_models": ["sap_lich.saplich"],
-    # Hide entire apps from specific groups
-    "hide_apps": [],
+    "order_with_respect_to": ["sap_lich", "scheduling", "pages", "data_table"],
+    # Ẩn model SapLich (dummy model) và tất cả models scheduling (sẽ hiện qua custom links)
+    "hide_models": [
+        "sap_lich.SapLich",
+        "pages.Product",
+        "scheduling.Khoa",
+        "scheduling.BoMon",
+        "scheduling.GiangVien",
+        "scheduling.GVDayMon",
+        "scheduling.MonHoc",
+        "scheduling.PhongHoc",
+        "scheduling.LopMonHoc",
+        "scheduling.DotXep",
+        "scheduling.PhanCong",
+        "scheduling.KhungTG",
+        "scheduling.RangBuocMem",
+        "scheduling.RangBuocTrongDot",
+        "scheduling.DuKienDT",
+        "scheduling.NgayNghiCoDinh",
+        "scheduling.NgayNghiDot",
+        "scheduling.NguyenVong",
+        "scheduling.TimeSlot",
+        "scheduling.ThoiKhoaBieu",
+    ],
+    # Hide entire apps
+    # auth app sẽ được ẩn động dựa vào has_module_permission trong custom admin
+    "hide_apps": ["authtoken"],  # Ẩn authtoken cho tất cả users
     # Show all apps including new ones
     "show_ui_builder": False,
     # Custom links under "Sắp lịch" in sidebar
     "custom_links": {
         "sap_lich": [
             {
-                "name": "Sắp lịch bằng thuật toán",
+                "name": "Sắp lịch (Thuật toán)",
                 "url": "/admin/sap_lich/algo-scheduler/",
-                "icon": "fas fa-cogs",
-                "permissions": ["auth.view_user"]  # Admin và Truong_Khoa only
-            },
-            {
-                "name": "Chat bot hỗ trợ",
-                "url": "/admin/sap_lich/llm-scheduler/",
                 "icon": "fas fa-robot",
-                "permissions": ["auth.view_user"]  # Admin và Truong_Khoa only
+                "permissions": ["auth.add_user"]  # Chỉ admin/superuser
             },
             {
-                "name": "Xem thời khóa biểu",
+                "name": "Chat Bot Hỗ trợ (LLM)",
+                "url": "/admin/sap_lich/llm-scheduler/",
+                "icon": "fas fa-comments",
+                "permissions": ["auth.add_user"]  # Chỉ admin/superuser
+            },
+        ],
+        "scheduling": [
+            {
+                "name": "Xem Thời Khóa Biểu",
                 "url": "/admin/sap_lich/thoikhoabieu/",
                 "icon": "fas fa-calendar-alt",
-                "permissions": ["auth.view_user"]  # Tất cả users
+                "permissions": ["auth.view_user"]
             },
             {
                 "name": "Quản lý TKB",
                 "url": "/admin/sap_lich/tkb-manage/",
                 "icon": "fas fa-edit",
-                "permissions": ["auth.view_user"]  # Admin và Truong_Khoa only
-            }
+                "permissions": ["auth.view_user"]
+            },
+        ],
+        "data_table": [
+            
+            {
+                "name": "Khoa",
+                "url": "/admin/scheduling/khoa/",
+                "icon": "fas fa-building",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Bộ môn",
+                "url": "/admin/scheduling/bomon/",
+                "icon": "fas fa-sitemap",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Giảng viên",
+                "url": "/admin/scheduling/giangvien/",
+                "icon": "fas fa-chalkboard-user",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Môn học",
+                "url": "/admin/scheduling/monhoc/",
+                "icon": "fas fa-book",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "GV dạy môn",
+                "url": "/admin/scheduling/gvdaymon/",
+                "icon": "fas fa-user-tie",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Phòng học",
+                "url": "/admin/scheduling/phonghoc/",
+                "icon": "fas fa-door-open",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Lớp môn học",
+                "url": "/admin/scheduling/lopmonhoc/",
+                "icon": "fas fa-graduation-cap",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Đợt xếp",
+                "url": "/admin/scheduling/dotxep/",
+                "icon": "fas fa-calendar-days",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Phân công",
+                "url": "/admin/scheduling/phancong/",
+                "icon": "fas fa-handshake",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Khung thời gian",
+                "url": "/admin/scheduling/khungtg/",
+                "icon": "fas fa-hourglass-half",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Ràng buộc mềm",
+                "url": "/admin/scheduling/rangbuocmem/",
+                "icon": "fas fa-wave-square",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Ràng buộc trong đợt",
+                "url": "/admin/scheduling/rangbuoctrongdot/",
+                "icon": "fas fa-shield-alt",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Dự kiến dạy học",
+                "url": "/admin/scheduling/dukiendt/",
+                "icon": "fas fa-clipboard-check",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Ngày nghỉ cố định",
+                "url": "/admin/scheduling/ngaynghicodinh/",
+                "icon": "fas fa-calendar-xmark",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Ngày nghỉ đợt",
+                "url": "/admin/scheduling/ngaynghidot/",
+                "icon": "fas fa-calendar-minus",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Nguyện vọng",
+                "url": "/admin/scheduling/nguyenvong/",
+                "icon": "fas fa-heart",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Time Slot",
+                "url": "/admin/scheduling/timeslot/",
+                "icon": "fas fa-hourglass-end",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Thời khóa biểu",
+                "url": "/admin/scheduling/thoikhoabieu/",
+                "icon": "fas fa-calendar-check",
+                "permissions": ["auth.view_user"]
+            },
+        ],
+        "pages": [
+            {
+                "name": "Hồ sơ cá nhân",
+                "url": "/user-profile/",
+                "icon": "fas fa-user-circle",
+                "permissions": ["auth.view_user"]  # Tất cả user đều thấy
+            },
+        ],
+        "auth": [
+            {
+                "name": "Phân quyền User/Role",
+                "url": "/admin/scheduling/assign-roles/",
+                "icon": "fas fa-user-shield",
+                "permissions": ["auth.add_user"]  # Chỉ admin
+            },
+           
         ]
     },
     "icons": {
         # Sap Lich app icon
         "sap_lich": "fas fa-calendar-plus",
+        
+        # Pages app icon (Hồ sơ cá nhân)
+        "pages": "fas fa-user-circle",
+        
         "auth": "fas fa-lock",
         "auth.user": "fas fa-user",
         "auth.group": "fas fa-users",

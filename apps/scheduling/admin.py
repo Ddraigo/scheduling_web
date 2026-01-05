@@ -69,8 +69,8 @@ class BaseAdmin(admin.ModelAdmin):
         
         # Kiểm tra groups
         groups = user.groups.values_list('name', flat=True)
-        is_truong_khoa = 'Truong_Khoa' in groups
-        is_truong_bo_mon = 'Truong_Bo_Mon' in groups
+        is_truong_khoa = 'Trưởng Khoa' in groups
+        is_truong_bo_mon = 'Trưởng Bộ Môn' in groups
         
         # Truong_Khoa thấy tất cả models
         if is_truong_khoa:

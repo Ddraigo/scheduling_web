@@ -2,6 +2,31 @@
 Custom Jazzmin settings helpers để filter menu dựa trên user groups
 """
 from django.urls import reverse
+from django.conf import settings
+
+
+def jazzmin_menu_context(request):
+    """
+    Context processor để thêm custom links động vào Jazzmin
+    """
+    if not request or not request.user.is_authenticated:
+        return {}
+    
+    user = request.user
+    is_admin = user.is_superuser
+    
+    # Lấy custom links dựa trên user
+    custom_links = get_custom_links_for_user(request)
+    
+    # Tạo hide_apps list
+    hide_apps = []
+    if not is_admin:
+        hide_apps = ['auth', 'authtoken']
+    
+    return {
+        'jazzmin_custom_links': custom_links,
+        'jazzmin_hide_apps': hide_apps,
+    }
 
 
 def get_custom_links_for_user(request):
@@ -18,36 +43,51 @@ def get_custom_links_for_user(request):
     is_truong_bo_mon = 'Trưởng Bộ Môn' in groups
     is_giang_vien = 'Giảng Viên' in groups or (not is_admin and not is_truong_khoa and not is_truong_bo_mon)
     
-    links = []
+    sap_lich_links = []
+    scheduling_links = []
+    pages_links = []
     
-    # Admin và Truong_Khoa thấy tất cả
-    if is_admin or is_truong_khoa:
-        links.extend([
+    # Chỉ Admin mới thấy menu Sắp lịch
+    if is_admin:
+        sap_lich_links.extend([
             {
-                "name": "Sắp lịch bằng thuật toán",
+                "name": "Sắp lịch (Thuật toán)",
                 "url": "/admin/sap_lich/algo-scheduler/",
-                "icon": "fas fa-cogs",
-            },
-            {
-                "name": "Chat bot hỗ trợ",
-                "url": "/admin/sap_lich/llm-scheduler/",
                 "icon": "fas fa-robot",
             },
             {
-                "name": "Quản lý TKB",
-                "url": "/admin/sap_lich/tkb-manage/",
-                "icon": "fas fa-edit",
+                "name": "Chat Bot Hỗ trợ (LLM)",
+                "url": "/admin/sap_lich/llm-scheduler/",
+                "icon": "fas fa-comments",
             },
         ])
     
-    # Tất cả users thấy Xem TKB
-    links.append({
-        "name": "Xem thời khóa biểu",
-        "url": "/admin/sap_lich/thoikhoabieu/",
-        "icon": "fas fa-calendar-alt",
+    # Tất cả users thấy Xem và Quản lý TKB
+    scheduling_links.extend([
+        {
+            "name": "Xem Thời Khóa Biểu",
+            "url": "/admin/sap_lich/thoikhoabieu/",
+            "icon": "fas fa-calendar-alt",
+        },
+        {
+            "name": "Quản lý TKB",
+            "url": "/admin/sap_lich/tkb-manage/",
+            "icon": "fas fa-edit",
+        },
+    ])
+    
+    # Tất cả users thấy Hồ sơ cá nhân
+    pages_links.append({
+        "name": "Hồ sơ cá nhân",
+        "url": "/user-profile/",
+        "icon": "fas fa-user-circle",
     })
     
-    return {"sap_lich": links}
+    return {
+        "sap_lich": sap_lich_links,
+        "scheduling": scheduling_links,
+        "pages": pages_links
+    }
 
 
 def filter_jazzmin_menu(request, menu_dict):
@@ -67,31 +107,19 @@ def filter_jazzmin_menu(request, menu_dict):
     user = request.user
     is_admin = user.is_superuser
     
-    if is_admin:
-        # Admin thấy tất cả
-        return menu_dict
-    
-    groups = user.groups.values_list('name', flat=True)
-    is_truong_khoa = 'Trưởng Khoa' in groups
-    is_truong_bo_mon = 'Trưởng Bộ Môn' in groups
-    is_giang_vien = 'Giảng Viên' in groups or (not is_truong_khoa and not is_truong_bo_mon)
-    
     # Filter menu items
     filtered_menu = menu_dict.copy()
     
-    # Filter custom_links trong sap_lich
-    if 'custom_links' in filtered_menu and 'sap_lich' in filtered_menu['custom_links']:
-        links = []
-        for link in filtered_menu['custom_links']['sap_lich']:
-            url = link.get('url', '')
-            
-            # Admin và Truong_Khoa thấy tất cả
-            if is_admin or is_truong_khoa:
-                links.append(link)
-            # Truong_Bo_Mon và Giang_Vien chỉ thấy "Xem thời khóa biểu"
-            elif (is_truong_bo_mon or is_giang_vien) and 'thoikhoabieu' in url:
-                links.append(link)
-        
-        filtered_menu['custom_links']['sap_lich'] = links
+    # Ẩn auth app với non-admin
+    if not is_admin:
+        if 'hide_apps' not in filtered_menu:
+            filtered_menu['hide_apps'] = []
+        if 'auth' not in filtered_menu['hide_apps']:
+            filtered_menu['hide_apps'].append('auth')
+        if 'authtoken' not in filtered_menu['hide_apps']:
+            filtered_menu['hide_apps'].append('authtoken')
+    
+    # Update custom_links động dựa trên user
+    filtered_menu['custom_links'] = get_custom_links_for_user(request)
     
     return filtered_menu
