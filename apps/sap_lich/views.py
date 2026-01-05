@@ -10,7 +10,7 @@ import time
 from datetime import datetime, timedelta
 from functools import wraps
 from django.contrib import admin
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -82,6 +82,30 @@ def require_role(*allowed_roles):
             return view_func(request, *args, **kwargs)
         return wrapper
     return decorator
+
+
+def landing_page_view(request):
+    """
+    Landing page - redirect users to appropriate page based on their role
+    """
+    if not request.user.is_authenticated:
+        # Redirect to login page
+        from django.contrib.auth.views import redirect_to_login
+        return redirect_to_login(request.get_full_path())
+    
+    role_info = get_user_role_info(request.user)
+    user_role = role_info['role']
+    ma_gv = role_info['ma_gv'] or request.user.username
+    
+    # Redirect based on role
+    if user_role == 'admin':
+        return redirect('/admin/sap_lich/thoikhoabieu/')
+    elif user_role == 'truong_khoa':
+        return redirect(f'/truong-khoa/{ma_gv}/xem-tkb/')
+    elif user_role == 'truong_bo_mon':
+        return redirect(f'/truong-bo-mon/{ma_gv}/xem-tkb/')
+    else:  # giang_vien or default
+        return redirect(f'/giang-vien/{ma_gv}/xem-tkb/')
 
 
 @csrf_exempt
@@ -180,8 +204,23 @@ def algo_scheduler_get_stats_api(request):
 
 
 @require_role('admin')
-def llm_scheduler_view(request):
+def llm_scheduler_view(request, ma_gv=None):
     """Admin view for LLM Chatbot Assistant - CHỈ ADMIN"""
+    role_info = get_user_role_info(request.user)
+    
+    if role_info['role'] != 'admin' and not ma_gv:
+        # Nếu user truy cập URL cũ (/admin/sap_lich/...), redirect sang URL mới
+        ma_gv_current = role_info['ma_gv'] or request.user.username
+        if 'truong_khoa' in role_info['role']:
+            return redirect(f'/truong-khoa/{ma_gv_current}/xem-tkb/')
+        elif 'truong_bo_mon' in role_info['role']:
+            return redirect(f'/truong-bo-mon/{ma_gv_current}/xem-tkb/')
+        else:
+            return redirect(f'/giang-vien/{ma_gv_current}/xem-tkb/')
+    
+    if role_info['role'] != 'admin':
+        return HttpResponseForbidden("Chỉ Admin mới có quyền truy cập Chat bot hỗ trợ")
+    
     try:
         periods = list(DotXep.objects.all().values('ma_dot', 'ten_dot', 'trang_thai'))
     except Exception:
@@ -203,13 +242,30 @@ def llm_scheduler_view(request):
             'verbose_name_plural': 'Sắp lịch',
         },
         'current_time': datetime.now().strftime('%H:%M'),
+        'user_role': role_info['role'],
+        'segment': ['sap-lich-llm'],
     }
     return render(request, 'admin/llm_scheduler.html', context)
 
 
 @require_role('admin')
-def algo_scheduler_view(request):
+def algo_scheduler_view(request, ma_gv=None):
     """Admin view for algorithm-based scheduler - CHỈ ADMIN"""
+    role_info = get_user_role_info(request.user)
+    
+    if role_info['role'] != 'admin' and not ma_gv:
+        # Nếu user truy cập URL cũ (/admin/sap_lich/...), redirect sang URL mới
+        ma_gv_current = role_info['ma_gv'] or request.user.username
+        if 'truong_khoa' in role_info['role']:
+            return redirect(f'/truong-khoa/{ma_gv_current}/xem-tkb/')
+        elif 'truong_bo_mon' in role_info['role']:
+            return redirect(f'/truong-bo-mon/{ma_gv_current}/xem-tkb/')
+        else:
+            return redirect(f'/giang-vien/{ma_gv_current}/xem-tkb/')
+    
+    if role_info['role'] != 'admin':
+        return HttpResponseForbidden("Chỉ Admin mới có quyền sắp lịch bằng thuật toán")
+    
     try:
         periods = list(DotXep.objects.all().values('ma_dot', 'ten_dot', 'trang_thai'))
     except Exception:
@@ -230,6 +286,8 @@ def algo_scheduler_view(request):
             'model_name': 'saplich',
             'verbose_name_plural': 'Sắp lịch',
         },
+        'user_role': role_info['role'],
+        'segment': ['sap-lich-algo'],
     }
     return render(request, 'admin/algo_scheduler.html', context)
 
@@ -793,15 +851,47 @@ def algo_scheduler_export_excel_api(request):
         }, status=500)
 
 
-def thoikhoabieu_view(request):
+def thoikhoabieu_view(request, ma_gv=None):
     """
     View hiển thị thời khóa biểu với nhiều góc nhìn và dạng hiển thị
     - Góc nhìn: theo giáo viên, theo phòng
     - Dạng hiển thị: tổng quát (tất cả tuần), chi tiết (theo tuần)
+    
+    URL Parameters:
+        ma_gv: Mã giảng viên từ URL (dùng cho các role không phải admin)
+    
+    Phân quyền:
+        - Admin: Xem toàn bộ TKB
+        - Trưởng Khoa: Xem TKB khoa mình (filter theo ma_khoa)
+        - Trưởng Bộ Môn: Xem TKB bộ môn mình (filter theo ma_bo_mon)
+        - Giảng Viên: Xem TKB cá nhân (filter theo ma_gv)
     """
+    # Kiểm tra authentication
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden("Bạn cần đăng nhập để xem thời khóa biểu")
+    
     # Lấy thông tin phân quyền
     role_info = get_user_role_info(request.user)
     user_role = role_info['role']
+    
+    # Redirect non-admin users từ URL cũ sang URL mới
+    if user_role != 'admin' and not ma_gv:
+        # Nếu user truy cập URL cũ (/admin/sap_lich/thoikhoabieu/), redirect sang URL mới
+        ma_gv_current = role_info['ma_gv'] or request.user.username
+        if user_role == 'truong_khoa':
+            return redirect(f'/truong-khoa/{ma_gv_current}/xem-tkb/')
+        elif user_role == 'truong_bo_mon':
+            return redirect(f'/truong-bo-mon/{ma_gv_current}/xem-tkb/')
+        else:
+            return redirect(f'/giang-vien/{ma_gv_current}/xem-tkb/')
+    
+    # Validate ma_gv trong URL với user hiện tại
+    if ma_gv:
+        # Nếu không phải admin, phải check ma_gv khớp với user
+        if user_role != 'admin':
+            # Trưởng Khoa, Trưởng Bộ Môn, Giảng Viên phải match với ma_gv của họ
+            if ma_gv != role_info['ma_gv']:
+                return HttpResponseForbidden("Bạn không có quyền xem thời khóa biểu của người khác")
     
     # Lấy các tham số từ request
     view_type = request.GET.get('view', 'teacher')  # 'teacher' hoặc 'room'
@@ -884,6 +974,7 @@ def thoikhoabieu_view(request):
             'model_name': 'thoikhoabieu',
             'verbose_name_plural': 'Thời khóa biểu',
         },
+        'segment': ['xem-tkb'],
     }
     
     if not ma_dot:
@@ -2055,11 +2146,40 @@ def tkb_swap_api(request):
 
 
 @require_role('admin', 'truong_khoa')
-def tkb_manage_view(request):
-    """Trang quản lý TKB với layout 2 cột - Admin và Trưởng Khoa (chỉ khoa mình)"""
+def tkb_manage_view(request, ma_gv=None):
+    """
+    Trang quản lý TKB với layout 2 cột - Admin và Trưởng Khoa (chỉ khoa mình)
+    
+    URL Parameters:
+        ma_gv: Mã giảng viên từ URL (dùng cho Trưởng Khoa)
+    
+    Phân quyền:
+        - Admin: Quản lý toàn bộ TKB
+        - Trưởng Khoa: Quản lý TKB khoa mình (filter theo ma_khoa)
+    """
     # Lấy thông tin phân quyền
     role_info = get_user_role_info(request.user)
     user_role = role_info['role']
+    
+    # Redirect non-admin users từ URL cũ sang URL mới
+    if user_role != 'admin' and not ma_gv:
+        # Nếu user truy cập URL cũ (/admin/sap_lich/tkb-manage/), redirect sang URL mới
+        ma_gv_current = role_info['ma_gv'] or request.user.username
+        if user_role == 'truong_khoa':
+            return redirect(f'/truong-khoa/{ma_gv_current}/quan-ly-tkb/')
+        else:
+            # Các role khác không được quản lý TKB
+            return redirect(f'/giang-vien/{ma_gv_current}/xem-tkb/')
+    
+    # Validate ma_gv trong URL với user hiện tại
+    if ma_gv:
+        # Nếu không phải admin, phải check ma_gv khớp với user
+        if user_role == 'truong_khoa':
+            if ma_gv != role_info['ma_gv']:
+                return HttpResponseForbidden("Bạn không có quyền quản lý TKB của người khác")
+        # Các role khác không được truy cập
+        elif user_role != 'admin':
+            return HttpResponseForbidden("Bạn không có quyền quản lý TKB")
     
     ma_dot = request.GET.get('ma_dot', '')
     ma_khoa = request.GET.get('ma_khoa', '')
@@ -2075,8 +2195,10 @@ def tkb_manage_view(request):
         # Giáo viên không được phép truy cập trang quản lý
         from django.contrib import messages
         messages.error(request, 'Bạn không có quyền truy cập trang quản lý TKB')
-        from django.shortcuts import redirect
-        return redirect('/admin/sap_lich/thoikhoabieu/')
+        # Redirect về trang xem TKB của giảng viên
+        if role_info['ma_gv']:
+            return redirect(f"/giang-vien/{role_info['ma_gv']}/xem-tkb/")
+        return redirect('/admin/')
     
     from apps.scheduling.models import Khoa
     
@@ -2110,6 +2232,7 @@ def tkb_manage_view(request):
             'model_name': 'tkbmanage',
             'verbose_name_plural': 'Quản lý TKB',
         },
+        'segment': ['quan-ly-tkb'],
     }
     
     if ma_dot:

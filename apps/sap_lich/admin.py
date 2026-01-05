@@ -1,7 +1,8 @@
 from django.contrib import admin
 from .models import SapLich
 
-# Register model to make app appear in sidebar
+# Register model để app "Sắp lịch" xuất hiện trong sidebar
+# Model này bị ẩn bởi JAZZMIN_SETTINGS["hide_models"] để không xuất hiện submenu
 @admin.register(SapLich)
 class SapLichAdmin(admin.ModelAdmin):
     def has_module_permission(self, request):
@@ -34,7 +35,8 @@ def get_sap_lich_menu_for_user(user):
     """
     Trả về danh sách menu items phù hợp với role của user
     - Admin: Tất cả (sắp lịch, chat bot, xem TKB, quản lý TKB)
-    - Trưởng Khoa/Bộ Môn: Chỉ xem TKB
+    - Trưởng Khoa: Xem TKB và quản lý TKB
+    - Trưởng Bộ Môn: Chỉ xem TKB
     - Giảng Viên: Chỉ xem TKB (của mình)
     """
     if not user.is_authenticated:
@@ -43,15 +45,24 @@ def get_sap_lich_menu_for_user(user):
     # Admin thấy tất cả
     if user.is_superuser:
         return [
-            {"name": "📊 Sắp lịch bằng thuật toán", "url": "/admin/sap_lich/algo-scheduler/", "icon": "fas fa-cogs"},
+            {"name": "⚙️ Sắp lịch bằng thuật toán", "url": "/admin/sap_lich/algo-scheduler/", "icon": "fas fa-cogs"},
             {"name": "🤖 Chat bot hỗ trợ", "url": "/admin/sap_lich/llm-scheduler/", "icon": "fas fa-robot"},
             {"name": "📅 Xem thời khóa biểu", "url": "/admin/sap_lich/thoikhoabieu/", "icon": "fas fa-calendar-alt"},
             {"name": "✏️ Quản lý TKB", "url": "/admin/sap_lich/tkb-manage/", "icon": "fas fa-edit"},
         ]
     
-    # Các role khác chỉ thấy xem TKB
+    # Các role khác
     groups = user.groups.values_list('name', flat=True)
-    if 'Trưởng Khoa' in groups or 'Trưởng Bộ Môn' in groups or 'Giảng Viên' in groups:
+    
+    # Trưởng Khoa: xem và quản lý TKB (của khoa mình)
+    if 'Trưởng Khoa' in groups:
+        return [
+            {"name": "📅 Xem thời khóa biểu", "url": "/admin/sap_lich/thoikhoabieu/", "icon": "fas fa-calendar-alt"},
+            {"name": "✏️ Quản lý TKB", "url": "/admin/sap_lich/tkb-manage/", "icon": "fas fa-edit"},
+        ]
+    
+    # Trưởng Bộ Môn hoặc Giảng Viên: chỉ xem TKB
+    if 'Trưởng Bộ Môn' in groups or 'Giảng Viên' in groups:
         return [
             {"name": "📅 Xem thời khóa biểu", "url": "/admin/sap_lich/thoikhoabieu/", "icon": "fas fa-calendar-alt"},
         ]

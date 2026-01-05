@@ -20,8 +20,20 @@
 <script>
     $(document).ready(function () {
         // Javascript method's body can be found in assets/js/demos.js
-        demo.initDashboardPageCharts();
-
+        // Chỉ init charts nếu có canvas elements trên trang
+        var hasChartElements = document.getElementById("chartLinePurple") || 
+                               document.getElementById("chartLineGreen") || 
+                               document.getElementById("CountryChart") ||
+                               document.getElementById("activeUsersChart") ||
+                               document.getElementById("activeCountriesChart");
+        
+        if (hasChartElements && typeof demo !== 'undefined' && demo.initDashboardPageCharts) {
+            try {
+                demo.initDashboardPageCharts();
+            } catch (e) {
+                console.log('Chart initialization skipped:', e.message);
+            }
+        }
     });
 </script>
 <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
