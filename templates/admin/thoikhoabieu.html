@@ -30,9 +30,11 @@
 
     /* Container chính */
     .tkb-container {
-        max-width: 1600px;
+        max-width: 100%;
+        width: 100%;
         margin: 0 auto;
         padding: 20px;
+        box-sizing: border-box;
     }
 
     /* Header Controls */
@@ -45,6 +47,8 @@
         border: none;
         transform: translateY(0);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-sizing: border-box;
+        overflow: hidden;
     }
     
     .tkb-header:hover {
@@ -66,14 +70,15 @@
     }
 
     .control-group {
-        flex: 1 1 200px;
-        min-width: 180px;
-        max-width: 320px;
+        flex: 1 1 150px;
+        min-width: 140px;
+        max-width: 280px;
     }
 
     .control-group.toggle-group {
-        flex: 0 0 auto;
+        flex: 0 1 auto;
         max-width: none;
+        min-width: auto;
     }
 
     .control-label {
@@ -87,15 +92,17 @@
     }
 
     .form-select, .form-control {
+        width: 100%;
         border: 2px solid transparent;
         border-radius: 16px;
-        padding: 14px 18px;
-        font-size: 15px;
+        padding: 12px 14px;
+        font-size: 14px;
         font-weight: 500;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         background: white;
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.08);
         color: var(--text-dark);
+        box-sizing: border-box;
     }
 
     .form-select:focus, .form-control:focus {
@@ -444,6 +451,47 @@
     }
 
     /* Responsive */
+    @media (max-width: 1200px) {
+        .tkb-header {
+            padding: 20px;
+        }
+        
+        .control-group {
+            flex: 1 1 120px;
+            min-width: 120px;
+            max-width: none;
+        }
+        
+        .control-row {
+            gap: 12px;
+        }
+        
+        .form-select, .form-control {
+            padding: 10px 12px;
+            font-size: 13px;
+        }
+        
+        .control-label {
+            font-size: 11px;
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .control-row.center-row {
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+        
+        .control-group {
+            flex: 1 1 45%;
+            min-width: 45%;
+        }
+        
+        .control-group.toggle-group {
+            flex: 1 1 auto;
+        }
+    }
+    
     @media (max-width: 768px) {
         .tkb-container {
             padding: 12px;
@@ -455,22 +503,35 @@
 
         .control-row {
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
 
         .control-group {
             width: 100%;
-            padding: 12px;
+            min-width: 100%;
+            max-width: 100%;
+        }
+        
+        .form-select, .form-control {
+            padding: 10px;
+            font-size: 13px;
+            border-radius: 12px;
         }
 
         .view-toggle, .week-navigation {
             width: 100%;
-            justify-content: space-between;
+            justify-content: center;
         }
         
         .toggle-btn {
-            padding: 10px 14px;
-            font-size: 13px;
+            padding: 8px 12px;
+            font-size: 12px;
+            flex: 1;
+        }
+        
+        .control-label {
+            font-size: 11px;
+            margin-bottom: 4px;
         }
     }
 
