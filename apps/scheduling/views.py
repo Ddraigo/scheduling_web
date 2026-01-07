@@ -98,7 +98,7 @@ class DotXepViewSet(viewsets.ModelViewSet):
     queryset = DotXep.objects.all()
     serializer_class = DotXepSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ['trang_thai', 'nam_hoc', 'hoc_ky']
+    filterset_fields = ['trang_thai', 'ma_du_kien_dt']  # nam_hoc, hoc_ky are in DuKienDT model
 
 
 class PhanCongViewSet(viewsets.ModelViewSet):

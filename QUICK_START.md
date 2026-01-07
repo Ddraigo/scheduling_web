@@ -1,4 +1,4 @@
-# 🚀 Quick Start Guide - Testing Scheduling App
+#  Quick Start Guide - Testing Scheduling App
 
 ## Bước 1: Kiểm tra cài đặt
 
