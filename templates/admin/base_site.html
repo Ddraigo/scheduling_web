@@ -1,45 +1,93 @@
-{% extends "admin/base.html" %}
+﻿{% extends "admin/base.html" %}
 
-{# Ẩn hoàn toàn footer và fix sidebar scroll #}
+{# Ẩn footer và fix sidebar/content layout #}
 {% block extrastyle %}
 {{ block.super }}
 <style>
-	/* Ẩn footer */
-	.main-footer,
-	footer,
-	.content-footer,
-	#footer,
-	footer.main-footer {
-		display: none !important;
-		visibility: hidden !important;
-		height: 0 !important;
-		padding: 0 !important;
-		margin: 0 !important;
-		border: 0 !important;
-	}
-	
-	/* Fix sidebar scroll độc lập */
-	.main-sidebar {
-		height: 100vh !important;
-		max-height: 100vh !important;
-		position: fixed !important;
-		top: 0 !important;
-		left: 0 !important;
-		overflow: hidden !important;
-		z-index: 1038 !important;
-        min-width: fit-content !important;
-	}
-	
-	.main-sidebar .sidebar {
-		height: calc(100vh - 57px) !important;
-		overflow-y: auto !important;
-		overflow-x: hidden !important;min-width: fit-content !important;
-	}
-	
-	/* Content scroll độc lập, không bị sidebar ảnh hưởng */
-	.content-wrapper {
-		min-height: 100vh !important;
-	}
+    /* Ẩn footer */
+    .main-footer,
+    footer,
+    .content-footer,
+    #footer,
+    footer.main-footer {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: 0 !important;
+    }
+
+    /* Fix sidebar */
+    .main-sidebar {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        overflow: visible !important;
+        z-index: 1038 !important;
+        transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out !important;
+    }
+    
+    .main-sidebar .sidebar {
+        height: calc(100vh - 57px) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        padding-bottom: 50px !important;
+    }
+    
+    /* Fix cho nav-sidebar scroll */
+    .nav-sidebar {
+        overflow: visible !important;
+    }
+    
+    .nav-sidebar > .nav-item > .nav-treeview {
+        overflow: visible !important;
+    }
+    
+    /* Fix navbar - không fixed */
+    .main-header {
+        position: relative !important;
+        z-index: 1030 !important;
+        transition: margin-left 0.3s ease-in-out !important;
+    }
+    
+    /* Content wrapper */
+    .content-wrapper {
+        min-height: calc(100vh - 57px) !important;
+        transition: margin-left 0.3s ease-in-out !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* Khi sidebar đang mở (mặc định) */
+    body:not(.sidebar-collapse) .content-wrapper,
+    body:not(.sidebar-collapse) .main-header {
+        margin-left: 250px !important;
+        width: calc(100% - 250px) !important;
+    }
+    
+    /* Khi sidebar đã collapse */
+    body.sidebar-collapse .content-wrapper,
+    body.sidebar-collapse .main-header {
+        margin-left: 4.6rem !important;
+        width: calc(100% - 4.6rem) !important;
+    }
+    
+    /* Responsive - màn hình nhỏ */
+    @media (max-width: 991.98px) {
+        .content-wrapper,
+        .main-header {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+        
+        body.sidebar-open .content-wrapper,
+        body.sidebar-open .main-header {
+            margin-left: 250px !important;
+            width: calc(100% - 250px) !important;
+        }
+    }
 </style>
 {% endblock extrastyle %}
 
