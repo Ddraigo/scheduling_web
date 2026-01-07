@@ -85,6 +85,9 @@ INSTALLED_APPS = [
     'rest_framework',            # Include DRF           # <-- NEW 
     'rest_framework.authtoken',  # Include DRF Auth      # <-- NEW
     'django_filters',            # For filtering in DRF   # <-- NEW
+    
+    # API Documentation
+    'drf_spectacular',           # OpenAPI 3.0 Schema + Swagger UI
 ]
 
 MIDDLEWARE = [
@@ -554,6 +557,52 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 50,
+    # OpenAPI Schema Generator (drf-spectacular)
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# DRF-Spectacular Settings (OpenAPI 3.0 Documentation)
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Scheduling System API',
+    'DESCRIPTION': '''
+## Hệ thống Xếp Thời Khóa Biểu Tự Động
+
+API documentation cho hệ thống quản lý và xếp lịch thời khóa biểu đại học.
+
+### Các tính năng chính:
+- **Quản lý Khoa/Bộ môn**: CRUD operations cho khoa và bộ môn
+- **Quản lý Giảng viên**: Quản lý thông tin giảng viên, nguyện vọng
+- **Quản lý Môn học**: Quản lý môn học, lớp môn học
+- **Quản lý Phòng học**: Quản lý phòng học theo loại và sức chứa
+- **Xếp Thời Khóa Biểu**: Thuật toán tự động xếp lịch (CP-SAT Solver)
+- **AI Chatbot**: Hỗ trợ chatbot AI (Gemini)
+
+### Authentication:
+- Session Authentication (cho web interface)
+- Token Authentication (cho API clients)
+    ''',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {
+        'name': 'Scheduling System Team',
+        'email': 'support@scheduling.edu.vn',
+    },
+    'LICENSE': {
+        'name': 'MIT License',
+    },
+    'TAGS': [
+        {'name': 'Khoa', 'description': 'Quản lý Khoa'},
+        {'name': 'Bộ Môn', 'description': 'Quản lý Bộ môn'},
+        {'name': 'Giảng Viên', 'description': 'Quản lý Giảng viên'},
+        {'name': 'Môn Học', 'description': 'Quản lý Môn học'},
+        {'name': 'Phòng Học', 'description': 'Quản lý Phòng học'},
+        {'name': 'Lớp Môn Học', 'description': 'Quản lý Lớp môn học'},
+        {'name': 'Thời Khóa Biểu', 'description': 'Xem và quản lý thời khóa biểu'},
+        {'name': 'Schedule Generation', 'description': 'Tạo thời khóa biểu tự động'},
+        {'name': 'Chatbot', 'description': 'AI Chatbot hỗ trợ'},
+    ],
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SORT_OPERATIONS': False,
 }
 ########################################
 

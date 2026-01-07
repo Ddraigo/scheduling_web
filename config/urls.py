@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.urls import include, path
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from apps.scheduling import views as views_scheduling
 from apps.sap_lich import views as views_sap_lich
 from apps.pages import admin_views
@@ -25,6 +26,13 @@ scheduler_router.register(r'schedule-generation', views_scheduling.ScheduleGener
 urlpatterns = [
     # Redirect root based on user role
     path('', views_sap_lich.landing_page_view, name='home'),
+
+    # ============================================================
+    # API Documentation - Swagger/OpenAPI
+    # ============================================================
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
     # Custom admin login (chặn user thường)
     path('admin/login/', admin_views.admin_login_view, name='admin_login'),
