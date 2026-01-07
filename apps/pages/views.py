@@ -35,6 +35,14 @@ def user_login_view(request):
             if user.is_superuser:
                 error = "Vui lòng sử dụng trang đăng nhập Admin."
             else:
+                # Auto-fix is_staff nếu user có role nhưng chưa là staff
+                if not user.is_staff:
+                    groups = user.groups.values_list('name', flat=True)
+                    allowed_groups = ['Truong_Khoa', 'Truong_Bo_Mon', 'Giang_Vien']
+                    if any(group in allowed_groups for group in groups):
+                        user.is_staff = True
+                        user.save(update_fields=['is_staff'])
+                
                 # Đăng nhập thành công cho non-superuser
                 login(request, user)
                 next_url = request.GET.get('next', '/')

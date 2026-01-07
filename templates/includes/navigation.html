@@ -52,27 +52,20 @@
                                 one</a></li>
                     </ul>
                 </li>
-                <li class="dropdown nav-item">
-                    <a href="{% url 'admin:logout' %}" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                <li class="nav-item">
+                    <div style="display: inline-flex; align-items: center; gap: 10px; padding: 10px 15px;">
                         <div class="photo">
-                            <img src="{% static 'assets/img/anime3.png' %}" alt="Profile Photo">
+                            <img src="{% static 'assets/img/anime3.png' %}" alt="Profile Photo" style="width: 35px; height: 35px; border-radius: 50%;">
                         </div>
-                        <b class="caret d-none d-lg-block d-xl-block"></b>
-                        <p class="d-lg-none">
-                            Log out
-                        </p>
-                    </a>
-                    <ul class="dropdown-menu dropdown-navbar">
-                        <li class="nav-link"><a href="javascript:void(0)" class="nav-item dropdown-item">Profile</a>
-                        </li>
-                        <li class="nav-link"><a href="javascript:void(0)" class="nav-item dropdown-item">Settings</a>
-                        </li>
-                        <li class="dropdown-divider"></li>
                         {% if request.user.is_authenticated %}
-                        <li class="nav-link"><a href="{% url 'logout' %}" class="nav-item dropdown-item">
-                            Logout</a></li>
+                        <form method="post" action="{% url 'logout' %}" style="display: inline; margin: 0;">
+                            {% csrf_token %}
+                            <button type="submit" style="background: none; border: none; color: #51cbce; cursor: pointer; font-size: 14px; text-decoration: none; padding: 0;">
+                                <i class="tim-icons icon-button-power"></i> Logout
+                            </button>
+                        </form>
                         {% endif %}
-                    </ul>
+                    </div>
                 </li>
                 <li class="separator d-lg-none"></li>
             </ul>
