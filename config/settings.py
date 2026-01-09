@@ -178,7 +178,7 @@ if DB_ENGINE and DB_NAME and (DB_USER or DB_USE_WINDOWS_AUTH):
         
         # With Windows Authentication we should not pass user/password
         if DB_USE_WINDOWS_AUTH:
-            _mssql_options.pop('extra_params', None)
+            _mssql_options['extra_params'] = 'TrustServerCertificate=yes;'
             _mssql_options['trusted_connection'] = 'yes'
 
         DATABASES = {
