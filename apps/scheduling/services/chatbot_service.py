@@ -264,7 +264,6 @@ DATABASE SCHEMA - HỆ THỐNG QUẢN LÝ THỜI KHÓA BIỂU ĐẠI HỌC
     - ngay_bd: DATE
     - ngay_kt: DATE
     - ngay_tao: DATETIME2
-    - ghi_chu: NVARCHAR(200)
     - UNIQUE(ma_dot, ma_lop, ma_phong, time_slot_id)
 
 === RELATIONSHIPS (QUAN HỆ) ===
@@ -585,7 +584,7 @@ DATABASE SCHEMA - HỆ THỐNG QUẢN LÝ THỜI KHÓA BIỂU ĐẠI HỌC
         thinking_level: str = THINKING_LEVEL_LOW,
         use_stateful: bool = False,
         temperature: float = 0.7,
-        max_tokens: int = 4096,
+        max_tokens: int = 8096,
         response_mime_type: str = "text/plain",  # Ignored in Interactions API, for fallback only
         _retry_count: int = 0  # Internal: track retry attempts
     ) -> Tuple[Optional[str], Optional[str], Optional[Exception]]:
@@ -805,40 +804,38 @@ DATABASE SCHEMA - HỆ THỐNG QUẢN LÝ THỜI KHÓA BIỂU ĐẠI HỌC
 HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
 """
         
-        query_prompt = (
-            f"{self.db_schema}\n\n" + QUERY_SPEC_INSTRUCTION.format(
-                question=message,
-                ma_dot=ma_dot or "(không có - chỉ query master data)",
-                feedback_section=feedback_section
-            )
-        )
+        # Dùng replace để tránh KeyError do dấu ngoặc nhọn trong JSON template
+        query_prompt = f"{self.db_schema}\n\n" + QUERY_SPEC_INSTRUCTION
+        query_prompt = query_prompt.replace("{question}", message)
+        query_prompt = query_prompt.replace("{ma_dot}", ma_dot or "(không có - chỉ query master data)")
+        query_prompt = query_prompt.replace("{feedback_section}", feedback_section)
         
-        # Sinh query_spec bằng generate_content (ổn định hơn, giảm 429)
-        model_used = PRIMARY_MODEL
+        # Sinh query_spec dùng model nhẹ trước để tiết kiệm quota
+        model_used = FALLBACK_MODEL
         response_text, _, error = self._call_generate_content_fallback(
             prompt=query_prompt,
             model=model_used,
             thinking_level=THINKING_LEVEL_MINIMAL,
             temperature=0.1,
-            max_tokens=2000,
+            max_tokens=900,
             response_mime_type="application/json"
         )
 
-        # Nếu model chính hết quota hoặc lỗi, thử fallback model nhẹ hơn
+        # Nếu model nhẹ cũng hết quota/lỗi, thử model chính
         if error or not response_text:
             error_str = str(error) if error else "empty response"
             if '429' in error_str or 'RESOURCE_EXHAUSTED' in error_str or not response_text:
-                logger.warning(f"Primary model unavailable ({error_str}), trying fallback model")
-                model_used = FALLBACK_MODEL
+                logger.warning(f"Fallback model unavailable ({error_str}), trying primary model")
+                model_used = PRIMARY_MODEL
                 response_text, _, error = self._call_generate_content_fallback(
                     prompt=query_prompt,
                     model=model_used,
                     thinking_level=THINKING_LEVEL_MINIMAL,
                     temperature=0.1,
-                    max_tokens=2000,
+                    max_tokens=900,
                     response_mime_type="application/json"
                 )
-            
+
         if error:
             error_str = str(error)
             # Kiểm tra nếu là lỗi rate limit
@@ -946,48 +943,128 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
             # Build queryset
             queryset = model.objects.all()
             
-            # Apply joins (select_related/prefetch_related)
+            # Apply joins (select_related/prefetch_related) with allowlist
             joins = query_spec.get('joins', [])
+            allowed_joins = {
+                'GiangVien': {'ma_bo_mon', 'ma_bo_mon__ma_khoa'},
+                'BoMon': {'ma_khoa'},
+                'LopMonHoc': {'ma_mon_hoc', 'phan_cong_list', 'tkb_list'},
+                'PhanCong': {'ma_lop', 'ma_lop__ma_mon_hoc', 'ma_gv'},
+                'ThoiKhoaBieu': {'ma_lop', 'ma_lop__ma_mon_hoc', 'ma_lop__phan_cong_list', 'ma_phong', 'time_slot_id', 'time_slot_id__ca'},
+                'NguyenVong': {'ma_gv', 'time_slot_id'},
+                'GVDayMon': {'ma_gv', 'ma_mon_hoc'},
+                'DotXep': {'ma_du_kien_dt'},
+                'PhongHoc': set(),
+                'MonHoc': set(),
+                'Khoa': set(),
+                'TimeSlot': {'ca'},
+            }
+            join_aliases = {
+                'phancong': 'phan_cong_list',
+                'phan_cong': 'phan_cong_list',
+                'ma_lop__phancong': 'ma_lop__phan_cong_list',
+                'ma_lop__phan_cong': 'ma_lop__phan_cong_list',
+            }
+
             if joins:
-                # Validate join fields
-                valid_joins = []
+                allowed_for_model = allowed_joins.get(model.__name__, set())
                 for j in joins:
-                    if '__' in j or hasattr(model, j.split('__')[0] if '__' in j else j):
-                        valid_joins.append(j)
-                if valid_joins:
-                    try:
-                        queryset = queryset.select_related(*valid_joins)
-                    except Exception:
-                        # Try prefetch_related instead
+                    normalized_join = join_aliases.get(j, j)
+
+                    # Skip if not in allowlist
+                    if allowed_for_model and normalized_join not in allowed_for_model:
+                        logger.warning(f"Join '{normalized_join}' not allowed for {model.__name__}, skipping")
+                        continue
+
+                    # Reverse relations should use prefetch_related
+                    if normalized_join.endswith('_list'):
                         try:
-                            queryset = queryset.prefetch_related(*valid_joins)
+                            queryset = queryset.prefetch_related(normalized_join)
                         except Exception as e:
-                            logger.warning(f"Join error: {e}")
+                            logger.warning(f"Join '{normalized_join}' skipped (unsupported path): {e}")
+                        continue
+
+                    # Try select_related, fallback prefetch; if both fail, skip
+                    try:
+                        queryset = queryset.select_related(normalized_join)
+                        continue
+                    except Exception as e:
+                        logger.debug(f"select_related failed for '{normalized_join}': {e}")
+                    try:
+                        queryset = queryset.prefetch_related(normalized_join)
+                    except Exception as e:
+                        logger.warning(f"Join '{normalized_join}' skipped (unsupported path): {e}")
             
             # Apply filters - WHITELIST approach
             filters = query_spec.get('filters', {})
             allowed_lookups = ['exact', 'iexact', 'contains', 'icontains', 'gt', 'gte', 'lt', 'lte', 'in', 'startswith', 'endswith']
-            
+
+            # Allowlist fields per model
+            allowed_filter_fields = {
+                'GiangVien': {'ma_gv', 'ten_gv', 'loai_gv', 'ma_bo_mon__ma_khoa__ten_khoa', 'ma_bo_mon__ten_bo_mon'},
+                'BoMon': {'ma_bo_mon', 'ten_bo_mon', 'ma_khoa__ten_khoa'},
+                'MonHoc': {'ma_mon_hoc', 'ten_mon_hoc', 'so_tin_chi', 'so_tiet_lt', 'so_tiet_th'},
+                'LopMonHoc': {'ma_lop', 'ma_mon_hoc__ten_mon_hoc', 'ma_mon_hoc__ma_mon_hoc'},
+                'PhanCong': {'ma_gv__ten_gv', 'ma_lop__ma_mon_hoc__ten_mon_hoc', 'ma_dot__ma_dot'},
+                'ThoiKhoaBieu': {
+                    'ma_lop__ma_mon_hoc__ten_mon_hoc',
+                    'ma_phong__ma_phong',
+                    'time_slot_id__thu',
+                    'time_slot_id__ca__ma_khung_gio',
+                    'ma_dot__ma_dot',
+                    'ma_lop__phan_cong_list__ma_gv__ten_gv',
+                },
+                'NguyenVong': {'ma_gv__ten_gv', 'ma_dot__ma_dot', 'time_slot_id__thu', 'time_slot_id__ca__ma_khung_gio'},
+                'GVDayMon': {'ma_gv__ten_gv', 'ma_mon_hoc__ten_mon_hoc'},
+                'PhongHoc': {'ma_phong', 'loai_phong', 'suc_chua'},
+                'DotXep': {'ma_dot', 'ten_dot', 'trang_thai'},
+                'TimeSlot': {'thu', 'ca__ma_khung_gio'},
+            }
+
             safe_filters = {}
+            allowed_fields = allowed_filter_fields.get(model.__name__, set())
             for key, value in filters.items():
                 # Parse lookup type
                 parts = key.split('__')
                 lookup = parts[-1] if len(parts) > 1 and parts[-1] in allowed_lookups else None
-                
+
                 # Validate: only allow field traversal, no code injection
                 if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*(__[a-zA-Z_][a-zA-Z0-9_]*)*$', key):
                     logger.warning(f"Invalid filter key rejected: {key}")
                     continue
-                
+
+                # Enforce allowlist
+                base_field = key if lookup is None else '__'.join(parts[:-1])
+                if allowed_fields and base_field not in allowed_fields:
+                    logger.warning(f"Filter '{key}' not allowed for {model.__name__}, skipping")
+                    continue
+
                 # Sanitize value
                 if isinstance(value, str):
-                    # Remove potential SQL injection attempts
                     value = value.replace(';', '').replace('--', '')
-                
-                safe_filters[key] = value
-            
+
+                # Try applying individually to catch unsupported traversal early
+                try:
+                    queryset.filter(**{key: value})
+                    safe_filters[key] = value
+                except Exception as e:
+                    logger.warning(f"Skipping unsupported filter '{key}': {e}")
+                    continue
+
             if safe_filters:
-                queryset = queryset.filter(**safe_filters)
+                try:
+                    queryset = queryset.filter(**safe_filters)
+                except Exception as e:
+                    logger.warning(f"Filter application failed, using partial filters: {e}")
+                    # Try one-by-one to salvage workable filters
+                    qs_temp = queryset
+                    for k, v in safe_filters.items():
+                        try:
+                            qs_temp = qs_temp.filter(**{k: v})
+                        except Exception:
+                            logger.warning(f"Filter '{k}' still invalid after salvage, skipping")
+                            continue
+                    queryset = qs_temp
             
             # Apply dot_xep filter if needed
             if query_spec.get('needs_dot_xep') and ma_dot:
@@ -1177,7 +1254,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
             dot_hoat_dong = DotXep.objects.filter(
                 ma_dot__in=ma_dots_co_tkb,
                 trang_thai__in=['RUNNING', 'PUBLISHED']
-            ).order_by('-ngay_bat_dau').first()
+            ).order_by('-ngay_tao').first()
             
             if dot_hoat_dong:
                 # Đếm số TKB
@@ -1189,7 +1266,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
             # Ưu tiên 2: Đợt mới nhất có TKB
             dot_moi_nhat = DotXep.objects.filter(
                 ma_dot__in=ma_dots_co_tkb
-            ).order_by('-ngay_bat_dau').first()
+            ).order_by('-ngay_tao').first()
             
             if dot_moi_nhat:
                 so_tkb = ThoiKhoaBieu.objects.filter(ma_dot=dot_moi_nhat.ma_dot).count()
@@ -1199,7 +1276,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                 # Liệt kê các đợt khác có TKB
                 other_dots = DotXep.objects.filter(
                     ma_dot__in=ma_dots_co_tkb
-                ).exclude(ma_dot=dot_moi_nhat.ma_dot).order_by('-ngay_bat_dau')[:3]
+                ).exclude(ma_dot=dot_moi_nhat.ma_dot).order_by('-ngay_tao')[:3]
                 
                 msg = f"📅 Tự động chọn đợt mới nhất có lịch: **{dot_moi_nhat.ten_dot}** - {so_tkb} lịch\n"
                 if other_dots.exists():
