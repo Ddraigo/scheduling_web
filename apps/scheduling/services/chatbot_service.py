@@ -21,8 +21,23 @@ from .data_access_layer import (
     get_lop_info_dict
 )
 from .llm_service import LLMDataProcessor
+from .chatbot_prompts import SYSTEM_INSTRUCTION, QUERY_SPEC_INSTRUCTION
 
 logger = logging.getLogger(__name__)
+
+# ====================================================================
+# CONSTANTS CHO INTERACTIONS API
+# ====================================================================
+
+# Model constants
+PRIMARY_MODEL = "gemini-2.5-pro"  # Model chính - ổn định
+FALLBACK_MODEL = "gemini-2.5-flash"  # Model backup - nhẹ hơn
+
+# Thinking levels cho các tác vụ khác nhau
+THINKING_LEVEL_MINIMAL = "minimal"  # Không cần suy nghĩ, giảm độ trễ
+THINKING_LEVEL_LOW = "low"  # Suy luận đơn giản, tiết kiệm chi phí
+THINKING_LEVEL_MEDIUM = "medium"  # Tư duy cân bằng
+THINKING_LEVEL_HIGH = "high"  # Tối đa chiều sâu suy luận
 
 
 class ScheduleChatbot:
@@ -37,48 +52,72 @@ class ScheduleChatbot:
     """
     
     def __init__(self):
-        """Khởi tạo chatbot với Google Gemini API"""
-        api_key = os.environ.get('GEMINI_API_KEY') or os.environ.get('GOOGLE_API_KEY')
-        if not api_key:
-            raise ValueError("Cần cấu hình GEMINI_API_KEY hoặc GOOGLE_API_KEY")
+        """Khởi tạo chatbot với Google Gemini Interactions API
         
-        self.client = genai.Client(api_key=api_key)
-        self.model = "gemini-2.5-flash"  # Model chính - nhanh và ổn định
+        Sử dụng Interactions API (Beta) với các cải tiến:
+        - Stateful conversations với previous_interaction_id
+        - Rate limiting với exponential backoff
+        - Thinking level configuration
+        - Multiple API keys rotation để tránh rate limit
+        """
+        # === MULTIPLE API KEYS SUPPORT ===
+        # Hỗ trợ nhiều API keys: GEMINI_API_KEYS=key1,key2,key3
+        # Hoặc fallback về GEMINI_API_KEY/GOOGLE_API_KEY (có thể có dấu phẩy)
+        api_keys_str = os.environ.get('GEMINI_API_KEYS')
         
-        # System instruction cho chatbot
-        self.system_instruction = """Bạn là trợ lý thông minh cho hệ thống quản lý thời khóa biểu đại học với khả năng phân tích và truy vấn dữ liệu.
-Nhiệm vụ của bạn:
-1. Phân tích câu hỏi người dùng để xác định INTENT và ENTITIES cần thiết
-2. Dựa vào KẾT QUẢ TRUY VẤN THỰC TẾ từ database để trả lời chính xác
-3. Trả lời bằng tiếng Việt, tự nhiên và dễ hiểu
-4. Nếu thiếu thông tin (như đợt xếp), tự động phân tích và tìm kiếm
+        if not api_keys_str:
+            # Fallback: Check GEMINI_API_KEY or GOOGLE_API_KEY
+            api_keys_str = os.environ.get('GEMINI_API_KEY') or os.environ.get('GOOGLE_API_KEY')
+        
+        if api_keys_str:
+            # Parse keys (split by comma)
+            self.api_keys = [k.strip() for k in api_keys_str.split(',') if k.strip()]
+            if not self.api_keys:
+                raise ValueError("API keys string is empty")
+            self.current_key_index = 0
+        else:
+            raise ValueError("Cần cấu hình GEMINI_API_KEYS hoặc GEMINI_API_KEY")
+        
+        # Key rotation tracking
+        self.key_stats = {}  # {key_index: {'uses': 0, 'failures': 0, 'last_used': timestamp}}
+        self.key_cooldowns = {}  # {key_index: cooldown_until_timestamp}
+        self.key_invalid = set()  # Set of invalid key indices (API_KEY_INVALID)
+        
+        # Initialize first client
+        self.client = genai.Client(api_key=self.api_keys[self.current_key_index])
+        self.model = FALLBACK_MODEL # Model chính - nhanh và ổn định
+        
+        logger.info(f"🔑 Initialized chatbot with {len(self.api_keys)} API key(s)")
+        
+        # Interactions API: Lưu interaction_id để tiếp tục cuộc trò chuyện
+        self._last_interaction_id: Optional[str] = None
+        self._use_stateful_mode = True  # Bật chế độ stateful (default)
+        self._store_interactions = True  # Không lưu trữ trên server (tiết kiệm quota)
+        
+        # System instruction cho chatbot (giữ riêng để giảm độ dài file)
+        self.system_instruction = SYSTEM_INSTRUCTION
 
-Các loại câu hỏi bạn có thể xử lý:
-- Thông tin giảng viên (dạy môn gì, thuộc khoa/bộ môn nào)
-- Lịch dạy của giảng viên
-- Thông tin môn học (số tín chỉ, số tiết LT/TH)
-- Phòng trống theo thời gian
-- Thống kê (số giảng viên, số lớp, tỷ lệ xếp lịch)
-- Nguyện vọng giảng viên
-- Thời khóa biểu đã xếp
-
-Quy tắc trả lời:
-- LUÔN dựa vào "KẾT QUẢ TRUY VẤN" được cung cấp
-- Sử dụng emoji phù hợp (👨‍🏫 🏫 📚 ⏰ ✅ ❌)
-- Format rõ ràng với bullet points hoặc bảng
-- Nếu kết quả trống, nói rõ "không tìm thấy"
-- Trả lời ngắn gọn, đủ ý, không dài dòng"""
-
-        # Conversation history
+        # Conversation history (local backup for stateless fallback)
         self.conversation_history: List[Dict[str, str]] = []
         
         # Cache cho đợt xếp hiện tại
         self._cached_dot_xep = None
         self._cache_time = None
         
-        # Rate limiting cho API calls
+        # === GLOBAL RATE LIMITING ===
+        # Giới hạn tổng số requests cho chatbot (không phân biệt key)
+        self._request_limit_per_minute = 3  # Max 3 requests/minute (giảm 429)
+        self._request_window_seconds = 60  # Time window
+        self._request_timestamps = []  # List of request timestamps
+        
+        # Rate limiting với exponential backoff (per-key basis)
         self._last_api_call = None
-        self._min_delay_between_calls = 1.5  # seconds (để tránh vượt quota 5 req/min)
+        self._min_delay_between_calls = 2.5  # seconds - base delay (tăng để giảm 429)
+        self._max_delay_between_calls = 15.0  # seconds - max delay
+        self._current_delay = self._min_delay_between_calls  # adaptive delay
+        self._consecutive_rate_limits = 0  # đếm số lần bị rate limit liên tiếp
+        self._rate_limit_reset_time = None  # thời điểm reset quota
+        self._key_cooldown_duration = 60  # seconds - cooldown time per key after 429
         
         # Database schema để AI sinh query
         self.db_schema = self._build_db_schema()
@@ -159,19 +198,22 @@ DATABASE SCHEMA - HỆ THỐNG QUẢN LÝ THỜI KHÓA BIỂU ĐẠI HỌC
 
 === BẢNG TRANSACTION DATA (phụ thuộc đợt xếp) ===
 
-11. DotXep (tb_DOT_XEP → model: DotXep) - Đợt xếp thời khóa biểu
-    - ma_dot: VARCHAR(20) PK (VD: "DOT1_2025-2026_HK1")
-    - ma_du_kien_dt: FK → DuKienDT
+11. DotXep (tb_DOT_XEP → model: DotXep) - Đợt xếp lịch
+    - ma_dot: VARCHAR(12) PK (VD: "DOT2025-01")
     - ten_dot: NVARCHAR(200)
-    - trang_thai: VARCHAR(20) ("DRAFT", "RUNNING", "LOCKED", "PUBLISHED")
-    - ngay_tao: DATETIME2
-    - ngay_khoa: DATETIME2
-   
-12. LopMonHoc (tb_LOP_MONHOC → model: LopMonHoc) - Lớp môn học (section)
-    - ma_lop: VARCHAR(12) PK (VD: "LOP-00000001")
+    - nam_hoc: VARCHAR(9)
+    - hoc_ky: TINYINT
+    - trang_thai: NVARCHAR(20) ("DRAFT", "RUNNING", "LOCKED", "PUBLISHED")
+    - ngay_bat_dau: DATE
+    - ngay_ket_thuc: DATE
+
+12. LopMonHoc (tb_LOP_MON_HOC → model: LopMonHoc)
+    - ma_lop: VARCHAR(15) PK (VD: "INT1001-N1")
     - ma_mon_hoc: FK → MonHoc
-    - nhom_mh: TINYINT (nhóm môn học)
-    - to_mh: TINYINT (tổ môn học, NULL nếu không chia tổ)
+    - nhom_mh: TINYINT (nhóm lý thuyết)
+    - to_mh: TINYINT (tổ thực hành - NULL nếu lớp lý thuyết)
+    - ma_du_kien_dt: FK → DuKienDT
+    - ma_dot: FK → DotXep (đợt xếp đang thuộc)
     - so_luong_sv: SMALLINT
     - he_dao_tao: NVARCHAR(200) ("Đại học", "Cao đẳng")
     - ngon_ngu: NVARCHAR(50)
@@ -246,6 +288,498 @@ DATABASE SCHEMA - HỆ THỐNG QUẢN LÝ THỜI KHÓA BIỂU ĐẠI HỌC
 - TuanHoc pattern: "1" = có học, "0" = nghỉ (VD: "111111100000000" = học 7 tuần đầu)
 - TimeSlot format: "Thu2-Ca1" = Thứ 2, Ca 1
 """
+
+    # ====================================================================
+    # MULTIPLE API KEYS MANAGEMENT
+    # ====================================================================
+    
+    def _check_global_rate_limit(self) -> Tuple[bool, float, int]:
+        """
+        Kiểm tra giới hạn tổng số requests/minute (5 requests/phút).
+        
+        Returns:
+            Tuple[can_proceed, wait_time, current_count]
+            - can_proceed: True nếu còn quota
+            - wait_time: Thời gian cần chờ nếu hết quota (seconds)
+            - current_count: Số requests trong window hiện tại
+        """
+        current_time = time.time()
+        window_start = current_time - self._request_window_seconds
+        
+        # Clean up old timestamps outside window
+        self._request_timestamps = [
+            ts for ts in self._request_timestamps 
+            if ts > window_start
+        ]
+        
+        current_count = len(self._request_timestamps)
+        
+        # Check if exceeded limit
+        if current_count >= self._request_limit_per_minute:
+            # Calculate wait time until oldest request expires
+            if self._request_timestamps:
+                oldest_timestamp = self._request_timestamps[0]
+                wait_time = (oldest_timestamp + self._request_window_seconds) - current_time
+                wait_time = max(0, wait_time)
+            else:
+                wait_time = 0
+            
+            logger.warning(f"⚠️ Global rate limit: {current_count}/{self._request_limit_per_minute} requests in last 60s")
+            return False, wait_time, current_count
+        
+        return True, 0, current_count
+    
+    def _record_request(self):
+        """Ghi nhận một request mới vào tracking."""
+        self._request_timestamps.append(time.time())
+    
+    def _get_next_available_key(self) -> Optional[int]:
+        """
+        Tìm API key tiếp theo có thể sử dụng (không trong cooldown và không invalid).
+        
+        Returns:
+            Index của key khả dụng, hoặc None nếu tất cả đang cooldown/invalid
+        """
+        current_time = time.time()
+        
+        # Nếu chỉ có 1 key, return luôn (trừ khi invalid)
+        if len(self.api_keys) == 1:
+            return 0 if 0 not in self.key_invalid else None
+        
+        # Tìm key không trong cooldown và không invalid
+        for i in range(len(self.api_keys)):
+            next_idx = (self.current_key_index + i) % len(self.api_keys)
+            
+            # Skip invalid keys
+            if next_idx in self.key_invalid:
+                logger.debug(f"Key {next_idx} is marked invalid, skipping")
+                continue
+            
+            # Check cooldown
+            if next_idx in self.key_cooldowns:
+                cooldown_until = self.key_cooldowns[next_idx]
+                if current_time < cooldown_until:
+                    wait_time = cooldown_until - current_time
+                    logger.debug(f"Key {next_idx} in cooldown for {wait_time:.1f}s more")
+                    continue
+                else:
+                    # Cooldown ended, remove it
+                    del self.key_cooldowns[next_idx]
+            
+            # Key available
+            return next_idx
+        
+        # All keys in cooldown or invalid
+        return None
+    
+    def _rotate_to_next_key(self) -> bool:
+        """
+        Chuyển sang API key tiếp theo.
+        
+        Returns:
+            True nếu rotate thành công, False nếu không còn key khả dụng
+        """
+        next_idx = self._get_next_available_key()
+        
+        if next_idx is None:
+            logger.warning("⚠️ All API keys are in cooldown")
+            return False
+        
+        if next_idx != self.current_key_index:
+            logger.info(f"🔄 Rotating from key {self.current_key_index} → key {next_idx}")
+            self.current_key_index = next_idx
+            # Recreate client with new key
+            self.client = genai.Client(api_key=self.api_keys[self.current_key_index])
+        
+        return True
+    
+    def _mark_key_cooldown(self, key_index: int, duration: float = None):
+        """Đánh dấu một key vào trạng thái cooldown."""
+        if duration is None:
+            duration = self._key_cooldown_duration
+        
+        cooldown_until = time.time() + duration
+        self.key_cooldowns[key_index] = cooldown_until
+        logger.info(f"❄️ Key {key_index} in cooldown for {duration:.1f}s")
+    
+    def _track_key_usage(self, key_index: int, success: bool):
+        """Track usage statistics cho một key."""
+        if key_index not in self.key_stats:
+            self.key_stats[key_index] = {'uses': 0, 'failures': 0, 'last_used': None}
+        
+        stats = self.key_stats[key_index]
+        stats['uses'] += 1
+        stats['last_used'] = time.time()
+        
+        if not success:
+            stats['failures'] += 1
+    
+    def get_key_usage_stats(self) -> Dict[int, Dict[str, Any]]:
+        """Lấy thống kê sử dụng của tất cả API keys."""
+        stats = self.key_stats.copy()
+        
+        # Add invalid status to stats
+        for key_idx in range(len(self.api_keys)):
+            if key_idx not in stats:
+                stats[key_idx] = {'uses': 0, 'failures': 0, 'last_used': None}
+            stats[key_idx]['invalid'] = key_idx in self.key_invalid
+            stats[key_idx]['in_cooldown'] = key_idx in self.key_cooldowns
+        
+        return stats
+    
+    def get_keys_health(self) -> Dict[str, Any]:
+        """Lấy trạng thái health của tất cả keys."""
+        total_keys = len(self.api_keys)
+        invalid_count = len(self.key_invalid)
+        cooldown_count = len(self.key_cooldowns)
+        available_count = total_keys - invalid_count
+        
+        return {
+            'total_keys': total_keys,
+            'available': available_count,
+            'invalid': invalid_count,
+            'in_cooldown': cooldown_count,
+            'current_key': self.current_key_index,
+            'health_percentage': (available_count / total_keys * 100) if total_keys > 0 else 0
+        }
+
+    # ====================================================================
+    # INTERACTIONS API HELPER METHODS (Beta)
+    # ====================================================================
+    
+    def _check_rate_limit_status(self) -> Tuple[bool, float]:
+        """
+        Kiểm tra trạng thái rate limit và tính delay cần thiết.
+        
+        Returns:
+            Tuple[can_proceed, wait_time]
+            - can_proceed: True nếu có thể gọi API
+            - wait_time: Thời gian cần chờ (seconds)
+        """
+        current_time = time.time()
+        
+        # Nếu đang trong thời gian chờ reset
+        if self._rate_limit_reset_time and current_time < self._rate_limit_reset_time:
+            wait_time = self._rate_limit_reset_time - current_time
+            logger.info(f"Rate limit active, need to wait {wait_time:.1f}s")
+            return False, wait_time
+        
+        # Tính delay dựa trên số lần rate limit liên tiếp (exponential backoff)
+        if self._consecutive_rate_limits > 0:
+            # Exponential backoff: 2^n * base_delay
+            backoff_delay = min(
+                (2 ** self._consecutive_rate_limits) * self._min_delay_between_calls,
+                self._max_delay_between_calls
+            )
+            self._current_delay = backoff_delay
+        else:
+            self._current_delay = self._min_delay_between_calls
+        
+        # Kiểm tra delay từ lần gọi trước
+        if self._last_api_call:
+            elapsed = current_time - self._last_api_call
+            if elapsed < self._current_delay:
+                wait_time = self._current_delay - elapsed
+                return False, wait_time
+        
+        return True, 0
+    
+    def _apply_rate_limit_delay(self):
+        """Áp dụng delay trước khi gọi API (nếu cần)."""
+        can_proceed, wait_time = self._check_rate_limit_status()
+        if not can_proceed and wait_time > 0:
+            logger.info(f"Applying rate limit delay: {wait_time:.1f}s")
+            time.sleep(wait_time)
+    
+    def _handle_rate_limit_error(self, error: Exception) -> bool:
+        """
+        Xử lý lỗi rate limit và API key invalid từ API với key rotation.
+        
+        Args:
+            error: Exception từ API
+            
+        Returns:
+            True nếu nên retry (đã rotate key), False nếu nên dùng fallback
+        """
+        error_str = str(error)
+        
+        # Kiểm tra lỗi config (response_mime_type không support) - KHÔNG đánh dấu invalid
+        is_config_error = "no such field" in error_str or "invalid JSON" in error_str
+        
+        if is_config_error:
+            logger.warning(f"⚠️ Config error (not key issue): {error_str[:150]}")
+            # Đây là lỗi code, không phải lỗi key - không retry
+            return False
+        
+        # Kiểm tra API key invalid (400 error với API_KEY_INVALID)
+        is_invalid_key = "API_KEY_INVALID" in error_str or "API key not valid" in error_str
+        
+        if is_invalid_key:
+            logger.error(f"❌ Key {self.current_key_index} is INVALID: {error_str[:200]}")
+            
+            # Mark current key as invalid permanently
+            self.key_invalid.add(self.current_key_index)
+            self._track_key_usage(self.current_key_index, success=False)
+            
+            # Try rotate to another key
+            if len(self.api_keys) > 1:
+                if self._rotate_to_next_key():
+                    logger.info(f"✅ Rotated to key {self.current_key_index} after invalid key")
+                    return True  # Retry with new key
+                else:
+                    logger.error("❌ All API keys are invalid or unavailable")
+                    return False  # Use fallback
+            else:
+                # Only one key and it's invalid
+                logger.error("❌ Single API key is invalid, cannot proceed")
+                return False
+        
+        # Kiểm tra các loại rate limit errors
+        is_rate_limit = any(code in error_str for code in ['429', 'RESOURCE_EXHAUSTED', 'quota', 'rate_limit'])
+        
+        if is_rate_limit:
+            # Track failure cho current key
+            self._track_key_usage(self.current_key_index, success=False)
+            
+            # Mark current key as cooldown
+            self._mark_key_cooldown(self.current_key_index)
+            
+            # Try rotate to next key
+            if len(self.api_keys) > 1:
+                if self._rotate_to_next_key():
+                    logger.info(f"✅ Rotated to key {self.current_key_index}, will retry")
+                    self._consecutive_rate_limits = 0  # Reset counter after rotation
+                    return True  # Retry with new key (limited by MAX_RETRIES)
+                else:
+                    logger.warning("⚠️ All keys exhausted, will use fallback")
+                    self._consecutive_rate_limits += 1
+                    return False  # Use fallback
+            else:
+                # Single key - exponential backoff
+                self._consecutive_rate_limits += 1
+                
+                if self._consecutive_rate_limits >= 3:
+                    # Sau 3 lần liên tiếp, chờ lâu hơn (có thể quota hết)
+                    self._rate_limit_reset_time = time.time() + 60.0  # Chờ 1 phút
+                    logger.warning(f"Multiple rate limits ({self._consecutive_rate_limits}x), setting 60s cooldown")
+                    return False  # Dùng fallback ngay
+                else:
+                    # Exponential backoff
+                    backoff = min((2 ** self._consecutive_rate_limits) * self._min_delay_between_calls, 30)
+                    self._rate_limit_reset_time = time.time() + backoff
+                    logger.warning(f"Rate limited ({self._consecutive_rate_limits}x), backoff {backoff:.1f}s")
+                    return self._consecutive_rate_limits < 2  # Retry nếu < 2 lần
+        
+        return False  # Không phải rate limit error
+    
+    def _reset_rate_limit_tracking(self):
+        """Reset tracking khi API call thành công."""
+        self._consecutive_rate_limits = 0
+        self._current_delay = self._min_delay_between_calls
+        self._rate_limit_reset_time = None
+    
+    def _call_interactions_api(
+        self, 
+        prompt: str, 
+        model: str = None,
+        thinking_level: str = THINKING_LEVEL_LOW,
+        use_stateful: bool = False,
+        temperature: float = 0.7,
+        max_tokens: int = 4096,
+        response_mime_type: str = "text/plain",  # Ignored in Interactions API, for fallback only
+        _retry_count: int = 0  # Internal: track retry attempts
+    ) -> Tuple[Optional[str], Optional[str], Optional[Exception]]:
+        """
+        Gọi Interactions API với rate limiting và error handling.
+        
+        Theo tài liệu mới:
+        - Sử dụng client.interactions.create() thay vì models.generate_content()
+        - Hỗ trợ stateful mode với previous_interaction_id
+        - Sử dụng thinking_level thay vì thinking_config
+        - Global rate limit: 5 requests/minute
+        - Max retry: 1 lần (tránh burn hết tất cả keys)
+        - NOTE: response_mime_type NOT supported in Interactions API Beta
+        
+        Args:
+            prompt: Nội dung câu hỏi/prompt
+            model: Model để sử dụng (default: PRIMARY_MODEL)
+            thinking_level: Mức độ suy luận ("minimal", "low", "medium", "high")
+            use_stateful: Sử dụng stateful mode với previous_interaction_id
+            temperature: Nhiệt độ sampling
+            max_tokens: Số token tối đa output
+            response_mime_type: IGNORED - Chỉ dùng cho fallback generate_content
+            _retry_count: INTERNAL - số lần đã retry
+            
+        Returns:
+            Tuple[response_text, interaction_id, error]
+        """
+        MAX_RETRIES = 1  # Chỉ retry 1 lần để tránh burn hết keys
+        
+        if model is None:
+            model = self.model
+        
+        # === CHECK GLOBAL RATE LIMIT (5 requests/minute) ===
+        can_proceed, wait_time, current_count = self._check_global_rate_limit()
+        if not can_proceed:
+            logger.warning(f"🚫 Rate limit exceeded: {current_count}/5 requests/minute. Wait {wait_time:.1f}s")
+            error_msg = f"Rate limit: {current_count}/5 requests/minute. Please wait {wait_time:.0f} seconds."
+            return None, None, Exception(error_msg)
+        
+        # Apply per-key rate limiting
+        self._apply_rate_limit_delay()
+        
+        # Record this request
+        self._record_request()
+        
+        try:
+            # Thử sử dụng Interactions API mới
+            try:
+                interaction_params = {
+                    "model": model,
+                    "input": prompt,
+                    "store": self._store_interactions,  # Không lưu trên server để tiết kiệm quota
+                }
+                
+                # Thêm generation_config với thinking_level
+                generation_config = {
+                    "temperature": temperature,
+                    "max_output_tokens": max_tokens,
+                    # NOTE: response_mime_type NOT supported in Interactions API
+                }
+                
+                # Chỉ thêm thinking_level cho Flash models
+                if "flash" in model.lower() and thinking_level:
+                    generation_config["thinking_level"] = thinking_level
+                
+                interaction_params["generation_config"] = generation_config
+                
+                # Sử dụng previous_interaction_id nếu stateful mode
+                if use_stateful and self._use_stateful_mode and self._last_interaction_id:
+                    interaction_params["previous_interaction_id"] = self._last_interaction_id
+                
+                # Gọi Interactions API
+                interaction = self.client.interactions.create(**interaction_params)
+                
+                self._last_api_call = time.time()
+                self._reset_rate_limit_tracking()
+                
+                # Track successful usage
+                self._track_key_usage(self.current_key_index, success=True)
+                
+                # Extract response text
+                response_text = ""
+                if interaction.outputs:
+                    # Lấy output cuối cùng (text output)
+                    for output in interaction.outputs:
+                        if hasattr(output, 'text') and output.text:
+                            response_text = output.text
+                            break
+                        elif hasattr(output, 'type') and output.type == "text":
+                            response_text = getattr(output, 'text', '')
+                            break
+                
+                # Lưu interaction_id cho stateful mode
+                new_interaction_id = interaction.id if hasattr(interaction, 'id') else None
+                if use_stateful and new_interaction_id:
+                    self._last_interaction_id = new_interaction_id
+                
+                logger.info(f"✅ API success [key {self.current_key_index}], model={model}")
+                return response_text, new_interaction_id, None
+                
+            except AttributeError as attr_err:
+                # Interactions API chưa available trong SDK version này
+                # Fallback về generate_content API cũ
+                logger.info(f"Interactions API not available: {attr_err}. Using generate_content fallback.")
+                return self._call_generate_content_fallback(
+                    prompt, model, thinking_level, temperature, max_tokens, response_mime_type
+                )
+                
+        except Exception as e:
+            error_str = str(e)
+            logger.warning(f"API call failed: {error_str}")
+            
+            # Check if exceeded max retries
+            if _retry_count >= MAX_RETRIES:
+                logger.warning(f"⚠️ Max retries ({MAX_RETRIES}) reached, using fallback")
+                return None, None, e
+            
+            # Handle rate limit
+            should_retry = self._handle_rate_limit_error(e)
+            if should_retry:
+                # Retry với delay
+                logger.info(f"Retrying after rate limit (attempt {_retry_count + 1}/{MAX_RETRIES})...")
+                time.sleep(self._current_delay)
+                return self._call_interactions_api(
+                    prompt, model, thinking_level, use_stateful, temperature, max_tokens, 
+                    response_mime_type, _retry_count + 1
+                )
+            
+            return None, None, e
+    
+    def _call_generate_content_fallback(
+        self,
+        prompt: str,
+        model: str,
+        thinking_level: str,
+        temperature: float,
+        max_tokens: int,
+        response_mime_type: str = "text/plain"
+    ) -> Tuple[Optional[str], Optional[str], Optional[Exception]]:
+        """
+        Fallback sử dụng generate_content API cũ nếu Interactions API không available.
+        API này hỗ trợ response_mime_type.
+        """
+        try:
+            # Build config
+            config_params = {
+                "temperature": temperature,
+                "max_output_tokens": max_tokens,
+                "response_mime_type": response_mime_type,  # Supported in generate_content
+            }
+            
+            # Thêm thinking_config cho models hỗ trợ
+            if "flash" in model.lower() or "2.5" in model:
+                thinking_budget = 0 if thinking_level == THINKING_LEVEL_MINIMAL else 1024
+                config_params["thinking_config"] = types.ThinkingConfig(
+                    thinking_budget=thinking_budget
+                )
+            
+            response = self.client.models.generate_content(
+                model=model,
+                contents=prompt,
+                config=types.GenerateContentConfig(**config_params)
+            )
+            
+            self._last_api_call = time.time()
+            self._reset_rate_limit_tracking()
+            
+            # Extract response text
+            response_text = ""
+            if response.candidates and len(response.candidates) > 0:
+                candidate = response.candidates[0]
+                if candidate.content and candidate.content.parts:
+                    for part in candidate.content.parts:
+                        if hasattr(part, 'text') and part.text:
+                            response_text += part.text
+            
+            if not response_text and hasattr(response, 'text'):
+                response_text = response.text
+            
+            logger.info(f"generate_content fallback success, model={model}")
+            return response_text, None, None
+            
+        except Exception as e:
+            logger.warning(f"generate_content fallback failed: {e}")
+            return None, None, e
+
+    def reset_conversation(self):
+        """Reset conversation state (clear history và interaction_id)."""
+        self.conversation_history = []
+        self._last_interaction_id = None
+        logger.info("Conversation reset")
+    
+    # Alias for backward compatibility
+    clear_history = reset_conversation
     
     def _generate_query_with_ai(self, message: str, ma_dot: str = None, feedback: str = None) -> Dict[str, Any]:
         """
@@ -271,203 +805,98 @@ DATABASE SCHEMA - HỆ THỐNG QUẢN LÝ THỜI KHÓA BIỂU ĐẠI HỌC
 HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
 """
         
-        query_prompt = f"""{self.db_schema}
-
-=== NHIỆM VỤ ===
-Phân tích câu hỏi và sinh ra QUERY SPECIFICATION để hệ thống thực thi.
-
-CÂU HỎI: "{message}"
-ĐỢT XẾP HIỆN TẠI: {ma_dot or "(không có - chỉ query master data)"}
-{feedback_section}
-=== OUTPUT FORMAT (JSON) ===
-{{
-    "intent_type": "giang_vien_info|mon_hoc_info|schedule_query|nguyen_vong_query|khoa_info|bo_mon_info|lop_info|phong_hoc_info|room_suggestion|dot_xep_info|thong_ke_query|general",
-    "query_type": "SELECT|COUNT|AGGREGATE",
-    "tables": ["bảng chính cần query"],
-    "select_fields": ["field1", "field2"],
-    "filters": {{
-        "field_name": "value",
-        "field_name__icontains": "search_term",
-        "field_name__gt": number
-    }},
-    "joins": ["related_table1", "related_table2"],
-    "order_by": ["field1", "-field2"],
-    "limit": 20,
-    "aggregations": {{
-        "count": true,
-        "sum_field": "field_name",
-        "avg_field": "field_name"
-    }},
-    "needs_dot_xep": true|false,
-    "explanation": "Giải thích ngắn gọn query này làm gì"
-}}
-
-=== QUY TẮC ===
-1. Filter pattern: field__icontains cho search, field cho exact match
-2. needs_dot_xep = true cho: schedule_query, nguyen_vong_query, room_suggestion, thong_ke_query
-3. needs_dot_xep = false cho: master data (giang_vien, mon_hoc, khoa, bo_mon, phong_hoc)
-4. Với câu hỏi "bao nhiêu", "số lượng" → query_type = "COUNT"
-5. Joins: liệt kê các bảng liên quan cần select_related/prefetch_related
-
-=== VÍ DỤ ===
-
-Câu: "Khoa CNTT có bao nhiêu giảng viên?"
-{{
-    "intent_type": "giang_vien_info",
-    "query_type": "COUNT",
-    "tables": ["GiangVien"],
-    "filters": {{
-        "ma_bo_mon__ma_khoa__ten_khoa__icontains": "Công nghệ thông tin"
-    }},
-    "joins": ["ma_bo_mon", "ma_bo_mon__ma_khoa"],
-    "needs_dot_xep": false,
-    "explanation": "Đếm số giảng viên thuộc các bộ môn của khoa Công nghệ thông tin"
-}}
-
-Câu: "Thầy Nguyễn Văn A dạy những môn gì?"
-{{
-    "intent_type": "giang_vien_info",
-    "query_type": "SELECT",
-    "tables": ["GVDayMon"],
-    "select_fields": ["ma_mon_hoc__ten_mon_hoc", "ma_mon_hoc__so_tin_chi"],
-    "filters": {{
-        "ma_gv__ten_gv__icontains": "Nguyễn Văn A"
-    }},
-    "joins": ["ma_gv", "ma_mon_hoc"],
-    "needs_dot_xep": false,
-    "explanation": "Tìm các môn học mà giảng viên Nguyễn Văn A có thể dạy"
-}}
-
-Câu: "Phòng nào trống thứ 3 ca 2?"
-{{
-    "intent_type": "room_suggestion",
-    "query_type": "SELECT",
-    "tables": ["PhongHoc", "ThoiKhoaBieu"],
-    "filters": {{
-        "time_slot_id__thu": 3,
-        "time_slot_id__ca__ma_khung_gio": 2
-    }},
-    "needs_dot_xep": true,
-    "explanation": "Tìm phòng chưa được xếp vào thứ 3 ca 2 trong đợt hiện tại"
-}}
-
-CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.
-"""
+        query_prompt = (
+            f"{self.db_schema}\n\n" + QUERY_SPEC_INSTRUCTION.format(
+                question=message,
+                ma_dot=ma_dot or "(không có - chỉ query master data)",
+                feedback_section=feedback_section
+            )
+        )
         
-        # Danh sách models để fallback - mỗi model có quota riêng
-        # Flash models: 20 req/day mỗi loại, Pro: 25 req/day
-        models_to_try = [
-            "gemini-2.5-flash",      # Nhanh nhất
-            "gemini-2.0-flash-lite", # Nhẹ, quota riêng  
-            "gemini-2.0-flash",      # Backup flash
-            "gemini-2.5-pro",        # Pro có quota 25/day riêng
-        ]
-        max_retries = 1  # Chỉ retry 1 lần rồi chuyển model
+        # Sinh query_spec bằng generate_content (ổn định hơn, giảm 429)
+        model_used = PRIMARY_MODEL
+        response_text, _, error = self._call_generate_content_fallback(
+            prompt=query_prompt,
+            model=model_used,
+            thinking_level=THINKING_LEVEL_MINIMAL,
+            temperature=0.1,
+            max_tokens=2000,
+            response_mime_type="application/json"
+        )
+
+        # Nếu model chính hết quota hoặc lỗi, thử fallback model nhẹ hơn
+        if error or not response_text:
+            error_str = str(error) if error else "empty response"
+            if '429' in error_str or 'RESOURCE_EXHAUSTED' in error_str or not response_text:
+                logger.warning(f"Primary model unavailable ({error_str}), trying fallback model")
+                model_used = FALLBACK_MODEL
+                response_text, _, error = self._call_generate_content_fallback(
+                    prompt=query_prompt,
+                    model=model_used,
+                    thinking_level=THINKING_LEVEL_MINIMAL,
+                    temperature=0.1,
+                    max_tokens=2000,
+                    response_mime_type="application/json"
+                )
+            
+        if error:
+            error_str = str(error)
+            # Kiểm tra nếu là lỗi rate limit
+            if '429' in error_str or 'RESOURCE_EXHAUSTED' in error_str:
+                logger.warning("Rate limited, falling back to keyword query")
+                return {'success': False, 'error': 'Rate limited', 'use_fallback': True}
+            logger.warning(f"AI query generation failed: {error}")
+            return {'success': False, 'error': error_str}
         
-        for model_name in models_to_try:
-            for retry in range(max_retries):
-                try:
-                    # Rate limiting - tăng delay nếu retry
-                    delay = self._min_delay_between_calls * (retry + 1)
-                    if self._last_api_call:
-                        elapsed = time.time() - self._last_api_call
-                        if elapsed < delay:
-                            time.sleep(delay - elapsed)
-                    
-                    response = self.client.models.generate_content(
-                        model=model_name,
-                        contents=query_prompt,
-                        config=types.GenerateContentConfig(
-                            temperature=0.1,
-                            max_output_tokens=2000,
-                        )
-                    )
-                    
-                    self._last_api_call = time.time()
-                    
-                    # Extract response text
-                    response_text = ""
-                    if response.candidates and len(response.candidates) > 0:
-                        candidate = response.candidates[0]
-                        if candidate.content and candidate.content.parts:
-                            for part in candidate.content.parts:
-                                if hasattr(part, 'text') and part.text:
-                                    response_text += part.text
-                    
-                    if not response_text:
-                        response_text = response.text if hasattr(response, 'text') else ""
-                    
-                    # Clean and parse JSON
-                    response_text = response_text.strip()
-                    if response_text.startswith('```json'):
-                        response_text = response_text[7:]
-                    if response_text.startswith('```'):
-                        response_text = response_text[3:]
-                    if response_text.endswith('```'):
-                        response_text = response_text[:-3]
-                    response_text = response_text.strip()
-                    
-                    # Find JSON object
-                    json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
-                    if json_match:
-                        try:
-                            query_spec = json.loads(json_match.group(0))
-                            logger.info(f"AI generated query spec (model={model_name}): {query_spec}")
-                            return {
-                                'success': True,
-                                'query_spec': query_spec,
-                                'raw_response': response_text,
-                                'model_used': model_name
-                            }
-                        except json.JSONDecodeError as je:
-                            # JSON không hoàn chỉnh - thử sửa
-                            logger.warning(f"JSON parse error: {je}. Trying to fix incomplete JSON...")
-                            # Thử thêm closing braces
-                            json_text = json_match.group(0)
-                            open_braces = json_text.count('{') - json_text.count('}')
-                            if open_braces > 0:
-                                json_text += '}' * open_braces
-                                try:
-                                    query_spec = json.loads(json_text)
-                                    logger.info(f"Fixed JSON successfully: {query_spec}")
-                                    return {
-                                        'success': True,
-                                        'query_spec': query_spec,
-                                        'raw_response': response_text,
-                                        'model_used': model_name
-                                    }
-                                except:
-                                    pass
-                            logger.warning(f"Cannot parse JSON from AI response: {response_text[:300]}")
-                            return {'success': False, 'error': f'Cannot parse JSON: {str(je)}'}
-                    else:
-                        logger.warning(f"Cannot parse JSON from AI response: {response_text[:200]}")
-                        return {'success': False, 'error': 'Cannot parse JSON'}
-                        
-                except Exception as e:
-                    error_str = str(e)
-                    # Kiểm tra nếu là lỗi 429 rate limit
-                    if '429' in error_str or 'RESOURCE_EXHAUSTED' in error_str:
-                        # Parse retry delay từ error message nếu có
-                        retry_match = re.search(r'retry.*?(\d+)', error_str.lower())
-                        wait_time = int(retry_match.group(1)) if retry_match else (35 * (retry + 1))
-                        
-                        logger.warning(f"Rate limited on {model_name}, retry {retry+1}/{max_retries}, waiting {wait_time}s...")
-                        
-                        if retry < max_retries - 1:
-                            time.sleep(min(wait_time, 10))  # Max wait 10s per retry
-                            continue
-                        else:
-                            # Hết retry cho model này, thử model tiếp theo
-                            logger.info(f"Switching from {model_name} to next model...")
-                            break
-                    else:
-                        logger.warning(f"AI query generation failed: {e}")
-                        return {'success': False, 'error': error_str}
+        if not response_text:
+            return {'success': False, 'error': 'Empty response from AI'}
         
-        # Tất cả models đều bị limit
-        logger.warning("All AI models rate limited, falling back to rule-based")
-        return {'success': False, 'error': 'All models rate limited'}
+        # Clean and parse JSON
+        response_text = response_text.strip()
+        if response_text.startswith('```json'):
+            response_text = response_text[7:]
+        if response_text.startswith('```'):
+            response_text = response_text[3:]
+        if response_text.endswith('```'):
+            response_text = response_text[:-3]
+        response_text = response_text.strip()
+        
+        # Find JSON object
+        json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+        if json_match:
+            try:
+                query_spec = json.loads(json_match.group(0))
+                logger.info(f"AI generated query spec: {query_spec.get('explanation', '')}")
+                return {
+                    'success': True,
+                    'query_spec': query_spec,
+                    'raw_response': response_text,
+                    'model_used': model_used
+                }
+            except json.JSONDecodeError as je:
+                # JSON không hoàn chỉnh - thử sửa
+                logger.warning(f"JSON parse error: {je}. Trying to fix incomplete JSON...")
+                # Thử thêm closing braces
+                json_text = json_match.group(0)
+                open_braces = json_text.count('{') - json_text.count('}')
+                if open_braces > 0:
+                    json_text += '}' * open_braces
+                    try:
+                        query_spec = json.loads(json_text)
+                        logger.info(f"Fixed JSON successfully: {query_spec.get('explanation', '')}")
+                        return {
+                            'success': True,
+                            'query_spec': query_spec,
+                            'raw_response': response_text,
+                            'model_used': PRIMARY_MODEL
+                        }
+                    except:
+                        pass
+                logger.warning(f"Cannot parse JSON from AI response: {response_text[:300]}")
+                return {'success': False, 'error': f'Cannot parse JSON: {str(je)}'}
+        else:
+            logger.warning(f"Cannot parse JSON from AI response: {response_text[:200]}")
+            return {'success': False, 'error': 'Cannot parse JSON'}
     
     def _execute_ai_generated_query(self, query_spec: Dict, ma_dot: str = None) -> Dict[str, Any]:
         """
@@ -573,7 +1002,7 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.
                     queryset = queryset.order_by(*valid_orders)
             
             # Limit
-            limit = min(query_spec.get('limit', 20), 100)  # Max 100 records
+            limit = min(query_spec.get('limit', 100), 300)  # Max 300 records
             
             # Execute query based on type
             query_type = query_spec.get('query_type', 'SELECT')
@@ -1172,6 +1601,10 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.
         Query đơn giản dựa trên keyword - KHÔNG CẦN AI.
         Xử lý các câu hỏi phổ biến về số lượng/danh sách.
         
+        Cải tiến:
+        - Trích xuất số lượng từ câu hỏi (VD: "5 phòng", "10 giảng viên")
+        - Hỗ trợ "gần đây", "mới nhất" (sắp xếp theo ID giảm dần)
+        
         Returns:
             Dict với success, data, intent_type, query_type
         """
@@ -1179,6 +1612,32 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.
         
         msg_lower = message.lower()
         result = {'success': False, 'data': [], 'summary': '', 'intent_type': 'general', 'query_type': 'SELECT'}
+        
+        # === HELPER: Trích xuất số lượng từ câu hỏi ===
+        def extract_limit(text: str, default: int = 20) -> int:
+            """Trích xuất số lượng từ câu hỏi. VD: '5 phòng', 'top 10'"""
+            # Pattern: số + từ khóa hoặc "top/first số"
+            patterns = [
+                r'(\d+)\s*(?:phòng|giảng viên|gv|môn|khoa|bộ môn|đợt)',
+                r'(?:top|first|đầu tiên|liệt kê)\s*(\d+)',
+                r'(\d+)\s*(?:cái|người|kết quả|record)',
+            ]
+            for pattern in patterns:
+                match = re.search(pattern, text)
+                if match:
+                    num = int(match.group(1))
+                    return min(num, 100)  # Max 100
+            return default
+        
+        # === HELPER: Kiểm tra yêu cầu sắp xếp "gần đây" ===
+        def wants_recent(text: str) -> bool:
+            """Kiểm tra xem user có muốn dữ liệu gần đây/mới nhất không"""
+            recent_keywords = ['gần đây', 'mới nhất', 'mới thêm', 'cuối cùng', 'recent', 'latest', 'newest']
+            return any(kw in text for kw in recent_keywords)
+        
+        # Trích xuất limit và recent flag
+        limit = extract_limit(msg_lower)
+        order_recent = wants_recent(msg_lower)
         
         try:
             # === KHOA ===
@@ -1192,13 +1651,18 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.
                         'intent_type': 'khoa_info',
                         'query_type': 'COUNT'
                     }
-                elif any(kw in msg_lower for kw in ['danh sách', 'liệt kê', 'list', 'có những', 'gồm những']):
-                    khoas = Khoa.objects.all()[:20]
+                elif any(kw in msg_lower for kw in ['danh sách', 'liệt kê', 'list', 'có những', 'gồm những']) or limit < 20:
+                    # Sử dụng limit từ câu hỏi, sắp xếp theo ID giảm dần nếu "gần đây"
+                    queryset = Khoa.objects.all()
+                    if order_recent:
+                        queryset = queryset.order_by('-ma_khoa')
+                    khoas = queryset[:limit]
                     data = [{'ma_khoa': k.ma_khoa, 'ten_khoa': k.ten_khoa} for k in khoas]
+                    recent_note = " (mới nhất)" if order_recent else ""
                     result = {
                         'success': True,
                         'data': data,
-                        'summary': f'Danh sách {len(data)} khoa',
+                        'summary': f'Danh sách {len(data)} khoa{recent_note}',
                         'intent_type': 'khoa_info',
                         'query_type': 'SELECT'
                     }
@@ -1225,12 +1689,16 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.
                         'query_type': 'COUNT'
                     }
                 else:
-                    bomons = BoMon.objects.select_related('ma_khoa').all()[:20]
+                    queryset = BoMon.objects.select_related('ma_khoa')
+                    if order_recent:
+                        queryset = queryset.order_by('-ma_bo_mon')
+                    bomons = queryset[:limit]
                     data = [{'ma_bo_mon': b.ma_bo_mon, 'ten_bo_mon': b.ten_bo_mon, 'khoa': b.ma_khoa.ten_khoa if b.ma_khoa else 'N/A'} for b in bomons]
+                    recent_note = " (mới nhất)" if order_recent else ""
                     result = {
                         'success': True,
                         'data': data,
-                        'summary': f'Danh sách {len(data)} bộ môn',
+                        'summary': f'Danh sách {len(data)} bộ môn{recent_note}',
                         'intent_type': 'bo_mon_info',
                         'query_type': 'SELECT'
                     }
@@ -1247,12 +1715,16 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.
                         'query_type': 'COUNT'
                     }
                 else:
-                    gvs = GiangVien.objects.select_related('ma_bo_mon', 'ma_bo_mon__ma_khoa').all()[:20]
+                    queryset = GiangVien.objects.select_related('ma_bo_mon', 'ma_bo_mon__ma_khoa')
+                    if order_recent:
+                        queryset = queryset.order_by('-ma_gv')
+                    gvs = queryset[:limit]
                     data = [{'ma_gv': g.ma_gv, 'ten_gv': g.ten_gv, 'bo_mon': g.ma_bo_mon.ten_bo_mon if g.ma_bo_mon else 'N/A'} for g in gvs]
+                    recent_note = " (mới nhất)" if order_recent else ""
                     result = {
                         'success': True,
                         'data': data,
-                        'summary': f'Danh sách {len(data)} giảng viên',
+                        'summary': f'Danh sách {len(data)} giảng viên{recent_note}',
                         'intent_type': 'giang_vien_info',
                         'query_type': 'SELECT'
                     }
@@ -1269,12 +1741,16 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.
                         'query_type': 'COUNT'
                     }
                 else:
-                    monhocs = MonHoc.objects.all()[:20]
+                    queryset = MonHoc.objects.all()
+                    if order_recent:
+                        queryset = queryset.order_by('-ma_mon_hoc')
+                    monhocs = queryset[:limit]
                     data = [{'ma_mon': m.ma_mon_hoc, 'ten_mon': m.ten_mon_hoc, 'so_tin_chi': m.so_tin_chi} for m in monhocs]
+                    recent_note = " (mới nhất)" if order_recent else ""
                     result = {
                         'success': True,
                         'data': data,
-                        'summary': f'Danh sách {len(data)} môn học',
+                        'summary': f'Danh sách {len(data)} môn học{recent_note}',
                         'intent_type': 'mon_hoc_info',
                         'query_type': 'SELECT'
                     }
@@ -1291,12 +1767,16 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.
                         'query_type': 'COUNT'
                     }
                 else:
-                    phongs = PhongHoc.objects.all()[:20]
+                    queryset = PhongHoc.objects.all()
+                    if order_recent:
+                        queryset = queryset.order_by('-ma_phong')
+                    phongs = queryset[:limit]
                     data = [{'ma_phong': p.ma_phong, 'loai_phong': p.loai_phong, 'suc_chua': p.suc_chua} for p in phongs]
+                    recent_note = " (mới nhất)" if order_recent else ""
                     result = {
                         'success': True,
                         'data': data,
-                        'summary': f'Danh sách {len(data)} phòng học',
+                        'summary': f'Danh sách {len(data)} phòng học{recent_note}',
                         'intent_type': 'phong_hoc_info',
                         'query_type': 'SELECT'
                     }
@@ -1313,13 +1793,138 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.
                         'query_type': 'COUNT'
                     }
                 else:
-                    dots = DotXep.objects.all().order_by('-ngay_bd')[:10]
+                    # Đợt xếp mặc định luôn sắp xếp theo ngày mới nhất
+                    dots = DotXep.objects.all().order_by('-ngay_bd')[:limit]
                     data = [{'ma_dot': d.ma_dot, 'ten_dot': d.ten_dot, 'trang_thai': d.trang_thai} for d in dots]
                     result = {
                         'success': True,
                         'data': data,
-                        'summary': f'Danh sách {len(data)} đợt xếp lịch',
+                        'summary': f'Danh sách {len(data)} đợt xếp lịch (mới nhất)',
                         'intent_type': 'dot_xep_info',
+                        'query_type': 'SELECT'
+                    }
+            
+            # === PHÂN CÔNG ===
+            elif any(kw in msg_lower for kw in ['phân công', 'phan cong', 'phancong', 'assignment']):
+                from ..models import PhanCong
+                if any(kw in msg_lower for kw in ['bao nhiêu', 'mấy', 'số lượng', 'tổng', 'count']):
+                    count = PhanCong.objects.count()
+                    result = {
+                        'success': True,
+                        'data': [{'count': count}],
+                        'summary': f'Hệ thống có {count} phân công giảng dạy',
+                        'intent_type': 'phan_cong_info',
+                        'query_type': 'COUNT'
+                    }
+                else:
+                    queryset = PhanCong.objects.select_related('ma_gv', 'ma_lop', 'ma_dot')
+                    if order_recent:
+                        queryset = queryset.order_by('-id')
+                    phan_congs = queryset[:limit]
+                    data = [{
+                        'id': pc.id,
+                        'giang_vien': pc.ma_gv.ten_gv if pc.ma_gv else 'Chưa phân công',
+                        'lop': pc.ma_lop.ma_lop if pc.ma_lop else 'N/A',
+                        'dot': pc.ma_dot.ten_dot if pc.ma_dot else 'N/A'
+                    } for pc in phan_congs]
+                    recent_note = " (mới nhất)" if order_recent else ""
+                    result = {
+                        'success': True,
+                        'data': data,
+                        'summary': f'Danh sách {len(data)} phân công{recent_note}',
+                        'intent_type': 'phan_cong_info',
+                        'query_type': 'SELECT'
+                    }
+            
+            # === LỚP MÔN HỌC ===
+            elif any(kw in msg_lower for kw in ['lớp môn', 'lop mon', 'lớp học', 'section', 'class']):
+                from ..models import LopMonHoc
+                if any(kw in msg_lower for kw in ['bao nhiêu', 'mấy', 'số lượng', 'tổng', 'count']):
+                    count = LopMonHoc.objects.count()
+                    result = {
+                        'success': True,
+                        'data': [{'count': count}],
+                        'summary': f'Hệ thống có {count} lớp môn học',
+                        'intent_type': 'lop_mon_hoc_info',
+                        'query_type': 'COUNT'
+                    }
+                else:
+                    queryset = LopMonHoc.objects.select_related('ma_mon_hoc')
+                    if order_recent:
+                        queryset = queryset.order_by('-ma_lop')
+                    lops = queryset[:limit]
+                    data = [{
+                        'ma_lop': l.ma_lop,
+                        'mon_hoc': l.ma_mon_hoc.ten_mon_hoc if l.ma_mon_hoc else 'N/A',
+                        'so_sv': l.so_luong_sv or 0,
+                        'nhom': l.nhom_mh
+                    } for l in lops]
+                    recent_note = " (mới nhất)" if order_recent else ""
+                    result = {
+                        'success': True,
+                        'data': data,
+                        'summary': f'Danh sách {len(data)} lớp môn học{recent_note}',
+                        'intent_type': 'lop_mon_hoc_info',
+                        'query_type': 'SELECT'
+                    }
+            
+            # === THỜI KHÓA BIỂU ===
+            elif any(kw in msg_lower for kw in ['thời khóa biểu', 'tkb', 'lịch học', 'schedule']):
+                from ..models import ThoiKhoaBieu
+                if any(kw in msg_lower for kw in ['bao nhiêu', 'mấy', 'số lượng', 'tổng', 'count']):
+                    count = ThoiKhoaBieu.objects.count()
+                    result = {
+                        'success': True,
+                        'data': [{'count': count}],
+                        'summary': f'Hệ thống có {count} bản ghi thời khóa biểu',
+                        'intent_type': 'tkb_info',
+                        'query_type': 'COUNT'
+                    }
+                else:
+                    queryset = ThoiKhoaBieu.objects.select_related('ma_lop', 'ma_phong', 'time_slot_id')
+                    if order_recent:
+                        queryset = queryset.order_by('-ngay_tao')
+                    tkbs = queryset[:limit]
+                    data = [{
+                        'ma_tkb': t.ma_tkb,
+                        'lop': t.ma_lop.ma_lop if t.ma_lop else 'N/A',
+                        'phong': t.ma_phong.ma_phong if t.ma_phong else 'Chưa xếp',
+                        'slot': t.time_slot_id.time_slot_id if t.time_slot_id else 'N/A'
+                    } for t in tkbs]
+                    recent_note = " (mới nhất)" if order_recent else ""
+                    result = {
+                        'success': True,
+                        'data': data,
+                        'summary': f'Danh sách {len(data)} thời khóa biểu{recent_note}',
+                        'intent_type': 'tkb_info',
+                        'query_type': 'SELECT'
+                    }
+            
+            # === NGUYỆN VỌNG ===
+            elif any(kw in msg_lower for kw in ['nguyện vọng', 'nguyen vong', 'đăng ký', 'preference']):
+                from ..models import NguyenVong
+                if any(kw in msg_lower for kw in ['bao nhiêu', 'mấy', 'số lượng', 'tổng', 'count']):
+                    count = NguyenVong.objects.count()
+                    result = {
+                        'success': True,
+                        'data': [{'count': count}],
+                        'summary': f'Hệ thống có {count} nguyện vọng đăng ký',
+                        'intent_type': 'nguyen_vong_info',
+                        'query_type': 'COUNT'
+                    }
+                else:
+                    queryset = NguyenVong.objects.select_related('ma_gv', 'time_slot_id')
+                    nvs = queryset[:limit]
+                    data = [{
+                        'id': nv.id,
+                        'giang_vien': nv.ma_gv.ten_gv if nv.ma_gv else 'N/A',
+                        'slot': nv.time_slot_id.time_slot_id if nv.time_slot_id else 'N/A'
+                    } for nv in nvs]
+                    result = {
+                        'success': True,
+                        'data': data,
+                        'summary': f'Danh sách {len(data)} nguyện vọng',
+                        'intent_type': 'nguyen_vong_info',
                         'query_type': 'SELECT'
                     }
             
@@ -1474,6 +2079,46 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.
                 lines.append(f"📅 {summary}\n")
                 for d in data[:5]:
                     lines.append(f"- **{d.get('ten_dot', 'N/A')}** ({d.get('ma_dot', 'N/A')}): {d.get('trang_thai', 'N/A')}")
+        
+        # === PHÂN CÔNG ===
+        elif intent_type == 'phan_cong_info':
+            if query_type == 'COUNT':
+                count = data[0].get('count', 0) if data else 0
+                lines.append(f"📋 Hệ thống có **{count} phân công giảng dạy**")
+            else:
+                lines.append(f"📋 {summary}\n")
+                for pc in data[:10]:
+                    lines.append(f"- **{pc.get('giang_vien', 'N/A')}** → Lớp: {pc.get('lop', 'N/A')} | Đợt: {pc.get('dot', 'N/A')}")
+        
+        # === LỚP MÔN HỌC ===
+        elif intent_type == 'lop_mon_hoc_info':
+            if query_type == 'COUNT':
+                count = data[0].get('count', 0) if data else 0
+                lines.append(f"📚 Hệ thống có **{count} lớp môn học**")
+            else:
+                lines.append(f"📚 {summary}\n")
+                for l in data[:10]:
+                    lines.append(f"- **{l.get('ma_lop', 'N/A')}**: {l.get('mon_hoc', 'N/A')} | SV: {l.get('so_sv', 0)} | Nhóm: {l.get('nhom', 'N/A')}")
+        
+        # === THỜI KHÓA BIỂU ===
+        elif intent_type == 'tkb_info':
+            if query_type == 'COUNT':
+                count = data[0].get('count', 0) if data else 0
+                lines.append(f"📅 Hệ thống có **{count} bản ghi thời khóa biểu**")
+            else:
+                lines.append(f"📅 {summary}\n")
+                for t in data[:10]:
+                    lines.append(f"- **{t.get('ma_tkb', 'N/A')}**: Lớp {t.get('lop', 'N/A')} | Phòng: {t.get('phong', 'N/A')} | Slot: {t.get('slot', 'N/A')}")
+        
+        # === NGUYỆN VỌNG (fallback) ===
+        elif intent_type == 'nguyen_vong_info':
+            if query_type == 'COUNT':
+                count = data[0].get('count', 0) if data else 0
+                lines.append(f"💬 Hệ thống có **{count} nguyện vọng đăng ký**")
+            else:
+                lines.append(f"💬 {summary}\n")
+                for nv in data[:10]:
+                    lines.append(f"- **{nv.get('giang_vien', 'N/A')}** → Slot: {nv.get('slot', 'N/A')}")
         
         # === CHÀO HỎI ===
         elif intent_type == 'greeting':
@@ -1687,30 +2332,19 @@ NHIỆM VỤ:
 
 HÃY FORMAT LẠI THÔNG TIN THEO YÊU CẦU. Trả lời bằng tiếng Việt.
 """
-                # Gọi AI để format lại
+                # Gọi AI để format lại sử dụng Interactions API
                 try:
-                    if self._last_api_call:
-                        elapsed = time.time() - self._last_api_call
-                        if elapsed < self._min_delay_between_calls:
-                            time.sleep(self._min_delay_between_calls - elapsed)
-                    
-                    response = self.client.models.generate_content(
-                        model="gemini-2.5-flash",
-                        contents=followup_prompt,
-                        config=types.GenerateContentConfig(
-                            temperature=0.7,
-                            max_output_tokens=4096,
-                        )
+                    response_text, interaction_id, error = self._call_interactions_api(
+                        prompt=followup_prompt,
+                        model=self.model,
+                        thinking_level=THINKING_LEVEL_LOW,
+                        use_stateful=True,  # Sử dụng stateful để giữ ngữ cảnh
+                        temperature=0.7,
+                        max_tokens=4096,
+                        response_mime_type="text/plain"  # Text response cho user
                     )
-                    self._last_api_call = time.time()
                     
-                    response_text = ""
-                    if response.candidates and len(response.candidates) > 0:
-                        for part in response.candidates[0].content.parts:
-                            if hasattr(part, 'text') and part.text:
-                                response_text += part.text
-                    
-                    if response_text:
+                    if response_text and not error:
                         # Lưu vào history
                         self.conversation_history.append({
                             'role': 'user',
@@ -1728,9 +2362,10 @@ HÃY FORMAT LẠI THÔNG TIN THEO YÊU CẦU. Trả lời bằng tiếng Việt.
                             'response': response_text,
                             'intent': {'type': 'followup_format', 'format': format_type},
                             'metadata': {
-                                'model': 'gemini-2.5-flash',
+                                'model': self.model,
                                 'timestamp': datetime.now().isoformat(),
-                                'followup': True
+                                'followup': True,
+                                'interaction_id': interaction_id
                             }
                         }
                 except Exception as e:
@@ -1935,56 +2570,51 @@ HƯỚNG DẪN TRẢ LỜI:
 """
             
             # ====================================================
-            # BƯỚC 4: GỌI AI ĐỂ FORMAT CÂU TRẢ LỜI
+            # BƯỚC 4: GỌI AI ĐỂ FORMAT CÂU TRẢ LỜI (sử dụng Interactions API)
             # ====================================================
-            max_retries = 3
-            retry_delay = 2  # seconds
-            response = None
-            # Ưu tiên flash (nhanh, ổn định), pro làm backup
-            models_to_try = [self.model, "gemini-2.0-flash", "gemini-2.5-pro"]
             
-            for model_idx, current_model in enumerate(models_to_try):
-                for attempt in range(max_retries):
-                    try:
-                        # Rate limiting
-                        if self._last_api_call:
-                            elapsed = time.time() - self._last_api_call
-                            if elapsed < self._min_delay_between_calls:
-                                time.sleep(self._min_delay_between_calls - elapsed)
-                        
-                        response = self.client.models.generate_content(
-                            model=current_model,
-                            contents=full_context,
-                            config=types.GenerateContentConfig(
-                                system_instruction=self.system_instruction,
-                                temperature=0.7,
-                                max_output_tokens=8192,
-                            )
-                        )
-                        
-                        self._last_api_call = time.time()
-                        break  # Success, exit retry loop
-                    except Exception as api_err:
-                        error_str = str(api_err)
-                        # Handle rate limit (429) and overload (503)
-                        if '429' in error_str or 'RESOURCE_EXHAUSTED' in error_str or '503' in error_str or 'UNAVAILABLE' in error_str:
-                            if attempt < max_retries - 1:
-                                logger.warning(f"API error with {current_model}, retrying in {retry_delay}s... (attempt {attempt + 1})")
-                                time.sleep(retry_delay)
-                                retry_delay *= 2  # Exponential backoff
-                            else:
-                                logger.warning(f"Model {current_model} failed, trying next model...")
-                                break  # Try next model
-                        else:
-                            raise api_err
+            # Chuẩn bị prompt cho AI
+            final_prompt = self.system_instruction + "\n\n" + full_context
+            
+            # Sử dụng Interactions API với stateful mode để giữ ngữ cảnh hội thoại
+            response_text, interaction_id, error = self._call_interactions_api(
+                prompt=final_prompt,
+                model=self.model,
+                thinking_level=THINKING_LEVEL_LOW,  # Suy luận nhẹ cho response formatting
+                use_stateful=self._use_stateful_mode,  # Sử dụng stateful mode
+                temperature=0.7,
+                max_tokens=8192,
+                response_mime_type="text/plain"  # Text response cho user
+            )
+            
+            if error:
+                error_str = str(error)
                 
-                if response:
-                    break  # Got response, exit model loop
-                retry_delay = 2  # Reset delay for next model
+                # Kiểm tra nếu là lỗi global rate limit
+                if "Rate limit:" in error_str and "requests/minute" in error_str:
+                    logger.warning(f"Global rate limit hit: {error_str}")
+                    
+                    # Trả về thông báo cho user
+                    rate_limit_msg = f"""⏱️ **Tạm thời quá tải**
+
+Hệ thống đang xử lý nhiều yêu cầu đồng thời. Vui lòng đợi một chút rồi thử lại.
+
+_(Giới hạn: 5 yêu cầu/phút để đảm bảo chất lượng phản hồi)_"""
+                    
+                    return {
+                        'success': False,
+                        'response': rate_limit_msg,
+                        'intent': {'type': 'rate_limit'},
+                        'metadata': {
+                            'timestamp': datetime.now().isoformat(),
+                            'rate_limited': True,
+                            'error': error_str
+                        }
+                    }
             
-            if not response:
+            if error or not response_text:
                 # === FALLBACK: Hệ thống tự trả lời khi AI không khả dụng ===
-                logger.warning("All AI models unavailable, using system fallback response")
+                logger.warning(f"AI unavailable ({error}), using system fallback response")
                 fallback_response = self._generate_fallback_response(query_result, intent, ma_dot)
                 
                 # Thêm thông báo về đợt xếp đầu response
@@ -2012,33 +2642,12 @@ HƯỚNG DẪN TRẢ LỜI:
                     }
                 }
             
-            # 6. Lưu vào history
+            # Lưu vào local history (backup cho stateless fallback)
             self.conversation_history.append({
                 'role': 'user',
                 'content': message,
                 'timestamp': datetime.now().isoformat()
             })
-            
-            # Extract text from response properly (handling thought_signature parts)
-            response_text = ""
-            try:
-                if response.candidates and len(response.candidates) > 0:
-                    candidate = response.candidates[0]
-                    if candidate.content and candidate.content.parts:
-                        text_parts = []
-                        for part in candidate.content.parts:
-                            if hasattr(part, 'text') and part.text:
-                                text_parts.append(part.text)
-                        response_text = "".join(text_parts)
-                
-                if not response_text and response.text:
-                    response_text = response.text
-            except Exception as text_err:
-                logger.warning(f"Error extracting text: {text_err}")
-                response_text = response.text if hasattr(response, 'text') and response.text else ""
-            
-            if not response_text:
-                response_text = "Xin lỗi, tôi không thể xử lý câu hỏi này."
             
             # Thêm thông báo về đợt xếp đầu response nếu có
             final_response = (dot_notice_section + response_text) if dot_notice_section else response_text
@@ -2055,7 +2664,9 @@ HƯỚNG DẪN TRẢ LỜI:
                 'intent': intent,
                 'metadata': {
                     'model': self.model,
-                    'timestamp': datetime.now().isoformat()
+                    'timestamp': datetime.now().isoformat(),
+                    'interaction_id': interaction_id,  # Lưu interaction_id cho debugging
+                    'stateful_mode': self._use_stateful_mode
                 }
             }
             
@@ -2070,10 +2681,6 @@ HƯỚNG DẪN TRẢ LỜI:
     def get_conversation_history(self) -> List[Dict]:
         """Lấy lịch sử hội thoại"""
         return self.conversation_history
-    
-    def clear_history(self):
-        """Xóa lịch sử hội thoại"""
-        self.conversation_history = []
 
 
 # Singleton instance
