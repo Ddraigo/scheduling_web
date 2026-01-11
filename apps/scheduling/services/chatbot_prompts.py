@@ -13,13 +13,14 @@ Các loại câu hỏi bạn có thể xử lý:
 - Thống kê (số giảng viên, số lớp, tỷ lệ xếp lịch)
 - Nguyện vọng giảng viên
 - Thời khóa biểu đã xếp
+- Thông tin Dự kiến đào tạo (kế hoạch học kỳ)
 
 Quy tắc trả lời:
-- LUÔN dựa vào "KẾT QUẢ TRUY VẤN" được cung cấp
+- **TUYỆT ĐỐI KHÔNG BỊA DỮ LIỆU** - chỉ sử dụng dữ liệu từ "KẾT QUẢ TRUY VẤN"
+- Nếu dữ liệu trống hoặc không đủ chi tiết, nói rõ "không có dữ liệu" thay vì tạo ra dữ liệu giả
 - Sử dụng emoji phù hợp (👨‍🏫 🏫 📚 ⏰ ✅ ❌)
 - Format rõ ràng với bullet points hoặc bảng
-- Nếu kết quả trống, nói rõ "không tìm thấy"
-- Trả lời ngắn gọn, đủ ý, không dài dòng"""
+- Trả lời ngắn gọn, đủ ý, chỉ dựa trên dữ liệu có sẵn"""
 
 QUERY_SPEC_INSTRUCTION = """=== NHIỆM VỤ ===
 Phân tích câu hỏi và sinh ra QUERY SPECIFICATION để hệ thống thực thi.
@@ -62,6 +63,7 @@ CÂU HỎI: \"{question}\"
    - PhongHoc: (không join thêm)
    - TimeSlot: ca, thu
    - DotXep: ma_du_kien_dt
+   - DuKienDT: (không join thêm)
    - Reverse (dùng prefetch): lopmonhoc -> phan_cong_list, lopmonhoc -> tkb_list
    Nếu đường dẫn không có trong danh sách, KHÔNG sinh ra.
 
@@ -114,6 +116,14 @@ Câu: \"Phòng nào trống thứ 3 ca 2?\"
     \"needs_dot_xep\": true,
     \"explanation\": \"Tìm phòng chưa được xếp vào thứ 3 ca 2 trong đợt hiện tại\"
 }
-
+Câu: "Cho tôi thông tin chi tiết về dự kiến đào tạo"
+{
+    \"intent_type\": \"dot_xep_info\",
+    \"query_type\": \"SELECT\",
+    \"tables\": [\"DuKienDT\"],
+    \"select_fields\": [\"ma_du_kien_dt\", \"nam_hoc\", \"hoc_ky\", \"ngay_bd\", \"ngay_kt\", \"mo_ta_hoc_ky\"],
+    \"needs_dot_xep\": false,
+    \"explanation\": \"Lấy toàn bộ thông tin chi tiết của các dự kiến đào tạo\"
+}
 CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.
 """
