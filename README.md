@@ -27,6 +27,7 @@ Hệ thống quản lý và xếp lịch học tự động cho trường đại
 python --version
 node --version
 npm --version
+$env:GEMINI_API_KEY="your_key"
 ```
 
 ### Cài Đặt ODBC Driver (Bắt buộc cho Azure SQL)
