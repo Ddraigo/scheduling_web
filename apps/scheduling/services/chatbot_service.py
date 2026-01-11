@@ -910,7 +910,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
         try:
             from ..models import (
                 Khoa, BoMon, GiangVien, MonHoc, LopMonHoc,
-                PhanCong, ThoiKhoaBieu, NguyenVong, GVDayMon, PhongHoc, DotXep, TimeSlot
+                PhanCong, ThoiKhoaBieu, NguyenVong, GVDayMon, PhongHoc, DotXep, TimeSlot, DuKienDT
             )
             
             # Map table names to models
@@ -927,6 +927,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                 'PhongHoc': PhongHoc, 'phong_hoc': PhongHoc,
                 'DotXep': DotXep, 'dot_xep': DotXep,
                 'TimeSlot': TimeSlot, 'time_slot': TimeSlot,
+                'DuKienDT': DuKienDT, 'du_kien_dt': DuKienDT,
             }
             
             # Get primary table
@@ -954,6 +955,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                 'NguyenVong': {'ma_gv', 'time_slot_id'},
                 'GVDayMon': {'ma_gv', 'ma_mon_hoc'},
                 'DotXep': {'ma_du_kien_dt'},
+                'DuKienDT': set(),
                 'PhongHoc': set(),
                 'MonHoc': set(),
                 'Khoa': set(),
@@ -1017,7 +1019,8 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                 'NguyenVong': {'ma_gv__ten_gv', 'ma_dot__ma_dot', 'time_slot_id__thu', 'time_slot_id__ca__ma_khung_gio'},
                 'GVDayMon': {'ma_gv__ten_gv', 'ma_mon_hoc__ten_mon_hoc'},
                 'PhongHoc': {'ma_phong', 'loai_phong', 'suc_chua'},
-                'DotXep': {'ma_dot', 'ten_dot', 'trang_thai'},
+                'DotXep': {'ma_dot', 'ten_dot', 'trang_thai', 'ma_du_kien_dt__ma_du_kien_dt', 'ma_du_kien_dt__nam_hoc', 'ma_du_kien_dt__hoc_ky'},
+                'DuKienDT': {'ma_du_kien_dt', 'nam_hoc', 'hoc_ky', 'mo_ta_hoc_ky'},
                 'TimeSlot': {'thu', 'ca__ma_khung_gio'},
             }
 
@@ -1078,8 +1081,15 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                 if valid_orders:
                     queryset = queryset.order_by(*valid_orders)
             
-            # Limit
-            limit = min(query_spec.get('limit', 100), 300)  # Max 300 records
+            # Limit - guard against None or non-int values
+            raw_limit = query_spec.get('limit', 100)
+            try:
+                parsed_limit = int(raw_limit)
+            except Exception:
+                parsed_limit = 100
+            if parsed_limit <= 0:
+                parsed_limit = 100
+            limit = min(parsed_limit, 300)  # Max 300 records
             
             # Execute query based on type
             query_type = query_spec.get('query_type', 'SELECT')

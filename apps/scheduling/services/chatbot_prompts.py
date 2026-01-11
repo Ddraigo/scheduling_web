@@ -62,6 +62,7 @@ CÂU HỎI: \"{question}\"
    - PhongHoc: (không join thêm)
    - TimeSlot: ca, thu
    - DotXep: ma_du_kien_dt
+   - DuKienDT: (không join thêm)
    - Reverse (dùng prefetch): lopmonhoc -> phan_cong_list, lopmonhoc -> tkb_list
    Nếu đường dẫn không có trong danh sách, KHÔNG sinh ra.
 
