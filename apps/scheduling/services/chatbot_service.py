@@ -1209,6 +1209,51 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                 'ten_dot': obj.ten_dot,
                 'trang_thai': obj.trang_thai
             }
+        elif model_name == 'DuKienDT':
+            data = {
+                'ma_du_kien_dt': obj.ma_du_kien_dt,
+                'nam_hoc': obj.nam_hoc,
+                'hoc_ky': obj.get_hoc_ky_display() if hasattr(obj, 'get_hoc_ky_display') else obj.hoc_ky,
+                'ngay_bd': obj.ngay_bd.strftime('%d/%m/%Y') if obj.ngay_bd else 'N/A',
+                'ngay_kt': obj.ngay_kt.strftime('%d/%m/%Y') if obj.ngay_kt else 'N/A',
+                'mo_ta_hoc_ky': obj.mo_ta_hoc_ky or 'N/A'
+            }
+        elif model_name == 'TimeSlot':
+            thu_name = 'CN' if obj.thu == 8 else f'Thứ {obj.thu}'
+            data = {
+                'time_slot_id': obj.time_slot_id,
+                'thu': thu_name,
+                'ca': obj.ca.ten_ca if obj.ca else 'N/A',
+                'gio_bat_dau': obj.ca.gio_bat_dau.strftime('%H:%M') if obj.ca and obj.ca.gio_bat_dau else 'N/A',
+                'gio_ket_thuc': obj.ca.gio_ket_thuc.strftime('%H:%M') if obj.ca and obj.ca.gio_ket_thuc else 'N/A'
+            }
+        elif model_name == 'PhanCong':
+            data = {
+                'giang_vien': obj.ma_gv.ten_gv if obj.ma_gv else 'Chưa phân công',
+                'lop': obj.ma_lop.ma_lop if obj.ma_lop else 'N/A',
+                'mon_hoc': obj.ma_lop.ma_mon_hoc.ten_mon_hoc if obj.ma_lop and obj.ma_lop.ma_mon_hoc else 'N/A',
+                'tuan': f'T{obj.tuan_bd}-T{obj.tuan_kt}',
+                'dot_xep': obj.ma_dot.ten_dot if obj.ma_dot else 'N/A'
+            }
+        elif model_name == 'NguyenVong':
+            data = {
+                'giang_vien': obj.ma_gv.ten_gv if obj.ma_gv else 'N/A',
+                'time_slot': obj.time_slot_id.time_slot_id if obj.time_slot_id else 'N/A',
+                'thu': f"Thứ {obj.time_slot_id.thu}" if obj.time_slot_id and obj.time_slot_id.thu != 8 else 'CN' if obj.time_slot_id else 'N/A',
+                'ca': obj.time_slot_id.ca.ten_ca if obj.time_slot_id and obj.time_slot_id.ca else 'N/A',
+                'dot_xep': obj.ma_dot.ten_dot if obj.ma_dot else 'N/A'
+            }
+        elif model_name == 'ThoiKhoaBieu':
+            data = {
+                'ma_lop': obj.ma_lop.ma_lop if obj.ma_lop else 'N/A',
+                'mon_hoc': obj.ma_lop.ma_mon_hoc.ten_mon_hoc if obj.ma_lop and obj.ma_lop.ma_mon_hoc else 'N/A',
+                'phong': obj.ma_phong.ma_phong if obj.ma_phong else 'Chưa xếp phòng',
+                'time_slot': obj.time_slot_id.time_slot_id if obj.time_slot_id else 'N/A',
+                'thu': f"Thứ {obj.time_slot_id.thu}" if obj.time_slot_id and obj.time_slot_id.thu != 8 else 'CN' if obj.time_slot_id else 'N/A',
+                'ca': obj.time_slot_id.ca.ten_ca if obj.time_slot_id and obj.time_slot_id.ca else 'N/A',
+                'ngay_bd': obj.ngay_bd.strftime('%d/%m/%Y') if obj.ngay_bd else 'N/A',
+                'ngay_kt': obj.ngay_kt.strftime('%d/%m/%Y') if obj.ngay_kt else 'N/A'
+            }
         else:
             # Generic: get all simple fields
             for field in obj._meta.fields:
@@ -1695,7 +1740,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
         Returns:
             Dict với success, data, intent_type, query_type
         """
-        from ..models import Khoa, BoMon, GiangVien, MonHoc, PhongHoc, DotXep
+        from ..models import Khoa, BoMon, GiangVien, MonHoc, PhongHoc, DotXep, DuKienDT
         
         msg_lower = message.lower()
         result = {'success': False, 'data': [], 'summary': '', 'intent_type': 'general', 'query_type': 'SELECT'}
@@ -2013,6 +2058,51 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                         'summary': f'Danh sách {len(data)} nguyện vọng',
                         'intent_type': 'nguyen_vong_info',
                         'query_type': 'SELECT'
+                    }
+            
+            # === DỰ KIẾN ĐÀO TẠO ===
+            elif any(kw in msg_lower for kw in ['dự kiến đào tạo', 'du kien dao tao', 'dự kiến', 'kế hoạch đào tạo', 'training plan']):
+                if any(kw in msg_lower for kw in ['bao nhiêu', 'mấy', 'số lượng', 'tổng', 'count', 'đếm']):
+                    count = DuKienDT.objects.count()
+                    result = {
+                        'success': True,
+                        'data': [{'count': count}],
+                        'summary': f'Hệ thống có {count} dự kiến đào tạo',
+                        'intent_type': 'dot_xep_info',
+                        'query_type': 'COUNT'
+                    }
+                elif any(kw in msg_lower for kw in ['danh sách', 'liệt kê', 'list', 'có những', 'gồm những', 'chi tiết', 'thông tin']):
+                    queryset = DuKienDT.objects.all()
+                    if order_recent:
+                        queryset = queryset.order_by('-nam_hoc', '-hoc_ky')
+                    du_kiens = queryset[:limit]
+                    data = []
+                    for dk in du_kiens:
+                        data.append({
+                            'ma_du_kien_dt': dk.ma_du_kien_dt,
+                            'nam_hoc': dk.nam_hoc,
+                            'hoc_ky': dk.get_hoc_ky_display() if hasattr(dk, 'get_hoc_ky_display') else dk.hoc_ky,
+                            'ngay_bd': dk.ngay_bd.strftime('%d/%m/%Y') if dk.ngay_bd else 'N/A',
+                            'ngay_kt': dk.ngay_kt.strftime('%d/%m/%Y') if dk.ngay_kt else 'N/A',
+                            'mo_ta': dk.mo_ta_hoc_ky or 'N/A'
+                        })
+                    recent_note = " (mới nhất)" if order_recent else ""
+                    result = {
+                        'success': True,
+                        'data': data,
+                        'summary': f'Danh sách {len(data)} dự kiến đào tạo{recent_note}',
+                        'intent_type': 'dot_xep_info',
+                        'query_type': 'SELECT'
+                    }
+                else:
+                    # Mặc định: đếm dự kiến đào tạo
+                    count = DuKienDT.objects.count()
+                    result = {
+                        'success': True,
+                        'data': [{'count': count}],
+                        'summary': f'Hệ thống có {count} dự kiến đào tạo',
+                        'intent_type': 'dot_xep_info',
+                        'query_type': 'COUNT'
                     }
             
             # === CHÀO HỎI ===
