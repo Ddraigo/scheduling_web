@@ -328,6 +328,9 @@ JAZZMIN_SETTINGS = {
         "scheduling.NguyenVong",
         "scheduling.TimeSlot",
         "scheduling.ThoiKhoaBieu",
+        "data_table.HideShowFilter",
+        "data_table.ModelFilter",
+        "data_table.PageItems",
     ],
     # Hide entire apps
     # auth app sẽ được ẩn động dựa vào has_module_permission trong custom admin
@@ -472,6 +475,24 @@ JAZZMIN_SETTINGS = {
                 "name": "Thời khóa biểu",
                 "url": "/admin/scheduling/thoikhoabieu/",
                 "icon": "fas fa-calendar-check",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Hide show filters",
+                "url": "/admin/data_table/hideshowfilter/",
+                "icon": "fas fa-eye-slash",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Model filters",
+                "url": "/admin/data_table/modelfilter/",
+                "icon": "fas fa-filter",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Page items",
+                "url": "/admin/data_table/pageitems/",
+                "icon": "fas fa-list",
                 "permissions": ["auth.view_user"]
             },
         ],
