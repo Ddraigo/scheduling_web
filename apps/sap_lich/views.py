@@ -205,8 +205,22 @@ def algo_scheduler_get_stats_api(request):
 
 @require_role('admin')
 def llm_scheduler_view(request, ma_gv=None):
-    """Admin view for LLM Chatbot Assistant - CHỈ ADMIN"""
+    """
+    Admin view for LLM Chatbot Assistant - CHỈ ADMIN
+    Chỉ admin/superuser được truy cập
+    """
+    # CHECK AUTHENTICATION
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden("Bạn cần đăng nhập")
+    
     role_info = get_user_role_info(request.user)
+    
+    logger.debug(f"llm_scheduler_view: user={request.user.username}, role={role_info['role']}")
+    
+    # CHECK ROLE: Chỉ admin
+    if role_info['role'] != 'admin':
+        logger.warning(f"User {request.user.username} (role={role_info['role']}) cố truy cập LLM scheduler")
+        return HttpResponseForbidden("Chỉ Admin mới có quyền truy cập Chat bot hỗ trợ")
     
     if role_info['role'] != 'admin' and not ma_gv:
         # Nếu user truy cập URL cũ (/admin/sap_lich/...), redirect sang URL mới
@@ -226,13 +240,15 @@ def llm_scheduler_view(request, ma_gv=None):
     except Exception:
         periods = []
     
+    # Set current_app for proper admin context (sidebar, breadcrumbs, etc.)
+    request.current_app = admin.site.name
+    
     # Get admin site context with proper breadcrumb info
+    base_ctx = admin.site.each_context(request)
     context = {
-        **admin.site.each_context(request),
+        **base_ctx,
         'periods': periods,
         'title': 'Trợ lý AI - Hỏi đáp Lịch học',
-        'site_title': admin.site.site_title,
-        'site_header': admin.site.site_header,
         'has_permission': True,
         'is_nav_sidebar_enabled': True,
         'app_label': 'sap_lich',
@@ -250,8 +266,22 @@ def llm_scheduler_view(request, ma_gv=None):
 
 @require_role('admin')
 def algo_scheduler_view(request, ma_gv=None):
-    """Admin view for algorithm-based scheduler - CHỈ ADMIN"""
+    """
+    Admin view for algorithm-based scheduler - CHỈ ADMIN
+    Chỉ admin/superuser được truy cập
+    """
+    # CHECK AUTHENTICATION
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden("Bạn cần đăng nhập")
+    
     role_info = get_user_role_info(request.user)
+    
+    logger.debug(f"algo_scheduler_view: user={request.user.username}, role={role_info['role']}")
+    
+    # CHECK ROLE: Chỉ admin
+    if role_info['role'] != 'admin':
+        logger.warning(f"User {request.user.username} (role={role_info['role']}) cố truy cập algo scheduler")
+        return HttpResponseForbidden("Chỉ Admin mới có quyền sắp lịch bằng thuật toán")
     
     if role_info['role'] != 'admin' and not ma_gv:
         # Nếu user truy cập URL cũ (/admin/sap_lich/...), redirect sang URL mới
@@ -271,13 +301,15 @@ def algo_scheduler_view(request, ma_gv=None):
     except Exception:
         periods = []
     
+    # Set current_app for proper admin context (sidebar, breadcrumbs, etc.)
+    request.current_app = admin.site.name
+    
     # Get admin site context with proper breadcrumb info
+    base_ctx = admin.site.each_context(request)
     context = {
-        **admin.site.each_context(request),
+        **base_ctx,
         'periods': periods,
         'title': 'Sắp lịch bằng thuật toán',
-        'site_title': admin.site.site_title,
-        'site_header': admin.site.site_header,
         'has_permission': True,
         'is_nav_sidebar_enabled': True,
         'app_label': 'sap_lich',
@@ -861,10 +893,12 @@ def thoikhoabieu_view(request, ma_gv=None):
         ma_gv: Mã giảng viên từ URL (dùng cho các role không phải admin)
     
     Phân quyền:
-        - Admin: Xem toàn bộ TKB
-        - Trưởng Khoa: Xem TKB khoa mình (filter theo ma_khoa)
-        - Trưởng Bộ Môn: Xem TKB bộ môn mình (filter theo ma_bo_mon)
-        - Giảng Viên: Xem TKB cá nhân (filter theo ma_gv)
+        - Tất cả authenticated users có thể xem
+        - Data scope được filter theo role:
+          + Admin: Xem toàn bộ TKB
+          + Trưởng Khoa: Xem TKB khoa mình (filter theo ma_khoa)
+          + Trưởng Bộ Môn: Xem TKB bộ môn mình (filter theo ma_bo_mon)
+          + Giảng Viên: Xem TKB cá nhân (filter theo ma_gv)
     """
     # Kiểm tra authentication
     if not request.user.is_authenticated:
@@ -873,6 +907,8 @@ def thoikhoabieu_view(request, ma_gv=None):
     # Lấy thông tin phân quyền
     role_info = get_user_role_info(request.user)
     user_role = role_info['role']
+    
+    logger.debug(f"thoikhoabieu_view: user={request.user.username}, role={user_role}, ma_gv_param={ma_gv}, role_info={role_info}")
     
     # Redirect non-admin users từ URL cũ sang URL mới
     if user_role != 'admin' and not ma_gv:
@@ -891,6 +927,7 @@ def thoikhoabieu_view(request, ma_gv=None):
         if user_role != 'admin':
             # Trưởng Khoa, Trưởng Bộ Môn, Giảng Viên phải match với ma_gv của họ
             if ma_gv != role_info['ma_gv']:
+                logger.warning(f"User {request.user.username} cố truy cập TKB của {ma_gv} (không khớp với {role_info['ma_gv']})")
                 return HttpResponseForbidden("Bạn không có quyền xem thời khóa biểu của người khác")
     
     # Lấy các tham số từ request
@@ -951,9 +988,13 @@ def thoikhoabieu_view(request, ma_gv=None):
     if not ma_dot and dot_list.exists():
         ma_dot = dot_list.first().ma_dot
     
+    # Set current_app for proper admin context (sidebar, breadcrumbs, etc.)
+    request.current_app = admin.site.name
+    
     # Khởi tạo context
+    base_ctx = admin.site.each_context(request)
     context = {
-        **admin.site.each_context(request),
+        **base_ctx,
         'title': 'Thời Khóa Biểu',
         'view_type': view_type,
         'display_mode': display_mode,
@@ -2154,12 +2195,20 @@ def tkb_manage_view(request, ma_gv=None):
         ma_gv: Mã giảng viên từ URL (dùng cho Trưởng Khoa)
     
     Phân quyền:
+        - Chỉ admin và trưởng khoa được truy cập
         - Admin: Quản lý toàn bộ TKB
         - Trưởng Khoa: Quản lý TKB khoa mình (filter theo ma_khoa)
+        - Trưởng Bộ Môn, Giảng Viên: KHÔNG được truy cập
     """
+    # Kiểm tra authentication
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden("Bạn cần đăng nhập để quản lý thời khóa biểu")
+    
     # Lấy thông tin phân quyền
     role_info = get_user_role_info(request.user)
     user_role = role_info['role']
+    
+    logger.debug(f"tkb_manage_view: user={request.user.username}, role={user_role}, ma_gv_param={ma_gv}, role_info={role_info}")
     
     # Redirect non-admin users từ URL cũ sang URL mới
     if user_role != 'admin' and not ma_gv:
@@ -2169,16 +2218,24 @@ def tkb_manage_view(request, ma_gv=None):
             return redirect(f'/truong-khoa/{ma_gv_current}/quan-ly-tkb/')
         else:
             # Các role khác không được quản lý TKB
+            logger.warning(f"User {request.user.username} (role={user_role}) không được quản lý TKB, redirect về xem TKB")
             return redirect(f'/giang-vien/{ma_gv_current}/xem-tkb/')
+    
+    # CHECK ROLE: Chỉ admin và trưởng khoa
+    if user_role not in ['admin', 'truong_khoa']:
+        logger.warning(f"User {request.user.username} (role={user_role}) không có quyền quản lý TKB")
+        return HttpResponseForbidden("Bạn không có quyền quản lý thời khóa biểu")
     
     # Validate ma_gv trong URL với user hiện tại
     if ma_gv:
         # Nếu không phải admin, phải check ma_gv khớp với user
         if user_role == 'truong_khoa':
             if ma_gv != role_info['ma_gv']:
+                logger.warning(f"User {request.user.username} cố truy cập quản lý TKB của {ma_gv}")
                 return HttpResponseForbidden("Bạn không có quyền quản lý TKB của người khác")
         # Các role khác không được truy cập
         elif user_role != 'admin':
+            logger.warning(f"User {request.user.username} (role={user_role}) cố truy cập tkb-manage")
             return HttpResponseForbidden("Bạn không có quyền quản lý TKB")
     
     ma_dot = request.GET.get('ma_dot', '')
@@ -2215,8 +2272,12 @@ def tkb_manage_view(request, ma_gv=None):
     if not ma_dot and dot_list.exists():
         ma_dot = dot_list.first().ma_dot
     
+    # Set current_app for proper admin context (sidebar, breadcrumbs, etc.)
+    request.current_app = admin.site.name
+    
+    base_ctx = admin.site.each_context(request)
     context = {
-        **admin.site.each_context(request),
+        **base_ctx,
         'title': 'Quản lý Thời Khóa Biểu',
         'ma_dot': ma_dot,
         'ma_khoa': ma_khoa,
@@ -2233,6 +2294,26 @@ def tkb_manage_view(request, ma_gv=None):
             'verbose_name_plural': 'Quản lý TKB',
         },
         'segment': ['quan-ly-tkb'],
+        'tkb_permissions': json.dumps({
+            'can_create': True,
+            'can_edit': True,
+            'can_delete': True,
+            'can_restore': True,
+            'can_swap': True,
+            'role': user_role,
+        }),
+        'tkb_api': json.dumps({
+            'mini': '/api/tkb/mini-schedule/',
+            'create': '/api/tkb/create/',
+            'update': '/api/tkb/update/',
+            'delete': '/api/tkb/delete/',
+            'restore': '/api/tkb/restore/',
+            'swap': '/api/tkb/swap/',
+            'monhoc': '/api/tkb/mon-hoc-info/',
+            'occupied': '/api/tkb/occupied-rooms/',
+            'gvSchedule': '/api/tkb/gv-schedule/',
+            'gvList': '/api/tkb/gv-list/',
+        }),
     }
     
     if ma_dot:
@@ -2367,6 +2448,7 @@ def tkb_mini_schedule_api(request):
                 'ca': tkb.time_slot_id.ca.ma_khung_gio,
                 'ten_ca': tkb.time_slot_id.ca.ten_ca,
                 'time_slot_id': tkb.time_slot_id.time_slot_id,
+                'so_luong_sv': tkb.ma_lop.so_luong_sv,
                 'tuan_hoc': tkb.tuan_hoc or '',
                 'ten_gv': ten_gv,
                 'ma_gv': ma_gv,

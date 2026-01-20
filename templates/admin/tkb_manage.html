@@ -5,2418 +5,1421 @@
 
 {% block extrastyle %}
 {{ block.super }}
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-    :root {
-        --primary-color: #667eea;
-        --primary-dark: #5a67d8;
-        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        --success-color: #48bb78;
-        --success-gradient: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-        --warning-color: #ed8936;
-        --warning-gradient: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
-        --danger-color: #f56565;
-        --danger-gradient: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
-        --bg-light: #f7fafc;
-        --bg-card: #ffffff;
-        --text-dark: #2d3748;
-        --text-muted: #718096;
-        --border-color: #e2e8f0;
-        --shadow-3d: 0 10px 40px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
-        --shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1);
-        --shadow-soft: 0 4px 20px rgba(102, 126, 234, 0.15);
-    }
-    
-    body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        background-attachment: fixed;
-        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-    
-    #content-main {
-        padding: 0;
-    }
-    
-    .tkb-container {
-        max-width: 1800px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    
-    .tkb-header {
-        background: var(--bg-card);
-        border-radius: 24px;
-        padding: 32px;
-        margin-bottom: 32px;
-        box-shadow: var(--shadow-3d);
-        border: none;
-        transform: translateY(0);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    
-    .tkb-header:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--shadow-hover);
-    }
-    
-    .tkb-header h1 {
-        font-size: 32px;
-        font-weight: 800;
-        background: var(--primary-gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin: 0 0 12px 0;
-        letter-spacing: -0.5px;
-    }
-    
-    .tkb-header p {
-        color: var(--text-muted);
-        margin: 0;
-        font-size: 15px;
-        font-weight: 500;
-    }
-    
-    .control-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-        align-items: center;
-    }
-    
-    .control-group {
-        flex: 1;
-        min-width: 200px;
-    }
-    
-    .control-label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 6px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .form-select {
-        width: 100%;
-        border: 2px solid transparent;
-        border-radius: 16px;
-        padding: 14px 18px;
-        font-size: 15px;
-        font-weight: 500;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: white;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.08);
-        color: var(--text-dark);
-    }
-    
-    .form-select:focus {
-        border-color: var(--primary-color);
-        box-shadow: var(--shadow-soft);
-        outline: none;
-        transform: translateY(-2px);
-    }
-    
-    .form-select:hover {
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.12);
-    }
-    
-    .main-layout {
-        display: grid;
-        grid-template-columns: 1fr 550px;
-        gap: 24px;
-        align-items: start;
-    }
-    
-    .form-section {
-        background: var(--bg-card);
-        border-radius: 24px;
-        padding: 28px;
-        box-shadow: var(--shadow-3d);
-        border: none;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    
-    .form-section:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-hover);
-    }
-    
-    .tabs {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 24px;
-        background: var(--bg-light);
-        padding: 4px;
-        border-radius: 12px;
-    }
-    
-    .tab-btn {
-        flex: 1;
-        background: transparent;
-        border: none;
-        padding: 12px 20px;
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text-muted);
-        cursor: pointer;
-        position: relative;
-        transition: all 0.2s;
-        border-radius: 8px;
-    }
-    
-    .tab-btn:hover {
-        background: rgba(99, 102, 241, 0.1);
-        color: var(--primary-color);
-    }
-    
-    .tab-btn.active {
-        background: var(--primary-color);
-        color: white;
-        box-shadow: var(--shadow-sm);
-    }
-    
-    .tab-content {
-        display: none;
-    }
-    
-    .tab-content.active {
-        display: block;
-        animation: fadeIn 0.3s ease;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .form-group {
-        margin-bottom: 20px;
-    }
-    
-    .form-group label {
-        display: block;
-        font-weight: 600;
-        font-size: 13px;
-        color: var(--text-dark);
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .form-group select,
-    .form-group input[type="text"],
-    .form-group input[type="number"] {
-        width: 100%;
-        padding: 14px 18px;
-        border: 2px solid transparent;
-        border-radius: 16px;
-        font-size: 15px;
-        font-weight: 500;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: white;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.08);
-    }
-    
-    .form-group select:focus,
-    .form-group input:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: var(--shadow-soft);
-        transform: translateY(-2px);
-    }
-    
-    .btn {
-        padding: 14px 28px;
-        border: none;
-        border-radius: 16px;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        letter-spacing: 0.3px;
-    }
-    
-    .btn-primary {
-        background: var(--primary-gradient);
-        color: white;
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
-    }
-    
-    .btn-success {
-        background: var(--success-gradient);
-        color: white;
-    }
-    
-    .btn-success:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(72, 187, 120, 0.35);
-    }
-    
-    .btn-danger {
-        background: var(--danger-gradient);
-        color: white;
-    }
-    
-    .btn-danger:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(245, 101, 101, 0.35);
-    }
-    
-    .btn-warning {
-        background: var(--warning-gradient);
-        color: white;
-    }
-    
-    .btn-warning:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(237, 137, 54, 0.35);
-    }
-    
-    .btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-    
-    .schedule-panel {
-        background: var(--bg-card);
-        border-radius: 24px;
-        padding: 28px;
-        box-shadow: var(--shadow-3d);
-        border: none;
-        position: sticky;
-        top: 20px;
-        max-height: calc(100vh - 40px);
-        overflow-y: auto;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    
-    .schedule-panel:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-hover);
-    }
-    
-    .schedule-panel h3 {
-        font-size: 20px;
-        font-weight: 700;
-        background: var(--primary-gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin: 0 0 20px 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .mini-schedule {
-        overflow-x: auto;
-    }
-    
-    .mini-schedule table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        font-size: 13px;
-    }
-    
-    .mini-schedule th {
-        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-        color: var(--text-dark);
-        padding: 12px 8px;
-        font-weight: 700;
-        text-align: center;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        border-bottom: 3px solid var(--primary-color);
-        white-space: nowrap;
-    }
-    
-    .mini-schedule th:first-child {
-        border-top-left-radius: 12px;
-    }
-    
-    .mini-schedule th:last-child {
-        border-top-right-radius: 12px;
-    }
-    
-    .mini-schedule td {
-        border: 1px solid #e2e8f0;
-        padding: 10px 6px;
-        text-align: center;
-        min-height: 70px;
-        background: white;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        cursor: pointer;
-    }
-    
-    .mini-schedule td:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-        z-index: 10;
-    }
-    
-    .mini-schedule td.has-class {
-        background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%);
-        font-weight: 600;
-        color: var(--primary-dark);
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
-    }
-    
-    .mini-schedule td.clickable-empty {
-        background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-        border: 2px dashed #d1d5db;
-        position: relative;
-    }
-    
-    .mini-schedule td.clickable-empty::after {
-        content: '+';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 24px;
-        color: #9ca3af;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-    
-    .mini-schedule td.clickable-empty:hover {
-        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-        border-color: #9ca3af;
-    }
-    
-    .mini-schedule td.clickable-empty:hover::after {
-        opacity: 1;
-        color: #6b7280;
-    }
-    
-    .mini-schedule td.selected {
-        background: var(--primary-gradient);
-        color: white;
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-        transform: scale(1.05);
-    }
-    
-    .class-info {
-        font-size: 11px;
-        line-height: 1.4;
-    }
-    
-    .class-code {
-        font-weight: 700;
-        display: block;
-        margin-bottom: 2px;
-    }
-    
-    .deleted-items {
-        margin-top: 24px;
-        padding-top: 24px;
-        border-top: 2px solid var(--border-color);
-    }
-    
-    .deleted-items h4 {
-        color: var(--danger-color);
-        margin-bottom: 16px;
-        font-size: 16px;
-        font-weight: 700;
-    }
-    
-    .deleted-list {
-        max-height: 300px;
-        overflow-y: auto;
-    }
-    
-    .deleted-item {
-        background: #fef2f2;
-        border: 1px solid #fecaca;
-        border-radius: 8px;
-        padding: 12px;
-        margin-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .deleted-item-info {
-        font-size: 13px;
-    }
-    
-    .deleted-item strong {
-        color: var(--danger-color);
-        font-weight: 700;
-    }
-    
-    .message {
-        padding: 12px 16px;
-        border-radius: 10px;
-        margin-bottom: 16px;
-        font-weight: 500;
-        font-size: 14px;
-        animation: slideIn 0.3s ease;
-    }
-    
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .message.success {
-        background: #d1fae5;
-        color: #065f46;
-        border-left: 4px solid var(--success-color);
-    }
-    
-    .message.error {
-        background: #fee2e2;
-        color: #991b1b;
-        border-left: 4px solid var(--danger-color);
-    }
-    
-    .message.warning {
-        background: #fef3c7;
-        color: #92400e;
-        border-left: 4px solid var(--warning-color);
-    }
-    
-    .message.info {
-        background: #dbeafe;
-        color: #1e40af;
-        border-left: 4px solid #3b82f6;
-    }
-    
-    .swap-mode {
-        background: #fffbeb;
-        border: 2px dashed var(--warning-color);
-        padding: 16px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        text-align: center;
-    }
-    
-    .swap-mode p {
-        color: #92400e;
-        font-weight: 600;
-        margin-bottom: 8px;
-        font-size: 14px;
-    }
-    
-    .loading {
-        display: none;
-        text-align: center;
-        padding: 20px;
-    }
-    
-    .loading.active {
-        display: block;
-    }
-    
-    .spinner {
-        border: 4px solid rgba(99, 102, 241, 0.1);
-        border-top: 4px solid var(--primary-color);
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-        margin: 0 auto;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    @media (max-width: 1400px) {
-        .main-layout {
-            grid-template-columns: 1fr;
-        }
-        
-        .schedule-panel {
-            position: relative;
-            top: 0;
-            max-height: none;
-        }
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/tkb_admin.css' %}">
+<script src="{% static 'js/tkb_admin.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-<div class="tkb-container">
-    <div class="tkb-header">
-        <h1>⚙️ Quản lý Thời Khoá Biểu</h1>
-        <p>Thêm mới, chỉnh sửa, xóa và phục hồi lịch học</p>
-        
-        <!-- Filters -->
-        <div class="control-row" style="margin-top: 16px;">
-            <div class="control-group">
-                <label class="control-label">📅 Đợt xếp lịch</label>
-                <select id="dotSelect" class="form-select" onchange="updateFilters()">
-                    <option value="">-- Chọn đợt --</option>
-                    {% for dot in dots %}
-                    <option value="{{ dot.ma_dot }}" {% if dot.ma_dot == ma_dot %}selected{% endif %}>
-                        {{ dot.ten_dot }}
-                    </option>
-                    {% endfor %}
-                </select>
+<div class="tkb-wrapper">
+    <!-- Message Container (Fixed Position) -->
+    <div id="tkb-message-container"></div>
+
+    <!-- Header Section -->
+    <div class="tkb-card">
+        <div class="d-flex flex-wrap justify-content-between gap-3 align-items-start mb-3">
+            <div class="flex-grow-1">
+                <h2 class="mb-2">Quản lý Thời Khoá Biểu</h2>
+                <div class="tkb-legend">
+                    <span><span class="dot" style="background:#eef2ff;border-color:#c7d2fe;"></span>Ô trống có thể thêm</span>
+                    <span><span class="dot" style="background:#dbeafe;border-color:#7dd3fc;"></span>Lịch đang xem</span>
+                    <span><span class="dot" style="background:#fee2e2;border-color:#fca5a5;"></span>Lịch đã xóa</span>
+                </div>
             </div>
-            
-            <div class="control-group">
-                <label class="control-label">🏛️ Khoa</label>
-                <select id="khoaSelect" class="form-select" onchange="updateFilters()">
-                    <option value="">-- Tất cả khoa --</option>
-                    {% for khoa in khoa_list %}
-                    <option value="{{ khoa.ma_khoa }}" {% if khoa.ma_khoa == ma_khoa %}selected{% endif %}>
-                        {{ khoa.ten_khoa }}
-                    </option>
-                    {% endfor %}
-                </select>
+            <div id="tkb-selection-pill" class="badge-soft info" style="display:none; align-self: center;"></div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="mb-4">
+            <div class="tkb-label mb-3">Bộ lọc</div>
+            <div class="tkb-filter-row">
+                <div>
+                    <label class="tkb-label">Đợt xếp lịch</label>
+                    <select id="dotSelect" class="tkb-select" onchange="tkbPage.updateFilters()">
+                        <option value="">-- Chọn đợt --</option>
+                        {% for dot in dots %}
+                            <option value="{{ dot.ma_dot }}" {% if dot.ma_dot == ma_dot %}selected{% endif %}>{{ dot.ten_dot }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="tkb-label">Khoa</label>
+                    <select id="khoaSelect" class="tkb-select" onchange="tkbPage.updateFilters()">
+                        <option value="">-- Tất cả khoa --</option>
+                        {% for khoa in khoa_list %}
+                            <option value="{{ khoa.ma_khoa }}" {% if khoa.ma_khoa == ma_khoa %}selected{% endif %}>{{ khoa.ten_khoa }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="tkb-label">Xem theo</label>
+                    <select id="viewTypeSelect" class="tkb-select" onchange="tkbPage.handleViewTypeChange()">
+                        <option value="teacher" {% if view_type == 'teacher' or not view_type %}selected{% endif %}>Giáo viên</option>
+                        <option value="room" {% if view_type == 'room' %}selected{% endif %}>Phòng học</option>
+                    </select>
+                </div>
+                <div id="teacherSelectGroup" {% if view_type == 'room' %}style="display:none;"{% endif %}>
+                    <label class="tkb-label">Giáo viên</label>
+                    <select id="teacherSelect" class="tkb-select" onchange="tkbPage.updateFilters()">
+                        <option value="">-- Chọn giáo viên --</option>
+                        {% for gv in teachers %}
+                            <option value="{{ gv.ma_gv }}" {% if gv.ma_gv == selected_id %}selected{% endif %}>{{ gv.ma_gv }} - {{ gv.ten_gv }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="roomSelectGroup" {% if view_type != 'room' %}style="display:none;"{% endif %}>
+                    <label class="tkb-label">Phòng học</label>
+                    <select id="roomSelect" class="tkb-select" onchange="tkbPage.updateFilters()">
+                        <option value="">-- Chọn phòng --</option>
+                        {% for phong in phongs %}
+                            <option value="{{ phong.ma_phong }}" {% if phong.ma_phong == selected_id %}selected{% endif %}>{{ phong.ma_phong }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-            
-            <div class="control-group">
-                <label class="control-label">👁️ Xem theo</label>
-                <select id="viewTypeSelect" class="form-select" onchange="handleViewTypeChange()">
-                    <option value="teacher" {% if view_type == 'teacher' or not view_type %}selected{% endif %}>👨‍🏫 Giáo viên</option>
-                    <option value="room" {% if view_type == 'room' %}selected{% endif %}>🏢 Phòng học</option>
-                </select>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-2" style="border-top: 1px solid var(--tkb-border); padding-top: 16px;">
+            <div class="tkb-action-bar">
+                <button id="btnAdd" class="tkb-btn tkb-btn-primary" type="button" title="Thêm lịch mới">
+                    <span>➕</span> Thêm mới
+                </button>
+                <button id="btnEdit" class="tkb-btn tkb-btn-success" type="button" disabled title="Sửa lịch">
+                    <span>✏️</span> Sửa
+                </button>
+                <button id="btnSwap" class="tkb-btn tkb-btn-warning" type="button" disabled title="Hoán đổi 2 lịch">
+                    <span>⇄</span> Hoán đổi
+                </button>
+                <button id="btnDelete" class="tkb-btn tkb-btn-danger" type="button" disabled title="Xóa lịch">
+                    <span>🗑️</span> Xóa
+                </button>
+                <button id="btnRestore" class="tkb-btn tkb-btn-ghost" type="button" disabled title="Phục hồi lịch">
+                    <span>↩️</span> Phục hồi
+                </button>
             </div>
-            
-            <div class="control-group" id="teacherSelectGroup" style="{% if view_type == 'room' %}display: none;{% endif %}">
-                <label class="control-label">👨‍🏫 Giáo viên</label>
-                <select id="teacherSelect" class="form-select" onchange="updateFilters()">
-                    <option value="">-- Chọn giáo viên --</option>
-                    {% for gv in teachers %}
-                    <option value="{{ gv.ma_gv }}" {% if gv.ma_gv == selected_id %}selected{% endif %}>
-                        {{ gv.ma_gv }} - {{ gv.ten_gv }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <div class="control-group" id="roomSelectGroup" style="{% if view_type != 'room' %}display: none;{% endif %}">
-                <label class="control-label">🏢 Phòng học</label>
-                <select id="roomSelect" class="form-select" onchange="updateFilters()">
-                    <option value="">-- Chọn phòng --</option>
-                    {% for phong in phongs %}
-                    <option value="{{ phong.ma_phong }}" {% if phong.ma_phong == selected_id %}selected{% endif %}>
-                        {{ phong.ma_phong }}
-                    </option>
-                    {% endfor %}
-                </select>
+            <div class="form-text-muted">
+                <span id="action-hint">Chọn lịch để Sửa/Xóa, chọn 2 lịch để Hoán đổi</span>
             </div>
         </div>
     </div>
-    
-    <div id="message-container"></div>
-    
-    <div class="main-layout">
-        <!-- Left: Form Section -->
-        <div class="form-section">
-            <div class="tabs">
-                <button class="tab-btn active" data-tab="create">➕ Thêm mới</button>
-                <button class="tab-btn" data-tab="edit">✏️ Sửa</button>
-                <button class="tab-btn" data-tab="delete">🗑️ Xóa & Phục hồi</button>
-                <button class="tab-btn" data-tab="swap">🔄 Hoán đổi</button>
-            </div>
-            
-            <!-- Tab Thêm mới -->
-            <div class="tab-content active" id="tab-create">
-                <form id="form-create">
-                    <div class="form-group">
-                        <label>Đợt xếp lịch *</label>
-                        <select name="ma_dot" required>
-                            <option value="">-- Chọn đợt --</option>
-                            {% for dot in dots %}
-                            <option value="{{ dot.ma_dot }}">{{ dot.ten_dot }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Môn học *</label>
-                        <select name="ma_mon_hoc" id="create-mon-hoc" required onchange="handleMonHocChange()">
-                            <option value="">-- Chọn môn học --</option>
-                            {% for mon in mon_hoc_list %}
-                            <option value="{{ mon.ma_mon_hoc }}">{{ mon.ma_mon_hoc }} - {{ mon.ten_mon_hoc }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div id="mon-hoc-info" style="display: none; background: #e0f2fe; border-left: 4px solid #0284c7; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px;">
-                        <div style="font-weight: 600; margin-bottom: 4px;">📚 Thông tin môn học:</div>
-                        <div id="mon-hoc-details"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Giáo viên *</label>
-                        <select name="ma_gv" id="create-gv" required>
-                            <option value="">-- Chọn giáo viên --</option>
-                            {% for gv in teachers %}
-                            <option value="{{ gv.ma_gv }}">{{ gv.ma_gv }} - {{ gv.ten_gv }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-                        <div class="form-group">
-                            <label>Nhóm * <span id="nhom-hint" style="font-size: 11px; color: #64748b;"></span></label>
-                            <select name="nhom_mh" id="create-nhom" required>
-                                <option value="">-- Chọn nhóm --</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
-                                <option value="8">8</option>
-                                <option value="9">9</option>
-                                <option value="10">10</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Tổ <span id="to-hint" style="font-size: 11px; color: #64748b;"></span></label>
-                            <select name="to_mh" id="create-to" required>
-                                <option value="0">0 (LT)</option>
-                                <option value="1">1 (TH)</option>
-                                <option value="2">2 (TH)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Số SV</label>
-                            <input type="number" name="so_luong_sv" id="create-soluongsv" min="1" value="40">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Phòng học *</label>
-                        <select name="ma_phong" id="create-phong" required>
-                            <option value="">-- Chọn phòng --</option>
-                            {% for phong in phongs %}
-                            <option value="{{ phong.ma_phong }}" data-loai="{{ phong.loai_phong|default:'' }}">
-                                {{ phong.ma_phong }} ({{ phong.suc_chua }} chỗ){% if phong.loai_phong %} - {{ phong.loai_phong }}{% endif %}
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Thời gian *</label>
-                        <select name="time_slot_id" id="create-timeslot" required>
-                            <option value="">-- Chọn thời gian --</option>
-                            {% for ts in timeslots %}
-                            <option value="{{ ts.time_slot_id }}">{{ ts.thu }} - Tiết {{ ts.tiet_bat_dau }}-{{ ts.tiet_ket_thuc }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Tuần học</label>
-                        <input type="text" name="tuan_hoc" placeholder="VD: 1,2,3-5,7">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">➕ Thêm lịch</button>
-                </form>
-            </div>
-            
-            <!-- Tab Sửa -->
-            <div class="tab-content" id="tab-edit">
-                <p style="color: #718096; margin-bottom: 20px;">💡 Nhấp vào ô lịch bên phải để chỉnh sửa</p>
-                <form id="form-edit">
-                    <input type="hidden" name="ma_tkb" id="edit-ma-tkb">
-                    <input type="hidden" id="edit-ma-lop-current">
-                    
-                    <div class="form-group">
-                        <label>Lớp hiện tại</label>
-                        <input type="text" id="edit-lop-display" readonly style="background: #f7fafc;">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>🎓 Môn học (có thể thay đổi)</label>
-                        <select name="ma_mon_hoc" id="edit-mon-hoc" onchange="handleEditMonHocChange()">
-                            <option value="">-- Chọn môn học --</option>
-                            {% for mon in mon_hoc_list %}
-                            <option value="{{ mon.ma_mon_hoc }}">{{ mon.ten_mon_hoc }} ({{ mon.ma_mon_hoc }})</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div id="edit-mon-hoc-info" style="display: none; background: #e0f2fe; border-left: 4px solid #0284c7; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px;">
-                        <div id="edit-mon-hoc-details"></div>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-                        <div class="form-group">
-                            <label>Nhóm</label>
-                            <select name="nhom" id="edit-nhom">
-                                {% for i in "12345678910" %}
-                                <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
-                                {% endfor %}
-                            </select>
-                            <small id="edit-nhom-hint" style="color: #10b981;"></small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Tổ</label>
-                            <select name="to" id="edit-to">
-                                <option value="0">0 (LT)</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                            </select>
-                            <small id="edit-to-hint" style="color: #10b981;"></small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Số SV</label>
-                            <input type="number" name="so_luong_sv" id="edit-soluongsv" min="1" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>🏢 Phòng học</label>
-                        <select name="ma_phong" id="edit-phong">
-                            <option value="">-- Chọn phòng --</option>
-                            {% for phong in phongs %}
-                            <option value="{{ phong.ma_phong }}" 
-                                    data-loai="{{ phong.loai_phong }}" 
-                                    data-suc-chua="{{ phong.suc_chua }}">
-                                {{ phong.ma_phong }} ({{ phong.suc_chua }} chỗ)
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>🕐 Thời gian</label>
-                        <select name="time_slot_id" id="edit-timeslot" onchange="filterEditRoomsByTimeslot()">
-                            <option value="">-- Chọn thời gian --</option>
-                            {% for ts in timeslots %}
-                            <option value="{{ ts.time_slot_id }}">
-                                {% if ts.thu == 2 %}Thứ 2{% elif ts.thu == 3 %}Thứ 3{% elif ts.thu == 4 %}Thứ 4{% elif ts.thu == 5 %}Thứ 5{% elif ts.thu == 6 %}Thứ 6{% elif ts.thu == 7 %}Thứ 7{% elif ts.thu == 8 %}CN{% endif %} - Ca {{ ts.ca.ma_khung_gio }} ({{ ts.ca.gio_bat_dau|time:"H:i" }}-{{ ts.ca.gio_ket_thuc|time:"H:i" }})
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>📅 Tuần học</label>
-                        <input type="text" name="tuan_hoc" id="edit-tuan" placeholder="VD: 1-8, 10-15">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-success">💾 Lưu thay đổi</button>
-                </form>
-            </div>
-            
-            <!-- Tab Xóa & Phục hồi -->
-            <div class="tab-content" id="tab-delete">
-                <p style="color: #718096; margin-bottom: 20px;">💡 Nhấp vào ô lịch bên phải để xóa</p>
-                <form id="form-delete">
-                    <input type="hidden" name="ma_tkb" id="delete-ma-tkb">
-                    
-                    <div class="form-group">
-                        <label>Lớp sẽ xóa</label>
-                        <input type="text" id="delete-lop" readonly style="background: #f7fafc;">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-danger">🗑️ Xóa lịch</button>
-                </form>
-            </div>
-            
-            <!-- Tab Hoán đổi -->
-            <div class="tab-content" id="tab-swap">
-                <h4 style="margin-bottom: 16px;">🔄 Hoán đổi lịch</h4>
-                
-                <!-- Toggle Mode -->
-                <div style="display: flex; gap: 8px; margin-bottom: 20px; background: #f7fafc; padding: 4px; border-radius: 12px;">
-                    <button id="btn-swap-mode-same" class="btn-swap-mode active" onclick="switchSwapMode('same')" style="flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; background: #667eea; color: white;">
-                        👤 Swap trong môn học
-                    </button>
-                    <button id="btn-swap-mode-diff" class="btn-swap-mode" onclick="switchSwapMode('diff')" style="flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; background: transparent; color: #64748b;">
-                        👥 Swap giữa GV khác
-                    </button>
+
+    <!-- Main Content: Current Schedule + Deleted List -->
+    <div class="row g-3">
+        <!-- Current Schedule -->
+        <div class="col-lg-8">
+            <div class="tkb-card schedule-card">
+                <div class="d-flex align-items-center justify-content-between mb-3" style="border-bottom: 1px solid var(--tkb-border); padding-bottom: 12px;">
+                    <h2 class="mb-0">📅 Lịch hiện tại</h2>
+                    <div class="form-text-muted" id="schedule-meta">0 lịch</div>
                 </div>
-                
-                <!-- Mode: Swap trong môn học (cùng GV) -->
-                <div id="swap-mode-same" style="display: block;">
-                    <div class="form-group">
-                        <label>👨‍🏫 Chọn giáo viên</label>
-                        <select id="swap-gv-same" style="width: 100%; padding: 10px; border: 2px solid #cbd5e0; border-radius: 6px;">
-                            <option value="">-- Chọn giáo viên --</option>
-                        </select>
-                    </div>
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width:50px;">Tiết</th>
+                                <th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th><th>T7</th><th>CN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mini-schedule-body"></tbody>
+                    </table>
                 </div>
-                
-                <!-- Mode: Swap giữa GV khác -->
-                <div id="swap-mode-diff" style="display: none;">
-                    <div class="form-group">
-                        <label>👨‍🏫 Giáo viên 1</label>
-                        <select id="swap-gv1" style="width: 100%; padding: 10px; border: 2px solid #cbd5e0; border-radius: 6px;">
-                            <option value="">-- Chọn giáo viên --</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>👨‍🏫 Giáo viên 2</label>
-                        <select id="swap-gv2" style="width: 100%; padding: 10px; border: 2px solid #cbd5e0; border-radius: 6px;">
-                            <option value="">-- Chọn giáo viên --</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div id="swap-schedules" style="display: none;">
-                    <h5 style="margin: 20px 0 10px 0; color: #4a5568;">📅 Chọn 1 lịch từ mỗi giáo viên để hoán đổi</h5>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                        <!-- TKB GV1 -->
-                        <div>
-                            <h6 style="color: #3182ce; font-weight: 600; margin-bottom: 8px;">
-                                <span id="swap-gv1-name">GV 1</span>
-                            </h6>
-                            <div id="swap-tkb-gv1" style="max-height: 400px; overflow-y: auto; border: 2px solid #3182ce; border-radius: 8px; padding: 8px;">
-                                <!-- Dynamic schedule -->
-                            </div>
-                        </div>
-                        
-                        <!-- TKB GV2 -->
-                        <div>
-                            <h6 style="color: #d97706; font-weight: 600; margin-bottom: 8px;">
-                                <span id="swap-gv2-name">GV 2</span>
-                            </h6>
-                            <div id="swap-tkb-gv2" style="max-height: 400px; overflow-y: auto; border: 2px solid #d97706; border-radius: 8px; padding: 8px;">
-                                <!-- Dynamic schedule -->
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div id="swap-selection-info" style="background: #edf2f7; padding: 12px; border-radius: 6px; margin-bottom: 16px; display: none;">
-                        <p style="margin: 0; font-weight: 600; color: #2d3748;">Đã chọn:</p>
-                        <p id="swap-selected-1" style="margin: 4px 0 0 0; color: #3182ce;">Lịch 1: Chưa chọn</p>
-                        <p id="swap-selected-2" style="margin: 4px 0 0 0; color: #d97706;">Lịch 2: Chưa chọn</p>
-                    </div>
-                    
-                    <div class="form-group" style="border: 1px solid #cbd5e0; padding: 12px; border-radius: 6px; background: #f7fafc;">
-                        <label style="display: flex; align-items: center; cursor: pointer; margin-bottom: 0;">
-                            <input type="checkbox" id="swap-phong" checked style="width: 20px; height: 20px; margin-right: 10px;">
-                            <span style="font-size: 14px; font-weight: 600;">🏢 Hoán đổi cả phòng học</span>
-                        </label>
-                        <small style="color: #718096; display: block; margin-top: 8px; margin-left: 30px;">
-                            ✓ Bật: Swap cả timeslot và phòng<br>
-                            ✗ Tắt: Chỉ swap timeslot, giữ nguyên phòng (kiểm tra phòng trùng)
-                        </small>
-                    </div>
-                    
-                    <button type="button" id="btn-swap-submit" class="btn btn-warning" style="width: 100%;" disabled>🔄 Hoán đổi lịch</button>
-                </div>
-            </div>
-            
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p style="margin-top: 10px; color: #718096;">Đang xử lý...</p>
             </div>
         </div>
-        
-        <!-- Right: Mini Schedule -->
-        <div class="schedule-panel">
-            <h3>📅 Lịch hiện tại</h3>
-            
-            <div class="mini-schedule">
-                <table id="mini-schedule-table">
-                    <thead>
-                        <tr>
-                            <th>Tiết</th>
-                            <th>T2</th>
-                            <th>T3</th>
-                            <th>T4</th>
-                            <th>T5</th>
-                            <th>T6</th>
-                            <th>T7</th>
-                            <th>CN</th>
-                        </tr>
-                    </thead>
-                    <tbody id="mini-schedule-body">
-                        <!-- Dynamic content -->
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="deleted-items">
-                <h4>🗑️ Lịch đã xóa (có thể phục hồi)</h4>
-                <div class="deleted-list" id="deleted-list">
-                    <!-- Dynamic content -->
+
+        <!-- Deleted Schedule List -->
+        <div class="col-lg-4">
+            <div class="tkb-card">
+                <div class="d-flex align-items-center justify-content-between mb-3" style="border-bottom: 1px solid var(--tkb-border); padding-bottom: 12px;">
+                    <h2 class="mb-0">🗑️ Lịch đã xóa</h2>
+                    <span class="badge-soft" id="deleted-count" style="background:#fee2e2;color:#991b1b;">0</span>
                 </div>
+                <div class="deleted-list" id="deleted-list"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-backdrop" id="globalLoading">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<!-- Modals Container (will be moved to body by tkb_admin.js) -->
+
+<!-- Add Modal -->
+<div class="modal fade" id="addScheduleModal" tabindex="-1" role="dialog" aria-labelledby="addScheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addScheduleModalLabel">Thêm lịch</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="addScheduleForm" class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="tkb-label">Đợt xếp lịch *</label>
+                        <select class="form-select" name="ma_dot" id="add-ma-dot" required>
+                            <option value="">-- Chọn đợt --</option>
+                            {% for dot in dots %}
+                                <option value="{{ dot.ma_dot }}" {% if dot.ma_dot == ma_dot %}selected{% endif %}>{{ dot.ten_dot }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="tkb-label">Giáo viên *</label>
+                        <select class="form-select" name="ma_gv" id="add-gv" required>
+                            <option value="">-- Chọn giáo viên --</option>
+                            {% for gv in teachers %}
+                                <option value="{{ gv.ma_gv }}">{{ gv.ma_gv }} - {{ gv.ten_gv }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="tkb-label">Môn học *</label>
+                        <select class="form-select" name="ma_mon_hoc" id="add-mon-hoc" required>
+                            <option value="">-- Chọn môn học --</option>
+                            {% for mon in mon_hoc_list %}
+                                <option value="{{ mon.ma_mon_hoc }}">{{ mon.ma_mon_hoc }} - {{ mon.ten_mon_hoc }}</option>
+                            {% endfor %}
+                        </select>
+                        <div id="add-mon-hoc-info" class="mt-2" style="display:none;">
+                            <div id="add-mon-hoc-details" class="form-text-muted"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="tkb-label">Nhóm *</label>
+                        <select class="form-select" name="nhom_mh" id="add-nhom" required>
+                            <option value="">-- Chọn nhóm --</option>
+                            {% for i in "12345678910" %}
+                                <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                            {% endfor %}
+                        </select>
+                        <div id="add-nhom-hint" class="form-text-muted"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="tkb-label">Tổ *</label>
+                        <select class="form-select" name="to_mh" id="add-to" required>
+                            <option value="0">0 (LT)</option>
+                            <option value="1">1 (TH)</option>
+                            <option value="2">2 (TH)</option>
+                        </select>
+                        <div id="add-to-hint" class="form-text-muted"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="tkb-label">Số SV</label>
+                        <input type="number" min="1" class="form-control" name="so_luong_sv" id="add-soluongsv" value="40">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="tkb-label">Phòng học *</label>
+                        <select class="form-select" name="ma_phong" id="add-phong" required>
+                            <option value="">-- Chọn phòng --</option>
+                            {% for phong in phongs %}
+                                <option value="{{ phong.ma_phong }}" data-loai="{{ phong.loai_phong|default:'' }}">{{ phong.ma_phong }} ({{ phong.suc_chua }} chỗ){% if phong.loai_phong %} - {{ phong.loai_phong }}{% endif %}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="tkb-label">Thời gian *</label>
+                        <select class="form-select" name="time_slot_id" id="add-timeslot" required>
+                            <option value="">-- Chọn thời gian --</option>
+                            {% for ts in timeslots %}
+                                <option value="{{ ts.time_slot_id }}">{% if ts.thu == 2 %}Thứ 2{% elif ts.thu == 3 %}Thứ 3{% elif ts.thu == 4 %}Thứ 4{% elif ts.thu == 5 %}Thứ 5{% elif ts.thu == 6 %}Thứ 6{% elif ts.thu == 7 %}Thứ 7{% elif ts.thu == 8 %}CN{% endif %} - Ca {{ ts.ca.ma_khung_gio }} ({{ ts.ca.gio_bat_dau|time:"H:i" }}-{{ ts.ca.gio_ket_thuc|time:"H:i" }})</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text text-danger d-none" id="add-gv-busy-hint"></div>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="tkb-label">Tuần học</label>
+                        <input type="text" class="form-control" name="tuan_hoc" id="add-tuan" placeholder="VD: 1,2,3-5,7">
+                    </div>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" data-dismiss="modal">Hủy</button>
+                <button type="submit" form="addScheduleForm" class="btn btn-primary" id="btnAddSubmit">Thêm lịch</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editScheduleModal" tabindex="-1" role="dialog" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editScheduleModalLabel">Sửa lịch</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editScheduleForm" class="modal-body">
+                <input type="hidden" name="ma_tkb" id="edit-ma-tkb">
+                <input type="hidden" id="edit-ma-lop-current">
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label class="tkb-label">Lớp hiện tại</label>
+                        <input type="text" class="form-control" id="edit-lop-display" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="tkb-label">Môn học</label>
+                        <select class="form-select" name="ma_mon_hoc" id="edit-mon-hoc">
+                            <option value="">-- Chọn môn học --</option>
+                            {% for mon in mon_hoc_list %}
+                                <option value="{{ mon.ma_mon_hoc }}">{{ mon.ten_mon_hoc }} ({{ mon.ma_mon_hoc }})</option>
+                            {% endfor %}
+                        </select>
+                        <div id="edit-mon-hoc-info" class="mt-2" style="display:none;"><div id="edit-mon-hoc-details" class="form-text-muted"></div></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="tkb-label">Nhóm</label>
+                        <select class="form-select" name="nhom" id="edit-nhom">
+                            {% for i in "12345678910" %}
+                                <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="tkb-label">Tổ</label>
+                        <select class="form-select" name="to" id="edit-to">
+                            <option value="0">0 (LT)</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="tkb-label">Số SV</label>
+                        <input type="number" min="1" class="form-control" name="so_luong_sv" id="edit-soluongsv" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="tkb-label">Phòng học</label>
+                        <select class="form-select" name="ma_phong" id="edit-phong">
+                            <option value="">-- Chọn phòng --</option>
+                            {% for phong in phongs %}
+                                <option value="{{ phong.ma_phong }}" data-loai="{{ phong.loai_phong }}" data-suc-chua="{{ phong.suc_chua }}">{{ phong.ma_phong }} ({{ phong.suc_chua }} chỗ)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="tkb-label">Thời gian</label>
+                        <select class="form-select" name="time_slot_id" id="edit-timeslot">
+                            <option value="">-- Chọn thời gian --</option>
+                            {% for ts in timeslots %}
+                                <option value="{{ ts.time_slot_id }}">{% if ts.thu == 2 %}Thứ 2{% elif ts.thu == 3 %}Thứ 3{% elif ts.thu == 4 %}Thứ 4{% elif ts.thu == 5 %}Thứ 5{% elif ts.thu == 6 %}Thứ 6{% elif ts.thu == 7 %}Thứ 7{% elif ts.thu == 8 %}CN{% endif %} - Ca {{ ts.ca.ma_khung_gio }} ({{ ts.ca.gio_bat_dau|time:"H:i" }}-{{ ts.ca.gio_ket_thuc|time:"H:i" }})</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text text-danger d-none" id="edit-gv-busy-hint"></div>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="tkb-label">Tuần học</label>
+                        <input type="text" class="form-control" name="tuan_hoc" id="edit-tuan" placeholder="VD: 1-8,10-15">
+                    </div>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" data-dismiss="modal">Hủy</button>
+                <button type="submit" form="editScheduleForm" class="btn btn-success" id="btnEditSubmit">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-1">Bạn có chắc muốn xóa lịch này?</p>
+                <div class="form-text-muted" id="delete-summary"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="btnDeleteConfirm">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Swap Modal -->
+<div class="modal fade" id="swapScheduleModal" tabindex="-1" role="dialog" aria-labelledby="swapScheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="swapScheduleModalLabel">Hoán đổi lịch</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <label class="tkb-label">Lịch A</label>
+                        <select class="form-select" id="swap-select-a"></select>
+                        <div class="form-text-muted" id="swap-a-info"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="tkb-label">Lịch B</label>
+                        <select class="form-select" id="swap-select-b"></select>
+                        <div class="form-text-muted" id="swap-b-info"></div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="swap-phong" checked>
+                            <label class="form-check-label" for="swap-phong">Hoán đổi cả phòng học</label>
+                        </div>
+                        <div class="form-text-muted">Bật: đổi cả phòng và timeslot. Tắt: chỉ đổi timeslot, giữ nguyên phòng (backend sẽ kiểm tra trùng).</div>
+                    </div>
+                </div>
+                <div id="swap-warning" class="alert alert-warning d-none mb-0" role="alert"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-warning" id="btnSwapSubmit" disabled>Hoán đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Restore Modal -->
+<div class="modal fade" id="restoreScheduleModal" tabindex="-1" role="dialog" aria-labelledby="restoreScheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="restoreScheduleModalLabel">Phục hồi lịch - chọn phòng khả dụng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="restoreScheduleForm" class="modal-body">
+                <input type="hidden" id="restore-ma-tkb" name="ma_tkb">
+                <input type="hidden" id="restore-soluongsv" value="0">
+                <div class="mb-3" id="restore-info" aria-live="polite"></div>
+                <div class="alert alert-info" id="restore-hint" role="alert"></div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="tkb-label">Thời gian</label>
+                        <select class="form-select" id="restore-timeslot" disabled>
+                            <option value="">-- Thời gian --</option>
+                            {% for ts in timeslots %}
+                                <option value="{{ ts.time_slot_id }}">{% if ts.thu == 2 %}Thứ 2{% elif ts.thu == 3 %}Thứ 3{% elif ts.thu == 4 %}Thứ 4{% elif ts.thu == 5 %}Thứ 5{% elif ts.thu == 6 %}Thứ 6{% elif ts.thu == 7 %}Thứ 7{% elif ts.thu == 8 %}CN{% endif %} - Ca {{ ts.ca.ma_khung_gio }} ({{ ts.ca.gio_bat_dau|time:"H:i" }}-{{ ts.ca.gio_ket_thuc|time:"H:i" }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="tkb-label">Chọn phòng thay thế</label>
+                        <select class="form-select" id="restore-phong">
+                            <option value="">-- Chọn phòng --</option>
+                            {% for phong in phongs %}
+                                <option value="{{ phong.ma_phong }}" data-loai="{{ phong.loai_phong|default:'' }}">{{ phong.ma_phong }} ({{ phong.suc_chua }} chỗ){% if phong.loai_phong %} - {{ phong.loai_phong }}{% endif %}</option>
+                            {% endfor %}
+                        </select>
+                        <div id="restore-phong-hint" class="form-text-muted mt-1"></div>
+                    </div>
+                </div>
+                <div class="alert alert-warning mt-3 d-none" id="restore-warning" role="alert"></div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-success" id="btnRestoreSubmit">Phục hồi</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Global state
-    let currentTab = 'create';
-    let scheduleData = [];
-    let deletedData = [];
-    let allScheduleData = []; // Lưu TẤT CẢ lịch trong đợt để filter phòng
-    
-    // Update filters
-    function updateFilters() {
-        const ma_dot = document.getElementById('dotSelect').value;
-        const ma_khoa = document.getElementById('khoaSelect').value;
-        const view_type = document.getElementById('viewTypeSelect').value;
-        
-        let selected_id = '';
-        if (view_type === 'teacher') {
-            selected_id = document.getElementById('teacherSelect').value;
-        } else if (view_type === 'room') {
-            selected_id = document.getElementById('roomSelect').value;
+    (function() {
+        // ==================================================
+        // PHẦN A: FIX MODAL LAYERING - Proper z-index & stacking
+        // ==================================================
+        // Fix stacking context: ensure modals render above backdrop
+        // Don't move modals to body - keep them in place but with proper z-index
+        function fixModalStacking() {
+            const modalIds = ['addScheduleModal', 'editScheduleModal', 'deleteConfirmModal', 'swapScheduleModal', 'restoreScheduleModal'];
+            modalIds.forEach(id => {
+                const modal = document.getElementById(id);
+                if (modal) {
+                    // Set modal z-index higher than default
+                    modal.style.zIndex = '1050';
+                }
+            });
         }
-        
-        let url = '?';
-        if (ma_dot) url += `ma_dot=${ma_dot}`;
-        if (ma_khoa) url += (url.length > 1 ? '&' : '') + `ma_khoa=${ma_khoa}`;
-        if (view_type) url += (url.length > 1 ? '&' : '') + `view_type=${view_type}`;
-        if (selected_id) url += (url.length > 1 ? '&' : '') + `selected_id=${selected_id}`;
-        
-        window.location.href = url || '?';
-    }
-    
-    function handleViewTypeChange() {
-        const view_type = document.getElementById('viewTypeSelect').value;
-        
-        // Show/hide dropdowns
-        document.getElementById('teacherSelectGroup').style.display = 
-            view_type === 'teacher' ? 'block' : 'none';
-        document.getElementById('roomSelectGroup').style.display = 
-            view_type === 'room' ? 'block' : 'none';
-        
-        // Reset selected values
-        if (view_type !== 'teacher') {
-            document.getElementById('teacherSelect').value = '';
+
+        const $ = window.django?.jQuery || window.jQuery;
+        if (!$) {
+            console.warn('jQuery not available yet, will initialize on DOMContentLoaded');
         }
-        if (view_type !== 'room') {
-            document.getElementById('roomSelect').value = '';
+
+        const tkbPermissions = Object.assign({
+            can_create: true,
+            can_edit: true,
+            can_delete: true,
+            can_restore: true,
+            can_swap: true,
+            role: "{{ user_role|default_if_none:'' }}"
+        }, JSON.parse('{{ tkb_permissions|default:'{}'|escapejs }}'));
+
+        const api = Object.assign({
+            mini: "/api/tkb/mini-schedule/",
+            create: "/api/tkb/create/",
+            update: "/api/tkb/update/",
+            delete: "/api/tkb/delete/",
+            restore: "/api/tkb/restore/",
+            swap: "/api/tkb/swap/",
+            monhoc: "/api/tkb/mon-hoc-info/",
+            occupied: "/api/tkb/occupied-rooms/",
+            gvSchedule: "/api/tkb/gv-schedule/",
+            gvList: "/api/tkb/gv-list/"
+        }, JSON.parse('{{ tkb_api|default:'{}'|escapejs }}'));
+
+        const state = {
+            schedule: [],
+            deleted: [],
+            allInDot: [],
+            selected: null,
+            selectedDeleted: null,
+            selectedSwapA: null,
+            selectedSwapB: null,
+            lastEmptySlot: null,
+            restoreContext: null,
+        };
+
+        function getPageContext() {
+            return {
+                ma_dot: document.getElementById('dotSelect').value || document.getElementById('add-ma-dot').value,
+                view_type: document.getElementById('viewTypeSelect').value || 'teacher',
+                ma_gv: document.getElementById('teacherSelect').value,
+                ma_phong: document.getElementById('roomSelect').value
+            };
         }
-        
-        // Auto reload if view type changed
-        updateFilters();
-    }
-    
-    // Tab switching
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const tab = btn.dataset.tab;
+
+        function applyContextToAddModal({ lockTimeslot = false } = {}) {
+            const ctx = getPageContext();
+            const maDotEl = document.getElementById('add-ma-dot');
+            const gvEl = document.getElementById('add-gv');
+            const roomEl = document.getElementById('add-phong');
+            const timeslotEl = document.getElementById('add-timeslot');
+
+            if (maDotEl) {
+                maDotEl.value = ctx.ma_dot || maDotEl.value || '';
+                maDotEl.disabled = Boolean(ctx.ma_dot);
+            }
+
+            if (gvEl) {
+                const shouldLockGv = ctx.view_type === 'teacher' && ctx.ma_gv;
+                gvEl.value = ctx.ma_gv || gvEl.value || '';
+                gvEl.disabled = shouldLockGv;
+            }
+
+            if (roomEl) {
+                const shouldLockRoom = ctx.view_type === 'room' && ctx.ma_phong;
+                roomEl.value = ctx.ma_phong || roomEl.value || '';
+                roomEl.disabled = shouldLockRoom;
+            }
+
+            if (timeslotEl && !lockTimeslot) {
+                timeslotEl.disabled = false;
+            }
+        }
+
+        const els = {
+            message: document.getElementById('tkb-message-container'),
+            miniBody: document.getElementById('mini-schedule-body'),
+            deletedList: document.getElementById('deleted-list'),
+            deletedCount: document.getElementById('deleted-count'),
+            selectionPill: document.getElementById('tkb-selection-pill'),
+            scheduleMeta: document.getElementById('schedule-meta'),
+            buttons: {
+                add: document.getElementById('btnAdd'),
+                edit: document.getElementById('btnEdit'),
+                del: document.getElementById('btnDelete'),
+                restore: document.getElementById('btnRestore'),
+                swap: document.getElementById('btnSwap'),
+            },
+            loading: document.getElementById('globalLoading'),
+        };
+
+        let modals = {};
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        function showMessage(type, text) {
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.textContent = text;
+            els.message.appendChild(div);
+            setTimeout(() => div.remove(), 4500);
+        }
+
+        function setLoading(on) {
+            els.loading.classList.toggle('active', on);
+        }
+
+        function updateActionState() {
+            const hasSelection = Boolean(state.selected);
+            const canCreate = tkbPermissions.can_create !== false;
+            const canEdit = tkbPermissions.can_edit !== false && hasSelection;
+            const canDelete = tkbPermissions.can_delete !== false && hasSelection;
+            const canSwap = tkbPermissions.can_swap !== false && (state.selectedSwapA || state.selectedSwapB || state.selected);
+            const canRestore = tkbPermissions.can_restore !== false && state.selectedDeleted;
+
+            // Update button states với tooltip
+            els.buttons.add.disabled = !canCreate;
+            TKB.updateButtonState(els.buttons.add, canCreate);
             
-            // Update buttons
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            els.buttons.edit.disabled = !canEdit;
+            TKB.updateButtonState(els.buttons.edit, canEdit, canEdit ? '' : 'Vui lòng chọn 1 lịch để sửa');
+            TKB.highlightClassChip(document.querySelector('.class-chip.selected'), hasSelection);
             
-            // Update content
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById(`tab-${tab}`).classList.add('active');
+            els.buttons.del.disabled = !canDelete;
+            TKB.updateButtonState(els.buttons.del, canDelete, canDelete ? '' : 'Vui lòng chọn 1 lịch để xóa');
             
-            currentTab = tab;
-            resetSwap();
+            els.buttons.swap.disabled = !canSwap;
+            TKB.updateButtonState(els.buttons.swap, canSwap, canSwap ? '' : 'Vui lòng chọn 2 lịch để hoán đổi');
             
-            // Re-render schedule to update clickable cells
-            renderMiniSchedule();
-        });
-    });
-    
-    // Load schedule
-    async function loadSchedule() {
-        try {
+            els.buttons.restore.disabled = !canRestore;
+            TKB.updateButtonState(els.buttons.restore, canRestore, canRestore ? '' : 'Vui lòng chọn 1 lịch đã xóa để phục hồi');
+
+            // Update selection pill
+            if (state.selected) {
+                els.selectionPill.style.display = 'inline-block';
+                els.selectionPill.textContent = `${state.selected.mon_hoc || state.selected.ma_lop} | ${state.selected.ma_phong || 'Phòng ?'} | Thứ ${state.selected.thu} - Ca ${state.selected.ca}`;
+            } else {
+                els.selectionPill.style.display = 'none';
+            }
+        }
+
+        function fetchJSON(url, options = {}) {
+            const headers = options.headers || {};
+            if (['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || '').toUpperCase())) {
+                headers['X-CSRFToken'] = getCookie('csrftoken');
+                headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+            }
+            return fetch(url, { ...options, headers });
+        }
+
+        function buildQuery() {
+            const params = new URLSearchParams();
             const ma_dot = document.getElementById('dotSelect').value;
             const ma_khoa = document.getElementById('khoaSelect').value;
             const view_type = document.getElementById('viewTypeSelect').value;
-            
             let selected_id = '';
-            if (view_type === 'teacher') {
-                selected_id = document.getElementById('teacherSelect').value;
-            } else if (view_type === 'room') {
-                selected_id = document.getElementById('roomSelect').value;
-            }
-            
-            // Load schedule for selected GV/room
-            let url = '/api/tkb/mini-schedule/?';
-            if (ma_dot) url += `ma_dot=${ma_dot}`;
-            if (ma_khoa) url += (ma_dot ? '&' : '') + `ma_khoa=${ma_khoa}`;
-            if (view_type) url += '&view_type=' + view_type;
-            if (selected_id) url += '&selected_id=' + selected_id;
-            
-            const response = await fetch(url);
-            const data = await response.json();
-            scheduleData = data.schedule || [];
-            deletedData = data.deleted || [];
-            
-            // Load ALL schedules in this period (for room filtering)
-            if (ma_dot) {
-                let allUrl = '/api/tkb/mini-schedule/?';
-                allUrl += `ma_dot=${ma_dot}`;
-                // Don't filter by selected_id to get ALL schedules
-                
-                const allResponse = await fetch(allUrl);
-                const allData = await allResponse.json();
-                allScheduleData = allData.schedule || [];
-                console.log('Loaded ALL schedules for filtering:', allScheduleData.length);
-            }
-            
-            renderMiniSchedule();
-            renderDeletedList();
-        } catch (error) {
-            console.error('Load schedule error:', error);
-            showMessage('error', 'Lỗi tải lịch: ' + error.message);
+            if (view_type === 'teacher') selected_id = document.getElementById('teacherSelect').value;
+            if (view_type === 'room') selected_id = document.getElementById('roomSelect').value;
+            if (ma_dot) params.set('ma_dot', ma_dot);
+            if (ma_khoa) params.set('ma_khoa', ma_khoa);
+            if (view_type) params.set('view_type', view_type);
+            if (selected_id) params.set('selected_id', selected_id);
+            return params.toString();
         }
-    }
-    
-    // Render mini schedule
-    function renderMiniSchedule() {
-        const tbody = document.getElementById('mini-schedule-body');
-        tbody.innerHTML = '';
-        
-        // Debug log
-        console.log('Rendering schedule with data:', scheduleData);
-        
-        // Group by timeslot (ca học)
-        const slots = {};
-        scheduleData.forEach(item => {
-            // Extract number from ca (e.g., "S1" -> 1, "C1" -> 1, or just 1 -> 1)
-            let caNumber = item.ca;
-            if (typeof caNumber === 'string') {
-                // Extract number from string like "S1", "C1", etc.
-                const match = caNumber.match(/\d+/);
-                caNumber = match ? parseInt(match[0]) : caNumber;
+
+        function updateFilters() {
+            const q = buildQuery();
+            window.location.href = q ? `?${q}` : window.location.pathname;
+        }
+
+        function handleViewTypeChange() {
+            const view_type = document.getElementById('viewTypeSelect').value;
+            document.getElementById('teacherSelectGroup').style.display = view_type === 'teacher' ? 'block' : 'none';
+            document.getElementById('roomSelectGroup').style.display = view_type === 'room' ? 'block' : 'none';
+            if (view_type !== 'teacher') document.getElementById('teacherSelect').value = '';
+            if (view_type !== 'room') document.getElementById('roomSelect').value = '';
+            updateFilters();
+        }
+
+        async function loadSchedule() {
+            try {
+                setLoading(true);
+                const query = buildQuery();
+                const res = await fetchJSON(`${api.mini}?${query}`);
+                const data = await res.json();
+                state.schedule = data.schedule || [];
+                state.deleted = data.deleted || [];
+                els.scheduleMeta.textContent = `${state.schedule.length} lịch`;
+                renderSchedule();
+                renderDeleted();
+                state.selected = null;
+                state.selectedDeleted = null;
+                state.selectedSwapA = null;
+                state.selectedSwapB = null;
+                updateActionState();
+                fillSwapSelects();
+            } catch (e) {
+                console.error(e);
+                showMessage('error', 'Lỗi tải lịch: ' + e.message);
+            } finally {
+                setLoading(false);
             }
-            
-            const key = `${item.thu}_${caNumber}`;
-            console.log(`Item: thu=${item.thu}, ca=${item.ca}, caNumber=${caNumber}, key=${key}, mon_hoc=${item.mon_hoc}`);
-            
-            if (!slots[key]) slots[key] = [];
-            slots[key].push(item);
-        });
-        
-        console.log('Grouped slots:', slots);
-        
-        // Generate rows (5 ca học per day)
-        for (let ca = 1; ca <= 5; ca++) {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td style="font-weight: 600;">${ca}</td>`;
-            
-            for (let day = 2; day <= 8; day++) {
-                const key = `${day}_${ca}`;
-                const classes = slots[key] || [];
-                
-                const td = document.createElement('td');
-                td.dataset.thu = day;
-                td.dataset.ca = ca;
-                
-                if (classes.length > 0) {
-                    td.classList.add('has-class');
-                    td.innerHTML = classes.map(c => `
-                        <div class="class-info" data-tkb="${c.ma_tkb}" data-ma-gv="${c.ma_gv || ''}">
-                            <div style="font-weight: 600; color: #1e293b;">${c.mon_hoc || c.ma_lop || 'N/A'}</div>
-                            <div style="font-size: 11px; color: #64748b;">${c.ma_lop || 'N/A'} - ${c.ma_phong || 'N/A'}</div>
-                        </div>
-                    `).join('');
-                } else if (currentTab === 'create') {
-                    // Highlight empty cells when in create mode
-                    td.classList.add('clickable-empty');
+        }
+
+        function renderSchedule() {
+            const tbody = els.miniBody;
+            tbody.innerHTML = '';
+            const slots = {};
+            state.schedule.forEach(item => {
+                let caNumber = item.ca;
+                if (typeof caNumber === 'string') {
+                    const match = caNumber.match(/\d+/);
+                    caNumber = match ? parseInt(match[0], 10) : caNumber;
+                }
+                const key = `${item.thu}_${caNumber}`;
+                if (!slots[key]) slots[key] = [];
+                slots[key].push(item);
+            });
+
+            for (let ca = 1; ca <= 5; ca++) {
+                const tr = document.createElement('tr');
+                const label = document.createElement('td');
+                label.textContent = ca;
+                label.className = 'text-center fw-bold';
+                tr.appendChild(label);
+                for (let day = 2; day <= 8; day++) {
+                    const td = document.createElement('td');
+                    const key = `${day}_${ca}`;
+                    const classes = slots[key] || [];
+                    if (classes.length === 0) {
+                        td.classList.add('is-empty');
+                        td.addEventListener('click', () => {
+                            state.lastEmptySlot = { thu: day, ca };
+                            openAddModalFromSlot();
+                        });
+                    } else {
+                        classes.forEach(cls => {
+                            const div = document.createElement('div');
+                            div.className = 'class-chip' + (state.selected && state.selected.ma_tkb === cls.ma_tkb ? ' selected' : '');
+                            div.innerHTML = `<div class="fw-semibold">${cls.mon_hoc || cls.ma_lop}</div><div class="class-meta"><span>${cls.ma_lop || ''}</span><span>${cls.ma_phong || 'Phòng ?'}</span><span>Thứ ${cls.thu} - Ca ${cls.ca}</span></div>`;
+                            div.addEventListener('click', (ev) => {
+                                ev.stopPropagation();
+                                state.selected = cls;
+                                updateActionState();
+                                renderSchedule();
+                            });
+                            td.appendChild(div);
+                        });
+                    }
+                    tr.appendChild(td);
+                }
+                tbody.appendChild(tr);
+            }
+        }
+
+        function renderDeleted() {
+            const list = els.deletedList;
+            list.innerHTML = '';
+            els.deletedCount.textContent = state.deleted.length;
+            if (state.deleted.length === 0) {
+                list.innerHTML = '<div class="deleted-list-empty">✓ Không có lịch đã xóa</div>';
+                return;
+            }
+            const selectedId = state.selectedDeleted ? state.selectedDeleted.ma_tkb : null;
+            state.deleted.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'deleted-row';
+                if (selectedId && selectedId === item.ma_tkb) {
+                    row.classList.add('selected');
                 }
                 
-                td.addEventListener('click', () => handleCellClick(td, classes));
-                row.appendChild(td);
-            }
-            
-            tbody.appendChild(row);
-        }
-    }
-    
-    // Render deleted list
-    function renderDeletedList() {
-        const list = document.getElementById('deleted-list');
-        
-        if (deletedData.length === 0) {
-            list.innerHTML = '<p style="color: #a0aec0; text-align: center;">Không có lịch đã xóa</p>';
-            return;
-        }
-        
-        list.innerHTML = deletedData.map(item => `
-            <div class="deleted-item">
-                <div class="deleted-item-info">
-                    <strong>${item.mon_hoc || item.ma_lop}</strong><br>
-                    <small>${item.ma_lop} - ${item.ma_phong || 'N/A'} - Thứ ${item.thu}, Ca ${item.ca}</small>
-                </div>
-                <button class="btn btn-success" style="padding: 8px 16px; font-size: 0.9rem;" onclick="restoreSchedule('${item.ma_tkb}')">
-                    ♻️ Phục hồi
-                </button>
-            </div>
-        `).join('');
-    }
-    
-    // Handle cell click
-    function handleCellClick(td, classes) {
-        const thu = td.dataset.thu;
-        const ca = td.dataset.ca;
-        
-        if (currentTab === 'create') {
-            // Allow clicking both empty and filled cells in create mode
-            populateCreateForm(thu, ca, classes.length > 0 ? classes[0] : null);
-        } else if (currentTab === 'edit' && classes.length > 0) {
-            // Get ma_gv from the clicked element
-            const tkb = classes[0];
-            const clickedDiv = td.querySelector('.class-info[data-tkb="' + tkb.ma_tkb + '"]');
-            if (clickedDiv && clickedDiv.dataset.maGv) {
-                tkb.ma_gv = clickedDiv.dataset.maGv;
-            }
-            populateEditForm(tkb);
-        } else if (currentTab === 'delete' && classes.length > 0) {
-            populateDeleteForm(classes[0]);
-        }
-    }
-    
-    // Populate create form from cell click
-    function populateCreateForm(thu, ca, existingTkb) {
-        // Find matching timeslot
-        const timeslotSelect = document.getElementById('create-timeslot');
-        const options = Array.from(timeslotSelect.options);
-        
-        console.log('Looking for timeslot: Thứ', thu, 'Ca', ca);
-        
-        // Try to find timeslot by matching value format: "Thu2-Ca1", "Thu3-Ca2", etc.
-        let matchFound = false;
-        for (let option of options) {
-            const value = option.value;
-            
-            if (!value) continue; // Skip empty option
-            
-            // Parse value format: "Thu2-Ca1" or "CN-Ca1"
-            const valueMatch = value.match(/Thu(\d+)-Ca(\d+)|CN-Ca(\d+)/i);
-            
-            if (valueMatch) {
-                const optionThu = valueMatch[1] || '8'; // CN = 8
-                const optionCa = valueMatch[2] || valueMatch[3];
-                
-                console.log(`  Checking value="${value}": Thu=${optionThu}, Ca=${optionCa} vs Target Thu=${thu}, Ca=${ca}`);
-                
-                // Compare with clicked cell
-                if (optionThu == thu && optionCa == ca) {
-                    timeslotSelect.value = value;
-                    matchFound = true;
-                    console.log('✓ MATCH FOUND! Selected:', value);
-                    break;
-                }
-            }
-        }
-        
-        if (matchFound) {
-            // Trigger change event to filter available rooms
-            filterRoomsByTimeslot(timeslotSelect.value);
-            
-            if (existingTkb) {
-                showMessage('info', `📌 Đã chọn Thứ ${thu}, Ca ${ca} (ô này có lớp ${existingTkb.ma_lop}). Phòng trống đã được lọc.`);
-            } else {
-                showMessage('success', `✓ Đã chọn Thứ ${thu}, Ca ${ca}. Chỉ hiện phòng trống - hãy chọn lớp và phòng!`);
-            }
-        } else {
-            showMessage('warning', `⚠️ Không tìm thấy timeslot cho Thứ ${thu}, Ca ${ca}. Vui lòng chọn thủ công.`);
-        }
-        
-        // Scroll to create form
-        document.getElementById('tab-create').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    
-    // Filter rooms by selected timeslot
-    async function filterRoomsByTimeslot(timeslotId) {
-        console.log('=== FILTER ROOMS DEBUG ===');
-        console.log('Selected timeslot ID:', timeslotId);
-        
-        const roomSelect = document.getElementById('create-phong');
-        
-        if (!timeslotId) {
-            // No timeslot selected, show all rooms
-            Array.from(roomSelect.options).forEach(option => {
-                if (option.value) option.style.display = '';
-            });
-            return;
-        }
-        
-        try {
-            // Call API to get ALL occupied rooms for this timeslot (not just current teacher/room)
-            const ma_dot = document.getElementById('dotSelect').value;
-            const response = await fetch(`/api/tkb/occupied-rooms/?ma_dot=${ma_dot}&time_slot_id=${encodeURIComponent(timeslotId)}`);
-            const data = await response.json();
-            
-            console.log('API Response:', data);
-            
-            const occupiedRooms = new Set(data.occupied_rooms || []);
-            console.log('Occupied rooms:', Array.from(occupiedRooms));
-            
-            // Filter room dropdown
-            let hiddenCount = 0;
-            Array.from(roomSelect.options).forEach(option => {
-                if (!option.value) return; // Skip empty option
-                
-                if (occupiedRooms.has(option.value)) {
-                    // Hide occupied rooms
-                    option.style.display = 'none';
-                    hiddenCount++;
-                    console.log(`  Hidden room: ${option.value}`);
-                } else {
-                    // Show available rooms
-                    option.style.display = '';
-                }
-            });
-            
-            console.log(`Total: ${hiddenCount} rooms hidden, ${roomSelect.options.length - hiddenCount - 1} available`);
-            
-            // Show feedback message
-            if (hiddenCount > 0) {
-                showMessage('info', `✓ Đã lọc: ${roomSelect.options.length - hiddenCount - 1} phòng trống, ${hiddenCount} phòng đã có lớp`);
-            } else {
-                showMessage('success', `✓ Tất cả ${roomSelect.options.length - 1} phòng đều trống!`);
-            }
-        } catch (error) {
-            console.error('Error filtering rooms:', error);
-            showMessage('warning', 'Không thể lọc phòng trống. Hiển thị tất cả phòng.');
-            
-            // Show all rooms on error
-            Array.from(roomSelect.options).forEach(option => {
-                if (option.value) option.style.display = '';
-            });
-        }
-        
-        console.log('=== END FILTER DEBUG ===');
-    }
-    
-    // Populate edit form
-    async function populateEditForm(tkb) {
-        document.getElementById('edit-ma-tkb').value = tkb.ma_tkb;
-        document.getElementById('edit-ma-lop-current').value = tkb.ma_lop;
-        document.getElementById('edit-lop-display').value = tkb.ma_lop;
-        
-        // Parse ma_lop để lấy ma_mon, nhom, to
-        // Format: MAHOC_nhom_to (VD: TOAN_1_0 hoặc TH_CNTT_2_1)
-        const parts = tkb.ma_lop.split('_');
-        let ma_mon, nhom, to;
-        
-        if (parts.length >= 3) {
-            to = parts[parts.length - 1];
-            nhom = parts[parts.length - 2];
-            ma_mon = parts.slice(0, -2).join('_');
-        } else {
-            // Fallback
-            ma_mon = parts[0] || '';
-            nhom = parts[1] || '1';
-            to = parts[2] || '0';
-        }
-        
-        console.log('Parsed ma_lop:', { ma_lop: tkb.ma_lop, ma_mon, nhom, to });
-        
-        // Store ma_gv for timeslot filtering
-        if (tkb.ma_gv) {
-            document.getElementById('edit-timeslot').dataset.maGv = tkb.ma_gv;
-        }
-        
-        // Set môn học
-        document.getElementById('edit-mon-hoc').value = ma_mon;
-        document.getElementById('edit-nhom').value = nhom;
-        document.getElementById('edit-to').value = to;
-        document.getElementById('edit-soluongsv').value = tkb.so_luong_sv || '';
-        document.getElementById('edit-phong').value = tkb.ma_phong || '';
-        document.getElementById('edit-timeslot').value = tkb.time_slot_id || '';
-        document.getElementById('edit-tuan').value = tkb.tuan_hoc || '';
-        
-        // Filter timeslots by GV schedule
-        if (tkb.ma_gv) {
-            await filterEditTimeslotsByGV(tkb.ma_gv, tkb.ma_tkb);
-        }
-        
-        // Load thông tin môn học và filter phòng
-        if (ma_mon) {
-            await handleEditMonHocChange();
-        }
-        
-        showMessage('success', 'Đã chọn lịch để sửa. Có thể thay đổi môn học, phòng, ca dạy.');
-    }
-    
-    // Handle edit môn học change
-    async function handleEditMonHocChange() {
-        const maMonHoc = document.getElementById('edit-mon-hoc').value;
-        const infoDiv = document.getElementById('edit-mon-hoc-info');
-        const detailsDiv = document.getElementById('edit-mon-hoc-details');
-        const toSelect = document.getElementById('edit-to');
-        const nhomSelect = document.getElementById('edit-nhom');
-        const currentMaTkb = document.getElementById('edit-ma-tkb').value;
-        
-        if (!maMonHoc) {
-            infoDiv.style.display = 'none';
-            return;
-        }
-        
-        try {
-            const response = await fetch(`/api/tkb/mon-hoc-info/?ma_mon_hoc=${maMonHoc}`);
-            const data = await response.json();
-            
-            if (data.status === 'success') {
-                const mon = data.mon_hoc;
-                const usedGroups = data.used_groups || {};
-                const suggested = data.suggested || {};
-                
-                // Hiển thị thông tin môn
-                infoDiv.style.display = 'block';
-                detailsDiv.innerHTML = `
-                    <strong>${mon.ten_mon_hoc}</strong> (${mon.ma_mon_hoc})<br>
-                    Loại: <span style="background: ${mon.loai === 'TH' ? '#dcfce7' : '#dbeafe'}; padding: 2px 8px; border-radius: 4px; font-weight: 600;">
-                        ${mon.loai === 'TH' ? '🔬 Thực hành' : '📖 Lý thuyết'}
-                    </span><br>
-                    Tiết LT: ${mon.so_tiet_lt}, Tiết TH: ${mon.so_tiet_th}
+                // Tạo info section
+                const info = document.createElement('div');
+                info.className = 'deleted-row-info';
+                info.innerHTML = `
+                    <strong>${item.mon_hoc || item.ma_lop}</strong>
+                    <div class="meta">
+                        <span>${item.ma_lop || 'N/A'}</span>
+                        <span>•</span>
+                        <span>${item.ma_phong || 'Phòng ?'}</span>
+                        <span>•</span>
+                        <span>Thứ ${item.thu}, Ca ${item.ca}</span>
+                    </div>
                 `;
                 
-                // Disable các option nhóm/tổ đã dùng
-                Array.from(nhomSelect.options).forEach(option => {
-                    const nhom = parseInt(option.value);
-                    if (!option.value) return; // Skip empty option
-                    
-                    if (usedGroups[nhom]) {
-                        const tosUsed = usedGroups[nhom].map(item => item.to).join(', ');
-                        option.text = `${nhom} (Đã có tổ: ${tosUsed})`;
-                        option.style.color = '#64748b';
-                        
-                        // Nếu là môn LT và nhóm đã có to=0, disable luôn
-                        if (mon.loai === 'LT' && usedGroups[nhom].some(item => item.to === 0)) {
-                            option.disabled = true;
-                            option.text = `${nhom} (Đã đầy)`;
-                        }
-                        // Nếu là môn TH và nhóm đã có 2 tổ, disable
-                        else if (mon.loai === 'TH' && usedGroups[nhom].length >= 2) {
-                            option.disabled = true;
-                            option.text = `${nhom} (Đã đầy 2 tổ)`;
-                        } else {
-                            option.disabled = false;
-                        }
-                    } else {
-                        option.text = `${nhom}`;
-                        option.disabled = false;
-                        option.style.color = '';
-                    }
+                // Tạo button phục hồi
+                const btnDiv = document.createElement('div');
+                btnDiv.className = 'deleted-row-btn';
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn btn-sm btn-outline-success';
+                btn.textContent = '↩️ Phục hồi';
+                btn.addEventListener('click', (ev) => { 
+                    ev.stopPropagation(); 
+                    startRestoreFlow(item); 
+                });
+                btnDiv.appendChild(btn);
+                
+                row.appendChild(info);
+                row.appendChild(btnDiv);
+                
+                // Attach selection handler
+                row.addEventListener('click', () => {
+                    state.selectedDeleted = item;
+                    renderDeleted();
+                    updateActionState();
                 });
                 
-                // Filter tổ theo loại môn
-                if (mon.loai === 'LT') {
-                    // LT: chỉ hiện tổ 0
-                    Array.from(toSelect.options).forEach(option => {
-                        option.style.display = option.value === '0' ? '' : 'none';
-                    });
-                    toSelect.value = '0';
-                } else {
-                    // TH: hiện tổ 1, 2
-                    Array.from(toSelect.options).forEach(option => {
-                        option.style.display = option.value === '0' ? 'none' : '';
-                    });
-                    if (toSelect.value === '0') {
-                        toSelect.value = '1';
-                    }
+                list.appendChild(row);
+            });
+        }
+
+        function fillSwapSelects() {
+            const selectA = document.getElementById('swap-select-a');
+            const selectB = document.getElementById('swap-select-b');
+            [selectA, selectB].forEach(sel => sel.innerHTML = '<option value="">-- Chọn lịch --</option>');
+            state.schedule.forEach(item => {
+                const label = `${item.mon_hoc || item.ma_lop} | ${item.ma_phong || 'Phòng ?'} | Thứ ${item.thu} - Ca ${item.ca}`;
+                const optA = document.createElement('option');
+                optA.value = item.ma_tkb; optA.textContent = label;
+                const optB = optA.cloneNode(true);
+                selectA.appendChild(optA);
+                selectB.appendChild(optB);
+            });
+        }
+
+        function openAddModalFromSlot() {
+            modals.add.show();
+            applyContextToAddModal({ lockTimeslot: true });
+            autoFillAddModal();
+            const timeslot = document.getElementById('add-timeslot');
+            if (timeslot) {
+                timeslot.disabled = false;
+            }
+            if (state.lastEmptySlot && timeslot) {
+                const tsId = getTimeSlotIdByThuCa(state.lastEmptySlot.thu, state.lastEmptySlot.ca);
+                if (tsId) {
+                    timeslot.value = tsId;
+                    timeslot.disabled = true;
+                    filterRoomsByTimeslot('add');
+                    precheckGvAvailability('add');
+                }
+            }
+        }
+
+        function autoFillAddModal() {
+            const gvSelect = document.getElementById('add-gv');
+            const selectedGv = document.getElementById('teacherSelect').value;
+            const tuanInput = document.getElementById('add-tuan');
+            
+            // Auto-fill giáo viên từ filter
+            if (selectedGv && gvSelect) {
+                gvSelect.value = selectedGv;
+            }
+            
+            // Auto-fill tuần học nếu có lịch được chọn
+            if (state.selected && state.selected.tuan_hoc && tuanInput) {
+                tuanInput.value = state.selected.tuan_hoc;
+            }
+        }
+
+        function populateEditModal(tkb) {
+            if (!tkb) return;
+            document.getElementById('edit-ma-tkb').value = tkb.ma_tkb;
+            document.getElementById('edit-ma-lop-current').value = tkb.ma_lop;
+            document.getElementById('edit-lop-display').value = tkb.ma_lop;
+            const parts = tkb.ma_lop.split('_');
+            let ma_mon = parts.slice(0, -2).join('_');
+            let nhom = parts.length >= 2 ? parts[parts.length - 2] : '';
+            let to = parts.length >= 1 ? parts[parts.length - 1] : '';
+            document.getElementById('edit-mon-hoc').value = ma_mon;
+            document.getElementById('edit-nhom').value = nhom;
+            document.getElementById('edit-to').value = to;
+            document.getElementById('edit-soluongsv').value = tkb.so_luong_sv || '';
+            document.getElementById('edit-phong').value = tkb.ma_phong || '';
+            document.getElementById('edit-timeslot').value = tkb.time_slot_id || '';
+            document.getElementById('edit-tuan').value = tkb.tuan_hoc || '';
+            if (ma_mon) {
+                handleEditMonHocChange();
+            }
+            precheckGvAvailability('edit');
+        }
+
+        function bindForms() {
+            const addForm = document.getElementById('addScheduleForm');
+            addForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                
+                // Validate form
+                if (!TKB.validateForm(form)) {
+                    showMessage('error', 'Vui lòng điền đầy đủ các trường bắt buộc');
+                    return;
                 }
                 
-                // Filter phòng theo loại môn
-                await filterEditRoomsByMonHoc(mon);
+                const data = Object.fromEntries(new FormData(form).entries());
+                const submitBtn = document.getElementById('btnAddSubmit');
+                try {
+                    setLoading(true);
+                    TKB.setButtonLoading(submitBtn, true, 'Đang thêm...');
+                    const res = await fetchJSON(api.create, { method: 'POST', body: JSON.stringify(data) });
+                    const result = await res.json();
+                    if (result.status === 'success') {
+                        modals.add.hide();
+                        TKB.resetForm(form);
+                        showMessage('success', result.message || 'Thêm lịch thành công');
+                        await loadSchedule();
+                    } else {
+                        showMessage('error', result.message || 'Không thể thêm lịch');
+                    }
+                } catch (err) {
+                    showMessage('error', err.message);
+                } finally { 
+                    setLoading(false); 
+                    TKB.setButtonLoading(submitBtn, false, 'Thêm lịch');
+                }
+            });
+
+            const editForm = document.getElementById('editScheduleForm');
+            editForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const form = e.target;
                 
-                // Sau đó filter thêm theo timeslot nếu có chọn
-                const timeslotId = document.getElementById('edit-timeslot').value;
-                if (timeslotId) {
+                // Validate form
+                if (!TKB.validateForm(form)) {
+                    showMessage('error', 'Vui lòng điền đầy đủ các trường bắt buộc');
+                    return;
+                }
+                
+                const data = Object.fromEntries(new FormData(form).entries());
+                const submitBtn = document.getElementById('btnEditSubmit');
+                try {
+                    setLoading(true);
+                    TKB.setButtonLoading(submitBtn, true, 'Đang lưu...');
+                    const res = await fetchJSON(api.update, { method: 'POST', body: JSON.stringify(data) });
+                    const result = await res.json();
+                    if (result.status === 'success') {
+                        modals.edit.hide();
+                        TKB.resetForm(form);
+                        showMessage('success', result.message || 'Cập nhật thành công');
+                        await loadSchedule();
+                    } else {
+                        showMessage('error', result.message || 'Không thể cập nhật');
+                    }
+                } catch (err) {
+                    showMessage('error', err.message);
+                } finally { 
+                    setLoading(false); 
+                    TKB.setButtonLoading(submitBtn, false, 'Lưu');
+                }
+            });
+        }
+
+        async function deleteSchedule() {
+            if (!state.selected) return;
+            const deleteBtn = document.getElementById('btnDeleteConfirm');
+            try {
+                setLoading(true);
+                TKB.setButtonLoading(deleteBtn, true, 'Đang xóa...');
+                const res = await fetchJSON(api.delete, { method: 'POST', body: JSON.stringify({ ma_tkb: state.selected.ma_tkb }) });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    showMessage('success', result.message || 'Đã xóa lịch');
+                    await loadSchedule();
+                    modals.delete.hide();
+                } else {
+                    showMessage('error', result.message || 'Xóa thất bại');
+                }
+            } catch (err) {
+                showMessage('error', err.message);
+            } finally { 
+                setLoading(false); 
+                TKB.setButtonLoading(deleteBtn, false, 'Xóa');
+            }
+        }
+
+        async function restoreSchedule(payload) {
+            try {
+                setLoading(true);
+                const body = typeof payload === 'string' ? { ma_tkb: payload } : payload;
+                const res = await fetchJSON(api.restore, { method: 'POST', body: JSON.stringify(body) });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    showMessage('success', result.message || 'Đã phục hồi');
+                    await loadSchedule();
+                } else {
+                    showMessage('error', result.message || 'Phục hồi thất bại');
+                }
+            } catch (err) {
+                showMessage('error', err.message);
+                throw err;
+            } finally { setLoading(false); }
+        }
+
+        async function swapSchedules() {
+            const ma_tkb_1 = document.getElementById('swap-select-a').value;
+            const ma_tkb_2 = document.getElementById('swap-select-b').value;
+            if (!ma_tkb_1 || !ma_tkb_2 || ma_tkb_1 === ma_tkb_2) {
+                showMessage('warning', 'Chọn 2 lịch khác nhau để hoán đổi');
+                return;
+            }
+            const swap_phong = document.getElementById('swap-phong').checked;
+            const swapBtn = document.getElementById('btnSwapSubmit');
+            try {
+                setLoading(true);
+                swapBtn.disabled = true;
+                const res = await fetchJSON(api.swap, { method: 'POST', body: JSON.stringify({ ma_tkb_1, ma_tkb_2, swap_phong }) });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    showMessage('success', result.message || 'Đã hoán đổi');
+                    modals.swap.hide();
+                    await loadSchedule();
+                } else {
+                    showMessage('error', result.message || 'Hoán đổi thất bại');
+                }
+            } catch (err) {
+                showMessage('error', err.message);
+            } finally { setLoading(false); swapBtn.disabled = false; }
+        }
+
+        function initModals() {
+            // Resolve jQuery at init time
+            const $ = window.django?.jQuery || window.jQuery;
+            if (!$) {
+                console.error('jQuery is required but not available');
+                return;
+            }
+            
+            // Dùng jQuery plugin Bootstrap 4 thay vì new bootstrap.Modal()
+            modals.add = { 
+                show: () => $('#addScheduleModal').modal('show'),
+                hide: () => $('#addScheduleModal').modal('hide')
+            };
+            modals.edit = { 
+                show: () => $('#editScheduleModal').modal('show'),
+                hide: () => $('#editScheduleModal').modal('hide')
+            };
+            modals.delete = { 
+                show: () => $('#deleteConfirmModal').modal('show'),
+                hide: () => $('#deleteConfirmModal').modal('hide')
+            };
+            modals.swap = { 
+                show: () => $('#swapScheduleModal').modal('show'),
+                hide: () => $('#swapScheduleModal').modal('hide')
+            };
+            modals.restore = {
+                show: () => $('#restoreScheduleModal').modal('show'),
+                hide: () => $('#restoreScheduleModal').modal('hide')
+            };
+
+            // Ensure global loading overlay is hidden when opening any modal
+            ['addScheduleModal','editScheduleModal','deleteConfirmModal','swapScheduleModal','restoreScheduleModal'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    $(el).on('show.bs.modal', () => setLoading(false));
+                }
+            });
+        }
+
+        function bindButtons() {
+            els.buttons.add.addEventListener('click', () => { 
+                setLoading(false); 
+                state.lastEmptySlot = null;
+                modals.add.show(); 
+                applyContextToAddModal({ lockTimeslot: false });
+                const ts = document.getElementById('add-timeslot');
+                if (ts) ts.disabled = false;
+                autoFillAddModal(); 
+                precheckGvAvailability('add');
+            });
+            els.buttons.edit.addEventListener('click', () => { if (!state.selected) return; setLoading(false); populateEditModal(state.selected); modals.edit.show(); });
+            els.buttons.del.addEventListener('click', () => { if (!state.selected) return; setLoading(false); document.getElementById('delete-summary').textContent = `${state.selected.ma_lop} | ${state.selected.ma_phong || 'Phòng ?'} | Thứ ${state.selected.thu}, Ca ${state.selected.ca}`; modals.delete.show(); });
+            els.buttons.swap.addEventListener('click', () => { if (state.selected) { document.getElementById('swap-select-a').value = state.selected.ma_tkb; } setLoading(false); modals.swap.show(); updateSwapInfo(); });
+            els.buttons.restore.addEventListener('click', () => { if (state.selectedDeleted) startRestoreFlow(state.selectedDeleted); });
+            document.getElementById('btnDeleteConfirm').addEventListener('click', deleteSchedule);
+            document.getElementById('btnSwapSubmit').addEventListener('click', swapSchedules);
+            document.getElementById('swap-select-a').addEventListener('change', updateSwapInfo);
+            document.getElementById('swap-select-b').addEventListener('change', updateSwapInfo);
+            document.getElementById('swap-phong').addEventListener('change', updateSwapInfo);
+            document.getElementById('btnRestoreSubmit').addEventListener('click', handleRestoreSubmit);
+        }
+
+        function updateSwapInfo() {
+            const aId = document.getElementById('swap-select-a').value;
+            const bId = document.getElementById('swap-select-b').value;
+            const findItem = (id) => state.schedule.find(x => x.ma_tkb === id);
+            const a = findItem(aId);
+            const b = findItem(bId);
+            document.getElementById('swap-a-info').textContent = a ? `${a.mon_hoc || a.ma_lop} | ${a.ma_phong || 'Phòng ?'} | Thứ ${a.thu} - Ca ${a.ca}` : '';
+            document.getElementById('swap-b-info').textContent = b ? `${b.mon_hoc || b.ma_lop} | ${b.ma_phong || 'Phòng ?'} | Thứ ${b.thu} - Ca ${b.ca}` : '';
+            document.getElementById('btnSwapSubmit').disabled = !(a && b && a.ma_tkb !== b.ma_tkb);
+            precheckSwapAvailability();
+        }
+
+        function bindFieldBehaviors() {
+            document.getElementById('add-mon-hoc').addEventListener('change', handleAddMonHocChange);
+            document.getElementById('add-timeslot').addEventListener('change', () => { filterRoomsByTimeslot('add'); precheckGvAvailability('add'); });
+            document.getElementById('add-gv').addEventListener('change', () => precheckGvAvailability('add'));
+            document.getElementById('add-soluongsv').addEventListener('input', () => handleAddMonHocChange());
+            document.getElementById('edit-mon-hoc').addEventListener('change', handleEditMonHocChange);
+            document.getElementById('edit-timeslot').addEventListener('change', () => { filterEditRoomsByTimeslot(); precheckGvAvailability('edit'); });
+            document.getElementById('edit-soluongsv').addEventListener('input', () => handleEditMonHocChange());
+        }
+
+        function getTimeSlotIdByThuCa(thu, ca) {
+            const options = document.querySelectorAll('#add-timeslot option');
+            const targetDay = thu === 8 ? 'CN' : `Thứ ${thu}`;
+            const targetCa = `Ca ${ca}`;
+            for (const opt of options) {
+                if (!opt.value) continue;
+                if (opt.textContent.includes(targetDay) && opt.textContent.includes(targetCa)) return opt.value;
+            }
+            return '';
+        }
+
+        function setGvBusyState(prefix, message) {
+            const hint = document.getElementById(`${prefix}-gv-busy-hint`);
+            const btn = prefix === 'edit' ? document.getElementById('btnEditSubmit') : document.getElementById('btnAddSubmit');
+            if (hint) {
+                if (message) {
+                    hint.textContent = message;
+                    hint.classList.remove('d-none');
+                    hint.style.display = 'block';
+                } else {
+                    hint.textContent = '';
+                    hint.classList.add('d-none');
+                }
+            }
+            if (btn) {
+                btn.disabled = Boolean(message);
+            }
+        }
+
+        async function precheckGvAvailability(prefix) {
+            const ctx = getPageContext();
+            const timeslotEl = document.getElementById(`${prefix}-timeslot`);
+            const timeslotId = timeslotEl ? timeslotEl.value : '';
+            const ma_gv = prefix === 'edit' ? (state.selected && state.selected.ma_gv) : document.getElementById('add-gv').value;
+            const excludeMaTkb = prefix === 'edit' ? (state.selected && state.selected.ma_tkb) : '';
+            if (!ma_gv || !timeslotId || !ctx.ma_dot) {
+                setGvBusyState(prefix, '');
+                return;
+            }
+            try {
+                const res = await fetchJSON(`${api.gvSchedule}?ma_dot=${ctx.ma_dot}&ma_gv=${ma_gv}&time_slot_id=${encodeURIComponent(timeslotId)}${excludeMaTkb ? `&exclude_ma_tkb=${encodeURIComponent(excludeMaTkb)}` : ''}`);
+                const data = await res.json();
+                if (data.busy) {
+                    setGvBusyState(prefix, 'Giáo viên bận ca này. Chọn ca khác.');
+                } else {
+                    setGvBusyState(prefix, '');
+                }
+            } catch (err) {
+                console.error(err);
+                setGvBusyState(prefix, 'Không kiểm tra được lịch GV, thử lại.');
+            }
+        }
+
+        async function handleAddMonHocChange() {
+            const maMonHoc = document.getElementById('add-mon-hoc').value;
+            const infoDiv = document.getElementById('add-mon-hoc-info');
+            const detailsDiv = document.getElementById('add-mon-hoc-details');
+            if (!maMonHoc) { infoDiv.style.display = 'none'; return; }
+            try {
+                const res = await fetchJSON(`${api.monhoc}?ma_mon_hoc=${maMonHoc}`);
+                const data = await res.json();
+                if (data.status === 'success') {
+                    const mon = data.mon_hoc; const suggested = data.suggested || {}; const usedGroups = data.used_groups || {};
+                    infoDiv.style.display = 'block';
+                    detailsDiv.textContent = `${mon.ten_mon_hoc} (${mon.ma_mon_hoc}) | Loại: ${mon.loai}`;
+                    const nhomSelect = document.getElementById('add-nhom');
+                    const toSelect = document.getElementById('add-to');
+                    Array.from(nhomSelect.options).forEach(opt => {
+                        if (!opt.value) return;
+                        const nhom = parseInt(opt.value, 10);
+                        if (usedGroups[nhom]) {
+                            opt.disabled = (mon.loai === 'LT' && usedGroups[nhom].some(x => x.to === 0)) || (mon.loai === 'TH' && usedGroups[nhom].length >= 2);
+                            opt.text = opt.disabled ? `${nhom} (đã đủ)` : `${nhom} (đã có tổ: ${usedGroups[nhom].map(x => x.to).join(',')})`;
+                        } else { opt.disabled = false; opt.text = nhom; }
+                    });
+                    if (mon.loai === 'LT') { toSelect.value = '0'; Array.from(toSelect.options).forEach(o => o.disabled = o.value !== '0'); }
+                    else { if (toSelect.value === '0') toSelect.value = '1'; Array.from(toSelect.options).forEach(o => o.disabled = o.value === '0'); }
+                    if (suggested.nhom) { nhomSelect.value = suggested.nhom; if (suggested.to !== undefined) toSelect.value = suggested.to; document.getElementById('add-nhom-hint').textContent = `Gợi ý nhóm ${suggested.nhom}`; }
+                    await filterRoomsByMonHoc('add', mon);
+                    await filterRoomsByTimeslot('add');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function handleEditMonHocChange() {
+            const maMonHoc = document.getElementById('edit-mon-hoc').value;
+            const infoDiv = document.getElementById('edit-mon-hoc-info');
+            const detailsDiv = document.getElementById('edit-mon-hoc-details');
+            if (!maMonHoc) { infoDiv.style.display = 'none'; return; }
+            try {
+                const res = await fetchJSON(`${api.monhoc}?ma_mon_hoc=${maMonHoc}`);
+                const data = await res.json();
+                if (data.status === 'success') {
+                    const mon = data.mon_hoc; infoDiv.style.display = 'block'; detailsDiv.textContent = `${mon.ten_mon_hoc} (${mon.ma_mon_hoc}) | Loại: ${mon.loai}`;
+                    await filterRoomsByMonHoc('edit', mon);
                     await filterEditRoomsByTimeslot();
                 }
-                
-            } else {
-                showMessage('error', data.message);
-            }
-        } catch (error) {
-            console.error('Error fetching mon hoc info:', error);
-            showMessage('error', 'Lỗi khi lấy thông tin môn học');
+            } catch (err) { console.error(err); }
         }
-    }
-    
-    // Filter phòng trong form edit
-    async function filterEditRoomsByMonHoc(monHoc) {
-        const roomSelect = document.getElementById('edit-phong');
-        const soLuongSV = parseInt(document.getElementById('edit-soluongsv').value) || 0;
-        
-        const allOptions = Array.from(roomSelect.options).slice(1);
-        
-        console.log('=== FILTER PHÒNG EDIT ===');
-        console.log('Loại môn:', monHoc.loai);
-        console.log('Số lượng SV:', soLuongSV);
-        
-        const suitableRooms = [];
-        const tooSmallRooms = [];
-        const otherRooms = [];
-        
-        allOptions.forEach(option => {
-            const loaiPhong = (option.dataset.loai || '').toUpperCase();
-            const roomCode = option.value.toUpperCase();
-            const roomText = option.text;
-            
-            if (!option.dataset.originalText) {
-                option.dataset.originalText = roomText.replace(/^❌\s*/, '');
-            }
-            
-            const originalText = option.dataset.originalText;
-            const capacityMatch = originalText.match(/\((\d+)\s*chỗ\)/);
-            const sucChua = capacityMatch ? parseInt(capacityMatch[1]) : 999;
-            
-            const isLabRoom = loaiPhong.includes('THỰC HÀNH') || 
-                             loaiPhong.includes('TH') || 
-                             loaiPhong.includes('MÁY') || 
-                             loaiPhong.includes('LAB');
-            
-            const isLectureRoom = loaiPhong.includes('LÝ THUYẾT') ||
-                                 loaiPhong.includes('LT') ||
-                                 loaiPhong.includes('PHÒNG HỌC');
-            
-            let finalIsLab = isLabRoom;
-            if (!isLabRoom && !isLectureRoom && loaiPhong === '') {
-                finalIsLab = roomCode.startsWith('TH') || 
-                            roomCode.includes('MAY') || 
-                            roomCode.includes('LAB');
-            }
-            
-            const isTooSmall = soLuongSV > 0 && sucChua < soLuongSV;
-            
-            option.style.fontWeight = 'normal';
-            option.disabled = false;
-            option.text = originalText;
-            
-            if (isTooSmall) {
-                option.style.color = '#dc2626';
-                option.style.background = '#fef2f2';
-                option.disabled = true;
-                option.text = `❌ ${originalText}`;
-                tooSmallRooms.push(option);
-            } else if (monHoc.loai === 'TH') {
-                if (finalIsLab || (!isLectureRoom && !isLabRoom)) {
-                    option.style.color = '#10b981';
-                    option.style.background = '#ecfdf5';
-                    option.style.fontWeight = '600';
-                    suitableRooms.push(option);
-                } else {
-                    option.style.color = '#6b7280';
-                    option.style.background = '#f9fafb';
-                    otherRooms.push(option);
-                }
-            } else {
-                if (isLectureRoom || (!isLectureRoom && !isLabRoom)) {
-                    option.style.color = '#10b981';
-                    option.style.background = '#ecfdf5';
-                    option.style.fontWeight = '600';
-                    suitableRooms.push(option);
-                } else {
-                    option.style.color = '#6b7280';
-                    option.style.background = '#f9fafb';
-                    otherRooms.push(option);
-                }
-            }
-        });
-        
-        // Re-order options
-        while (roomSelect.options.length > 1) {
-            roomSelect.remove(1);
+
+        async function filterRoomsByMonHoc(prefix, monHoc) {
+            const roomSelect = document.getElementById(`${prefix}-phong`);
+            const soLuongSV = parseInt(document.getElementById(`${prefix}-soluongsv`).value || '0', 10);
+            const all = Array.from(roomSelect.options).slice(1);
+            const keep = [];
+            all.forEach(opt => {
+                const loai = (opt.dataset.loai || '').toUpperCase();
+                const text = opt.text; const match = text.match(/\((\d+) chỗ\)/); const sucChua = match ? parseInt(match[1], 10) : 999;
+                const isLab = loai.includes('TH') || loai.includes('LAB') || loai.includes('MÁY');
+                const isLecture = loai.includes('LT') || loai.includes('LÝ THUYẾT') || loai.includes('PHÒNG HỌC');
+                const tooSmall = soLuongSV && sucChua < soLuongSV;
+                const allowedType = monHoc.loai === 'TH' ? (isLab || (!isLab && !isLecture)) : (isLecture || (!isLab && !isLecture));
+                const allowed = allowedType && !tooSmall;
+                opt.disabled = !allowed;
+                opt.style.display = allowed ? '' : 'none';
+                if (allowed) keep.push(opt);
+            });
+            while (roomSelect.options.length > 1) roomSelect.remove(1);
+            keep.forEach(o => roomSelect.add(o));
         }
-        
-        suitableRooms.forEach(opt => roomSelect.add(opt));
-        
-        if (suitableRooms.length > 0 && (otherRooms.length > 0 || tooSmallRooms.length > 0)) {
-            const separator1 = document.createElement('option');
-            separator1.disabled = true;
-            separator1.text = '────── Phòng ít phù hợp ──────';
-            separator1.style.color = '#cbd5e1';
-            roomSelect.add(separator1);
+
+        async function filterRoomsByTimeslot(prefix) {
+            const select = document.getElementById(`${prefix}-timeslot`);
+            const roomSelect = document.getElementById(`${prefix}-phong`);
+            const timeslotId = select.value;
+            if (!timeslotId) return;
+            const ma_dot = document.getElementById('dotSelect').value || document.getElementById('add-ma-dot').value;
+            try {
+                const res = await fetchJSON(`${api.occupied}?ma_dot=${ma_dot}&time_slot_id=${encodeURIComponent(timeslotId)}`);
+                const data = await res.json();
+                const occupied = new Set(data.occupied_rooms || []);
+                Array.from(roomSelect.options).forEach(opt => { if (!opt.value) return; opt.disabled = occupied.has(opt.value); opt.style.display = occupied.has(opt.value) ? 'none' : ''; });
+            } catch (err) { console.error(err); }
         }
-        
-        otherRooms.forEach(opt => roomSelect.add(opt));
-        
-        if (tooSmallRooms.length > 0) {
-            const separator2 = document.createElement('option');
-            separator2.disabled = true;
-            separator2.text = '────── Phòng quá nhỏ ──────';
-            separator2.style.color = '#ef4444';
-            roomSelect.add(separator2);
-        }
-        
-        tooSmallRooms.forEach(opt => roomSelect.add(opt));
-        
-        console.log(`Kết quả: ${suitableRooms.length} phù hợp, ${otherRooms.length} khác, ${tooSmallRooms.length} quá nhỏ`);
-    }
-    
-    // Filter timeslots by GV schedule (hide occupied timeslots)
-    async function filterEditTimeslotsByGV(ma_gv, exclude_ma_tkb) {
-        console.log('=== FILTER EDIT TIMESLOTS BY GV ===');
-        console.log('GV:', ma_gv, 'Exclude:', exclude_ma_tkb);
-        
-        const timeslotSelect = document.getElementById('edit-timeslot');
-        const ma_dot = document.getElementById('dotSelect').value;
-        
-        if (!ma_gv || !ma_dot) {
-            return;
-        }
-        
-        try {
-            // Get GV schedule
-            const response = await fetch(`/api/tkb/gv-schedule/?ma_dot=${ma_dot}&ma_gv=${encodeURIComponent(ma_gv)}`);
-            const data = await response.json();
-            
-            if (data.status === 'success') {
-                const occupiedTimeslots = new Set(
-                    data.schedule
-                        .filter(item => item.ma_tkb !== exclude_ma_tkb)
-                        .map(item => item.time_slot_id)
-                );
-                
-                console.log('Occupied timeslots:', Array.from(occupiedTimeslots));
-                
-                // Filter timeslot dropdown
-                let hiddenCount = 0;
-                Array.from(timeslotSelect.options).forEach(option => {
-                    if (!option.value) return; // Skip empty option
-                    
-                    if (occupiedTimeslots.has(option.value)) {
-                        option.style.display = 'none';
-                        option.disabled = true;
-                        hiddenCount++;
-                        console.log(`  Hidden timeslot: ${option.value}`);
-                    } else {
-                        option.style.display = '';
-                        option.disabled = false;
-                    }
-                });
-                
-                console.log(`Total hidden timeslots: ${hiddenCount}`);
-            }
-        } catch (error) {
-            console.error('Error filtering timeslots:', error);
-        }
-    }
-    
-    // Filter edit rooms by selected timeslot (similar to create form)
-    async function filterEditRoomsByTimeslot() {
-        const timeslotId = document.getElementById('edit-timeslot').value;
-        console.log('=== FILTER EDIT ROOMS BY TIMESLOT DEBUG ===');
-        console.log('Selected timeslot ID:', timeslotId);
-        
-        const roomSelect = document.getElementById('edit-phong');
-        const currentMaTkb = document.getElementById('edit-ma-tkb').value;
-        
-        if (!timeslotId) {
-            // No timeslot selected, show all rooms that passed subject filter
-            // Don't reset - keep the subject-based filtering
-            return;
-        }
-        
-        try {
-            // Call API to get occupied rooms for this timeslot
+
+        async function filterEditRoomsByTimeslot() {
+            const timeslotId = document.getElementById('edit-timeslot').value;
+            const ma_tkb = document.getElementById('edit-ma-tkb').value;
+            if (!timeslotId) return;
             const ma_dot = document.getElementById('dotSelect').value;
-            const response = await fetch(`/api/tkb/occupied-rooms/?ma_dot=${ma_dot}&time_slot_id=${encodeURIComponent(timeslotId)}&exclude_ma_tkb=${encodeURIComponent(currentMaTkb)}`);
-            const data = await response.json();
+            try {
+                const res = await fetchJSON(`${api.occupied}?ma_dot=${ma_dot}&time_slot_id=${encodeURIComponent(timeslotId)}&exclude_ma_tkb=${encodeURIComponent(ma_tkb)}`);
+                const data = await res.json();
+                const occupied = new Set(data.occupied_rooms || []);
+                Array.from(document.getElementById('edit-phong').options).forEach(opt => { if (!opt.value) return; opt.disabled = occupied.has(opt.value); opt.style.display = occupied.has(opt.value) ? 'none' : ''; });
+            } catch (err) { console.error(err); }
+        }
+
+        async function isRoomAvailable(timeslotId, roomId, excludeMaTkb) {
+            if (!timeslotId || !roomId) {
+                console.warn('isRoomAvailable: missing params', { timeslotId, roomId });
+                return true;
+            }
+            const ma_dot = document.getElementById('dotSelect').value || document.getElementById('add-ma-dot').value;
+            const excludeParam = excludeMaTkb ? `&exclude_ma_tkb=${encodeURIComponent(excludeMaTkb)}` : '';
+            const url = `${api.occupied}?ma_dot=${ma_dot}&time_slot_id=${encodeURIComponent(timeslotId)}${excludeParam}`;
+            console.log('isRoomAvailable checking:', { timeslotId, roomId, excludeMaTkb, url });
+            try {
+                const res = await fetchJSON(url);
+                const data = await res.json();
+                const occupied = new Set(data.occupied_rooms || []);
+                const available = !occupied.has(roomId);
+                console.log('isRoomAvailable result:', { roomId, occupied: Array.from(occupied), available });
+                return available;
+            } catch (err) {
+                console.error('isRoomAvailable error:', err);
+                return true;
+            }
+        }
+
+        async function precheckSwapAvailability() {
+            const warning = document.getElementById('swap-warning');
+            const btn = document.getElementById('btnSwapSubmit');
+            warning.classList.add('d-none');
+            warning.textContent = '';
+            const aId = document.getElementById('swap-select-a').value;
+            const bId = document.getElementById('swap-select-b').value;
+            const swapPhong = document.getElementById('swap-phong').checked;
+            const findItem = (id) => state.schedule.find(x => x.ma_tkb === id);
+            const a = findItem(aId);
+            const b = findItem(bId);
             
-            console.log('API Response:', data);
+            console.log('Precheck swap:', { aId, bId, a, b, swapPhong });
             
-            const occupiedRooms = new Set(data.occupied_rooms || []);
-            console.log('Occupied rooms:', Array.from(occupiedRooms));
-            
-            // Filter room dropdown - ONLY hide occupied rooms, don't show hidden ones
-            let hiddenCount = 0;
-            Array.from(roomSelect.options).forEach(option => {
-                if (!option.value) return; // Skip empty option
+            if (!(a && b && a.ma_tkb !== b.ma_tkb)) { btn.disabled = true; return; }
+
+            btn.disabled = true;
+            try {
+                const ctx = getPageContext();
+                const conflicts = [];
                 
-                // Only process rooms that are currently visible (not hidden by subject filter)
-                if (option.style.display !== 'none') {
-                    if (occupiedRooms.has(option.value)) {
-                        // Hide occupied rooms
-                        option.style.display = 'none';
-                        option.dataset.occupiedHidden = 'true';
-                        hiddenCount++;
-                        console.log(`  Hidden room: ${option.value}`);
-                    } else {
-                        // Keep visible
-                        delete option.dataset.occupiedHidden;
-                    }
+                // ===== CHECK PHÒNG HỌC =====
+                if (!swapPhong) {
+                    // Chỉ đổi timeslot: kiểm tra phòng A có rảnh ở timeslot B, phòng B có rảnh ở timeslot A
+                    console.log('Check only timeslot swap:', { 
+                        aRoom: a.ma_phong, bTimeslot: b.time_slot_id,
+                        bRoom: b.ma_phong, aTimeslot: a.time_slot_id
+                    });
+                    const [roomAOk, roomBOk] = await Promise.all([
+                        isRoomAvailable(b.time_slot_id, a.ma_phong, b.ma_tkb),
+                        isRoomAvailable(a.time_slot_id, b.ma_phong, a.ma_tkb)
+                    ]);
+                    console.log('Timeslot swap result:', { roomAOk, roomBOk });
+                    if (!roomAOk) conflicts.push(`Phòng ${a.ma_phong || '?'} không rảnh tại timeslot Thứ ${b.thu} - Ca ${b.ca}`);
+                    if (!roomBOk) conflicts.push(`Phòng ${b.ma_phong || '?'} không rảnh tại timeslot Thứ ${a.thu} - Ca ${a.ca}`);
+                } else {
+                    // Đổi cả phòng: kiểm tra phòng B có rảnh ở timeslot A, phòng A có rảnh ở timeslot B
+                    console.log('Check full swap (room + timeslot):', {
+                        bRoom: b.ma_phong, aTimeslot: a.time_slot_id,
+                        aRoom: a.ma_phong, bTimeslot: b.time_slot_id
+                    });
+                    const [roomAOk, roomBOk] = await Promise.all([
+                        isRoomAvailable(a.time_slot_id, b.ma_phong, a.ma_tkb),
+                        isRoomAvailable(b.time_slot_id, a.ma_phong, b.ma_tkb)
+                    ]);
+                    console.log('Full swap result:', { roomAOk, roomBOk });
+                    if (!roomAOk) conflicts.push(`Phòng ${b.ma_phong || '?'} không rảnh tại timeslot Thứ ${a.thu} - Ca ${a.ca}`);
+                    if (!roomBOk) conflicts.push(`Phòng ${a.ma_phong || '?'} không rảnh tại timeslot Thứ ${b.thu} - Ca ${b.ca}`);
                 }
-            });
-            
-            console.log(`Total hidden by timeslot: ${hiddenCount} rooms`);
-            
-        } catch (error) {
-            console.error('Error filtering rooms:', error);
-        }
-    }
-    
-    // Populate delete form
-    function populateDeleteForm(tkb) {
-        document.getElementById('delete-ma-tkb').value = tkb.ma_tkb;
-        document.getElementById('delete-lop').value = `${tkb.ma_lop} - ${tkb.ma_phong} - Thứ ${tkb.thu}, Tiết ${tkb.tiet}`;
-        
-        showMessage('warning', 'Đã chọn lịch để xóa');
-    }
-    
-    // Reset swap (không cần nữa với UI mới)
-    function resetSwap() {
-        // Do nothing - giữ function để không lỗi
-    }
-    
-    // Handle môn học change - filter nhóm/tổ
-    async function handleMonHocChange() {
-        const maMonHoc = document.getElementById('create-mon-hoc').value;
-        const infoDiv = document.getElementById('mon-hoc-info');
-        const detailsDiv = document.getElementById('mon-hoc-details');
-        const nhomSelect = document.getElementById('create-nhom');
-        const toSelect = document.getElementById('create-to');
-        const nhomHint = document.getElementById('nhom-hint');
-        const toHint = document.getElementById('to-hint');
-        
-        if (!maMonHoc) {
-            infoDiv.style.display = 'none';
-            return;
-        }
-        
-        try {
-            const response = await fetch(`/api/tkb/mon-hoc-info/?ma_mon_hoc=${maMonHoc}`);
-            const data = await response.json();
-            
-            if (data.status === 'success') {
-                const mon = data.mon_hoc;
-                const suggested = data.suggested;
-                const usedGroups = data.used_groups;
-                
-                // Hiển thị thông tin môn
-                infoDiv.style.display = 'block';
-                detailsDiv.innerHTML = `
-                    <strong>${mon.ten_mon_hoc}</strong> (${mon.ma_mon_hoc})<br>
-                    Loại: <span style="background: ${mon.loai === 'TH' ? '#dcfce7' : '#dbeafe'}; padding: 2px 8px; border-radius: 4px; font-weight: 600;">
-                        ${mon.loai === 'TH' ? '🔬 Thực hành' : '📖 Lý thuyết'}
-                    </span><br>
-                    Tiết LT: ${mon.so_tiet_lt}, Tiết TH: ${mon.so_tiet_th}
-                `;
-                
-                // Tự động chọn nhóm/tổ được suggest
-                if (suggested.nhom) {
-                    nhomSelect.value = suggested.nhom;
-                    toSelect.value = suggested.to;
+
+                // ===== CHECK GIÁO VIÊN (hỗ trợ swap khác GV) =====
+                // Tận dụng api.gvSchedule để check xung đột GV
+                if (a.ma_gv && b.ma_gv && ctx.ma_dot) {
+                    console.log('Check teacher conflicts:', { 
+                        gvA: a.ma_gv, timeslotB: b.time_slot_id,
+                        gvB: b.ma_gv, timeslotA: a.time_slot_id
+                    });
                     
-                    nhomHint.textContent = `(Gợi ý: ${suggested.nhom})`;
-                    nhomHint.style.color = '#16a34a';
+                    // Check GV A có bận timeslot B không (exclude lịch B)
+                    // Check GV B có bận timeslot A không (exclude lịch A)
+                    const [gvACheck, gvBCheck] = await Promise.all([
+                        fetchJSON(`${api.gvSchedule}?ma_dot=${ctx.ma_dot}&ma_gv=${a.ma_gv}&time_slot_id=${encodeURIComponent(b.time_slot_id)}&exclude_ma_tkb=${encodeURIComponent(b.ma_tkb)}`),
+                        fetchJSON(`${api.gvSchedule}?ma_dot=${ctx.ma_dot}&ma_gv=${b.ma_gv}&time_slot_id=${encodeURIComponent(a.time_slot_id)}&exclude_ma_tkb=${encodeURIComponent(a.ma_tkb)}`)
+                    ]);
                     
-                    if (mon.loai === 'TH') {
-                        toHint.textContent = `(TH: 1 hoặc 2)`;
-                    } else {
-                        toHint.textContent = `(LT: chỉ dùng 0)`;
+                    const [dataA, dataB] = await Promise.all([
+                        gvACheck.json(),
+                        gvBCheck.json()
+                    ]);
+                    
+                    console.log('Teacher check result:', { dataA, dataB });
+                    
+                    if (dataA.busy) {
+                        conflicts.push(`GV ${a.ma_gv} đã có lịch tại Thứ ${b.thu} - Ca ${b.ca}`);
                     }
-                } else {
-                    showMessage('warning', '⚠️ Đã hết nhóm trống (1-10). Vui lòng kiểm tra lại!');
-                }
-                
-                // Disable các option nhóm/tổ đã dùng
-                Array.from(nhomSelect.options).forEach(option => {
-                    const nhom = parseInt(option.value);
-                    if (usedGroups[nhom]) {
-                        const tosUsed = usedGroups[nhom].map(item => item.to).join(', ');
-                        option.text = `${nhom} (Đã có tổ: ${tosUsed})`;
-                        option.style.color = '#64748b';
-                        
-                        // Nếu là môn LT và nhóm đã có to=0, disable luôn
-                        if (mon.loai === 'LT' && usedGroups[nhom].some(item => item.to === 0)) {
-                            option.disabled = true;
-                            option.text = `${nhom} (Đã đầy)`;
-                        }
-                        
-                        // Nếu là môn TH và nhóm đã có 2 tổ, disable
-                        if (mon.loai === 'TH' && usedGroups[nhom].length >= 2) {
-                            option.disabled = true;
-                            option.text = `${nhom} (Đã đầy 2 tổ)`;
-                        }
-                    } else {
-                        option.text = `${nhom}`;
-                        option.disabled = false;
-                        option.style.color = '';
+                    if (dataB.busy) {
+                        conflicts.push(`GV ${b.ma_gv} đã có lịch tại Thứ ${a.thu} - Ca ${a.ca}`);
                     }
-                });
-                
-                // Filter tổ theo loại môn
-                if (mon.loai === 'LT') {
-                    // Môn LT: chỉ cho chọn tổ 0
-                    toSelect.value = 0;
-                    Array.from(toSelect.options).forEach(opt => {
-                        opt.disabled = opt.value !== '0';
-                    });
-                } else {
-                    // Môn TH: chỉ cho chọn tổ 1, 2
-                    if (toSelect.value === '0') toSelect.value = 1;
-                    Array.from(toSelect.options).forEach(opt => {
-                        opt.disabled = opt.value === '0';
-                    });
                 }
-                
-                // Filter phòng theo loại môn
-                filterRoomsByMonHoc(mon);
-                
-            } else {
-                showMessage('error', data.message);
+
+                if (conflicts.length) {
+                    warning.textContent = conflicts.join(' | ');
+                    warning.classList.remove('d-none');
+                    btn.disabled = true;
+                } else {
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error('Precheck error:', err);
+                warning.textContent = 'Không thể kiểm tra, hãy tiếp tục - backend sẽ kiểm tra';
+                warning.classList.remove('d-none');
+                btn.disabled = false;
             }
-        } catch (error) {
-            console.error('Error fetching mon hoc info:', error);
-            showMessage('error', 'Lỗi khi lấy thông tin môn học');
         }
-    }
-    
-    // Filter phòng theo loại môn (LT/TH) và số lượng SV
-    function filterRoomsByMonHoc(monHoc) {
-        const roomSelect = document.getElementById('create-phong');
-        const soLuongSV = parseInt(document.getElementById('create-soluongsv').value) || 0;
-        
-        // Lấy tất cả options (trừ option rỗng)
-        const allOptions = Array.from(roomSelect.options).slice(1);
-        
-        console.log('=== FILTER PHÒNG DEBUG ===');
-        console.log('Loại môn:', monHoc.loai);
-        console.log('Số lượng SV:', soLuongSV);
-        console.log('Tổng số phòng:', allOptions.length);
-        
-        // Phân loại phòng
-        const suitableRooms = [];
-        const tooSmallRooms = [];
-        const otherRooms = [];
-        
-        allOptions.forEach(option => {
-            const loaiPhong = (option.dataset.loai || '').toUpperCase();
-            const roomCode = option.value.toUpperCase();
-            const roomText = option.text;
-            
-            // Lưu text gốc nếu chưa có
-            if (!option.dataset.originalText) {
-                option.dataset.originalText = roomText.replace(/^❌\s*/, '');
-            }
-            
-            // Restore text gốc
-            const originalText = option.dataset.originalText;
-            
-            // Debug: Log 3 phòng đầu tiên
-            if (suitableRooms.length + otherRooms.length + tooSmallRooms.length < 3) {
-                console.log(`Phòng: ${roomCode}, Loại: "${loaiPhong}", Text: ${originalText}`);
-            }
-            
-            // Lấy sức chứa từ text gốc (số trong ngoặc)
-            const capacityMatch = originalText.match(/\((\d+)\s*chỗ\)/);
-            const sucChua = capacityMatch ? parseInt(capacityMatch[1]) : 999;
-            
-            // Kiểm tra loại phòng từ DATABASE (loai_phong)
-            const isLabRoom = loaiPhong.includes('THỰC HÀNH') || 
-                             loaiPhong.includes('TH') || 
-                             loaiPhong.includes('MÁY') || 
-                             loaiPhong.includes('LAB') ||
-                             loaiPhong.includes('COMPUTER');
-            
-            const isLectureRoom = loaiPhong.includes('LÝ THUYẾT') ||
-                                 loaiPhong.includes('LT') ||
-                                 loaiPhong.includes('PHÒNG HỌC') ||
-                                 loaiPhong.includes('GIẢNG ĐƯỜNG');
-            
-            // Nếu không có loại rõ ràng, dựa vào mã phòng
-            let finalIsLab = isLabRoom;
-            if (!isLabRoom && !isLectureRoom && loaiPhong === '') {
-                // Fallback: dựa vào mã phòng
-                finalIsLab = roomCode.startsWith('TH') || 
-                            roomCode.startsWith('LAB') || 
-                            roomCode.includes('MAY');
-            }
-            
-            // Debug
-            if (suitableRooms.length + otherRooms.length + tooSmallRooms.length < 3) {
-                console.log(`  → isLabRoom: ${isLabRoom}, isLectureRoom: ${isLectureRoom}, finalIsLab: ${finalIsLab}`);
-            }
-            
-            // Check sức chứa
-            const isTooSmall = soLuongSV > 0 && sucChua < soLuongSV;
-            
-            // Reset style và text
-            option.style.fontWeight = 'normal';
-            option.disabled = false;
-            option.text = originalText; // Reset về text gốc
-            
-            if (isTooSmall) {
-                // Phòng quá nhỏ → màu đỏ, disabled, có icon ❌
-                option.style.color = '#dc2626';
-                option.style.background = '#fef2f2';
-                option.style.fontWeight = 'normal';
-                option.disabled = true;
-                option.text = `❌ ${originalText}`;
-                tooSmallRooms.push(option);
-            } else if (monHoc.loai === 'TH') {
-                // Môn TH: phòng lab/TH = xanh, phòng LT = xám
-                if (finalIsLab || (!isLectureRoom && !isLabRoom)) {
-                    option.style.fontWeight = '700';
-                    option.style.color = '#16a34a';
-                    option.style.background = '#f0fdf4';
-                    suitableRooms.push(option);
-                } else {
-                    option.style.fontWeight = 'normal';
-                    option.style.color = '#94a3b8';
-                    option.style.background = 'white';
-                    otherRooms.push(option);
+
+        async function startRestoreFlow(item) {
+            if (!item) return;
+            const timeslotId = getTimeSlotIdByThuCa(item.thu, item.ca);
+            if (!timeslotId) { showMessage('error', 'Không tìm thấy timeslot phù hợp để kiểm tra phòng'); return; }
+            const ma_dot = document.getElementById('dotSelect').value || document.getElementById('add-ma-dot').value;
+            try {
+                const res = await fetchJSON(`${api.occupied}?ma_dot=${ma_dot}&time_slot_id=${encodeURIComponent(timeslotId)}`);
+                const data = await res.json();
+                const occupied = new Set(data.occupied_rooms || []);
+                const roomBusy = item.ma_phong && occupied.has(item.ma_phong);
+                if (!roomBusy) {
+                    try {
+                        await restoreSchedule({ ma_tkb: item.ma_tkb });
+                    } catch (err) {
+                        // restoreSchedule already hiển thị thông báo lỗi
+                    }
+                    return;
                 }
-            } else {
-                // Môn LT: phòng LT = xanh, phòng lab/TH = xám
-                if (isLectureRoom || (!isLectureRoom && !isLabRoom)) {
-                    option.style.fontWeight = '700';
-                    option.style.color = '#16a34a';
-                    option.style.background = '#f0fdf4';
-                    suitableRooms.push(option);
-                } else {
-                    option.style.fontWeight = 'normal';
-                    option.style.color = '#94a3b8';
-                    option.style.background = 'white';
-                    otherRooms.push(option);
+                openRestoreModal(item, timeslotId, occupied);
+            } catch (err) {
+                showMessage('error', 'Không thể kiểm tra phòng: ' + err.message);
+            }
+        }
+
+        async function openRestoreModal(item, timeslotId, occupied) {
+            state.restoreContext = { item, timeslotId, occupied };
+            document.getElementById('restore-ma-tkb').value = item.ma_tkb;
+            document.getElementById('restore-info').textContent = `${item.mon_hoc || item.ma_lop} | ${item.ma_lop} | Thứ ${item.thu} - Ca ${item.ca}`;
+            document.getElementById('restore-timeslot').value = timeslotId;
+            document.getElementById('restore-warning').classList.add('d-none');
+            document.getElementById('restore-warning').textContent = '';
+            document.getElementById('restore-phong').value = '';
+            document.getElementById('restore-phong-hint').textContent = 'Chỉ hiển thị phòng chưa bị chiếm trong ca này.';
+            document.getElementById('restore-hint').textContent = `Phòng gốc ${item.ma_phong || 'N/A'} đang bận. Chọn phòng thay thế rồi phục hồi.`;
+
+            const parts = (item.ma_lop || '').split('_');
+            const maMonHoc = parts.length >= 3 ? parts.slice(0, -2).join('_') : '';
+            const soLuong = item.so_luong_sv || 0;
+            document.getElementById('restore-soluongsv').value = soLuong;
+
+            await filterRoomsByTimeslot('restore');
+            if (maMonHoc) {
+                try {
+                    const res = await fetchJSON(`${api.monhoc}?ma_mon_hoc=${maMonHoc}`);
+                    const data = await res.json();
+                    if (data.status === 'success') {
+                        await filterRoomsByMonHoc('restore', data.mon_hoc);
+                        await filterRoomsByTimeslot('restore');
+                    }
+                } catch (err) {
+                    console.error(err);
                 }
             }
+            modals.restore.show();
+        }
+
+        async function handleRestoreSubmit() {
+            const ctx = state.restoreContext;
+            if (!ctx) { modals.restore.hide(); return; }
+            const room = document.getElementById('restore-phong').value;
+            const warning = document.getElementById('restore-warning');
+            warning.classList.add('d-none');
+            warning.textContent = '';
+            if (!room) {
+                warning.textContent = 'Chọn phòng thay thế trước khi phục hồi.';
+                warning.classList.remove('d-none');
+                return;
+            }
+
+            try {
+                await restoreSchedule({ ma_tkb: ctx.item.ma_tkb, ma_phong_moi: room });
+                state.restoreContext = null;
+                modals.restore.hide();
+            } catch (err) {
+                warning.textContent = 'Backend chưa hỗ trợ đổi phòng khi phục hồi. Vui lòng giải phóng phòng hoặc phục hồi rồi dùng chức năng Sửa khi slot trống.';
+                warning.classList.remove('d-none');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fixModalStacking();
+            initModals();
+            bindButtons();
+            bindForms();
+            bindFieldBehaviors();
+            loadSchedule();
+            updateActionState();
+            window.tkbPage = { updateFilters, handleViewTypeChange };
         });
-        
-        // Xóa tất cả options (trừ option rỗng)
-        while (roomSelect.options.length > 1) {
-            roomSelect.remove(1);
-        }
-        
-        // Thêm lại: phòng phù hợp → phòng khác → phòng quá nhỏ
-        suitableRooms.forEach(opt => roomSelect.add(opt));
-        
-        if (suitableRooms.length > 0 && (otherRooms.length > 0 || tooSmallRooms.length > 0)) {
-            const separator1 = document.createElement('option');
-            separator1.disabled = true;
-            separator1.text = '────── Phòng ít phù hợp ──────';
-            separator1.style.color = '#cbd5e1';
-            roomSelect.add(separator1);
-        }
-        
-        otherRooms.forEach(opt => roomSelect.add(opt));
-        
-        if (tooSmallRooms.length > 0 && (suitableRooms.length > 0 || otherRooms.length > 0)) {
-            const separator2 = document.createElement('option');
-            separator2.disabled = true;
-            separator2.text = '────── Phòng quá nhỏ ──────';
-            separator2.style.color = '#ef4444';
-            roomSelect.add(separator2);
-        }
-        
-        tooSmallRooms.forEach(opt => roomSelect.add(opt));
-        
-        // Debug summary
-        console.log(`Kết quả: ${suitableRooms.length} phù hợp (xanh), ${otherRooms.length} khác (xám), ${tooSmallRooms.length} quá nhỏ (đỏ)`);
-        console.log('=== END DEBUG ===');
-        
-        // Hiển thị thông báo
-        const suitableCount = suitableRooms.length;
-        const totalCount = allOptions.length;
-        const roomType = monHoc.loai === 'TH' ? 'phòng thực hành/máy' : 'phòng lý thuyết';
-        
-        let message = `✓ ${suitableCount} ${roomType} phù hợp`;
-        if (tooSmallRooms.length > 0) {
-            message += `, ${tooSmallRooms.length} phòng quá nhỏ (< ${soLuongSV} SV)`;
-        }
-        message += ` / ${totalCount} phòng`;
-        
-        showMessage('success', message);
-    }
-    
-    // Show message
-    function showMessage(type, text) {
-        const container = document.getElementById('message-container');
-        const msg = document.createElement('div');
-        msg.className = `message ${type}`;
-        msg.textContent = text;
-        container.appendChild(msg);
-        
-        setTimeout(() => msg.remove(), 5000);
-    }
-    
-    // Form submissions
-    document.getElementById('form-create').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const data = Object.fromEntries(formData);
-        
-        try {
-            document.getElementById('loading').classList.add('active');
-            const response = await fetch('/api/tkb/create/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            
-            const result = await response.json();
-            
-            if (result.status === 'success') {
-                showMessage('success', result.message);
-                e.target.reset();
-                await loadSchedule();
-            } else {
-                showMessage('error', result.message);
-            }
-        } catch (error) {
-            showMessage('error', 'Lỗi: ' + error.message);
-        } finally {
-            document.getElementById('loading').classList.remove('active');
-        }
-    });
-    
-    document.getElementById('form-edit').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const data = Object.fromEntries(formData);
-        
-        try {
-            document.getElementById('loading').classList.add('active');
-            const response = await fetch('/api/tkb/update/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            
-            const result = await response.json();
-            
-            if (result.status === 'success') {
-                showMessage('success', result.message);
-                e.target.reset();
-                await loadSchedule();
-            } else {
-                showMessage('error', result.message);
-            }
-        } catch (error) {
-            showMessage('error', 'Lỗi: ' + error.message);
-        } finally {
-            document.getElementById('loading').classList.remove('active');
-        }
-    });
-    
-    document.getElementById('form-delete').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const ma_tkb = document.getElementById('delete-ma-tkb').value;
-        
-        if (!confirm('Bạn có chắc muốn xóa lịch này?')) return;
-        
-        try {
-            document.getElementById('loading').classList.add('active');
-            const response = await fetch('/api/tkb/delete/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ma_tkb })
-            });
-            
-            const result = await response.json();
-            
-            if (result.status === 'success') {
-                showMessage('success', result.message);
-                e.target.reset();
-                await loadSchedule();
-            } else {
-                showMessage('error', result.message);
-            }
-        } catch (error) {
-            showMessage('error', 'Lỗi: ' + error.message);
-        } finally {
-            document.getElementById('loading').classList.remove('active');
-        }
-    });
-    
-    // Restore function
-    async function restoreSchedule(ma_tkb) {
-        if (!confirm('Bạn có chắc muốn phục hồi lịch này?')) return;
-        
-        try {
-            document.getElementById('loading').classList.add('active');
-            const response = await fetch('/api/tkb/restore/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ma_tkb })
-            });
-            
-            const result = await response.json();
-            
-            if (result.status === 'success') {
-                showMessage('success', result.message);
-                await loadSchedule();
-            } else {
-                showMessage('error', result.message);
-            }
-        } catch (error) {
-            showMessage('error', 'Lỗi: ' + error.message);
-        } finally {
-            document.getElementById('loading').classList.remove('active');
-        }
-    }
-    
-    // Filter available rooms based on selected timeslot
-    async function filterAvailableRooms() {
-        const timeslotId = document.getElementById('create-timeslot').value;
-        const roomSelect = document.getElementById('create-phong');
-        
-        if (!timeslotId) {
-            // No timeslot selected, show all rooms
-            return;
-        }
-        
-        // Get all rooms
-        const allRooms = Array.from(roomSelect.options).map(opt => ({
-            value: opt.value,
-            text: opt.text,
-            element: opt
-        }));
-        
-        // Find which rooms are occupied at this timeslot
-        const occupiedRooms = scheduleData
-            .filter(tkb => tkb.time_slot_id == timeslotId)
-            .map(tkb => tkb.ma_phong);
-        
-        // Update room dropdown - disable occupied rooms
-        allRooms.forEach(room => {
-            if (room.value && occupiedRooms.includes(room.value)) {
-                room.element.disabled = true;
-                room.element.text = room.text.replace(' (Đã có lớp)', '') + ' (Đã có lớp)';
-                room.element.style.color = '#ef4444';
-            } else {
-                room.element.disabled = false;
-                room.element.text = room.text.replace(' (Đã có lớp)', '');
-                room.element.style.color = '';
-            }
-        });
-        
-        // Show message
-        const availableCount = allRooms.filter(r => r.value && !occupiedRooms.includes(r.value)).length;
-        console.log(`Có ${availableCount} phòng trống trong tiết này`);
-    }
-    
-    // Add event listener for timeslot change when DOM is ready
-    window.addEventListener('DOMContentLoaded', function() {
-        loadSchedule();
-        loadTeachersForSwap();
-        
-        const timeslotSelect = document.getElementById('create-timeslot');
-        if (timeslotSelect) {
-            timeslotSelect.addEventListener('change', filterAvailableRooms);
-        }
-        
-        // Re-filter phòng khi thay đổi số SV
-        const soLuongSVInput = document.getElementById('create-soluongsv');
-        if (soLuongSVInput) {
-            soLuongSVInput.addEventListener('input', function() {
-                const maMonHoc = document.getElementById('create-mon-hoc').value;
-                if (maMonHoc) {
-                    // Re-trigger filter với môn học hiện tại
-                    handleMonHocChange();
-                }
-            });
-        }
-        
-        // Re-filter phòng trong form edit khi thay đổi số SV
-        const editSoLuongSVInput = document.getElementById('edit-soluongsv');
-        if (editSoLuongSVInput) {
-            editSoLuongSVInput.addEventListener('input', function() {
-                const maMonHoc = document.getElementById('edit-mon-hoc').value;
-                if (maMonHoc) {
-                    // Re-trigger filter với môn học hiện tại
-                    handleEditMonHocChange();
-                }
-            });
-        }
-        
-        // Swap GV selection - check if elements exist
-        const swapGVSame = document.getElementById('swap-gv-same');
-        const swapGV1 = document.getElementById('swap-gv1');
-        const swapGV2 = document.getElementById('swap-gv2');
-        const btnSwapSubmit = document.getElementById('btn-swap-submit');
-        
-        if (swapGVSame) swapGVSame.addEventListener('change', handleSwapGVChange);
-        if (swapGV1) swapGV1.addEventListener('change', handleSwapGVChange);
-        if (swapGV2) swapGV2.addEventListener('change', handleSwapGVChange);
-        if (btnSwapSubmit) btnSwapSubmit.addEventListener('click', handleSwapSubmit);
-    });
-    
-    // === SWAP FUNCTIONALITY ===
-    let swapGV1Schedule = [];
-    let swapGV2Schedule = [];
-    let swapSelectedTKB = { gv1: null, gv2: null };
-    let currentSwapMode = 'same'; // 'same' hoặc 'diff'
-    
-    function switchSwapMode(mode) {
-        currentSwapMode = mode;
-        
-        // Update buttons
-        document.getElementById('btn-swap-mode-same').className = 'btn-swap-mode' + (mode === 'same' ? ' active' : '');
-        document.getElementById('btn-swap-mode-diff').className = 'btn-swap-mode' + (mode === 'diff' ? ' active' : '');
-        
-        document.getElementById('btn-swap-mode-same').style.background = mode === 'same' ? '#667eea' : 'transparent';
-        document.getElementById('btn-swap-mode-same').style.color = mode === 'same' ? 'white' : '#64748b';
-        document.getElementById('btn-swap-mode-diff').style.background = mode === 'diff' ? '#667eea' : 'transparent';
-        document.getElementById('btn-swap-mode-diff').style.color = mode === 'diff' ? 'white' : '#64748b';
-        
-        // Show/hide forms
-        document.getElementById('swap-mode-same').style.display = mode === 'same' ? 'block' : 'none';
-        document.getElementById('swap-mode-diff').style.display = mode === 'diff' ? 'block' : 'none';
-        
-        // Hide schedules
-        document.getElementById('swap-schedules').style.display = 'none';
-        
-        // Reset selection
-        swapSelectedTKB = { gv1: null, gv2: null };
-        document.getElementById('btn-swap-submit').disabled = true;
-        document.getElementById('swap-selection-info').style.display = 'none';
-    }
-    
-    async function loadTeachersForSwap() {
-        const ma_dot = document.getElementById('dotSelect').value;
-        if (!ma_dot) return;
-        
-        try {
-            const response = await fetch(`/api/tkb/gv-list/?ma_dot=${ma_dot}`);
-            const data = await response.json();
-            
-            if (data.status === 'success') {
-                const gvSameSelect = document.getElementById('swap-gv-same');
-                const gv1Select = document.getElementById('swap-gv1');
-                const gv2Select = document.getElementById('swap-gv2');
-                
-                // Clear và thêm options
-                [gvSameSelect, gv1Select, gv2Select].forEach(select => {
-                    select.innerHTML = '<option value="">-- Chọn giáo viên --</option>';
-                    data.teachers.forEach(gv => {
-                        const option = document.createElement('option');
-                        option.value = gv.ma_gv;
-                        option.textContent = `${gv.ten_gv} (${gv.bo_mon})`;
-                        select.appendChild(option);
-                    });
-                });
-            }
-        } catch (error) {
-            console.error('Lỗi khi load danh sách GV:', error);
-        }
-    }
-    
-    async function handleSwapGVChange() {
-        const ma_dot = document.getElementById('dotSelect').value;
-        
-        // Reset selection
-        swapSelectedTKB = { gv1: null, gv2: null };
-        document.getElementById('btn-swap-submit').disabled = true;
-        document.getElementById('swap-selection-info').style.display = 'none';
-        
-        let ma_gv1, ma_gv2;
-        
-        if (currentSwapMode === 'same') {
-            // Swap trong môn học (cùng GV)
-            ma_gv1 = document.getElementById('swap-gv-same').value;
-            ma_gv2 = ma_gv1; // Cùng GV
-        } else {
-            // Swap giữa GV khác
-            ma_gv1 = document.getElementById('swap-gv1').value;
-            ma_gv2 = document.getElementById('swap-gv2').value;
-        }
-        
-        if (ma_gv1 && ma_gv2) {
-            const sameTeacher = ma_gv1 === ma_gv2;
-            const swapType = sameTeacher ? '👤 Cùng GV' : '👥 Khác GV';
-            
-            document.getElementById('swap-schedules').style.display = 'block';
-            
-            // Load TKB
-            let schedule1, schedule2;
-            if (sameTeacher) {
-                schedule1 = await loadGVSchedule(ma_dot, ma_gv1);
-                schedule2 = schedule1; // Cùng lịch
-            } else {
-                [schedule1, schedule2] = await Promise.all([
-                    loadGVSchedule(ma_dot, ma_gv1),
-                    loadGVSchedule(ma_dot, ma_gv2)
-                ]);
-            }
-            
-            swapGV1Schedule = schedule1;
-            swapGV2Schedule = schedule2;
-            
-            // Hiển thị tên GV
-            let gv1Name, gv2Name;
-            if (currentSwapMode === 'same') {
-                gv1Name = document.getElementById('swap-gv-same').selectedOptions[0].text;
-                gv2Name = gv1Name;
-            } else {
-                gv1Name = document.getElementById('swap-gv1').selectedOptions[0].text;
-                gv2Name = document.getElementById('swap-gv2').selectedOptions[0].text;
-            }
-            
-            document.getElementById('swap-gv1-name').textContent = gv1Name;
-            document.getElementById('swap-gv2-name').textContent = gv2Name;
-            
-            // Render TKB
-            renderSwapSchedule('swap-tkb-gv1', swapGV1Schedule, 'gv1');
-            renderSwapSchedule('swap-tkb-gv2', swapGV2Schedule, 'gv2');
-            
-            showMessage('success', `${swapType}: Đã load lịch. Hãy chọn 2 lịch để hoán đổi!`);
-        } else {
-            document.getElementById('swap-schedules').style.display = 'none';
-        }
-    }
-    
-    async function loadGVSchedule(ma_dot, ma_gv) {
-        try {
-            const response = await fetch(`/api/tkb/gv-schedule/?ma_dot=${ma_dot}&ma_gv=${ma_gv}`);
-            const data = await response.json();
-            return data.status === 'success' ? data.schedule : [];
-        } catch (error) {
-            console.error('Lỗi khi load lịch GV:', error);
-            return [];
-        }
-    }
-    
-    function renderSwapSchedule(containerId, schedule, gvKey) {
-        const container = document.getElementById(containerId);
-        
-        if (schedule.length === 0) {
-            container.innerHTML = '<p style="color: #a0aec0; text-align: center; padding: 20px;">Chưa có lịch</p>';
-            return;
-        }
-        
-        container.innerHTML = schedule.map(item => {
-            const isSelected = swapSelectedTKB[gvKey] && swapSelectedTKB[gvKey].ma_tkb === item.ma_tkb;
-            const bgColor = gvKey === 'gv1' ? (isSelected ? '#bfdbfe' : '#eff6ff') : (isSelected ? '#fed7aa' : '#fff7ed');
-            const borderColor = gvKey === 'gv1' ? '#3182ce' : '#d97706';
-            
-            return `
-                <div onclick="selectSwapTKB('${gvKey}', '${item.ma_tkb}')" 
-                     data-tkb="${item.ma_tkb}"
-                     style="background: ${bgColor}; 
-                            border: 2px solid ${isSelected ? borderColor : '#e2e8f0'}; 
-                            padding: 10px; 
-                            margin-bottom: 8px; 
-                            border-radius: 6px; 
-                            cursor: pointer;
-                            transition: all 0.2s;">
-                    <div style="font-weight: 600; color: #1e293b;">${item.mon_hoc}</div>
-                    <div style="font-size: 12px; color: #64748b;">${item.ma_lop} - ${item.ma_phong || 'N/A'}</div>
-                    <div style="font-size: 11px; color: #10b981; font-weight: 500;">${item.timeslot_str}</div>
-                </div>
-            `;
-        }).join('');
-    }
-    
-    function selectSwapTKB(gvKey, ma_tkb) {
-        const schedule = gvKey === 'gv1' ? swapGV1Schedule : swapGV2Schedule;
-        const item = schedule.find(s => s.ma_tkb === ma_tkb);
-        
-        if (!item) return;
-        
-        // Kiểm tra nếu đang chọn cùng 1 lịch 2 lần (cùng GV)
-        const ma_gv1 = document.getElementById('swap-gv1').value;
-        const ma_gv2 = document.getElementById('swap-gv2').value;
-        const sameTeacher = ma_gv1 === ma_gv2;
-        
-        if (sameTeacher && swapSelectedTKB.gv1 && swapSelectedTKB.gv1.ma_tkb === ma_tkb) {
-            showMessage('warning', '⚠️ Không thể chọn cùng 1 lịch 2 lần!');
-            return;
-        }
-        if (sameTeacher && swapSelectedTKB.gv2 && swapSelectedTKB.gv2.ma_tkb === ma_tkb) {
-            showMessage('warning', '⚠️ Không thể chọn cùng 1 lịch 2 lần!');
-            return;
-        }
-        
-        // Update selection
-        swapSelectedTKB[gvKey] = item;
-        
-        // Re-render to show selection
-        renderSwapSchedule('swap-tkb-gv1', swapGV1Schedule, 'gv1');
-        renderSwapSchedule('swap-tkb-gv2', swapGV2Schedule, 'gv2');
-        
-        // Update selection info
-        document.getElementById('swap-selection-info').style.display = 'block';
-        document.getElementById('swap-selected-1').textContent = swapSelectedTKB.gv1 
-            ? `Lịch 1: ${swapSelectedTKB.gv1.mon_hoc} - ${swapSelectedTKB.gv1.timeslot_str}` 
-            : 'Lịch 1: Chưa chọn';
-        document.getElementById('swap-selected-2').textContent = swapSelectedTKB.gv2 
-            ? `Lịch 2: ${swapSelectedTKB.gv2.mon_hoc} - ${swapSelectedTKB.gv2.timeslot_str}` 
-            : 'Lịch 2: Chưa chọn';
-        
-        // Enable button if both selected
-        document.getElementById('btn-swap-submit').disabled = !(swapSelectedTKB.gv1 && swapSelectedTKB.gv2);
-    }
-    
-    async function handleSwapSubmit() {
-        if (!swapSelectedTKB.gv1 || !swapSelectedTKB.gv2) {
-            showMessage('warning', 'Vui lòng chọn đủ 2 lịch!');
-            return;
-        }
-        
-        const swap_phong = document.getElementById('swap-phong').checked;
-        const confirmMsg = swap_phong 
-            ? 'Hoán đổi CẢ timeslot VÀ phòng học giữa 2 lịch này?' 
-            : 'Chỉ hoán đổi timeslot, GIỮ NGUYÊN phòng (sẽ kiểm tra trùng phòng)?';
-        
-        if (!confirm(confirmMsg)) return;
-        
-        try {
-            document.getElementById('loading').classList.add('active');
-            const response = await fetch('/api/tkb/swap/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    ma_tkb_1: swapSelectedTKB.gv1.ma_tkb, 
-                    ma_tkb_2: swapSelectedTKB.gv2.ma_tkb, 
-                    swap_phong 
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (result.status === 'success') {
-                let message = result.message;
-                
-                if (result.warnings && result.warnings.length > 0) {
-                    message += '\n\n⚠️ Cảnh báo:\n' + result.warnings.join('\n');
-                }
-                
-                if (result.swap_info) {
-                    const info = result.swap_info;
-                    message += '\n\n📋 Chi tiết:\n';
-                    message += `- Lớp 1: ${info.tkb1.lop} → ${info.tkb1.timeslot}`;
-                    if (swap_phong) message += ` (Phòng: ${info.tkb1.phong || 'N/A'})`;
-                    message += `\n- Lớp 2: ${info.tkb2.lop} → ${info.tkb2.timeslot}`;
-                    if (swap_phong) message += ` (Phòng: ${info.tkb2.phong || 'N/A'})`;
-                }
-                
-                showMessage('success', message);
-                
-                // Reset
-                swapSelectedTKB = { gv1: null, gv2: null };
-                document.getElementById('btn-swap-submit').disabled = true;
-                document.getElementById('swap-selection-info').style.display = 'none';
-                
-                // Reload schedules
-                await handleSwapGVChange();
-                await loadSchedule();
-            } else {
-                let errorMsg = result.message;
-                if (result.errors && result.errors.length > 0) {
-                    errorMsg += '\n\n' + result.errors.join('\n');
-                }
-                if (result.warnings && result.warnings.length > 0) {
-                    errorMsg += '\n\n⚠️ Cảnh báo:\n' + result.warnings.join('\n');
-                }
-                showMessage('error', errorMsg);
-            }
-        } catch (error) {
-            showMessage('error', 'Lỗi: ' + error.message);
-        } finally {
-            document.getElementById('loading').classList.remove('active');
-        }
-    }
+    })();
 </script>
-{% endblock content %}
+{% endblock %}

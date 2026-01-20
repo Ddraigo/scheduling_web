@@ -1,5 +1,6 @@
 """
 Views and ViewSets for Scheduling API
+SỬA: Tích hợp RBAC scope enforcement
 """
 
 import os
@@ -11,6 +12,15 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from django.http import JsonResponse
 import traceback
+from django.contrib import admin
+
+# RBAC imports
+from apps.sap_lich.rbac import get_user_role_info
+from apps.sap_lich.permissions import (
+    SchedulingRolePermission,
+    SchedulingManagePermission,
+    filter_queryset_by_role
+)
 
 logger = logging.getLogger(__name__)
 
@@ -29,10 +39,14 @@ logger = logging.getLogger(__name__)
 
 
 class KhoaViewSet(viewsets.ModelViewSet):
-    """ViewSet for Khoa (Faculty)"""
+    """ViewSet for Khoa (Faculty) - với scope filter"""
     queryset = Khoa.objects.all()
     serializer_class = KhoaSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SchedulingManagePermission]
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return filter_queryset_by_role(self.request.user, qs, 'Khoa')
 
     def perform_create(self, serializer):
         # Sinh mã khoa tự động dạng KHOA-xxx
@@ -51,64 +65,80 @@ class KhoaViewSet(viewsets.ModelViewSet):
 
 
 class BoMonViewSet(viewsets.ModelViewSet):
-    """ViewSet for BoMon (Department)"""
+    """ViewSet for BoMon (Department) - với scope filter"""
     queryset = BoMon.objects.select_related('ma_khoa').all()
     serializer_class = BoMonSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SchedulingManagePermission]
     filterset_fields = ['ma_khoa']
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return filter_queryset_by_role(self.request.user, qs, 'BoMon')
 
 
 class GiangVienViewSet(viewsets.ModelViewSet):
-    """ViewSet for GiangVien (Teacher)"""
+    """ViewSet for GiangVien (Teacher) - với scope filter"""
     queryset = GiangVien.objects.select_related('ma_bo_mon').all()
     serializer_class = GiangVienSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SchedulingManagePermission]
     filterset_fields = ['ma_bo_mon']
     search_fields = ['ma_gv', 'ten_gv', 'email']
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return filter_queryset_by_role(self.request.user, qs, 'GiangVien')
 
 
 class MonHocViewSet(viewsets.ModelViewSet):
-    """ViewSet for MonHoc (Subject)"""
+    """ViewSet for MonHoc (Subject) - Admin + Trưởng Khoa"""
     queryset = MonHoc.objects.all()
     serializer_class = MonHocSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SchedulingManagePermission]
     search_fields = ['ma_mon_hoc', 'ten_mon_hoc']
 
 
 class PhongHocViewSet(viewsets.ModelViewSet):
-    """ViewSet for PhongHoc (Classroom)"""
+    """ViewSet for PhongHoc (Classroom) - Admin + Trưởng Khoa"""
     queryset = PhongHoc.objects.all()
     serializer_class = PhongHocSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SchedulingManagePermission]
     filterset_fields = ['loai_phong']
     search_fields = ['ma_phong']
 
 
 class LopMonHocViewSet(viewsets.ModelViewSet):
-    """ViewSet for LopMonHoc (Class)"""
+    """ViewSet for LopMonHoc (Class) - với scope filter"""
     queryset = LopMonHoc.objects.select_related('ma_mon_hoc').all()
     serializer_class = LopMonHocSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SchedulingManagePermission]
     filterset_fields = ['ma_mon_hoc', 'nhom_mh', 'to_mh', 'he_dao_tao']
     search_fields = ['ma_lop']
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return filter_queryset_by_role(self.request.user, qs, 'LopMonHoc')
 
 
 class DotXepViewSet(viewsets.ModelViewSet):
-    """ViewSet for DotXep (Scheduling Period)"""
+    """ViewSet for DotXep (Scheduling Period) - Admin + Trưởng Khoa"""
     queryset = DotXep.objects.all()
     serializer_class = DotXepSerializer
-    permission_classes = [IsAuthenticated]
-    filterset_fields = ['trang_thai', 'ma_du_kien_dt']  # nam_hoc, hoc_ky are in DuKienDT model
+    permission_classes = [SchedulingManagePermission]
+    filterset_fields = ['trang_thai', 'ma_du_kien_dt']
 
 
 class PhanCongViewSet(viewsets.ModelViewSet):
-    """ViewSet for PhanCong (Teaching Assignment)"""
+    """ViewSet for PhanCong (Teaching Assignment) - với scope filter"""
     queryset = PhanCong.objects.select_related(
         'ma_dot', 'ma_lop', 'ma_gv', 'ma_lop__ma_mon_hoc'
     ).all()
     serializer_class = PhanCongSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SchedulingManagePermission]
     filterset_fields = ['ma_dot', 'ma_gv', 'ma_lop']
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return filter_queryset_by_role(self.request.user, qs, 'PhanCong')
 
 
 class TimeSlotViewSet(viewsets.ReadOnlyModelViewSet):
@@ -120,17 +150,29 @@ class TimeSlotViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ThoiKhoaBieuViewSet(viewsets.ModelViewSet):
-    """ViewSet for ThoiKhoaBieu (Schedule)"""
+    """
+    ViewSet for ThoiKhoaBieu (Schedule) - với RBAC scope enforcement
+    SỬA: Fix ORM filter queries và enforce scope theo role
+    """
     queryset = ThoiKhoaBieu.objects.select_related(
         'ma_dot', 'ma_lop', 'ma_phong', 'time_slot_id', 'ma_lop__ma_mon_hoc'
     ).all()
     serializer_class = ThoiKhoaBieuSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SchedulingRolePermission]
     filterset_fields = ['ma_dot', 'ma_lop', 'ma_phong', 'tuan_hoc']
+    
+    def get_queryset(self):
+        """Override để enforce scope theo role"""
+        qs = super().get_queryset()
+        # Filter theo role - scope enforcement
+        return filter_queryset_by_role(self.request.user, qs, 'ThoiKhoaBieu')
     
     @action(detail=False, methods=['get'])
     def by_period(self, request):
-        """Get schedule by period"""
+        """
+        Get schedule by period
+        SỬA: Dùng đúng field FK (ma_dot) thay vì dot_xep__ma_dot
+        """
         ma_dot = request.query_params.get('ma_dot')
         if not ma_dot:
             return Response(
@@ -138,32 +180,62 @@ class ThoiKhoaBieuViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        schedules = self.queryset.filter(dot_xep__ma_dot=ma_dot)
+        # SỬA: Dùng ma_dot__ma_dot (FK trỏ đến DotXep.ma_dot)
+        schedules = self.get_queryset().filter(ma_dot__ma_dot=ma_dot)
         serializer = self.get_serializer(schedules, many=True)
         return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
     def by_teacher(self, request):
-        """Get schedule by teacher"""
-        ma_gv = request.query_params.get('ma_gv')
+        """
+        Get schedule by teacher
+        SỬA: Join đúng qua PhanCong (TKB.ma_lop -> PhanCong.ma_lop -> PhanCong.ma_gv)
+        ENFORCE: Giảng viên chỉ thấy TKB của chính mình
+        """
+        ma_gv_param = request.query_params.get('ma_gv')
         ma_dot = request.query_params.get('ma_dot')
         
-        if not ma_gv:
-            return Response(
-                {'error': 'ma_gv parameter required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        # Get role info
+        role_info = get_user_role_info(request.user)
         
-        schedules = self.queryset.filter(phan_cong__giang_vien__ma_gv=ma_gv)
+        # ENFORCE: Giảng viên chỉ thấy TKB của chính mình
+        if role_info['role'] == 'giang_vien':
+            ma_gv = role_info['ma_gv']
+            if not ma_gv:
+                return Response(
+                    {'error': 'Không tìm thấy thông tin giảng viên'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            # Bỏ qua ma_gv_param từ query nếu user là giảng viên
+        else:
+            # Admin/Trưởng Khoa/Trưởng Bộ Môn: dùng ma_gv từ query
+            if not ma_gv_param:
+                return Response(
+                    {'error': 'ma_gv parameter required'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            ma_gv = ma_gv_param
+        
+        # SỬA: Join qua PhanCong đúng cách
+        # ThoiKhoaBieu.ma_lop -> LopMonHoc
+        # LopMonHoc.phan_cong_list (reverse FK) -> PhanCong
+        # PhanCong.ma_gv -> GiangVien
+        schedules = self.get_queryset().filter(
+            ma_lop__phan_cong_list__ma_gv__ma_gv=ma_gv
+        ).distinct()
+        
         if ma_dot:
-            schedules = schedules.filter(dot_xep__ma_dot=ma_dot)
+            schedules = schedules.filter(ma_dot__ma_dot=ma_dot)
         
         serializer = self.get_serializer(schedules, many=True)
         return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
     def by_room(self, request):
-        """Get schedule by room"""
+        """
+        Get schedule by room
+        SỬA: Dùng đúng field FK (ma_phong) thay vì phong_hoc__ma_phong
+        """
         ma_phong = request.query_params.get('ma_phong')
         ma_dot = request.query_params.get('ma_dot')
         
@@ -173,9 +245,10 @@ class ThoiKhoaBieuViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        schedules = self.queryset.filter(phong_hoc__ma_phong=ma_phong)
+        # SỬA: Dùng ma_phong__ma_phong (FK trỏ đến PhongHoc.ma_phong)
+        schedules = self.get_queryset().filter(ma_phong__ma_phong=ma_phong)
         if ma_dot:
-            schedules = schedules.filter(dot_xep__ma_dot=ma_dot)
+            schedules = schedules.filter(ma_dot__ma_dot=ma_dot)
         
         serializer = self.get_serializer(schedules, many=True)
         return Response(serializer.data)
@@ -548,13 +621,17 @@ def assign_roles_view(request):
     groups = Group.objects.all()
     giang_vien_map = {gv.ma_gv: gv for gv in GiangVien.objects.all()}
     
+    # Set current_app for proper admin context (sidebar, breadcrumbs, etc.)
+    request.current_app = admin.site.name
+    
+    # Merge admin.site.each_context to get proper Django Admin layout
+    base_ctx = admin.site.each_context(request)
     context = {
+        **base_ctx,
         'users': users,
         'groups': groups,
         'giang_vien_map': giang_vien_map,
         'title': 'Gán vai trò hàng loạt',
-        'site_header': 'Quản lý phân quyền',
-        'site_title': 'Phân quyền',
     }
     
     return render(request, 'admin/scheduling/assign_roles.html', context)

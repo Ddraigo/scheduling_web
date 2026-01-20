@@ -43,13 +43,13 @@ def get_sap_lich_menu_for_user(user):
         return []
     
     # Admin thấy tất cả
-    if user.is_superuser:
-        return [
-            {"name": "⚙️ Sắp lịch bằng thuật toán", "url": "/admin/sap_lich/algo-scheduler/", "icon": "fas fa-cogs"},
-            {"name": "🤖 Chat bot hỗ trợ", "url": "/admin/sap_lich/llm-scheduler/", "icon": "fas fa-robot"},
-            {"name": "📅 Xem thời khóa biểu", "url": "/admin/sap_lich/thoikhoabieu/", "icon": "fas fa-calendar-alt"},
-            {"name": "✏️ Quản lý TKB", "url": "/admin/sap_lich/tkb-manage/", "icon": "fas fa-edit"},
-        ]
+    # if user.is_superuser:
+    #     return [
+    #         {"name": "⚙️ Sắp lịch bằng thuật toán", "url": "/admin/sap_lich/algo-scheduler/", "icon": "fas fa-cogs"},
+    #         {"name": "🤖 Chat bot hỗ trợ", "url": "/admin/sap_lich/llm-scheduler/", "icon": "fas fa-robot"},
+    #         {"name": "📅 Xem thời khóa biểu", "url": "/admin/sap_lich/thoikhoabieu/", "icon": "fas fa-calendar-alt"},
+    #         {"name": "✏️ Quản lý TKB", "url": "/admin/sap_lich/tkb-manage/", "icon": "fas fa-edit"},
+    #     ]
     
     # Các role khác
     groups = user.groups.values_list('name', flat=True)
