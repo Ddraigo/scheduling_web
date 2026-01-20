@@ -249,6 +249,7 @@ class RoleManagementView:
         """Assign role to multiple users at once"""
         from django.shortcuts import render
         from django.contrib import messages
+        from django.contrib import admin
         
         if request.method == 'POST':
             usernames = request.POST.getlist('users')
@@ -277,7 +278,12 @@ class RoleManagementView:
         groups = Group.objects.all()
         giang_vien_map = {gv.ma_gv: gv for gv in GiangVien.objects.all()}
         
+        # Set current_app for proper admin context
+        request.current_app = admin.site.name
+        
+        base_ctx = admin.site.each_context(request)
         context = {
+            **base_ctx,
             'users': users,
             'groups': groups,
             'giang_vien_map': giang_vien_map,

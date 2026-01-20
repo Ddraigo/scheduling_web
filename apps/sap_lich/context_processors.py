@@ -1,46 +1,11 @@
 """
 Context processor để cung cấp thông tin role và menu cho template
+SỬA: Dùng rbac.py làm single source of truth
 """
 import logging
-from apps.scheduling.models import GiangVien
+from apps.sap_lich.rbac import get_user_role_info
 
 logger = logging.getLogger(__name__)
-
-
-def get_user_role_info(user):
-    """
-    Xác định role và thông tin liên quan của user
-    """
-    if not user.is_authenticated:
-        return {'role': None, 'ma_khoa': None, 'ma_bo_mon': None, 'ma_gv': None}
-    
-    if user.is_superuser:
-        return {'role': 'admin', 'ma_khoa': None, 'ma_bo_mon': None, 'ma_gv': None}
-    
-    # Lấy groups của user
-    groups = user.groups.values_list('name', flat=True)
-    
-    # Tìm GiangVien theo username
-    try:
-        giang_vien = GiangVien.objects.select_related('ma_bo_mon', 'ma_bo_mon__ma_khoa').get(ma_gv=user.username)
-        ma_gv = giang_vien.ma_gv
-        ma_bo_mon = giang_vien.ma_bo_mon.ma_bo_mon if giang_vien.ma_bo_mon else None
-        ma_khoa = giang_vien.ma_bo_mon.ma_khoa.ma_khoa if giang_vien.ma_bo_mon and giang_vien.ma_bo_mon.ma_khoa else None
-    except GiangVien.DoesNotExist:
-        ma_gv = user.username
-        ma_bo_mon = None
-        ma_khoa = None
-    
-    # Xác định role dựa trên group
-    if 'Trưởng Khoa' in groups:
-        return {'role': 'truong_khoa', 'ma_khoa': ma_khoa, 'ma_bo_mon': None, 'ma_gv': ma_gv}
-    elif 'Trưởng Bộ Môn' in groups:
-        return {'role': 'truong_bo_mon', 'ma_khoa': ma_khoa, 'ma_bo_mon': ma_bo_mon, 'ma_gv': ma_gv}
-    elif 'Giảng Viên' in groups:
-        return {'role': 'giang_vien', 'ma_khoa': None, 'ma_bo_mon': None, 'ma_gv': ma_gv}
-    else:
-        # Mặc định là giáo viên nếu không có group
-        return {'role': 'giang_vien', 'ma_khoa': None, 'ma_bo_mon': None, 'ma_gv': ma_gv}
 
 
 def user_role_context(request):
@@ -54,6 +19,18 @@ def user_role_context(request):
     
     logger.info(f"DEBUG: Context processor running for user={request.user.username}, role={role_info['role']}")
     
+    # Nếu role không hợp lệ hoặc chưa gán => trả về trống để tránh hiển thị menu sai
+    if not role_info.get('is_valid', True) and role_info.get('role') is not None:
+        return {
+            'user_role_info': role_info,
+            'user_role': role_info['role'],
+            'menu_items': [],
+            'is_admin': False,
+            'is_truong_khoa': False,
+            'is_truong_bo_mon': False,
+            'is_giang_vien': False,
+        }
+
     if role_info['role'] == 'admin':
         menu_items = [
             {
