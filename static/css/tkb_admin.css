@@ -24,9 +24,12 @@
 /* ==================================================
    LAYOUT & CONTAINER
    ================================================== */
+/* Fix: Jazzmin wraps {% block content %} in a .row div with negative margins.
+   Simply remove centering margin and use minimal padding to let content use full width. */
 .tkb-wrapper {
-    max-width: 1500px;
-    margin: 0 auto;
+    max-width: none;  /* Remove max-width constraint completely */
+    width: 100%;
+    margin: 0;  /* No margin - let it fill parent width */
     padding: 12px 16px 24px 16px;
 }
 
@@ -401,6 +404,7 @@
 .schedule-card table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;  /* Force equal column widths */
 }
 
 .schedule-card thead th {
@@ -414,6 +418,11 @@
     font-weight: 700;
     color: #1f2937;
     white-space: nowrap;
+}
+
+/* First column (Ca) - minimal width based on content, others share remaining space equally */
+.schedule-card thead th:first-child {
+    width: 4em;  /* Flexible width based on font size, not hard-coded pixels */
 }
 
 .schedule-card tbody td {
@@ -431,7 +440,7 @@
     text-align: center;
     font-weight: 700;
     background: var(--tkb-surface-2);
-    width: 50px;
+    width: 4em;  /* Match header column width */
     color: #1f2937;
     vertical-align: middle;
 }

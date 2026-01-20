@@ -256,7 +256,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Auth settings
 LOGIN_URL = '/login/'  # Trang login cho users thông thường
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'  # Redirect về trang login sau khi logout
 
 # ### DYNAMIC_DATATB Settings ###
 DYNAMIC_DATATB = {

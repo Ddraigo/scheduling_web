@@ -36,6 +36,9 @@ urlpatterns = [
 
     # Custom admin login (chặn user thường)
     path('admin/login/', admin_views.admin_login_view, name='admin_login'),
+    
+    # Custom admin logout (đảm bảo clear session)
+    path('admin/logout/', admin_views.admin_logout_view, name='admin_logout'),
 
     path('', include('apps.pages.urls')),
     path('', include('apps.data_table.urls')),
