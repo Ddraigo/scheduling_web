@@ -58,8 +58,8 @@ def get_user_role_info(user):
     elif 'Giảng Viên' in groups:
         return {'role': 'giang_vien', 'ma_khoa': None, 'ma_bo_mon': None, 'ma_gv': ma_gv}
     else:
-        # Mặc định là giáo viên nếu không có group
-        return {'role': 'giang_vien', 'ma_khoa': None, 'ma_bo_mon': None, 'ma_gv': ma_gv}
+        # User không thuộc group nào được định nghĩa → trả về None
+        return {'role': None, 'ma_khoa': None, 'ma_bo_mon': None, 'ma_gv': ma_gv}
 
 
 def require_role(*allowed_roles):
@@ -97,6 +97,20 @@ def landing_page_view(request):
     user_role = role_info['role']
     ma_gv = role_info['ma_gv'] or request.user.username
     
+    # Kiểm tra user có role hợp lệ không
+    if user_role is None:
+        # User chưa được gán quyền → hiển thị trang lỗi
+        from django.contrib.auth import logout
+        logout(request)
+        from django.contrib import messages
+        messages.error(
+            request,
+            f"Tài khoản '{request.user.username}' chưa được gán quyền truy cập. "
+            "Vui lòng liên hệ quản trị viên để được phân quyền vào nhóm: "
+            "Trưởng Khoa, Trưởng Bộ Môn hoặc Giảng Viên."
+        )
+        return redirect('/login/')
+    
     # Redirect based on role
     if user_role == 'admin':
         return redirect('/admin/sap_lich/thoikhoabieu/')
@@ -104,7 +118,7 @@ def landing_page_view(request):
         return redirect(f'/truong-khoa/{ma_gv}/xem-tkb/')
     elif user_role == 'truong_bo_mon':
         return redirect(f'/truong-bo-mon/{ma_gv}/xem-tkb/')
-    else:  # giang_vien or default
+    else:  # giang_vien
         return redirect(f'/giang-vien/{ma_gv}/xem-tkb/')
 
 

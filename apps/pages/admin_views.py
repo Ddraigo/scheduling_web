@@ -2,10 +2,21 @@
 Custom Admin Login View - Chỉ cho phép superuser đăng nhập
 """
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import admin
 from django.contrib import messages
+from django.views.decorators.http import require_http_methods
+
+
+def admin_logout_view(request):
+    """
+    Custom logout view - đảm bảo xóa session hoàn toàn
+    """
+    logout(request)
+    # Clear all session data
+    request.session.flush()
+    return redirect('/login/')
 
 
 def admin_login_view(request):
