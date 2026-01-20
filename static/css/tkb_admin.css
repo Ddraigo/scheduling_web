@@ -1,0 +1,848 @@
+/**
+ * TKB Admin - Stylesheet
+ * Quản lý Thời Khoá Biểu - Custom CSS trên Bootstrap 4.6.1 + AdminLTE
+ * Scoped bằng .tkb-wrapper để tránh ảnh hưởng các pages khác
+ */
+
+:root {
+    --tkb-primary: #4f46e5;
+    --tkb-primary-2: #4338ca;
+    --tkb-success: #16a34a;
+    --tkb-danger: #dc2626;
+    --tkb-warning: #d97706;
+    --tkb-info: #0891b2;
+    --tkb-surface: #ffffff;
+    --tkb-surface-2: #f8fafc;
+    --tkb-border: #e2e8f0;
+    --tkb-border-muted: #cbd5e1;
+    --tkb-muted: #6b7280;
+    --tkb-muted-light: #9ca3af;
+    --tkb-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    --tkb-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* ==================================================
+   LAYOUT & CONTAINER
+   ================================================== */
+.tkb-wrapper {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 12px 16px 24px 16px;
+}
+
+.tkb-card {
+    background: var(--tkb-surface);
+    border: 1px solid var(--tkb-border);
+    border-radius: 12px;
+    box-shadow: var(--tkb-shadow);
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: box-shadow 0.2s ease;
+}
+
+.tkb-card:hover {
+    box-shadow: var(--tkb-shadow-hover);
+}
+
+.tkb-card > h2,
+.tkb-card > .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 14px 0;
+    color: #111827;
+}
+
+/* ==================================================
+   FILTER & ACTION BAR
+   ================================================== */
+.tkb-filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 0;
+}
+
+.tkb-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #111827;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.tkb-select {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid var(--tkb-border);
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #1f2937;
+    background-color: var(--tkb-surface);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    font-weight: 500;
+}
+
+.tkb-select:hover {
+    border-color: var(--tkb-primary);
+}
+
+.tkb-select:focus {
+    border-color: var(--tkb-primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    outline: none;
+}
+
+.form-select {
+    border-radius: 10px;
+    border-color: var(--tkb-border);
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-select:focus {
+    border-color: var(--tkb-primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* ==================================================
+   ACTION BUTTONS
+   ================================================== */
+.tkb-action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.tkb-btn {
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: 700;
+    font-size: 14px;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    white-space: nowrap;
+}
+
+.tkb-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.tkb-btn-primary {
+    background: var(--tkb-primary);
+    color: #fff;
+    border-color: transparent;
+}
+
+.tkb-btn-primary:not(:disabled):hover {
+    background: var(--tkb-primary-2);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(79, 70, 229, 0.3);
+}
+
+.tkb-btn-success {
+    background: var(--tkb-success);
+    color: #fff;
+    border-color: transparent;
+}
+
+.tkb-btn-success:not(:disabled):hover {
+    background: #15803d;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(22, 163, 74, 0.3);
+}
+
+.tkb-btn-danger {
+    background: var(--tkb-danger);
+    color: #fff;
+    border-color: transparent;
+}
+
+.tkb-btn-danger:not(:disabled):hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(220, 38, 38, 0.3);
+}
+
+.tkb-btn-warning {
+    background: var(--tkb-warning);
+    color: #fff;
+    border-color: transparent;
+}
+
+.tkb-btn-warning:not(:disabled):hover {
+    background: #b45309;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(217, 119, 6, 0.3);
+}
+
+.tkb-btn-ghost {
+    background: var(--tkb-surface-2);
+    color: #1f2937;
+    border-color: var(--tkb-border);
+}
+
+.tkb-btn-ghost:not(:disabled):hover {
+    background: #e2e8f0;
+    border-color: var(--tkb-primary);
+}
+
+/* BS4 Button overrides */
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+}
+
+.btn:not(:disabled):hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background-color: var(--tkb-primary);
+    border-color: var(--tkb-primary);
+}
+
+.btn-primary:not(:disabled):hover {
+    background-color: var(--tkb-primary-2);
+    border-color: var(--tkb-primary-2);
+}
+
+.btn-success {
+    background-color: var(--tkb-success);
+    border-color: var(--tkb-success);
+}
+
+.btn-danger {
+    background-color: var(--tkb-danger);
+    border-color: var(--tkb-danger);
+}
+
+.btn-outline-success {
+    color: var(--tkb-success);
+    border-color: var(--tkb-success);
+}
+
+.btn-outline-success:not(:disabled):hover {
+    background-color: var(--tkb-success);
+    border-color: var(--tkb-success);
+}
+
+.btn-link {
+    color: var(--tkb-muted);
+    text-decoration: none;
+}
+
+.btn-link:not(:disabled):hover {
+    color: var(--tkb-primary);
+    text-decoration: underline;
+}
+
+/* ==================================================
+   LEGEND & STATUS INDICATORS
+   ================================================== */
+.tkb-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--tkb-muted);
+    margin: 0;
+}
+
+.tkb-legend .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 999px;
+    display: inline-block;
+    margin-right: 6px;
+    border: 1px solid var(--tkb-border-muted);
+}
+
+.badge-soft {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #e0e7ff;
+    color: #312e81;
+    white-space: nowrap;
+}
+
+.badge-soft.info {
+    background: #dbeafe;
+    color: #1e3a8a;
+}
+
+/* ==================================================
+   MESSAGES & ALERTS - Dễ nhìn, không gắt
+   ================================================== */
+.message {
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: slideInDown 0.3s ease;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.success {
+    background: #dcfce7;
+    color: #065f46;
+    border: 1px solid #86efac;
+}
+
+.message.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+.message.info {
+    background: #dbeafe;
+    color: #1e3a8a;
+    border: 1px solid #93c5fd;
+}
+
+.message.warning {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde047;
+}
+
+.alert {
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    border-width: 1px;
+}
+
+.alert-warning {
+    background: #fffbeb;
+    border-color: #fde047;
+    color: #92400e;
+}
+
+.alert-info {
+    background: #f0f9ff;
+    border-color: #7dd3fc;
+    color: #075985;
+}
+
+#tkb-message-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2000;
+    max-width: 400px;
+    pointer-events: none;
+}
+
+#tkb-message-container .message {
+    pointer-events: auto;
+    margin-bottom: 8px;
+}
+
+/* ==================================================
+   LOADING OVERLAY
+   ================================================== */
+.loading-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 1040;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+}
+
+.loading-backdrop.active {
+    display: flex;
+}
+
+.loading-backdrop .spinner-border {
+    width: 2rem;
+    height: 2rem;
+    border-width: 3px;
+}
+
+/* ==================================================
+   SCHEDULE TABLE
+   ================================================== */
+.schedule-card table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.schedule-card thead th {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--tkb-surface-2);
+    padding: 12px 8px;
+    border-bottom: 2px solid var(--tkb-border);
+    text-align: center;
+    font-weight: 700;
+    color: #1f2937;
+    white-space: nowrap;
+}
+
+.schedule-card tbody td {
+    border: 1px solid var(--tkb-border);
+    min-height: 110px;
+    height: 110px;
+    vertical-align: top;
+    padding: 8px;
+    position: relative;
+    background: var(--tkb-surface);
+    transition: all 0.2s ease;
+}
+
+.schedule-card tbody td:first-child {
+    text-align: center;
+    font-weight: 700;
+    background: var(--tkb-surface-2);
+    width: 50px;
+    color: #1f2937;
+    vertical-align: middle;
+}
+
+.schedule-card tbody td.is-empty {
+    background: #fafbfc;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.schedule-card tbody td.is-empty::after {
+    content: '+';
+    font-size: 24px;
+    color: var(--tkb-border-muted);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.schedule-card tbody td.is-empty:hover {
+    background: #eef2ff;
+    border-color: var(--tkb-primary);
+    box-shadow: inset 0 0 0 1px var(--tkb-primary);
+}
+
+.schedule-card tbody td.is-empty:hover::after {
+    opacity: 0.6;
+}
+
+/* ==================================================
+   CLASS CHIPS - Chiếm đủ không gian, dễ click
+   ================================================== */
+.class-chip {
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background: var(--tkb-surface-2);
+    font-size: 13px;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    min-height: 80px;
+}
+
+.class-chip:hover {
+    border-color: var(--tkb-primary);
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15);
+    background: #f1f5ff;
+}
+
+.class-chip.selected {
+    border: 2px solid var(--tkb-primary);
+    background: #eef2ff;
+    box-shadow: 0 6px 12px rgba(79, 70, 229, 0.2), inset 0 0 0 2px rgba(79, 70, 229, 0.1);
+    font-weight: 600;
+}
+
+.class-chip .fw-semibold {
+    font-weight: 700;
+    font-size: 13px;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.class-meta {
+    font-size: 11px;
+    color: var(--tkb-muted);
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    line-height: 1.2;
+}
+
+/* ==================================================
+   DELETED LIST
+   ================================================== */
+.deleted-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.deleted-row {
+    border: 1px dashed var(--tkb-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: #fffbeb;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.deleted-row:hover {
+    border-color: var(--tkb-warning);
+    background: #fef3c7;
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.1);
+}
+
+.deleted-row.selected {
+    border: 2px solid var(--tkb-primary);
+    background: #eef2ff;
+    box-shadow: 0 6px 14px rgba(79, 70, 229, 0.15);
+}
+
+.deleted-row-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.deleted-row-info strong {
+    display: block;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.deleted-row-info .meta {
+    display: flex;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--tkb-muted);
+    flex-wrap: wrap;
+}
+
+.deleted-row-btn {
+    flex-shrink: 0;
+}
+
+.deleted-list-empty {
+    text-align: center;
+    padding: 20px;
+    color: var(--tkb-muted);
+    font-size: 14px;
+}
+
+/* ==================================================
+   MODAL STYLING - Hiện đại, bo góc lớn, shadow mềm
+   ================================================== */
+.modal-content {
+    border: 1px solid var(--tkb-border);
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--tkb-border);
+    padding: 18px 24px;
+    background: var(--tkb-surface-2);
+}
+
+.modal-header .close {
+    padding: 8px 12px;
+    margin: -8px -12px -8px auto;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+    font-size: 24px;
+    line-height: 1;
+    border-radius: 8px;
+}
+
+.modal-header .close:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--tkb-border);
+    padding: 16px 24px;
+    background: var(--tkb-surface-2);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* BS4 form controls - Bo góc lớn, padding thoáng */
+.form-control,
+.form-select {
+    border-radius: 12px;
+    border-color: var(--tkb-border);
+    padding: 12px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    background-color: #fff;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--tkb-primary);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    outline: none;
+}
+
+.form-control:hover:not(:focus):not(:disabled),
+.form-select:hover:not(:focus):not(:disabled) {
+    border-color: var(--tkb-border-muted);
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: var(--tkb-danger);
+}
+
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.invalid-feedback {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--tkb-danger);
+}
+
+.form-text-muted {
+    font-size: 12px;
+    color: var(--tkb-muted);
+    margin-top: 6px;
+    line-height: 1.4;
+}
+
+.form-text.text-danger {
+    font-size: 13px;
+    color: var(--tkb-danger);
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+/* Form group spacing */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.row.g-3 > [class*='col-'] {
+    padding-bottom: 12px;
+}
+
+/* ==================================================
+   SELECTION PILL
+   ================================================== */
+#tkb-selection-pill {
+    background: #e0e7ff;
+    color: #312e81;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ==================================================
+   RESPONSIVE DESIGN
+   ================================================== */
+@media (max-width: 768px) {
+    .tkb-wrapper {
+        padding: 8px 12px 16px 12px;
+    }
+
+    .tkb-card {
+        padding: 14px;
+        margin-bottom: 12px;
+    }
+
+    .tkb-filter-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .tkb-action-bar {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .tkb-btn,
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .schedule-card {
+        font-size: 12px;
+    }
+
+    .schedule-card tbody td {
+        min-height: 70px;
+        padding: 6px;
+    }
+
+    .class-chip {
+        padding: 6px 8px;
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+
+    .deleted-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .deleted-row-btn {
+        width: 100%;
+    }
+
+    .deleted-row-btn .btn {
+        width: 100%;
+    }
+
+    #tkb-message-container {
+        left: 10px;
+        right: 10px;
+        max-width: calc(100% - 20px);
+    }
+
+    .modal-dialog {
+        margin: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .tkb-legend {
+        gap: 8px;
+        font-size: 12px;
+    }
+
+    .badge-soft {
+        font-size: 11px;
+        padding: 3px 8px;
+    }
+
+    .tkb-card > h2 {
+        font-size: 16px;
+    }
+
+    .modal-body .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .modal-body [class*='col-'] {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+/* ==================================================
+   UTILITY CLASSES
+   ================================================== */
+.no-wrap {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.truncate-line {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.truncate-lines-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Override AdminLTE if needed */
+.content-wrapper {
+    background-color: #f5f7fa !important;
+}
+
+/* Scoped to avoid affecting other admin pages */
+.tkb-wrapper .btn-group,
+.tkb-wrapper .input-group,
+.tkb-wrapper .list-group {
+    /* Ensure Bootstrap components work correctly within tkb-wrapper */
+}
