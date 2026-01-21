@@ -1005,10 +1005,17 @@ def thoikhoabieu_view(request, ma_gv=None):
     # Set current_app for proper admin context (sidebar, breadcrumbs, etc.)
     request.current_app = admin.site.name
     
-    # Khởi tạo context
+    # Khởi tạo context từ admin
     base_ctx = admin.site.each_context(request)
+    
+    # Thêm menu_items từ context processor
+    from apps.sap_lich.context_processors import user_role_context
+    frontend_ctx = user_role_context(request)
+    
+    # Merge contexts
     context = {
         **base_ctx,
+        **frontend_ctx,  # Thêm menu_items, user_role_info từ context processor
         'title': 'Thời Khóa Biểu',
         'view_type': view_type,
         'display_mode': display_mode,
