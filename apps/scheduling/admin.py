@@ -60,6 +60,8 @@ class BaseAdmin(admin.ModelAdmin):
     def has_module_permission(self, request):
         """
         Override để check permission dựa trên user groups
+        QUAN TRỌNG: Để hiển thị app trong Jazzmin sidebar (cho custom_links),
+        cần return True cho tất cả users có quyền xem TKB
         """
         user = request.user
         
@@ -71,18 +73,21 @@ class BaseAdmin(admin.ModelAdmin):
         groups = user.groups.values_list('name', flat=True)
         is_truong_khoa = 'Trưởng Khoa' in groups
         is_truong_bo_mon = 'Trưởng Bộ Môn' in groups
+        is_giang_vien = 'Giảng Viên' in groups
         
-        # Truong_Khoa thấy tất cả models
-        if is_truong_khoa:
+        # Truong_Khoa, Truong_Bo_Mon, Giang_Vien đều thấy app để truy cập custom_links
+        # (Xem TKB, Quản lý TKB trong JAZZMIN_SETTINGS)
+        if is_truong_khoa or is_truong_bo_mon or is_giang_vien:
             return True
         
+        # Kiểm tra model-level permissions cho các trường hợp khác
         # Truong_Bo_Mon chỉ thấy một số models
         if is_truong_bo_mon:
             model_name = self.model.__name__.lower()
             allowed_models = ['monhoc', 'giangvien', 'nguyenvong', 'gvdaymon', 'phancong']
             return model_name in allowed_models
         
-        # Giang_Vien không thấy models
+        # Default: không thấy
         return False
     def get_urls(self):
         """Add custom URLs for import"""

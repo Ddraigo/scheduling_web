@@ -217,11 +217,9 @@ def algo_scheduler_get_stats_api(request):
         }, status=500)
 
 
-@require_role('admin')
 def llm_scheduler_view(request, ma_gv=None):
     """
-    Admin view for LLM Chatbot Assistant - CHỈ ADMIN
-    Chỉ admin/superuser được truy cập
+    LLM Chatbot Assistant - Tất cả user đăng nhập đều có thể truy cập
     """
     # CHECK AUTHENTICATION
     if not request.user.is_authenticated:
@@ -229,25 +227,15 @@ def llm_scheduler_view(request, ma_gv=None):
     
     role_info = get_user_role_info(request.user)
     
+    # Kiểm tra user có role hợp lệ không
+    if role_info['role'] is None:
+        logger.warning(f"User {request.user.username} chưa được gán quyền, từ chối truy cập LLM scheduler")
+        return HttpResponseForbidden(
+            "Tài khoản chưa được gán quyền truy cập. "
+            "Vui lòng liên hệ quản trị viên để được phân quyền."
+        )
+    
     logger.debug(f"llm_scheduler_view: user={request.user.username}, role={role_info['role']}")
-    
-    # CHECK ROLE: Chỉ admin
-    if role_info['role'] != 'admin':
-        logger.warning(f"User {request.user.username} (role={role_info['role']}) cố truy cập LLM scheduler")
-        return HttpResponseForbidden("Chỉ Admin mới có quyền truy cập Chat bot hỗ trợ")
-    
-    if role_info['role'] != 'admin' and not ma_gv:
-        # Nếu user truy cập URL cũ (/admin/sap_lich/...), redirect sang URL mới
-        ma_gv_current = role_info['ma_gv'] or request.user.username
-        if 'truong_khoa' in role_info['role']:
-            return redirect(f'/truong-khoa/{ma_gv_current}/xem-tkb/')
-        elif 'truong_bo_mon' in role_info['role']:
-            return redirect(f'/truong-bo-mon/{ma_gv_current}/xem-tkb/')
-        else:
-            return redirect(f'/giang-vien/{ma_gv_current}/xem-tkb/')
-    
-    if role_info['role'] != 'admin':
-        return HttpResponseForbidden("Chỉ Admin mới có quyền truy cập Chat bot hỗ trợ")
     
     try:
         periods = list(DotXep.objects.all().values('ma_dot', 'ten_dot', 'trang_thai'))
@@ -1005,10 +993,17 @@ def thoikhoabieu_view(request, ma_gv=None):
     # Set current_app for proper admin context (sidebar, breadcrumbs, etc.)
     request.current_app = admin.site.name
     
-    # Khởi tạo context
+    # Khởi tạo context từ admin
     base_ctx = admin.site.each_context(request)
+    
+    # Thêm menu_items từ context processor
+    from apps.sap_lich.context_processors import user_role_context
+    frontend_ctx = user_role_context(request)
+    
+    # Merge contexts
     context = {
         **base_ctx,
+        **frontend_ctx,  # Thêm menu_items, user_role_info từ context processor
         'title': 'Thời Khóa Biểu',
         'view_type': view_type,
         'display_mode': display_mode,
@@ -1831,6 +1826,101 @@ def tkb_update_api(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
+def tkb_update_timeslot_api(request):
+    """API cập nhật nhanh timeslot cho drag & drop - chỉ thay đổi thứ và ca"""
+    try:
+        data = json.loads(request.body)
+        ma_tkb = data.get('ma_tkb')
+        new_thu = data.get('thu')  # Thứ mới (2-8)
+        new_ca = data.get('ca')    # Ca mới (1-5)
+        
+        if not all([ma_tkb, new_thu, new_ca]):
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Thiếu thông tin: ma_tkb, thu, ca'
+            }, status=400)
+        
+        # Lấy TKB hiện tại
+        tkb = ThoiKhoaBieu.objects.get(ma_tkb=ma_tkb, is_deleted=False)
+        
+        # Tạo time_slot_id mới
+        new_time_slot_id = f"Thu{new_thu}-Ca{new_ca}"
+        
+        # Kiểm tra time slot có tồn tại không
+        try:
+            new_time_slot = TimeSlot.objects.get(time_slot_id=new_time_slot_id)
+        except TimeSlot.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Không tìm thấy time slot: {new_time_slot_id}'
+            }, status=404)
+        
+        # Lưu old data
+        old_time_slot_id = tkb.time_slot_id.time_slot_id
+        
+        # Lấy thông tin GV để validate
+        phan_cong = PhanCong.objects.filter(
+            ma_dot=tkb.ma_dot,
+            ma_lop=tkb.ma_lop
+        ).select_related('ma_gv').first()
+        ma_gv = phan_cong.ma_gv.ma_gv if phan_cong and phan_cong.ma_gv else None
+        
+        # Validate với exclude current
+        validation = validate_tkb_constraints(
+            tkb.ma_dot.ma_dot,
+            tkb.ma_lop.ma_lop,
+            tkb.ma_phong.ma_phong if tkb.ma_phong else None,
+            new_time_slot_id,
+            ma_gv=ma_gv,
+            exclude_ma_tkb=ma_tkb
+        )
+        
+        logger.info(f"Validation result for drag&drop: {validation}")  # Debug
+        
+        if not validation['valid']:
+            logger.warning(f"Drag&drop blocked: {validation['errors']}")  # Debug
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Không thể di chuyển vì vi phạm ràng buộc',
+                'errors': validation['errors'],
+                'warnings': validation['warnings']
+            }, status=400)
+        
+        # Cập nhật time slot
+        tkb.time_slot_id = new_time_slot
+        tkb.save()
+        
+        # Log
+        TKBLog.objects.create(
+            ma_tkb=ma_tkb,
+            action='MOVE',  # Thay vì UPDATE_TIMESLOT (quá dài)
+            user=request.user.username if request.user.is_authenticated else 'anonymous',
+            old_data={'time_slot_id': old_time_slot_id},
+            new_data={'time_slot_id': new_time_slot_id},
+            reason=f'Drag & drop: {old_time_slot_id} → {new_time_slot_id}'
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': f'Di chuyển thành công từ {old_time_slot_id} sang {new_time_slot_id}',
+            'warnings': validation['warnings']
+        })
+        
+    except ThoiKhoaBieu.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Không tìm thấy lịch học'
+        }, status=404)
+    except Exception as e:
+        logger.exception(f"Lỗi khi drag & drop TKB: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
 def tkb_delete_api(request):
     """API xóa TKB (soft delete)"""
     try:
@@ -2200,19 +2290,19 @@ def tkb_swap_api(request):
         }, status=500)
 
 
-@require_role('admin', 'truong_khoa')
+@require_role('admin', 'truong_khoa', 'truong_bo_mon')
 def tkb_manage_view(request, ma_gv=None):
     """
-    Trang quản lý TKB với layout 2 cột - Admin và Trưởng Khoa (chỉ khoa mình)
+    Trang quản lý TKB với layout 2 cột
     
     URL Parameters:
-        ma_gv: Mã giảng viên từ URL (dùng cho Trưởng Khoa)
+        ma_gv: Mã giảng viên từ URL (dùng cho Trưởng Khoa / Trưởng Bộ Môn)
     
     Phân quyền:
-        - Chỉ admin và trưởng khoa được truy cập
         - Admin: Quản lý toàn bộ TKB
         - Trưởng Khoa: Quản lý TKB khoa mình (filter theo ma_khoa)
-        - Trưởng Bộ Môn, Giảng Viên: KHÔNG được truy cập
+        - Trưởng Bộ Môn: Quản lý TKB bộ môn mình (filter theo ma_bo_mon)
+        - Giảng Viên: KHÔNG được truy cập
     """
     # Kiểm tra authentication
     if not request.user.is_authenticated:
@@ -2230,30 +2320,33 @@ def tkb_manage_view(request, ma_gv=None):
         ma_gv_current = role_info['ma_gv'] or request.user.username
         if user_role == 'truong_khoa':
             return redirect(f'/truong-khoa/{ma_gv_current}/quan-ly-tkb/')
+        elif user_role == 'truong_bo_mon':
+            return redirect(f'/truong-bo-mon/{ma_gv_current}/quan-ly-tkb/')
         else:
-            # Các role khác không được quản lý TKB
+            # Giảng viên không được quản lý TKB
             logger.warning(f"User {request.user.username} (role={user_role}) không được quản lý TKB, redirect về xem TKB")
             return redirect(f'/giang-vien/{ma_gv_current}/xem-tkb/')
     
-    # CHECK ROLE: Chỉ admin và trưởng khoa
-    if user_role not in ['admin', 'truong_khoa']:
+    # CHECK ROLE: admin, trưởng khoa, trưởng bộ môn (không cho giảng viên)
+    if user_role not in ['admin', 'truong_khoa', 'truong_bo_mon']:
         logger.warning(f"User {request.user.username} (role={user_role}) không có quyền quản lý TKB")
         return HttpResponseForbidden("Bạn không có quyền quản lý thời khóa biểu")
     
     # Validate ma_gv trong URL với user hiện tại
     if ma_gv:
         # Nếu không phải admin, phải check ma_gv khớp với user
-        if user_role == 'truong_khoa':
+        if user_role in ['truong_khoa', 'truong_bo_mon']:
             if ma_gv != role_info['ma_gv']:
                 logger.warning(f"User {request.user.username} cố truy cập quản lý TKB của {ma_gv}")
                 return HttpResponseForbidden("Bạn không có quyền quản lý TKB của người khác")
-        # Các role khác không được truy cập
-        elif user_role != 'admin':
+        # Giảng viên không được truy cập
+        elif user_role == 'giang_vien':
             logger.warning(f"User {request.user.username} (role={user_role}) cố truy cập tkb-manage")
             return HttpResponseForbidden("Bạn không có quyền quản lý TKB")
     
     ma_dot = request.GET.get('ma_dot', '')
     ma_khoa = request.GET.get('ma_khoa', '')
+    ma_bo_mon = request.GET.get('ma_bo_mon', '')  # Thêm cho trưởng bộ môn
     view_type = request.GET.get('view_type', 'teacher')  # Default là 'teacher'
     selected_id = request.GET.get('selected_id', '')  # ma_gv hoặc ma_phong
     
@@ -2262,6 +2355,8 @@ def tkb_manage_view(request, ma_gv=None):
         ma_khoa = role_info['ma_khoa']
     elif user_role == 'truong_bo_mon':
         ma_khoa = role_info['ma_khoa']
+        # Trưởng bộ môn cũng filter theo bộ môn
+        ma_bo_mon = role_info.get('ma_bo_mon')
     elif user_role == 'giang_vien':
         # Giáo viên không được phép truy cập trang quản lý
         from django.contrib import messages
@@ -2485,6 +2580,11 @@ def tkb_mini_schedule_api(request):
         
         deleted = []
         for tkb in deleted_list:
+            # Lấy giáo viên từ phân công
+            phan_cong = tkb.ma_lop.phan_cong_list.first()
+            ma_gv = phan_cong.ma_gv.ma_gv if phan_cong and phan_cong.ma_gv else 'N/A'
+            ten_gv = phan_cong.ma_gv.ten_gv if phan_cong and phan_cong.ma_gv else 'N/A'
+            
             deleted.append({
                 'ma_tkb': tkb.ma_tkb,
                 'ma_lop': tkb.ma_lop.ma_lop,
@@ -2492,6 +2592,8 @@ def tkb_mini_schedule_api(request):
                 'ma_phong': tkb.ma_phong.ma_phong if tkb.ma_phong else 'N/A',
                 'thu': tkb.time_slot_id.thu,
                 'ca': tkb.time_slot_id.ca.ma_khung_gio,
+                'ma_gv': ma_gv,
+                'ten_gv': ten_gv,
             })
         
         return JsonResponse({

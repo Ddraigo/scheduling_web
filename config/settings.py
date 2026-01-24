@@ -65,10 +65,7 @@ INSTALLED_APPS = [
 
     # Serve UI pages
     "apps.pages",
-
-    # Dynamic DT
-    "apps.data_table",
-
+    
     # Dynamic API
     "apps.dyn_api",
 
@@ -80,6 +77,9 @@ INSTALLED_APPS = [
     
     # Sap Lich - Scheduling Tools Container
     "apps.sap_lich",
+    
+    # Dynamic DT - MUST be after scheduling (proxy models depend on scheduling)
+    "apps.data_table",
 
     # Tooling API-GEN
     'rest_framework',            # Include DRF           # <-- NEW 
@@ -260,8 +260,7 @@ LOGOUT_REDIRECT_URL = '/login/'  # Redirect về trang login sau khi logout
 
 # ### DYNAMIC_DATATB Settings ###
 DYNAMIC_DATATB = {
-    # SLUG -> Import_PATH 
-    'Sản phẩm'  : "apps.pages.models.Product",
+    # SLUG -> Import_PATH
     'Khoa'  : "apps.scheduling.models.Khoa",
     'Tổ bộ môn'  : "apps.scheduling.models.BoMon",
     'Giảng viên'  : "apps.scheduling.models.GiangVien",
@@ -283,8 +282,8 @@ DYNAMIC_DATATB = {
 
 # Syntax: URI -> Import_PATH
 DYNAMIC_API = {
-    # SLUG -> Import_PATH 
-    'product'  : "apps.pages.models.Product",
+    # SLUG -> Import_PATH
+    # Product model removed - no longer used
 }
 
 # JAZZMIN Configuration
@@ -296,20 +295,18 @@ JAZZMIN_SETTINGS = {
     "copyright": "",
     "search_model": "auth.User",
     "topmenu_links": [
-        {"name": "Trang chủ", "url": "/"},
-        {"name": "Dữ liệu", "url": "/data_table/"},
+        # {"name": "Trang chủ", "url": "/"},
     ],
     "usermenu_links": [
         {"name": "Hồ sơ", "url": "/user-profile/", "icon": "fas fa-user-circle"},
     ],
     "show_sidebar": True,
     "navigation_expanded": False,
-    # Order apps - put "Sắp lịch" first
-    "order_with_respect_to": ["sap_lich", "scheduling", "pages", "data_table"],
+    # Order apps - put "Sắp lịch" first, then "Dữ liệu" before "Tài khoản"
+    "order_with_respect_to": ["sap_lich", "scheduling", "data_table", "pages"],
     # Ẩn model SapLich (dummy model) và tất cả models scheduling (sẽ hiện qua custom links)
     "hide_models": [
         "sap_lich.SapLich",
-        "pages.Product",
         "pages.UserProfile",
         "scheduling.Khoa",
         "scheduling.BoMon",
@@ -329,17 +326,20 @@ JAZZMIN_SETTINGS = {
         "scheduling.NguyenVong",
         "scheduling.TimeSlot",
         "scheduling.ThoiKhoaBieu",
+        "scheduling.TKBLog",  # Ẩn TKBLog để tránh trùng lặp
         "data_table.HideShowFilter",
         "data_table.ModelFilter",
         "data_table.PageItems",
     ],
     # Hide entire apps
     # auth app sẽ được ẩn động dựa vào has_module_permission trong custom admin
-    "hide_apps": ["authtoken"],  # Ẩn authtoken cho tất cả users
+    "hide_apps": ["authtoken"],  # Chỉ ẩn authtoken
     # Show all apps including new ones
     "show_ui_builder": False,
     # Custom links under "Sắp lịch" in sidebar
     # SỬA: Dùng permissions chuẩn theo model thay vì auth.view_user
+    # LƯU Ý: custom_links chỉ hiển thị nếu user có quyền với ít nhất 1 model trong app đó
+    # Nên đặt tất cả links dưới "scheduling" vì user có quyền scheduling.*
     "custom_links": {
         "sap_lich": [
             {
@@ -356,147 +356,22 @@ JAZZMIN_SETTINGS = {
             },
         ],
         "scheduling": [
+            # Menu cho Xem và Quản lý TKB
             {
                 "name": "Xem Thời Khóa Biểu",
                 "url": "/admin/sap_lich/thoikhoabieu/",
                 "icon": "fas fa-calendar-alt",
-                "permissions": ["scheduling.view_thoikhoabieu"]  # Tất cả role có quyền xem TKB
+                "permissions": ["sap_lich.view_saplich"]  # Dùng sap_lich vì scheduling models bị ẩn
             },
             {
                 "name": "Quản lý TKB",
                 "url": "/admin/sap_lich/tkb-manage/",
                 "icon": "fas fa-edit",
-                "permissions": ["scheduling.change_thoikhoabieu"]  # Admin + Trưởng Khoa
+                "permissions": ["sap_lich.change_saplich"]
             },
         ],
         "data_table": [
-            
-            {
-                "name": "Khoa",
-                "url": "/admin/scheduling/khoa/",
-                "icon": "fas fa-building",
-                "permissions": ["scheduling.view_khoa"]  # Admin + Trưởng Khoa
-            },
-            {
-                "name": "Bộ môn",
-                "url": "/admin/scheduling/bomon/",
-                "icon": "fas fa-sitemap",
-                "permissions": ["scheduling.view_bomon"]  # Admin + Trưởng Khoa + Trưởng Bộ Môn
-            },
-            {
-                "name": "Giảng viên",
-                "url": "/admin/scheduling/giangvien/",
-                "icon": "fas fa-chalkboard-user",
-                "permissions": ["scheduling.view_giangvien"]  # Admin + Trưởng Khoa + Trưởng Bộ Môn
-            },
-            {
-                "name": "Môn học",
-                "url": "/admin/scheduling/monhoc/",
-                "icon": "fas fa-book",
-                "permissions": ["scheduling.view_monhoc"]  # Admin + Trưởng Khoa
-            },
-            {
-                "name": "GV dạy môn",
-                "url": "/admin/scheduling/gvdaymon/",
-                "icon": "fas fa-user-tie",
-                "permissions": ["scheduling.view_gvdaymon"]  # Admin + Trưởng Khoa
-            },
-            {
-                "name": "Phòng học",
-                "url": "/admin/scheduling/phonghoc/",
-                "icon": "fas fa-door-open",
-                "permissions": ["scheduling.view_phonghoc"]  # Admin + Trưởng Khoa
-            },
-            {
-                "name": "Lớp môn học",
-                "url": "/admin/scheduling/lopmonhoc/",
-                "icon": "fas fa-graduation-cap",
-                "permissions": ["scheduling.view_lopmonhoc"]  # Admin + Trưởng Khoa
-            },
-            {
-                "name": "Đợt xếp",
-                "url": "/admin/scheduling/dotxep/",
-                "icon": "fas fa-calendar-days",
-                "permissions": ["scheduling.view_dotxep"]  # Admin + Trưởng Khoa
-            },
-            {
-                "name": "Phân công",
-                "url": "/admin/scheduling/phancong/",
-                "icon": "fas fa-handshake",
-                "permissions": ["scheduling.view_phancong"]  # Admin + Trưởng Khoa + Trưởng Bộ Môn
-            },
-            {
-                "name": "Khung thời gian",
-                "url": "/admin/scheduling/khungtg/",
-                "icon": "fas fa-hourglass-half",
-                "permissions": ["scheduling.view_khungtg"]  # Admin
-            },
-            {
-                "name": "Ràng buộc mềm",
-                "url": "/admin/scheduling/rangbuocmem/",
-                "icon": "fas fa-wave-square",
-                "permissions": ["scheduling.view_rangbuocmem"]  # Admin
-            },
-            {
-                "name": "Ràng buộc trong đợt",
-                "url": "/admin/scheduling/rangbuoctrongdot/",
-                "icon": "fas fa-shield-alt",
-                "permissions": ["scheduling.view_rangbuoctrongdot"]  # Admin
-            },
-            {
-                "name": "Dự kiến dạy học",
-                "url": "/admin/scheduling/dukiendt/",
-                "icon": "fas fa-clipboard-check",
-                "permissions": ["scheduling.view_dukiendt"]  # Admin
-            },
-            {
-                "name": "Ngày nghỉ cố định",
-                "url": "/admin/scheduling/ngaynghicodinh/",
-                "icon": "fas fa-calendar-xmark",
-                "permissions": ["scheduling.view_ngaynghicodinh"]  # Admin
-            },
-            {
-                "name": "Ngày nghỉ đợt",
-                "url": "/admin/scheduling/ngaynghidot/",
-                "icon": "fas fa-calendar-minus",
-                "permissions": ["scheduling.view_ngaynghidot"]  # Admin
-            },
-            {
-                "name": "Nguyện vọng",
-                "url": "/admin/scheduling/nguyenvong/",
-                "icon": "fas fa-heart",
-                "permissions": ["scheduling.view_nguyenvong"]  # Tất cả user
-            },
-            {
-                "name": "Time Slot",
-                "url": "/admin/scheduling/timeslot/",
-                "icon": "fas fa-hourglass-end",
-                "permissions": ["scheduling.view_timeslot"]  # Admin
-            },
-            {
-                "name": "Thời khóa biểu",
-                "url": "/admin/scheduling/thoikhoabieu/",
-                "icon": "fas fa-calendar-check",
-                "permissions": ["scheduling.view_thoikhoabieu"]  # Tất cả role
-            },
-            {
-                "name": "Hide show filters",
-                "url": "/admin/data_table/hideshowfilter/",
-                "icon": "fas fa-eye-slash",
-                "permissions": ["auth.view_user"]
-            },
-            {
-                "name": "Model filters",
-                "url": "/admin/data_table/modelfilter/",
-                "icon": "fas fa-filter",
-                "permissions": ["auth.view_user"]
-            },
-            {
-                "name": "Page items",
-                "url": "/admin/data_table/pageitems/",
-                "icon": "fas fa-list",
-                "permissions": ["auth.view_user"]
-            },
+            # Empty list - will auto-show registered proxy models
         ],
         "pages": [
             {
@@ -513,7 +388,6 @@ JAZZMIN_SETTINGS = {
                 "icon": "fas fa-user-shield",
                 "permissions": ["auth.add_user"]  # Chỉ admin
             },
-           
         ]
     },
     "icons": {
@@ -534,30 +408,29 @@ JAZZMIN_SETTINGS = {
         
         # Data table app
         "data_table": "fas fa-table",
+        
+        # Data table proxy models icons
+        "data_table.khoaproxy": "fas fa-building",
+        "data_table.bomonproxy": "fas fa-sitemap",
+        "data_table.giangvienproxy": "fas fa-chalkboard-user",
+        "data_table.gvdaymonproxy": "fas fa-user-tie",
+        "data_table.monhocproxy": "fas fa-book",
+        "data_table.phonghocproxy": "fas fa-door-open",
+        "data_table.lopmonhocproxy": "fas fa-graduation-cap",
+        "data_table.dotxepproxy": "fas fa-calendar-days",
+        "data_table.phancongproxy": "fas fa-handshake",
+        "data_table.khungtgproxy": "fas fa-hourglass-half",
+        "data_table.rangbuocmemproxy": "fas fa-wave-square",
+        "data_table.rangbuoctrongdotproxy": "fas fa-shield-alt",
+        "data_table.dukiendtproxy": "fas fa-clipboard-check",
+        "data_table.ngaynghicodinhproxy": "fas fa-calendar-xmark",
+        "data_table.ngaynghidotproxy": "fas fa-calendar-minus",
+        "data_table.nguyenvongproxy": "fas fa-heart",
+        "data_table.timeslotproxy": "fas fa-hourglass-end",
+        "data_table.thoikhoabieuproxy": "fas fa-calendar-check",
 
         # REST framework / tooling
         "rest_framework": "fas fa-cubes",
-
-        # Scheduling models
-        "scheduling.khoa": "fas fa-building",
-        "scheduling.bomon": "fas fa-sitemap",
-        "scheduling.giangvien": "fas fa-chalkboard-user",
-        "scheduling.gvdaymon": "fas fa-user-tie",  # Giáo viên dạy môn
-        "scheduling.monhoc": "fas fa-book",
-        "scheduling.phonghoc": "fas fa-door-open",
-        "scheduling.lopmonhoc": "fas fa-graduation-cap",
-        "scheduling.dotxep": "fas fa-calendar-days",
-        "scheduling.phancong": "fas fa-handshake",
-        "scheduling.khungtg": "fas fa-hourglass-half",  # Khung thời gian
-        "scheduling.rangbuocmem": "fas fa-wave-square",  # Ràng buộc mềm
-        "scheduling.rangbuoctrongdot": "fas fa-shield-alt",  # Ràng buộc trong đợt
-        "scheduling.dukiendt": "fas fa-clipboard-check",  # Dự kiến dạy-học (fixed: was dukilendtao)
-        "scheduling.ngaynghicodinh": "fas fa-calendar-xmark",  # Ngày nghỉ cố định
-        "scheduling.ngaynghidot": "fas fa-calendar-minus",  # Ngày nghỉ theo đợt
-        
-        "scheduling.nguyenvong": "fas fa-heart",
-        "scheduling.timeslot": "fas fa-hourglass-end",
-        "scheduling.thoikhoabieu": "fas fa-calendar-check",
     },
     "default_icon_children": "fas fa-chevron-right",
     "related_modal_active": False,

@@ -73,6 +73,7 @@ urlpatterns = [
     
     # Trưởng Bộ Môn
     path('truong-bo-mon/<str:ma_gv>/xem-tkb/', views_sap_lich.thoikhoabieu_view, name='truongbomon_xem_tkb'),
+    path('truong-bo-mon/<str:ma_gv>/quan-ly-tkb/', views_sap_lich.tkb_manage_view, name='truongbomon_quan_ly_tkb'),
     
     # Giảng Viên
     path('giang-vien/<str:ma_gv>/xem-tkb/', views_sap_lich.thoikhoabieu_view, name='giangvien_xem_tkb'),

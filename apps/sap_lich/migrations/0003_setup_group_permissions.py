@@ -48,9 +48,9 @@ def setup_group_permissions(apps, schema_editor):
         'Trưởng Khoa': [view_saplich, view_tkb, change_tkb, view_user],
         'Truong_Khoa': [view_saplich, view_tkb, change_tkb, view_user],
         
-        # Trưởng Bộ Môn - chỉ có quyền view
-        'Trưởng Bộ Môn': [view_saplich, view_tkb, view_user],
-        'Truong_Bo_Mon': [view_saplich, view_tkb, view_user],
+        # Trưởng Bộ Môn - có quyền view và change TKB (trong phạm vi bộ môn)
+        'Trưởng Bộ Môn': [view_saplich, view_tkb, change_tkb, view_user],
+        'Truong_Bo_Mon': [view_saplich, view_tkb, change_tkb, view_user],
         
         # Giảng Viên - chỉ có quyền view
         'Giảng Viên': [view_saplich, view_tkb, view_user],

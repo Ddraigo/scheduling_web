@@ -177,3 +177,4 @@ src/
 # Deployment
 deploy.zip
 output.tar.gz
+output/
