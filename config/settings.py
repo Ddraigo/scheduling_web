@@ -295,8 +295,7 @@ JAZZMIN_SETTINGS = {
     "copyright": "",
     "search_model": "auth.User",
     "topmenu_links": [
-        {"name": "Trang chủ", "url": "/"},
-        {"name": "Dữ liệu", "url": "/data_table/"},
+        # {"name": "Trang chủ", "url": "/"},
     ],
     "usermenu_links": [
         {"name": "Hồ sơ", "url": "/user-profile/", "icon": "fas fa-user-circle"},
@@ -333,7 +332,7 @@ JAZZMIN_SETTINGS = {
     ],
     # Hide entire apps
     # auth app sẽ được ẩn động dựa vào has_module_permission trong custom admin
-    "hide_apps": ["authtoken"],  # Ẩn authtoken cho tất cả users
+    "hide_apps": ["authtoken"],  # Chỉ ẩn authtoken
     # Show all apps including new ones
     "show_ui_builder": False,
     # Custom links under "Sắp lịch" in sidebar

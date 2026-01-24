@@ -65,21 +65,23 @@ def get_custom_links_for_user(request):
     logger.debug(f"Building custom links for user={user.username}, role={role_info['role']}")
     logger.debug(f"Permissions: view_saplich={has_view_saplich}, change_saplich={has_change_saplich}, add_saplich={has_add_saplich}")
     
-    # SAP_LICH: Thêm scheduler links nếu có quyền add/change
+    # SAP_LICH: Scheduler links - Sắp lịch chỉ admin có quyền
     if has_add_saplich or has_change_saplich:
-        sap_lich_links.extend([
-            {
-                "name": "Sắp lịch (Thuật toán)",
-                "url": "/admin/sap_lich/algo-scheduler/",
-                "icon": "fas fa-robot",
-            },
-            {
-                "name": "Chat Bot Hỗ trợ (LLM)",
-                "url": "/admin/sap_lich/llm-scheduler/",
-                "icon": "fas fa-comments",
-            },
-        ])
-        logger.debug(f"User {user.username}: Added scheduler links")
+        sap_lich_links.append({
+            "name": "Sắp lịch (Thuật toán)",
+            "url": "/admin/sap_lich/algo-scheduler/",
+            "icon": "fas fa-robot",
+        })
+        logger.debug(f"User {user.username}: Added algo scheduler link")
+    
+    # Chat Bot - TẤT CẢ users có role hợp lệ đều truy cập được
+    if role_info['role'] is not None:
+        sap_lich_links.append({
+            "name": "Chat Bot Hỗ trợ (LLM)",
+            "url": "/admin/sap_lich/llm-scheduler/",
+            "icon": "fas fa-comments",
+        })
+        logger.debug(f"User {user.username}: Added LLM scheduler link")
     
     # XEM TKB: Nếu có permission view_saplich
     if has_view_saplich:
@@ -100,14 +102,16 @@ def get_custom_links_for_user(request):
         })
         logger.debug(f"User {user.username}: Added 'Xem TKB' link")
     
-    # QUẢN LÝ TKB: Nếu có permission change_saplich
-    if has_change_saplich:
+    # QUẢN LÝ TKB: admin, truong_khoa, truong_bo_mon (KHÔNG cho giang_vien)
+    if has_change_saplich or role_info['role'] in ['admin', 'truong_khoa', 'truong_bo_mon']:
         if role_info['role'] == 'admin':
             manage_tkb_url = "/admin/sap_lich/tkb-manage/"
         elif role_info['role'] == 'truong_khoa':
             manage_tkb_url = f"/truong-khoa/{ma_gv}/quan-ly-tkb/"
+        elif role_info['role'] == 'truong_bo_mon':
+            manage_tkb_url = f"/truong-bo-mon/{ma_gv}/quan-ly-tkb/"
         else:
-            # Trưởng bộ môn, giảng viên không có quyền quản lý
+            # Giảng viên không có quyền quản lý
             manage_tkb_url = None
         
         if manage_tkb_url:
