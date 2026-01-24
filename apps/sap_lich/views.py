@@ -2577,6 +2577,11 @@ def tkb_mini_schedule_api(request):
         
         deleted = []
         for tkb in deleted_list:
+            # Lấy giáo viên từ phân công
+            phan_cong = tkb.ma_lop.phan_cong_list.first()
+            ma_gv = phan_cong.ma_gv.ma_gv if phan_cong and phan_cong.ma_gv else 'N/A'
+            ten_gv = phan_cong.ma_gv.ten_gv if phan_cong and phan_cong.ma_gv else 'N/A'
+            
             deleted.append({
                 'ma_tkb': tkb.ma_tkb,
                 'ma_lop': tkb.ma_lop.ma_lop,
@@ -2584,6 +2589,8 @@ def tkb_mini_schedule_api(request):
                 'ma_phong': tkb.ma_phong.ma_phong if tkb.ma_phong else 'N/A',
                 'thu': tkb.time_slot_id.thu,
                 'ca': tkb.time_slot_id.ca.ma_khung_gio,
+                'ma_gv': ma_gv,
+                'ten_gv': ten_gv,
             })
         
         return JsonResponse({

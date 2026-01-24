@@ -109,12 +109,15 @@
 
         <!-- Right: Deleted Schedule List (25%) -->
         <div class="col-lg-3 d-flex">
-            <div class="tkb-card flex-fill">
+            <div class="tkb-card flex-fill d-flex flex-column">
                 <div class="d-flex align-items-center justify-content-between mb-3" style="border-bottom: 1px solid var(--tkb-border); padding-bottom: 12px;">
                     <h2 class="mb-0">🗑️ Lịch đã xóa</h2>
                     <span class="badge-soft" id="deleted-count" style="background:#fee2e2;color:#991b1b;">0</span>
                 </div>
-                <div class="deleted-list" id="deleted-list"></div>
+                <div style="margin-bottom: 12px;">
+                    <input type="text" id="deleted-search" class="form-control form-control-sm" placeholder="🔍 Tìm lớp, giáo viên..." onkeyup="renderDeleted()">
+                </div>
+                <div class="deleted-list" id="deleted-list" style="flex: 1; overflow-y: auto; max-height: 280px;"></div>
             </div>
         </div>
     </div>
@@ -439,6 +442,12 @@
     </div>
 </div>
 
+<!-- Trash Zone for Drag & Drop Delete -->
+<div id="trash-zone" class="trash-zone">
+    <div class="trash-icon">🗑️</div>
+    <div class="trash-text">Kéo vào đây để xóa</div>
+</div>
+
 <script>
     (function() {
         // ==================================================
@@ -680,7 +689,9 @@
             dragState.draggedData = {
                 ma_tkb: e.target.dataset.maTkb,
                 thu: parseInt(e.target.dataset.thu),
-                ca: parseInt(e.target.dataset.ca)
+                ca: parseInt(e.target.dataset.ca),
+                mon_hoc: e.target.dataset.monHoc || e.target.dataset.maLop,
+                ma_lop: e.target.dataset.maLop
             };
             
             e.target.classList.add('dragging');
@@ -767,6 +778,64 @@
             });
         }
 
+        // ===== TRASH ZONE HANDLERS =====
+        function initTrashZone() {
+            const trashZone = document.getElementById('trash-zone');
+            if (!trashZone) return;
+            
+            trashZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                trashZone.classList.add('drag-over');
+            });
+
+            trashZone.addEventListener('dragleave', (e) => {
+                trashZone.classList.remove('drag-over');
+            });
+
+            trashZone.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                trashZone.classList.remove('drag-over');
+                
+                if (!dragState.draggedData) return;
+                
+                // Confirm trước khi xóa
+                const classInfo = `${dragState.draggedData.mon_hoc || dragState.draggedData.ma_lop} (Thứ ${dragState.draggedData.thu}, Ca ${dragState.draggedData.ca})`;
+                
+                if (!confirm(`Xóa môn học: ${classInfo}?`)) {
+                    return;
+                }
+                
+                // Gọi API để xóa
+                try {
+                    setLoading(true);
+                    const response = await fetchJSON(api.delete, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            ma_tkb: dragState.draggedData.ma_tkb,
+                            reason: 'Xóa bằng drag & drop'
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.status === 'success') {
+                        showMessage('success', 'Xóa môn học thành công');
+                        await loadSchedule();
+                    } else {
+                        showMessage('error', result.message || 'Lỗi khi xóa môn học');
+                    }
+                } catch (error) {
+                    console.error('Trash zone error:', error);
+                    showMessage('error', 'Lỗi kết nối khi xóa môn học');
+                } finally {
+                    setLoading(false);
+                    dragState.draggedElement = null;
+                    dragState.draggedData = null;
+                }
+            });
+        }
+
         function renderSchedule() {
             const tbody = els.miniBody;
             tbody.innerHTML = '';
@@ -815,6 +884,8 @@
                             div.dataset.maTkb = cls.ma_tkb;
                             div.dataset.thu = cls.thu;
                             div.dataset.ca = cls.ca;
+                            div.dataset.monHoc = cls.mon_hoc || cls.ma_lop;
+                            div.dataset.maLop = cls.ma_lop;
                             
                             div.addEventListener('dragstart', handleDragStart);
                             div.addEventListener('dragend', handleDragEnd);
@@ -836,14 +907,27 @@
 
         function renderDeleted() {
             const list = els.deletedList;
+            const searchInput = document.getElementById('deleted-search');
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            
+            // Lọc danh sách theo tìm kiếm
+            const filtered = state.deleted.filter(item => {
+                const searchText = `${item.mon_hoc} ${item.ma_lop} ${item.ten_gv || ''}`.toLowerCase();
+                return searchText.includes(searchTerm);
+            });
+            
             list.innerHTML = '';
-            els.deletedCount.textContent = state.deleted.length;
-            if (state.deleted.length === 0) {
-                list.innerHTML = '<div class="deleted-list-empty">✓ Không có lịch đã xóa</div>';
+            els.deletedCount.textContent = `${filtered.length}/${state.deleted.length}`;
+            
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="deleted-list-empty">' + 
+                    (state.deleted.length === 0 ? '✓ Không có lịch đã xóa' : '🔍 Không tìm thấy lớp') + 
+                    '</div>';
                 return;
             }
+            
             const selectedId = state.selectedDeleted ? state.selectedDeleted.ma_tkb : null;
-            state.deleted.forEach(item => {
+            filtered.forEach(item => {
                 const row = document.createElement('div');
                 row.className = 'deleted-row';
                 if (selectedId && selectedId === item.ma_tkb) {
@@ -861,6 +945,9 @@
                         <span>${item.ma_phong || 'Phòng ?'}</span>
                         <span>•</span>
                         <span>Thứ ${item.thu}, Ca ${item.ca}</span>
+                    </div>
+                    <div class="meta" style="margin-top: 4px; color: #0891b2; font-weight: 500;">
+                        👨‍🏫 ${item.ten_gv || 'N/A'} (${item.ma_gv || 'N/A'})
                     </div>
                 `;
                 
@@ -1532,6 +1619,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             fixModalStacking();
             initModals();
+            initTrashZone();  // Khởi tạo trash zone
             bindButtons();
             bindForms();
             bindFieldBehaviors();
