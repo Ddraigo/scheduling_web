@@ -42,6 +42,10 @@ class DataTableConfig(AppConfig):
                 def has_module_permission(self, request):
                     return True
                 
+                def changelist_view(self, request, extra_context=None):
+                    """Giữ nguyên changelist mặc định của Django admin."""
+                    return super().changelist_view(request, extra_context)
+                
                 def has_view_permission(self, request, obj=None):
                     if request.user.is_superuser:
                         return True
@@ -76,8 +80,10 @@ class DataTableConfig(AppConfig):
                     if role == 'admin':
                         return True
                     if role == 'truong_khoa':
-                        # Trưởng khoa có thể sửa trong khoa mình
-                        return True
+                        # Trưởng khoa có thể sửa hầu hết models NGOẠI TRỪ Khoa
+                        actual_model = model_name.lower().replace('proxy', '')
+                        blocked = ['khoa']  # Không cho sửa Khoa
+                        return actual_model not in blocked
                     if role == 'truong_bo_mon':
                         # Trưởng bộ môn chỉ sửa một số model
                         allowed = ['giangvien', 'nguyenvong']
@@ -100,7 +106,10 @@ class DataTableConfig(AppConfig):
                     if role == 'admin':
                         return True
                     if role == 'truong_khoa':
-                        return True
+                        # Trưởng khoa có thể thêm hầu hết models NGOẠI TRỪ Khoa
+                        actual_model = model_name.lower().replace('proxy', '')
+                        blocked = ['khoa']  # Không cho thêm Khoa
+                        return actual_model not in blocked
                     if role == 'truong_bo_mon':
                         # Trưởng bộ môn chỉ thêm một số model
                         allowed = ['nguyenvong']
@@ -119,7 +128,10 @@ class DataTableConfig(AppConfig):
                     if role == 'admin':
                         return True
                     if role == 'truong_khoa':
-                        return True
+                        # Trưởng khoa có thể xóa hầu hết models NGOẠI TRỪ Khoa
+                        actual_model = model_name.lower().replace('proxy', '')
+                        blocked = ['khoa']  # Không cho xóa Khoa
+                        return actual_model not in blocked
                     # Giảng viên: chỉ xóa nguyện vọng của mình
                     if role == 'giang_vien':
                         if model_name.lower().replace('proxy', '') == 'nguyenvong':
