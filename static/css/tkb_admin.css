@@ -434,6 +434,7 @@
     position: relative;
     background: var(--tkb-surface);
     transition: all 0.2s ease;
+    overflow: hidden;
 }
 
 .schedule-card tbody td:first-child {
@@ -449,10 +450,10 @@
     background: #fafbfc;
     cursor: pointer;
     user-select: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
     position: relative;
+    min-height: 80px;  /* Đảm bảo có đủ diện tích để drop */
 }
 
 .schedule-card tbody td.is-empty::after {
@@ -480,23 +481,50 @@
     border: 1px solid #cbd5e1;
     border-radius: 10px;
     padding: 10px 12px;
-    margin-bottom: 8px;
     background: var(--tkb-surface-2);
     font-size: 13px;
     line-height: 1.5;
-    cursor: pointer;
+    cursor: grab;  /* Thay đổi cursor để hiển thị có thể kéo */
     transition: all 0.15s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
     position: relative;
-    min-height: 80px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.class-chip:active {
+    cursor: grabbing;  /* Khi đang kéo */
+}
+
+.class-chip.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .class-chip:hover {
     border-color: var(--tkb-primary);
     box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15);
     background: #f1f5ff;
+}
+
+/* Highlight ô đích khi kéo qua */
+.schedule-card tbody td.drag-over {
+    background: linear-gradient(135deg, #fef3c7, #fde68a) !important;
+    border: 2px dashed var(--tkb-warning) !important;
+    box-shadow: inset 0 0 0 3px rgba(217, 119, 6, 0.1);
+}
+
+.schedule-card tbody td.drag-over::after {
+    content: '↓ Thả tại đây';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--tkb-warning);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .class-chip.selected {

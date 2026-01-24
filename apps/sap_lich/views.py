@@ -1826,6 +1826,98 @@ def tkb_update_api(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
+def tkb_update_timeslot_api(request):
+    """API cập nhật nhanh timeslot cho drag & drop - chỉ thay đổi thứ và ca"""
+    try:
+        data = json.loads(request.body)
+        ma_tkb = data.get('ma_tkb')
+        new_thu = data.get('thu')  # Thứ mới (2-8)
+        new_ca = data.get('ca')    # Ca mới (1-5)
+        
+        if not all([ma_tkb, new_thu, new_ca]):
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Thiếu thông tin: ma_tkb, thu, ca'
+            }, status=400)
+        
+        # Lấy TKB hiện tại
+        tkb = ThoiKhoaBieu.objects.get(ma_tkb=ma_tkb, is_deleted=False)
+        
+        # Tạo time_slot_id mới
+        new_time_slot_id = f"Thu{new_thu}-Ca{new_ca}"
+        
+        # Kiểm tra time slot có tồn tại không
+        try:
+            new_time_slot = TimeSlot.objects.get(time_slot_id=new_time_slot_id)
+        except TimeSlot.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Không tìm thấy time slot: {new_time_slot_id}'
+            }, status=404)
+        
+        # Lưu old data
+        old_time_slot_id = tkb.time_slot_id.time_slot_id
+        
+        # Lấy thông tin GV để validate
+        phan_cong = PhanCong.objects.filter(
+            ma_dot=tkb.ma_dot,
+            ma_lop=tkb.ma_lop
+        ).select_related('ma_gv').first()
+        ma_gv = phan_cong.ma_gv.ma_gv if phan_cong and phan_cong.ma_gv else None
+        
+        # Validate với exclude current
+        validation = validate_tkb_constraints(
+            tkb.ma_dot.ma_dot,
+            tkb.ma_lop.ma_lop,
+            tkb.ma_phong.ma_phong if tkb.ma_phong else None,
+            new_time_slot_id,
+            ma_gv=ma_gv,
+            exclude_ma_tkb=ma_tkb
+        )
+        
+        if not validation['valid']:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Không thể di chuyển vì vi phạm ràng buộc',
+                'errors': validation['errors'],
+                'warnings': validation['warnings']
+            }, status=400)
+        
+        # Cập nhật time slot
+        tkb.time_slot_id = new_time_slot
+        tkb.save()
+        
+        # Log
+        TKBLog.objects.create(
+            ma_tkb=ma_tkb,
+            action='MOVE',  # Thay vì UPDATE_TIMESLOT (quá dài)
+            user=request.user.username if request.user.is_authenticated else 'anonymous',
+            old_data={'time_slot_id': old_time_slot_id},
+            new_data={'time_slot_id': new_time_slot_id},
+            reason=f'Drag & drop: {old_time_slot_id} → {new_time_slot_id}'
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': f'Di chuyển thành công từ {old_time_slot_id} sang {new_time_slot_id}',
+            'warnings': validation['warnings']
+        })
+        
+    except ThoiKhoaBieu.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Không tìm thấy lịch học'
+        }, status=404)
+    except Exception as e:
+        logger.exception(f"Lỗi khi drag & drop TKB: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Lỗi: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
 def tkb_delete_api(request):
     """API xóa TKB (soft delete)"""
     try:

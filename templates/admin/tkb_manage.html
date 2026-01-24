@@ -475,6 +475,7 @@
             mini: "/api/tkb/mini-schedule/",
             create: "/api/tkb/create/",
             update: "/api/tkb/update/",
+            updateTimeslot: "/api/tkb/update-timeslot/",  // Drag & drop API
             delete: "/api/tkb/delete/",
             restore: "/api/tkb/restore/",
             swap: "/api/tkb/swap/",
@@ -668,6 +669,104 @@
             }
         }
 
+        // ===== DRAG & DROP HANDLERS =====
+        let dragState = {
+            draggedElement: null,
+            draggedData: null
+        };
+
+        function handleDragStart(e) {
+            dragState.draggedElement = e.target;
+            dragState.draggedData = {
+                ma_tkb: e.target.dataset.maTkb,
+                thu: parseInt(e.target.dataset.thu),
+                ca: parseInt(e.target.dataset.ca)
+            };
+            
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', dragState.draggedData.ma_tkb);
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            
+            // Xóa tất cả highlight
+            document.querySelectorAll('.drag-over').forEach(el => {
+                el.classList.remove('drag-over');
+            });
+        }
+
+        function makeCellDroppable(cell) {
+            cell.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                cell.classList.add('drag-over');
+            });
+
+            cell.addEventListener('dragleave', (e) => {
+                cell.classList.remove('drag-over');
+            });
+
+            cell.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                cell.classList.remove('drag-over');
+                
+                const targetThu = parseInt(cell.dataset.thu);
+                const targetCa = parseInt(cell.dataset.ca);
+                
+                if (!dragState.draggedData) return;
+                
+                // Kiểm tra xem có thay đổi không
+                if (dragState.draggedData.thu === targetThu && dragState.draggedData.ca === targetCa) {
+                    return; // Không thay đổi vị trí
+                }
+                
+                // Confirm trước khi di chuyển
+                const oldSlot = `Thứ ${dragState.draggedData.thu}, Ca ${dragState.draggedData.ca}`;
+                const newSlot = `Thứ ${targetThu}, Ca ${targetCa}`;
+                
+                if (!confirm(`Di chuyển môn học từ ${oldSlot} sang ${newSlot}?`)) {
+                    return;
+                }
+                
+                // Gọi API để cập nhật
+                try {
+                    setLoading(true);
+                    const response = await fetchJSON(api.updateTimeslot, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            ma_tkb: dragState.draggedData.ma_tkb,
+                            thu: targetThu,
+                            ca: targetCa
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.status === 'success') {
+                        showMessage('success', result.message);
+                        if (result.warnings && result.warnings.length > 0) {
+                            result.warnings.forEach(w => showMessage('warning', w));
+                        }
+                        await loadSchedule();
+                    } else {
+                        showMessage('error', result.message || 'Lỗi khi di chuyển môn học');
+                        if (result.errors && result.errors.length > 0) {
+                            result.errors.forEach(err => showMessage('error', err));
+                        }
+                    }
+                } catch (error) {
+                    console.error('Drag & drop error:', error);
+                    showMessage('error', 'Lỗi kết nối khi di chuyển môn học');
+                } finally {
+                    setLoading(false);
+                    dragState.draggedElement = null;
+                    dragState.draggedData = null;
+                }
+            });
+        }
+
         function renderSchedule() {
             const tbody = els.miniBody;
             tbody.innerHTML = '';
@@ -689,10 +788,16 @@
                 label.textContent = ca;
                 label.className = 'text-center fw-bold';
                 tr.appendChild(label);
-                for (let day = 2; day <= 8; day++) {
+                for (let day = 2; day < 9; day++) {
                     const td = document.createElement('td');
+                    td.dataset.thu = day;
+                    td.dataset.ca = ca;
                     const key = `${day}_${ca}`;
                     const classes = slots[key] || [];
+                    
+                    // Cho phép drop vào ô
+                    makeCellDroppable(td);
+                    
                     if (classes.length === 0) {
                         td.classList.add('is-empty');
                         td.addEventListener('click', () => {
@@ -704,6 +809,16 @@
                             const div = document.createElement('div');
                             div.className = 'class-chip' + (state.selected && state.selected.ma_tkb === cls.ma_tkb ? ' selected' : '');
                             div.innerHTML = `<div class="fw-semibold">${cls.mon_hoc || cls.ma_lop}</div><div class="class-meta"><span>${cls.ma_lop || ''}</span><span>${cls.ma_phong || 'Phòng ?'}</span><span>Thứ ${cls.thu} - Ca ${cls.ca}</span></div>`;
+                            
+                            // Thêm drag & drop
+                            div.draggable = true;
+                            div.dataset.maTkb = cls.ma_tkb;
+                            div.dataset.thu = cls.thu;
+                            div.dataset.ca = cls.ca;
+                            
+                            div.addEventListener('dragstart', handleDragStart);
+                            div.addEventListener('dragend', handleDragEnd);
+                            
                             div.addEventListener('click', (ev) => {
                                 ev.stopPropagation();
                                 state.selected = cls;
