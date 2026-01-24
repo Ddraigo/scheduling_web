@@ -1875,7 +1875,10 @@ def tkb_update_timeslot_api(request):
             exclude_ma_tkb=ma_tkb
         )
         
+        logger.info(f"Validation result for drag&drop: {validation}")  # Debug
+        
         if not validation['valid']:
+            logger.warning(f"Drag&drop blocked: {validation['errors']}")  # Debug
             return JsonResponse({
                 'status': 'error',
                 'message': 'Không thể di chuyển vì vi phạm ràng buộc',
