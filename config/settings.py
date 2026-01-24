@@ -326,6 +326,7 @@ JAZZMIN_SETTINGS = {
         "scheduling.NguyenVong",
         "scheduling.TimeSlot",
         "scheduling.ThoiKhoaBieu",
+        "scheduling.TKBLog",  # Ẩn TKBLog để tránh trùng lặp
         "data_table.HideShowFilter",
         "data_table.ModelFilter",
         "data_table.PageItems",
@@ -355,18 +356,18 @@ JAZZMIN_SETTINGS = {
             },
         ],
         "scheduling": [
-            # === Xem và Quản lý TKB ===
+            # Menu cho Xem và Quản lý TKB
             {
                 "name": "Xem Thời Khóa Biểu",
                 "url": "/admin/sap_lich/thoikhoabieu/",
                 "icon": "fas fa-calendar-alt",
-                "permissions": ["scheduling.view_thoikhoabieu"]
+                "permissions": ["sap_lich.view_saplich"]  # Dùng sap_lich vì scheduling models bị ẩn
             },
             {
                 "name": "Quản lý TKB",
                 "url": "/admin/sap_lich/tkb-manage/",
                 "icon": "fas fa-edit",
-                "permissions": ["scheduling.change_thoikhoabieu"]
+                "permissions": ["sap_lich.change_saplich"]
             },
         ],
         "data_table": [
