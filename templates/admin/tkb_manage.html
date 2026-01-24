@@ -14,99 +14,114 @@
     <!-- Message Container (Fixed Position) -->
     <div id="tkb-message-container"></div>
 
-    <!-- Header Section -->
-    <div class="tkb-card">
-        <div class="d-flex flex-wrap justify-content-between gap-3 align-items-start mb-3">
-            <div class="flex-grow-1">
-                <h2 class="mb-2">Quản lý Thời Khoá Biểu</h2>
-                <div class="tkb-legend">
-                    <span><span class="dot" style="background:#eef2ff;border-color:#c7d2fe;"></span>Ô trống có thể thêm</span>
-                    <span><span class="dot" style="background:#dbeafe;border-color:#7dd3fc;"></span>Lịch đang xem</span>
-                    <span><span class="dot" style="background:#fee2e2;border-color:#fca5a5;"></span>Lịch đã xóa</span>
+    <!-- Top Section: Header + Deleted List (3:1 ratio) -->
+    <div class="row g-3">
+        <!-- Left: Header Section (75%) -->
+        <div class="col-lg-9 d-flex">
+            <div class="tkb-card flex-fill">
+                <div class="d-flex flex-wrap justify-content-between gap-3 align-items-start mb-3">
+                    <div class="flex-grow-1">
+                        <h2 class="mb-2">Quản lý Thời Khoá Biểu</h2>
+                        <div class="tkb-legend">
+                            <span><span class="dot" style="background:#eef2ff;border-color:#c7d2fe;"></span>Ô trống có thể thêm</span>
+                            <span><span class="dot" style="background:#dbeafe;border-color:#7dd3fc;"></span>Lịch đang xem</span>
+                            <span><span class="dot" style="background:#fee2e2;border-color:#fca5a5;"></span>Lịch đã xóa</span>
+                        </div>
+                    </div>
+                    <div id="tkb-selection-pill" class="badge-soft info" style="display:none; align-self: center;"></div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="mb-4">
+                    <div class="tkb-label mb-3">Bộ lọc</div>
+                    <div class="tkb-filter-row">
+                        <div>
+                            <label class="tkb-label">Đợt xếp lịch</label>
+                            <select id="dotSelect" class="tkb-select" onchange="tkbPage.updateFilters()">
+                                <option value="">-- Chọn đợt --</option>
+                                {% for dot in dots %}
+                                    <option value="{{ dot.ma_dot }}" {% if dot.ma_dot == ma_dot %}selected{% endif %}>{{ dot.ten_dot }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="tkb-label">Khoa</label>
+                            <select id="khoaSelect" class="tkb-select" onchange="tkbPage.updateFilters()">
+                                <option value="">-- Tất cả khoa --</option>
+                                {% for khoa in khoa_list %}
+                                    <option value="{{ khoa.ma_khoa }}" {% if khoa.ma_khoa == ma_khoa %}selected{% endif %}>{{ khoa.ten_khoa }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="tkb-label">Xem theo</label>
+                            <select id="viewTypeSelect" class="tkb-select" onchange="tkbPage.handleViewTypeChange()">
+                                <option value="teacher" {% if view_type == 'teacher' or not view_type %}selected{% endif %}>Giáo viên</option>
+                                <option value="room" {% if view_type == 'room' %}selected{% endif %}>Phòng học</option>
+                            </select>
+                        </div>
+                        <div id="teacherSelectGroup" {% if view_type == 'room' %}style="display:none;"{% endif %}>
+                            <label class="tkb-label">Giáo viên</label>
+                            <select id="teacherSelect" class="tkb-select" onchange="tkbPage.updateFilters()">
+                                <option value="">-- Chọn giáo viên --</option>
+                                {% for gv in teachers %}
+                                    <option value="{{ gv.ma_gv }}" {% if gv.ma_gv == selected_id %}selected{% endif %}>{{ gv.ma_gv }} - {{ gv.ten_gv }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div id="roomSelectGroup" {% if view_type != 'room' %}style="display:none;"{% endif %}>
+                            <label class="tkb-label">Phòng học</label>
+                            <select id="roomSelect" class="tkb-select" onchange="tkbPage.updateFilters()">
+                                <option value="">-- Chọn phòng --</option>
+                                {% for phong in phongs %}
+                                    <option value="{{ phong.ma_phong }}" {% if phong.ma_phong == selected_id %}selected{% endif %}>{{ phong.ma_phong }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Bar -->
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-2" style="border-top: 1px solid var(--tkb-border); padding-top: 16px;">
+                    <div class="tkb-action-bar">
+                        <button id="btnAdd" class="tkb-btn tkb-btn-primary" type="button" title="Thêm lịch mới">
+                            <span>➕</span> Thêm mới
+                        </button>
+                        <button id="btnEdit" class="tkb-btn tkb-btn-success" type="button" disabled title="Sửa lịch">
+                            <span>✏️</span> Sửa
+                        </button>
+                        <button id="btnSwap" class="tkb-btn tkb-btn-warning" type="button" disabled title="Hoán đổi 2 lịch">
+                            <span>⇄</span> Hoán đổi
+                        </button>
+                        <button id="btnDelete" class="tkb-btn tkb-btn-danger" type="button" disabled title="Xóa lịch">
+                            <span>🗑️</span> Xóa
+                        </button>
+                        <button id="btnRestore" class="tkb-btn tkb-btn-ghost" type="button" disabled title="Phục hồi lịch">
+                            <span>↩️</span> Phục hồi
+                        </button>
+                    </div>
+                    <div class="form-text-muted">
+                        <span id="action-hint">Chọn lịch để Sửa/Xóa, chọn 2 lịch để Hoán đổi</span>
+                    </div>
                 </div>
             </div>
-            <div id="tkb-selection-pill" class="badge-soft info" style="display:none; align-self: center;"></div>
         </div>
 
-        <!-- Filter Bar -->
-        <div class="mb-4">
-            <div class="tkb-label mb-3">Bộ lọc</div>
-            <div class="tkb-filter-row">
-                <div>
-                    <label class="tkb-label">Đợt xếp lịch</label>
-                    <select id="dotSelect" class="tkb-select" onchange="tkbPage.updateFilters()">
-                        <option value="">-- Chọn đợt --</option>
-                        {% for dot in dots %}
-                            <option value="{{ dot.ma_dot }}" {% if dot.ma_dot == ma_dot %}selected{% endif %}>{{ dot.ten_dot }}</option>
-                        {% endfor %}
-                    </select>
+        <!-- Right: Deleted Schedule List (25%) -->
+        <div class="col-lg-3 d-flex">
+            <div class="tkb-card flex-fill">
+                <div class="d-flex align-items-center justify-content-between mb-3" style="border-bottom: 1px solid var(--tkb-border); padding-bottom: 12px;">
+                    <h2 class="mb-0">🗑️ Lịch đã xóa</h2>
+                    <span class="badge-soft" id="deleted-count" style="background:#fee2e2;color:#991b1b;">0</span>
                 </div>
-                <div>
-                    <label class="tkb-label">Khoa</label>
-                    <select id="khoaSelect" class="tkb-select" onchange="tkbPage.updateFilters()">
-                        <option value="">-- Tất cả khoa --</option>
-                        {% for khoa in khoa_list %}
-                            <option value="{{ khoa.ma_khoa }}" {% if khoa.ma_khoa == ma_khoa %}selected{% endif %}>{{ khoa.ten_khoa }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label class="tkb-label">Xem theo</label>
-                    <select id="viewTypeSelect" class="tkb-select" onchange="tkbPage.handleViewTypeChange()">
-                        <option value="teacher" {% if view_type == 'teacher' or not view_type %}selected{% endif %}>Giáo viên</option>
-                        <option value="room" {% if view_type == 'room' %}selected{% endif %}>Phòng học</option>
-                    </select>
-                </div>
-                <div id="teacherSelectGroup" {% if view_type == 'room' %}style="display:none;"{% endif %}>
-                    <label class="tkb-label">Giáo viên</label>
-                    <select id="teacherSelect" class="tkb-select" onchange="tkbPage.updateFilters()">
-                        <option value="">-- Chọn giáo viên --</option>
-                        {% for gv in teachers %}
-                            <option value="{{ gv.ma_gv }}" {% if gv.ma_gv == selected_id %}selected{% endif %}>{{ gv.ma_gv }} - {{ gv.ten_gv }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div id="roomSelectGroup" {% if view_type != 'room' %}style="display:none;"{% endif %}>
-                    <label class="tkb-label">Phòng học</label>
-                    <select id="roomSelect" class="tkb-select" onchange="tkbPage.updateFilters()">
-                        <option value="">-- Chọn phòng --</option>
-                        {% for phong in phongs %}
-                            <option value="{{ phong.ma_phong }}" {% if phong.ma_phong == selected_id %}selected{% endif %}>{{ phong.ma_phong }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- Action Bar -->
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-2" style="border-top: 1px solid var(--tkb-border); padding-top: 16px;">
-            <div class="tkb-action-bar">
-                <button id="btnAdd" class="tkb-btn tkb-btn-primary" type="button" title="Thêm lịch mới">
-                    <span>➕</span> Thêm mới
-                </button>
-                <button id="btnEdit" class="tkb-btn tkb-btn-success" type="button" disabled title="Sửa lịch">
-                    <span>✏️</span> Sửa
-                </button>
-                <button id="btnSwap" class="tkb-btn tkb-btn-warning" type="button" disabled title="Hoán đổi 2 lịch">
-                    <span>⇄</span> Hoán đổi
-                </button>
-                <button id="btnDelete" class="tkb-btn tkb-btn-danger" type="button" disabled title="Xóa lịch">
-                    <span>🗑️</span> Xóa
-                </button>
-                <button id="btnRestore" class="tkb-btn tkb-btn-ghost" type="button" disabled title="Phục hồi lịch">
-                    <span>↩️</span> Phục hồi
-                </button>
-            </div>
-            <div class="form-text-muted">
-                <span id="action-hint">Chọn lịch để Sửa/Xóa, chọn 2 lịch để Hoán đổi</span>
+                <div class="deleted-list" id="deleted-list"></div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content: Current Schedule + Deleted List -->
+    <!-- Main Content: Current Schedule (Full Width) -->
     <div class="row g-3">
-        <!-- Current Schedule -->
-        <div class="col-lg-8">
+        <div class="col-12">
             <div class="tkb-card schedule-card">
                 <div class="d-flex align-items-center justify-content-between mb-3" style="border-bottom: 1px solid var(--tkb-border); padding-bottom: 12px;">
                     <h2 class="mb-0">📅 Lịch hiện tại</h2>
@@ -116,24 +131,13 @@
                     <table class="table table-sm mb-0">
                         <thead>
                             <tr>
-                                <th style="width:50px;">Tiết</th>
+                                <th style="width:50px;">Ca</th>
                                 <th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th><th>T7</th><th>CN</th>
                             </tr>
                         </thead>
                         <tbody id="mini-schedule-body"></tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-
-        <!-- Deleted Schedule List -->
-        <div class="col-lg-4">
-            <div class="tkb-card">
-                <div class="d-flex align-items-center justify-content-between mb-3" style="border-bottom: 1px solid var(--tkb-border); padding-bottom: 12px;">
-                    <h2 class="mb-0">🗑️ Lịch đã xóa</h2>
-                    <span class="badge-soft" id="deleted-count" style="background:#fee2e2;color:#991b1b;">0</span>
-                </div>
-                <div class="deleted-list" id="deleted-list"></div>
             </div>
         </div>
     </div>

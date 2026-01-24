@@ -178,7 +178,7 @@ if DB_ENGINE and DB_NAME and (DB_USER or DB_USE_WINDOWS_AUTH):
         
         # With Windows Authentication we should not pass user/password
         if DB_USE_WINDOWS_AUTH:
-            _mssql_options.pop('extra_params', None)
+            _mssql_options['extra_params'] = 'TrustServerCertificate=yes;'
             _mssql_options['trusted_connection'] = 'yes'
 
         DATABASES = {
@@ -241,8 +241,9 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-#if not DEBUG:
-#    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# WhiteNoise static files storage for production
+# This ensures static files are compressed and have unique hashes for cache busting
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -255,7 +256,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Auth settings
 LOGIN_URL = '/login/'  # Trang login cho users thông thường
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'  # Redirect về trang login sau khi logout
 
 # ### DYNAMIC_DATATB Settings ###
 DYNAMIC_DATATB = {
@@ -477,6 +478,24 @@ JAZZMIN_SETTINGS = {
                 "url": "/admin/scheduling/thoikhoabieu/",
                 "icon": "fas fa-calendar-check",
                 "permissions": ["scheduling.view_thoikhoabieu"]  # Tất cả role
+            },
+            {
+                "name": "Hide show filters",
+                "url": "/admin/data_table/hideshowfilter/",
+                "icon": "fas fa-eye-slash",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Model filters",
+                "url": "/admin/data_table/modelfilter/",
+                "icon": "fas fa-filter",
+                "permissions": ["auth.view_user"]
+            },
+            {
+                "name": "Page items",
+                "url": "/admin/data_table/pageitems/",
+                "icon": "fas fa-list",
+                "permissions": ["auth.view_user"]
             },
         ],
         "pages": [
