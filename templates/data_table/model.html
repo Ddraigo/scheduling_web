@@ -108,7 +108,7 @@
                                         <img class="export-csv-img" style="width: 40px" src="{% static "img/csv.png" %}" alt="img">
                                     </a>
                                 </div>
-                                {% if request.user.is_authenticated %}
+                                {% if has_add_permission %}
                                 <div>
                                     <button data-toggle="modal" data-target="#addSales" type="button" class="btn btn-primary p-0 px-3 py-2 ">
                                         Add
@@ -167,10 +167,14 @@
                                             <td class="td_{{ field_name }} data-td">{{ item|getattribute:field_name }}</td>
                                             {% endfor %}
                 
-                                            {% if request.user.is_authenticated %}
-                                            <td class="d-none action-td" >
+                                            {% if has_change_permission or has_delete_permission %}
+                                            <td class="d-none action-td">
+                                                {% if has_change_permission %}
                                                 <a data-toggle="modal" data-target="#editSales-{{item.pk}}" class="btn btn-primary btn-sm p-0 px-3 pr-4 py-2 " href="#"><i class="tim-icons icon-pencil"></i></a>
+                                                {% endif %}
+                                                {% if has_delete_permission %}
                                                 <a data-toggle="modal" data-target="#deleteSales-{{item.pk}}" class="btn btn-danger btn-sm p-0 px-3 pr-4 py-2 " href="#"><i class="tim-icons ti icon-trash-simple"></i></a>
+                                                {% endif %}
                                             </td>
                                             {% else %}
                                             <td class="d-none action-td">
