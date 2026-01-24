@@ -442,6 +442,50 @@
     </div>
 </div>
 
+<!-- Modal: Đổi phòng khi Drag & Drop bị xung đột -->
+<div class="modal fade" id="dragConflictModal" tabindex="-1" role="dialog" aria-labelledby="dragConflictModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="dragConflictModalLabel">⚠️ Xung đột phòng học</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" id="drag-conflict-errors"></div>
+                <div id="drag-conflict-info" class="mb-3">
+                    <strong>Môn học:</strong> <span id="drag-mon-hoc"></span><br>
+                    <strong>Vị trí mới:</strong> <span id="drag-new-slot"></span><br>
+                    <strong>Phòng hiện tại:</strong> <span id="drag-current-room"></span>
+                </div>
+                <hr>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label class="tkb-label">Chọn phòng thay thế (không bị xung đột)</label>
+                        <select class="form-select" id="drag-new-room">
+                            <option value="">-- Chọn phòng khác --</option>
+                            {% for phong in phongs %}
+                                <option value="{{ phong.ma_phong }}" data-loai="{{ phong.loai_phong|default:'' }}">
+                                    {{ phong.ma_phong }} ({{ phong.suc_chua }} chỗ){% if phong.loai_phong %} - {{ phong.loai_phong }}{% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div id="drag-room-hint" class="form-text-muted mt-2"></div>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3" role="alert">
+                    💡 <strong>Gợi ý:</strong> Chọn một phòng khác không bị xung đột, hoặc nhấn "Hủy" để giữ nguyên vị trí cũ.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnDragCancel">Hủy</button>
+                <button type="button" class="btn btn-primary" id="btnDragChangeRoom">Đổi phòng và di chuyển</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Trash Zone for Drag & Drop Delete -->
 <div id="trash-zone" class="trash-zone">
     <div class="trash-icon">🗑️</div>
@@ -681,7 +725,9 @@
         // ===== DRAG & DROP HANDLERS =====
         let dragState = {
             draggedElement: null,
-            draggedData: null
+            draggedData: null,
+            targetThu: null,
+            targetCa: null
         };
 
         function handleDragStart(e) {
@@ -733,49 +779,196 @@
                     return; // Không thay đổi vị trí
                 }
                 
-                // Confirm trước khi di chuyển
-                const oldSlot = `Thứ ${dragState.draggedData.thu}, Ca ${dragState.draggedData.ca}`;
-                const newSlot = `Thứ ${targetThu}, Ca ${targetCa}`;
+                // Lưu target để dùng sau
+                dragState.targetThu = targetThu;
+                dragState.targetCa = targetCa;
                 
-                if (!confirm(`Di chuyển môn học từ ${oldSlot} sang ${newSlot}?`)) {
+                // Gọi API để cập nhật
+                await attemptDragMove(targetThu, targetCa);
+            });
+        }
+
+        async function attemptDragMove(targetThu, targetCa, newRoomId = null) {
+            try {
+                setLoading(true);
+                
+                // Nếu có phòng mới, gọi API update với cả phòng
+                const apiUrl = newRoomId ? api.update : api.updateTimeslot;
+                const payload = newRoomId ? {
+                    ma_tkb: dragState.draggedData.ma_tkb,
+                    ma_phong: newRoomId,
+                    time_slot_id: `Thu${targetThu}-Ca${targetCa}`
+                } : {
+                    ma_tkb: dragState.draggedData.ma_tkb,
+                    thu: targetThu,
+                    ca: targetCa
+                };
+                
+                const response = await fetchJSON(apiUrl, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                
+                // Parse JSON bất kể status code (400 hay 200)
+                let result;
+                try {
+                    result = await response.json();
+                } catch (parseError) {
+                    console.error('JSON parse error:', parseError);
+                    showMessage('error', 'Lỗi phản hồi từ server');
+                    dragState.draggedElement = null;
+                    dragState.draggedData = null;
                     return;
                 }
                 
-                // Gọi API để cập nhật
-                try {
-                    setLoading(true);
-                    const response = await fetchJSON(api.updateTimeslot, {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            ma_tkb: dragState.draggedData.ma_tkb,
-                            thu: targetThu,
-                            ca: targetCa
-                        })
+                console.log('Update timeslot response:', result);  // Debug
+                console.log('Response status:', response.status);  // Debug
+                
+                if (result.status === 'success' || response.ok) {
+                    showMessage('success', result.message);
+                    if (result.warnings && result.warnings.length > 0) {
+                        result.warnings.forEach(w => showMessage('warning', w));
+                    }
+                    await loadSchedule();
+                    dragState.draggedElement = null;
+                    dragState.draggedData = null;
+                } else {
+                    // Kiểm tra nếu lỗi là về phòng hoặc xung đột
+                    const hasRoomConflict = result.errors && result.errors.some(err => {
+                        const errLower = err.toLowerCase();
+                        return errLower.includes('phòng') && (
+                            errLower.includes('trùng') || 
+                            errLower.includes('xung đột') ||
+                            errLower.includes('bị chiếm') ||
+                            errLower.includes('đã bị')
+                        );
                     });
                     
-                    const result = await response.json();
+                    console.log('Has room conflict:', hasRoomConflict, 'newRoomId:', newRoomId);  // Debug
+                    console.log('Errors:', result.errors);  // Debug
                     
-                    if (result.status === 'success') {
-                        showMessage('success', result.message);
-                        if (result.warnings && result.warnings.length > 0) {
-                            result.warnings.forEach(w => showMessage('warning', w));
-                        }
-                        await loadSchedule();
+                    if (hasRoomConflict && !newRoomId) {
+                        // Mở modal để chọn phòng khác
+                        console.log('Opening conflict modal...');  // Debug
+                        openDragConflictModal(result, targetThu, targetCa);
                     } else {
+                        // Hiển thị lỗi bình thường
                         showMessage('error', result.message || 'Lỗi khi di chuyển môn học');
                         if (result.errors && result.errors.length > 0) {
                             result.errors.forEach(err => showMessage('error', err));
                         }
+                        dragState.draggedElement = null;
+                        dragState.draggedData = null;
                     }
-                } catch (error) {
-                    console.error('Drag & drop error:', error);
-                    showMessage('error', 'Lỗi kết nối khi di chuyển môn học');
-                } finally {
-                    setLoading(false);
-                    dragState.draggedElement = null;
-                    dragState.draggedData = null;
                 }
-            });
+            } catch (error) {
+                console.error('Drag & drop error:', error);
+                showMessage('error', 'Lỗi kết nối khi di chuyển môn học');
+                dragState.draggedElement = null;
+                dragState.draggedData = null;
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function openDragConflictModal(result, targetThu, targetCa) {
+            // Lấy thông tin TKB hiện tại
+            const currentItem = state.schedule.find(item => item.ma_tkb === dragState.draggedData.ma_tkb);
+            
+            // Hiển thị thông tin
+            document.getElementById('drag-mon-hoc').textContent = dragState.draggedData.mon_hoc;
+            document.getElementById('drag-new-slot').textContent = `Thứ ${targetThu}, Ca ${targetCa}`;
+            document.getElementById('drag-current-room').textContent = currentItem ? currentItem.ma_phong : 'N/A';
+            
+            // Hiển thị lỗi
+            const errorsDiv = document.getElementById('drag-conflict-errors');
+            errorsDiv.innerHTML = result.errors.map(err => `<div>${err}</div>`).join('');
+            
+            // Reset select
+            document.getElementById('drag-new-room').value = '';
+            document.getElementById('drag-room-hint').textContent = '';
+            
+            // Mở modal bằng vanilla JavaScript hoặc Bootstrap
+            const modalEl = document.getElementById('dragConflictModal');
+            if (modalEl) {
+                // Thử dùng Bootstrap modal nếu có
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                } else if (window.jQuery && jQuery.fn.modal) {
+                    // Fallback sang jQuery nếu có
+                    jQuery(modalEl).modal('show');
+                } else {
+                    // Vanilla JS fallback
+                    modalEl.classList.add('show');
+                    modalEl.style.display = 'block';
+                    document.body.classList.add('modal-open');
+                    
+                    // Tạo backdrop
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    backdrop.id = 'drag-modal-backdrop';
+                    document.body.appendChild(backdrop);
+                }
+            }
+        }
+
+        // Xử lý khi người dùng chọn đổi phòng
+        function handleDragChangeRoom() {
+            const newRoomId = document.getElementById('drag-new-room').value;
+            
+            if (!newRoomId) {
+                alert('Vui lòng chọn phòng thay thế');
+                return;
+            }
+            
+            // Đóng modal
+            const modalEl = document.getElementById('dragConflictModal');
+            if (modalEl) {
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+                } else if (window.jQuery && jQuery.fn.modal) {
+                    jQuery(modalEl).modal('hide');
+                } else {
+                    // Vanilla JS
+                    modalEl.classList.remove('show');
+                    modalEl.style.display = 'none';
+                    document.body.classList.remove('modal-open');
+                    const backdrop = document.getElementById('drag-modal-backdrop');
+                    if (backdrop) backdrop.remove();
+                }
+            }
+            
+            // Thử di chuyển với phòng mới
+            attemptDragMove(dragState.targetThu, dragState.targetCa, newRoomId);
+        }
+
+        // Xử lý khi người dùng hủy
+        function handleDragCancel() {
+            // Đóng modal
+            const modalEl = document.getElementById('dragConflictModal');
+            if (modalEl) {
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+                } else if (window.jQuery && jQuery.fn.modal) {
+                    jQuery(modalEl).modal('hide');
+                } else {
+                    // Vanilla JS
+                    modalEl.classList.remove('show');
+                    modalEl.style.display = 'none';
+                    document.body.classList.remove('modal-open');
+                    const backdrop = document.getElementById('drag-modal-backdrop');
+                    if (backdrop) backdrop.remove();
+                }
+            }
+            
+            // Reset drag state
+            dragState.draggedElement = null;
+            dragState.draggedData = null;
+            dragState.targetThu = null;
+            dragState.targetCa = null;
         }
 
         // ===== TRASH ZONE HANDLERS =====
@@ -1246,6 +1439,8 @@
             document.getElementById('swap-select-b').addEventListener('change', updateSwapInfo);
             document.getElementById('swap-phong').addEventListener('change', updateSwapInfo);
             document.getElementById('btnRestoreSubmit').addEventListener('click', handleRestoreSubmit);
+            document.getElementById('btnDragChangeRoom').addEventListener('click', handleDragChangeRoom);
+            document.getElementById('btnDragCancel').addEventListener('click', handleDragCancel);
         }
 
         function updateSwapInfo() {
