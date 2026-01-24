@@ -159,13 +159,17 @@ def can_manage_schedule(user):
     Kiểm tra user có quyền quản lý lịch không
     - Admin: toàn quyền
     - Trưởng Khoa: quản lý trong khoa
-    - Trưởng Bộ Môn: chỉ xem (không quản lý)
-    - Giảng viên: chỉ xem của mình
+    - Trưởng Bộ Môn: quản lý trong bộ môn
+    - Giảng viên: KHÔNG có quyền quản lý
     """
     if has_admin_access(user):
         return True
     if has_truong_khoa_access(user):
         return True
+    if has_truong_bo_mon_access(user):
+        role_info = get_user_role_info(user)
+        # Trưởng bộ môn có thể quản lý (chỉ trong scope bộ môn của họ)
+        return role_info['role'] == 'truong_bo_mon'
     return False
 
 

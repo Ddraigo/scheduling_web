@@ -19,6 +19,7 @@ class Khoa(models.Model):
         verbose_name = "Khoa"
         verbose_name_plural = "Các Khoa"
         ordering = ['ma_khoa']
+        default_permissions = ()  
     
     def save(self, *args, **kwargs):
         """Auto-generate ma_khoa: KHOA-001, KHOA-002, ..."""
@@ -48,6 +49,7 @@ class BoMon(models.Model):
         verbose_name_plural = "Các Bộ môn"
         ordering = ['ma_bo_mon']
         unique_together = [['ma_khoa', 'ten_bo_mon']]  # UQ_BM_Ten_Trong_Khoa
+        default_permissions = ()  
     
     def save(self, *args, **kwargs):
         """Auto-generate ma_bo_mon: BM-{khoa_number}-{3 digits}"""
@@ -85,6 +87,7 @@ class GiangVien(models.Model):
         indexes = [
             models.Index(fields=['ma_bo_mon'], name='IX_GV_MaBoMon'),
         ]
+        default_permissions = ()  
     
     def save(self, *args, **kwargs):
         """Auto-generate ma_gv: GV001, GV002, ..."""
@@ -123,6 +126,7 @@ class DuKienDT(models.Model):
         verbose_name = "Dự kiến đào tạo"
         verbose_name_plural = "Dự kiến đào tạo"
         ordering = ['-nam_hoc', '-hoc_ky']
+        default_permissions = ()  
     
     def save(self, *args, **kwargs):
         """Auto-generate ma_du_kien_dt: {NamHoc}_HK{HocKy}"""
@@ -156,6 +160,7 @@ class MonHoc(models.Model):
         verbose_name = "Môn học"
         verbose_name_plural = "Môn học"
         ordering = ['ma_mon_hoc']
+        default_permissions = ()  
     
     def __str__(self):
         return f"{self.ma_mon_hoc} - {self.ten_mon_hoc}"
@@ -175,6 +180,7 @@ class GVDayMon(models.Model):
         verbose_name = "GV dạy môn"
         verbose_name_plural = "GV dạy môn"
         unique_together = [['ma_mon_hoc', 'ma_gv']]
+        default_permissions = ()  
     
     def __str__(self):
         return f"{self.ma_gv.ten_gv} -> {self.ma_mon_hoc.ten_mon_hoc}"
@@ -193,6 +199,7 @@ class KhungTG(models.Model):
         verbose_name = "Khung thời gian"
         verbose_name_plural = "Khung thời gian"
         ordering = ['ma_khung_gio']
+        default_permissions = ()  
     
     def __str__(self):
         return f"{self.ten_ca} ({self.gio_bat_dau.strftime('%H:%M')}-{self.gio_ket_thuc.strftime('%H:%M')})"
@@ -213,6 +220,7 @@ class TimeSlot(models.Model):
         verbose_name_plural = "Time Slots"
         ordering = ['thu', 'ca']
         unique_together = [['thu', 'ca']]
+        default_permissions = ()  
     
     def __str__(self):
         thu_name = 'CN' if self.thu == 8 else f'Thứ {self.thu}'
@@ -236,6 +244,7 @@ class PhongHoc(models.Model):
         verbose_name = "Phòng học"
         verbose_name_plural = "Phòng học"
         ordering = ['ma_phong']
+        default_permissions = ()  
     
     def __str__(self):
         return f"{self.ma_phong} ({self.suc_chua or 'N/A'} chỗ)"
@@ -254,6 +263,7 @@ class RangBuocMem(models.Model):
         verbose_name = "Ràng buộc mềm"
         verbose_name_plural = "Ràng buộc mềm"
         ordering = ['ma_rang_buoc']
+        default_permissions = ()  
     
     def save(self, *args, **kwargs):
         """Auto-generate ma_rang_buoc: RBM-001, RBM-002, ..."""
@@ -300,6 +310,7 @@ class LopMonHoc(models.Model):
         indexes = [
             models.Index(fields=['ma_mon_hoc'], name='IX_LMH_MaMonHoc'),
         ]
+        default_permissions = ()  
     
     def save(self, *args, **kwargs):
         """Auto-generate ma_lop: LOP-00000001, LOP-00000002, ..."""
@@ -341,6 +352,7 @@ class DotXep(models.Model):
         verbose_name = "Đợt xếp lịch"
         verbose_name_plural = "Đợt xếp lịch"
         ordering = ['-ngay_tao']
+        default_permissions = ()  
     
     def save(self, *args, **kwargs):
         """Auto-generate ma_dot: DOT{n}_{NamHoc}_HK{HocKy}"""
@@ -400,6 +412,7 @@ class PhanCong(models.Model):
             models.Index(fields=['ma_dot'], name='IX_PC_MaDot'),
             models.Index(fields=['ma_dot', 'ma_gv'], name='IX_PC_MaDot_MaGV'),
         ]
+        default_permissions = ()  
     
     def __str__(self):
         gv_name = self.ma_gv.ten_gv if self.ma_gv else 'Chưa phân'
@@ -423,6 +436,7 @@ class NgayNghiCoDinh(models.Model):
         verbose_name = "Ngày nghỉ cố định"
         verbose_name_plural = "Ngày nghỉ cố định"
         ordering = ['ngay']
+        default_permissions = ()  
     
     def __str__(self):
         return f"{self.ten_ngay_nghi} ({self.ngay})"
@@ -457,6 +471,7 @@ class NgayNghiDot(models.Model):
         indexes = [
             models.Index(fields=['ma_dot'], name='IX_NGAYNGHI_MaDot'),
         ]
+        default_permissions = ()  
     
     def __str__(self):
         return f"{self.ma_dot.ma_dot} - {self.ten_ngay_nghi or f'{self.ngay_bd} ({self.so_ngay_nghi} ngày)'}"
@@ -480,6 +495,7 @@ class RangBuocTrongDot(models.Model):
         verbose_name = "Ràng buộc trong đợt"
         verbose_name_plural = "Ràng buộc trong đợt"
         unique_together = [['ma_dot', 'ma_rang_buoc']]
+        default_permissions = ()  
     
     def __str__(self):
         return f"{self.ma_dot.ma_dot} - {self.ma_rang_buoc.ten_rang_buoc} (Trọng số: {self.trong_so})"
@@ -501,6 +517,7 @@ class NguyenVong(models.Model):
         verbose_name = "Nguyện vọng"
         verbose_name_plural = "Nguyện vọng giảng viên"
         unique_together = [['ma_gv', 'ma_dot', 'time_slot_id']]
+        default_permissions = ()  
     
     def __str__(self):
         return f"{self.ma_gv.ten_gv} - {self.time_slot_id}"

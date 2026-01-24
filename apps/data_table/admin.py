@@ -1,8 +1,2 @@
-from django.contrib import admin
-from .models import *
-
-# Register your models here.
-
-admin.site.register(PageItems)
-admin.site.register(HideShowFilter)
-admin.site.register(ModelFilter)
+# Admin registrations are handled in apps.py DataTableConfig.ready()
+# This file is kept empty - all registration logic moved to AppConfig
