@@ -402,7 +402,7 @@ def algo_scheduler_run_api(request):
         runner = AlgorithmRunner(ma_dot=ma_dot, seed=seed)
 
         # Step 2: Prepare data (export DB to CTT)
-        logger.info("📊 Step 1: Chuẩn bị dữ liệu (export DB sang CTT)")
+        logger.info(" Step 1: Chuẩn bị dữ liệu (export DB sang CTT)")
         if not runner.prepare_data():
             return JsonResponse({
                 'status': 'error',

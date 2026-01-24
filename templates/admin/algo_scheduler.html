@@ -77,7 +77,7 @@
                 🧮 Chạy thuật toán
             </button>
             <button type="button" class="btn btn-info" onclick="viewResult()">
-                📊 Tải kết quả có sẵn
+                 Tải kết quả có sẵn
             </button>
         </div>
     </div>
@@ -195,7 +195,7 @@
             <!-- Main Metrics -->
             <div class="col-md-3 mb-3">
                 <div class="metric-card">
-                    <div class="metric-icon bg-primary">📊</div>
+                    <div class="metric-icon bg-primary"></div>
                     <div class="metric-info">
                         <small class="text-muted">Cost ban đầu</small>
                         <h4 id="initialCost">-</h4>
@@ -234,7 +234,7 @@
         <!-- Cost Breakdown -->
         <div class="row mt-3">
             <div class="col-12">
-                <h6 class="border-bottom pb-2 mb-3">📊 Các tiêu chí đánh giá chất lượng lịch học</h6>
+                <h6 class="border-bottom pb-2 mb-3"> Các tiêu chí đánh giá chất lượng lịch học</h6>
                 <div class="row">
                     <!-- RBM-001 (S7): Highest Priority -->
                     <div class="col-md-6 mb-2">
@@ -335,7 +335,7 @@
 <!-- Schedule Table -->
 <div class="card" id="scheduleTableCard" style="display: none;">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">📅 Thời khóa biểu (<span id="scheduleCount">0</span> buổi học)</h5>
+        <h5 class="mb-0"> Thời khóa biểu (<span id="scheduleCount">0</span> buổi học)</h5>
         <button class="btn btn-success btn-sm ml-auto" onclick="exportToExcel()" style="margin-left: auto !important;">
             <i class="fas fa-file-excel"></i> Xuất Excel
         </button>
@@ -1309,7 +1309,7 @@
         });
         
         displayScheduleTable(filtered);
-        log(`🔍 Lọc: Tìm thấy ${filtered.length}/${window.allSchedules.length} buổi học`);
+        log(` Lọc: Tìm thấy ${filtered.length}/${window.allSchedules.length} buổi học`);
     }
     
     function exportToExcel() {
@@ -1409,7 +1409,7 @@
                     document.getElementById('statTimeSlots').textContent = stats.time_slots.toLocaleString();
                     document.getElementById('statNguyenVong').textContent = stats.nguyen_vong.toLocaleString();
                     
-                    log(`📊 Đã tải thống kê: ${stats.phan_cong} phân công, ${stats.lop_mon_hoc} lớp môn học`, 'info');
+                    log(` Đã tải thống kê: ${stats.phan_cong} phân công, ${stats.lop_mon_hoc} lớp môn học`, 'info');
                 } else {
                     // Just log to console, don't show toast on initial load
                     console.warn('Stats API error:', data.message);

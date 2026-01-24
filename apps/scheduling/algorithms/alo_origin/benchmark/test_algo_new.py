@@ -141,13 +141,13 @@ def analyze_solution(sol_file, ctt_file):
     with open(sol_file, 'r', encoding='utf-8') as f:
         assignments = f.readlines()
     
-    print(f"\n📊 Instance Statistics:")
+    print(f"\n Instance Statistics:")
     print(f"  - Courses: {courses_count}")
     print(f"  - Rooms: {rooms_count}")
     print(f"  - Curricula: {curricula_count}")
     print(f"  - Total periods: 5 days × 6 periods/day = 30")
     
-    print(f"\n📋 Solution Statistics:")
+    print(f"\n Solution Statistics:")
     print(f"  - Assignments: {len(assignments)}")
     print(f"  - Expected: {courses_count} (1 per course)")
     
@@ -167,11 +167,11 @@ def analyze_solution(sol_file, ctt_file):
             day_usage[day] += 1
             period_usage[period] += 1
     
-    print(f"\n🏛️  Room Usage:")
+    print(f"\n  Room Usage:")
     for room, count in sorted(room_usage.items()):
         print(f"  - {room}: {count} lectures")
     
-    print(f"\n📅 Day Distribution (lectures per day):")
+    print(f"\n Day Distribution (lectures per day):")
     for day, count in enumerate(day_usage):
         print(f"  - Day {day}: {count}")
     

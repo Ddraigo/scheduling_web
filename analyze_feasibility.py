@@ -11,7 +11,7 @@ from collections import defaultdict
 ctt_file = r"D:\HOCTAP\DU_AN_CNTT\scheduling_web\apps\scheduling\algorithms\alo_origin\dot1.ctt"
 
 print("=" * 80)
-print("🔍 PHÂN TÍCH FEASIBILITY - dot1.ctt")
+print(" PHÂN TÍCH FEASIBILITY - dot1.ctt")
 print("=" * 80)
 
 # Parse file
@@ -29,7 +29,7 @@ days = int(header.get('Days', 5))
 periods = int(header.get('Periods_per_day', 5))
 total_slots = days * periods
 
-print(f"\n📊 Tổng quan:")
+print(f"\n Tổng quan:")
 print(f"  - Courses: {header['Courses']}")
 print(f"  - Rooms: {header['Rooms']}")
 print(f"  - Days: {days}, Periods/day: {periods}, Total slots: {total_slots}")
@@ -88,12 +88,12 @@ for line in lines:
             if equipment:
                 rooms_by_equipment[equipment].append(room_id)
 
-print(f"\n📚 COURSES:")
+print(f"\n COURSES:")
 print(f"  - LT (Lý thuyết): {len(courses_lt)}")
 print(f"  - TH (Thực hành): {len(courses_th)}")
 print(f"  - Total: {len(courses_lt) + len(courses_th)}")
 
-print(f"\n🏛️  ROOMS:")
+print(f"\n  ROOMS:")
 print(f"  - LT (Lý thuyết): {len(rooms_lt)}")
 print(f"  - TH (Thực hành): {len(rooms_th)}")
 print(f"  - Total: {len(rooms_lt) + len(rooms_th)}")
@@ -121,7 +121,7 @@ total_capacity = (len(rooms_lt) + len(rooms_th)) * total_slots
 total_courses = len(courses_lt) + len(courses_th)
 
 print(f"\n✅ Total capacity: {total_capacity} course-slots")
-print(f"📚 Total courses: {total_courses}")
+print(f" Total courses: {total_courses}")
 
 if total_courses > total_capacity:
     print(f"\n❌ KHÔNG KHẢ THI: Cần {total_courses} slots nhưng chỉ có {total_capacity} slots!")

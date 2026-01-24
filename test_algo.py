@@ -42,7 +42,7 @@ elapsed = time.time() - start
 
 print(f"\n{'=' * 80}")
 print(f"⏱️  Tổng thời gian: {elapsed:.2f}s")
-print(f"📊 Status: {result['status']}")
+print(f" Status: {result['status']}")
 
 if result['status'] == 'success':
     print(f"\n✅ THÀNH CÔNG!")
@@ -61,7 +61,7 @@ if result['status'] == 'success':
 else:
     print(f"\n❌ LỖI: {result.get('message', 'Unknown error')}")
     if 'debug_info' in result:
-        print(f"\n🔍 Debug info:")
+        print(f"\n Debug info:")
         for k, v in result['debug_info'].items():
             print(f"   - {k}: {v}")
 

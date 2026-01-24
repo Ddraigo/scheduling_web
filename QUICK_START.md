@@ -275,7 +275,7 @@ GEMINI_API_KEY=your_api_key_here
 - [ ] No import errors in services/validators
 - [ ] Management command works
 
-## 📚 Next Steps
+##  Next Steps
 
 1. **Import Real Data**
    - Connect to SQL Server database

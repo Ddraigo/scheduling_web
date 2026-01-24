@@ -62,7 +62,7 @@ def fix_json_file(filepath):
     mixed_format_count = 0
     failed_count = 0
     
-    print(f"📊 Processing {len(schedule)} entries...")
+    print(f" Processing {len(schedule)} entries...")
     
     for i, entry in enumerate(schedule):
         slot = entry.get('slot', '')
@@ -79,7 +79,7 @@ def fix_json_file(filepath):
                 print(f"  ❌ {i+1:3d}. Failed to convert {slot}: {e}")
                 failed_count += 1
     
-    print(f"\n📊 Results:")
+    print(f"\n Results:")
     print(f"  ✓ Fixed: {mixed_format_count}")
     print(f"  ❌ Failed: {failed_count}")
     

@@ -97,7 +97,7 @@
                             <span>🗑️</span> Xóa
                         </button>
                         <button id="btnRestore" class="tkb-btn tkb-btn-ghost" type="button" disabled title="Phục hồi lịch">
-                            <span>↩️</span> Phục hồi
+                            <span></span> Phục hồi
                         </button>
                     </div>
                     <div class="form-text-muted">
@@ -115,7 +115,7 @@
                     <span class="badge-soft" id="deleted-count" style="background:#fee2e2;color:#991b1b;">0</span>
                 </div>
                 <div style="margin-bottom: 12px;">
-                    <input type="text" id="deleted-search" class="form-control form-control-sm" placeholder="🔍 Tìm lớp, giáo viên..." onkeyup="renderDeleted()">
+                    <input type="text" id="deleted-search" class="form-control form-control-sm" placeholder=" Tìm lớp, giáo viên..." onkeyup="renderDeleted()">
                 </div>
                 <div class="deleted-list" id="deleted-list" style="flex: 1; overflow-y: auto; max-height: 280px;"></div>
             </div>
@@ -127,7 +127,7 @@
         <div class="col-12">
             <div class="tkb-card schedule-card">
                 <div class="d-flex align-items-center justify-content-between mb-3" style="border-bottom: 1px solid var(--tkb-border); padding-bottom: 12px;">
-                    <h2 class="mb-0">📅 Lịch hiện tại</h2>
+                    <h2 class="mb-0"> Lịch hiện tại</h2>
                     <div class="form-text-muted" id="schedule-meta">0 lịch</div>
                 </div>
                 <div class="table-responsive">
@@ -1114,7 +1114,7 @@
             
             if (filtered.length === 0) {
                 list.innerHTML = '<div class="deleted-list-empty">' + 
-                    (state.deleted.length === 0 ? '✓ Không có lịch đã xóa' : '🔍 Không tìm thấy lớp') + 
+                    (state.deleted.length === 0 ? '✓ Không có lịch đã xóa' : ' Không tìm thấy lớp') + 
                     '</div>';
                 return;
             }
@@ -1140,7 +1140,7 @@
                         <span>Thứ ${item.thu}, Ca ${item.ca}</span>
                     </div>
                     <div class="meta" style="margin-top: 4px; color: #0891b2; font-weight: 500;">
-                        👨‍🏫 ${item.ten_gv || 'N/A'} (${item.ma_gv || 'N/A'})
+                         ${item.ten_gv || 'N/A'} (${item.ma_gv || 'N/A'})
                     </div>
                 `;
                 
@@ -1150,7 +1150,7 @@
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'btn btn-sm btn-outline-success';
-                btn.textContent = '↩️ Phục hồi';
+                btn.textContent = ' Phục hồi';
                 btn.addEventListener('click', (ev) => { 
                     ev.stopPropagation(); 
                     startRestoreFlow(item); 

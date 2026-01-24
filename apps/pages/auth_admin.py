@@ -83,9 +83,9 @@ class CustomUserAdmin(BaseUserAdmin):
         
         # Map groups sang display với icon và màu
         role_config = {
-            'Truong_Khoa': {'label': '👔 Trưởng Khoa', 'color': '#dc2626'},
-            'Truong_Bo_Mon': {'label': '📚 Trưởng Bộ Môn', 'color': '#ea580c'},
-            'Giang_Vien': {'label': '👨‍🏫 Giảng Viên', 'color': '#16a34a'}
+            'Truong_Khoa': {'label': ' Trưởng Khoa', 'color': '#dc2626'},
+            'Truong_Bo_Mon': {'label': ' Trưởng Bộ Môn', 'color': '#ea580c'},
+            'Giang_Vien': {'label': ' Giảng Viên', 'color': '#16a34a'}
         }
         
         html_parts = []

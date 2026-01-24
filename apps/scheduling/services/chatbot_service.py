@@ -1293,9 +1293,9 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                         try:
                             dot = DotXep.objects.get(ma_dot=self._cached_dot_xep)
                             so_tkb = ThoiKhoaBieu.objects.filter(ma_dot=self._cached_dot_xep).count()
-                            return self._cached_dot_xep, f"📅 Đang sử dụng: **{dot.ten_dot}** - {so_tkb} lịch"
+                            return self._cached_dot_xep, f" Đang sử dụng: **{dot.ten_dot}** - {so_tkb} lịch"
                         except:
-                            return self._cached_dot_xep, f"📅 Đang sử dụng đợt: {self._cached_dot_xep}"
+                            return self._cached_dot_xep, f" Đang sử dụng đợt: {self._cached_dot_xep}"
                     return self._cached_dot_xep, ""
             
             # Lấy danh sách các đợt CÓ TKB (có lịch đã xếp)
@@ -1316,7 +1316,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                 so_tkb = ThoiKhoaBieu.objects.filter(ma_dot=dot_hoat_dong.ma_dot).count()
                 self._cached_dot_xep = dot_hoat_dong.ma_dot
                 self._cache_time = timezone.now()
-                return dot_hoat_dong.ma_dot, f"📅 Tự động chọn đợt đang hoạt động: **{dot_hoat_dong.ten_dot}** - {so_tkb} lịch"
+                return dot_hoat_dong.ma_dot, f" Tự động chọn đợt đang hoạt động: **{dot_hoat_dong.ten_dot}** - {so_tkb} lịch"
             
             # Ưu tiên 2: Đợt mới nhất có TKB
             dot_moi_nhat = DotXep.objects.filter(
@@ -1333,7 +1333,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                     ma_dot__in=ma_dots_co_tkb
                 ).exclude(ma_dot=dot_moi_nhat.ma_dot).order_by('-ngay_tao')[:3]
                 
-                msg = f"📅 Tự động chọn đợt mới nhất có lịch: **{dot_moi_nhat.ten_dot}** - {so_tkb} lịch\n"
+                msg = f" Tự động chọn đợt mới nhất có lịch: **{dot_moi_nhat.ten_dot}** - {so_tkb} lịch\n"
                 if other_dots.exists():
                     other_list = ", ".join([f"{d.ten_dot}" for d in other_dots])
                     msg += f"💡 Đợt khác: {other_list}\n"
@@ -1569,7 +1569,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                 # Ưu tiên nhiều phòng trống (dễ chọn)
                 so_phong = phong_trong.count()
                 score += min(so_phong * 2, 20)
-                reasons.append(f"🏫 {so_phong} phòng trống")
+                reasons.append(f" {so_phong} phòng trống")
                 
                 # Ưu tiên slot liền kề với lịch hiện tại (tiện di chuyển)
                 for lich in result['lich_hien_tai']:
@@ -2150,11 +2150,11 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                 count = data[0].get('count', 0) if data else 0
                 khoa_filter = entities.get('khoa')
                 if khoa_filter:
-                    lines.append(f"📊 **Khoa {khoa_filter}** có **{count} giảng viên** 👨‍🏫")
+                    lines.append(f" **Khoa {khoa_filter}** có **{count} giảng viên** ")
                 else:
-                    lines.append(f"📊 Hệ thống có tổng cộng **{count} giảng viên** 👨‍🏫")
+                    lines.append(f" Hệ thống có tổng cộng **{count} giảng viên** ")
             else:
-                lines.append(f"📋 {summary}\n")
+                lines.append(f" {summary}\n")
                 for gv in data[:10]:
                     mon_str = ", ".join(gv.get('mon_day', [])[:3]) or "Chưa phân công"
                     lines.append(f"- **{gv['ten_gv']}** ({gv['ma_gv']})")
@@ -2166,9 +2166,9 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
         elif intent_type == 'mon_hoc_info':
             if query_type == 'COUNT':
                 count = data[0].get('count', 0) if data else 0
-                lines.append(f"📚 Hệ thống có **{count} môn học**")
+                lines.append(f" Hệ thống có **{count} môn học**")
             else:
-                lines.append(f"📋 {summary}\n")
+                lines.append(f" {summary}\n")
                 for mon in data[:10]:
                     lines.append(f"- **{mon['ten_mon']}** ({mon['ma_mon']}): {mon['so_tin_chi']} TC")
         
@@ -2182,7 +2182,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
             ca_str = f"Ca {ca}" if ca else "?"
             
             if rooms:
-                lines.append(f"🏫 **Phòng trống {thu_str}, {ca_str}:**\n")
+                lines.append(f" **Phòng trống {thu_str}, {ca_str}:**\n")
                 for r in rooms[:10]:
                     lines.append(f"- **{r['ma_phong']}**: {r['loai_phong']}, {r['suc_chua']} chỗ")
                 lines.append(f"\n✅ Tìm thấy {len(rooms)} phòng trống")
@@ -2192,7 +2192,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
         # === LỊCH DẠY / TKB ===
         elif intent_type == 'schedule_query':
             if data:
-                lines.append(f"📅 {summary}\n")
+                lines.append(f" {summary}\n")
                 for tkb in data[:10]:
                     thu_str = f"Thứ {tkb['thu']}" if tkb['thu'] != 8 else "CN"
                     lines.append(f"- **{tkb['ma_lop']}**: {tkb['ten_mon']}")
@@ -2221,9 +2221,9 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
         elif intent_type == 'khoa_info':
             if query_type == 'COUNT':
                 count = data[0].get('count', 0) if data else 0
-                lines.append(f"🏛️ Hệ thống có **{count} khoa**")
+                lines.append(f" Hệ thống có **{count} khoa**")
             else:
-                lines.append(f"🏛️ {summary}\n")
+                lines.append(f" {summary}\n")
                 for k in data[:10]:
                     lines.append(f"- **{k.get('ten_khoa', 'N/A')}** ({k.get('ma_khoa', 'N/A')})")
         
@@ -2231,9 +2231,9 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
         elif intent_type == 'bo_mon_info':
             if query_type == 'COUNT':
                 count = data[0].get('count', 0) if data else 0
-                lines.append(f"📚 Hệ thống có **{count} bộ môn**")
+                lines.append(f" Hệ thống có **{count} bộ môn**")
             else:
-                lines.append(f"📚 {summary}\n")
+                lines.append(f" {summary}\n")
                 for bm in data[:10]:
                     lines.append(f"- **{bm.get('ten_bo_mon', 'N/A')}** | Khoa: {bm.get('khoa', 'N/A')}")
         
@@ -2241,9 +2241,9 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
         elif intent_type == 'phong_hoc_info':
             if query_type == 'COUNT':
                 count = data[0].get('count', 0) if data else 0
-                lines.append(f"🏫 Hệ thống có **{count} phòng học**")
+                lines.append(f" Hệ thống có **{count} phòng học**")
             else:
-                lines.append(f"🏫 {summary}\n")
+                lines.append(f" {summary}\n")
                 for p in data[:10]:
                     lines.append(f"- **{p['ma_phong']}**: {p.get('loai_phong', 'N/A')}, {p.get('suc_chua', 'N/A')} chỗ")
         
@@ -2251,9 +2251,9 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
         elif intent_type == 'dot_xep_info':
             if query_type == 'COUNT':
                 count = data[0].get('count', 0) if data else 0
-                lines.append(f"📅 Hệ thống có **{count} đợt xếp lịch**")
+                lines.append(f" Hệ thống có **{count} đợt xếp lịch**")
             else:
-                lines.append(f"📅 {summary}\n")
+                lines.append(f" {summary}\n")
                 for d in data[:5]:
                     lines.append(f"- **{d.get('ten_dot', 'N/A')}** ({d.get('ma_dot', 'N/A')}): {d.get('trang_thai', 'N/A')}")
         
@@ -2261,9 +2261,9 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
         elif intent_type == 'phan_cong_info':
             if query_type == 'COUNT':
                 count = data[0].get('count', 0) if data else 0
-                lines.append(f"📋 Hệ thống có **{count} phân công giảng dạy**")
+                lines.append(f" Hệ thống có **{count} phân công giảng dạy**")
             else:
-                lines.append(f"📋 {summary}\n")
+                lines.append(f" {summary}\n")
                 for pc in data[:10]:
                     lines.append(f"- **{pc.get('giang_vien', 'N/A')}** → Lớp: {pc.get('lop', 'N/A')} | Đợt: {pc.get('dot', 'N/A')}")
         
@@ -2271,9 +2271,9 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
         elif intent_type == 'lop_mon_hoc_info':
             if query_type == 'COUNT':
                 count = data[0].get('count', 0) if data else 0
-                lines.append(f"📚 Hệ thống có **{count} lớp môn học**")
+                lines.append(f" Hệ thống có **{count} lớp môn học**")
             else:
-                lines.append(f"📚 {summary}\n")
+                lines.append(f" {summary}\n")
                 for l in data[:10]:
                     lines.append(f"- **{l.get('ma_lop', 'N/A')}**: {l.get('mon_hoc', 'N/A')} | SV: {l.get('so_sv', 0)} | Nhóm: {l.get('nhom', 'N/A')}")
         
@@ -2281,9 +2281,9 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
         elif intent_type == 'tkb_info':
             if query_type == 'COUNT':
                 count = data[0].get('count', 0) if data else 0
-                lines.append(f"📅 Hệ thống có **{count} bản ghi thời khóa biểu**")
+                lines.append(f" Hệ thống có **{count} bản ghi thời khóa biểu**")
             else:
-                lines.append(f"📅 {summary}\n")
+                lines.append(f" {summary}\n")
                 for t in data[:10]:
                     lines.append(f"- **{t.get('ma_tkb', 'N/A')}**: Lớp {t.get('lop', 'N/A')} | Phòng: {t.get('phong', 'N/A')} | Slot: {t.get('slot', 'N/A')}")
         
@@ -2306,12 +2306,12 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
         elif intent_type == 'thong_ke_query':
             if data:
                 stats = data[0]
-                lines.append("📊 **Thống kê tổng hợp:**\n")
+                lines.append(" **Thống kê tổng hợp:**\n")
                 lines.append(f"- Giảng viên: **{stats.get('tong_giang_vien', 'N/A')}**")
                 lines.append(f"- Môn học: **{stats.get('tong_mon_hoc', 'N/A')}**")
                 lines.append(f"- Khoa: **{stats.get('tong_khoa', 'N/A')}** | Bộ môn: **{stats.get('tong_bo_mon', 'N/A')}**")
                 if stats.get('dot_xep'):
-                    lines.append(f"\n📅 Đợt {stats['dot_xep']}: {stats.get('lop_da_xep', 0)}/{stats.get('tong_lop', 0)} lớp ({stats.get('ty_le_xep', 0)}%)")
+                    lines.append(f"\n Đợt {stats['dot_xep']}: {stats.get('lop_da_xep', 0)}/{stats.get('tong_lop', 0)} lớp ({stats.get('ty_le_xep', 0)}%)")
         
         # === GENERAL ===
         else:
@@ -2338,7 +2338,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
             if thu and ca:
                 rooms = self._get_available_rooms(thu, ca, loai_phong, ma_dot=ma_dot)
                 if rooms:
-                    additional_context.append(f"\n🔍 KẾT QUẢ TRA CỨU PHÒNG TRỐNG (Thứ {thu}, Ca {ca}):")
+                    additional_context.append(f"\n KẾT QUẢ TRA CỨU PHÒNG TRỐNG (Thứ {thu}, Ca {ca}):")
                     for r in rooms[:10]:
                         additional_context.append(
                             f"- {r['ma_phong']}: {r['loai_phong']}, {r['suc_chua']} chỗ"
@@ -2368,7 +2368,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
         if intent['type'] == 'thong_ke_query' and ma_dot:
             thong_ke = self._get_thong_ke(ma_dot)
             if thong_ke:
-                additional_context.append(f"\n📊 THỐNG KÊ ĐỢT {ma_dot}:")
+                additional_context.append(f"\n THỐNG KÊ ĐỢT {ma_dot}:")
                 additional_context.append(f"- Tổng lớp: {thong_ke.get('tong_lop', 0)}")
                 additional_context.append(f"- Đã xếp: {thong_ke.get('lop_da_xep', 0)}")
                 additional_context.append(f"- Tỷ lệ: {thong_ke.get('tyle_xep_xong', 0):.1f}%")
@@ -2396,7 +2396,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                     dot_moi_nhat = DotXep.objects.order_by('-ngay_bat_dau').first()
                     if dot_moi_nhat:
                         current_ma_dot = dot_moi_nhat.ma_dot
-                        additional_context.append(f"📅 Tự động chọn đợt: **{dot_moi_nhat.ten_dot}** ({current_ma_dot})")
+                        additional_context.append(f" Tự động chọn đợt: **{dot_moi_nhat.ten_dot}** ({current_ma_dot})")
                 except Exception as e:
                     logger.warning(f"Không thể lấy đợt mới nhất: {e}")
             
@@ -2423,7 +2423,7 @@ HÃY PHÂN TÍCH FEEDBACK VÀ SỬA LẠI QUERY SPECIFICATION CHO ĐÚNG!
                     
                     # Lịch hiện tại
                     if suggest_result['lich_hien_tai']:
-                        additional_context.append(f"\n📅 LỊCH HIỆN TẠI ({len(suggest_result['lich_hien_tai'])} slot):")
+                        additional_context.append(f"\n LỊCH HIỆN TẠI ({len(suggest_result['lich_hien_tai'])} slot):")
                         for lich in suggest_result['lich_hien_tai'][:5]:
                             additional_context.append(
                                 f"  • {lich['thu_ca_str']}: {lich['mon']} | Phòng: {lich['phong']}"
@@ -2715,7 +2715,7 @@ KẾT QUẢ TRUY VẤN TỪ DATABASE:
 """
             
             if query_result and query_result.get('success'):
-                full_context += f"\n📊 {query_result.get('query_description', 'Truy vấn dữ liệu')}\n"
+                full_context += f"\n {query_result.get('query_description', 'Truy vấn dữ liệu')}\n"
                 full_context += f"✅ {query_result.get('summary', '')}\n\n"
                 
                 # Format data

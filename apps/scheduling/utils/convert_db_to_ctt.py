@@ -47,7 +47,7 @@ def get_or_create_test_data(ma_dot: str = None):
             return dot_xep
         except DotXep.DoesNotExist:
             print(f"❌ Không tìm thấy DotXep với mã: {ma_dot}")
-            print(f"\n📋 Danh sách DotXep có sẵn:")
+            print(f"\n Danh sách DotXep có sẵn:")
             all_dot = DotXep.objects.annotate(
                 phan_cong_count=Count('phan_cong_list')
             ).order_by('ma_dot')
@@ -63,7 +63,7 @@ def get_or_create_test_data(ma_dot: str = None):
     
     if not dot_xep_list:
         print("❌ Không có DotXep nào có dữ liệu PhanCong!")
-        print(f"\n📋 Danh sách tất cả DotXep:")
+        print(f"\n Danh sách tất cả DotXep:")
         all_dot = DotXep.objects.all()
         for dot in all_dot:
             print(f"  - {dot.ma_dot} ({dot.ten_dot})")
@@ -87,7 +87,7 @@ def export_to_ctt(dot_xep, output_path: str = None):
         output_dir = Path(__file__).parent
         output_path = output_dir / f"dot1.ctt"
     
-    print(f"\n📋 Bắt đầu xuất dữ liệu sang {output_path}...")
+    print(f"\n Bắt đầu xuất dữ liệu sang {output_path}...")
     
     # ===== 1. LẤY CÁC KHÓA HỌC =====
     courses_data = []
@@ -97,7 +97,7 @@ def export_to_ctt(dot_xep, output_path: str = None):
     phan_cong_list = PhanCong.objects.filter(
         ma_dot=dot_xep
     ).select_related('ma_lop__ma_mon_hoc', 'ma_gv')
-    print(f"📚 Tìm thấy {len(phan_cong_list)} phân công dạy")
+    print(f" Tìm thấy {len(phan_cong_list)} phân công dạy")
     
     for idx, phan_cong in enumerate(phan_cong_list):
         lop = phan_cong.ma_lop
@@ -174,14 +174,14 @@ def export_to_ctt(dot_xep, output_path: str = None):
     print(f"✅ Xuất {len(courses_data)} lớp môn học")
     
     # Debug: Hiển thị thông tin chi tiết
-    print(f"\n📊 Chi tiết min_working_days:")
+    print(f"\n Chi tiết min_working_days:")
     min_wd_1 = sum(1 for c in courses_data if c['min_working_days'] == 1)
     min_wd_2 = sum(1 for c in courses_data if c['min_working_days'] == 2)
     print(f"  - min_working_days = 1 (so_ca_tuan <= 2): {min_wd_1} lớp")
     print(f"  - min_working_days = 2 (so_ca_tuan > 2): {min_wd_2} lớp")
     
     # Hiển thị top 10 lớp để debug
-    print(f"\n📋 Top 10 lớp môn học (đầu tiên):")
+    print(f"\n Top 10 lớp môn học (đầu tiên):")
     for i, course in enumerate(courses_data[:10]):
         print(f"  {i+1}. {course['id']} ({course['lop'].ma_lop}) - "
               f"so_ca_tuan={course.get('so_ca_tuan', 1)}, "
@@ -194,7 +194,7 @@ def export_to_ctt(dot_xep, output_path: str = None):
     room_id_map = {}  # ma_phong -> room_id
     
     phong_list = PhongHoc.objects.all()
-    print(f"🏛️  Tìm thấy {len(phong_list)} phòng")
+    print(f"  Tìm thấy {len(phong_list)} phòng")
     
     for idx, phong in enumerate(phong_list):
         # ===== LẤY ROOM_ID THỰC TỬ phong.ma_phong =====
@@ -347,7 +347,7 @@ def export_to_ctt(dot_xep, output_path: str = None):
         })
     
     # ===== THỐNG KÊ SKIP =====
-    print(f"\n📊 Thống kê lọc nguyện vọng:")
+    print(f"\n Thống kê lọc nguyện vọng:")
     print(f"  - Tổng NguyenVong: {len(nguyen_vong_list)}")
     print(f"  - Lọc (ngày/period ngoài phạm vi): {skipped_invalid}")
     print(f"  - Lọc (GV không dạy): {skipped_no_gv}")
@@ -355,7 +355,7 @@ def export_to_ctt(dot_xep, output_path: str = None):
     print(f"  - ✅ Lưu giữ: {len(preferred_periods)}")
     
     # Debug: Hiển thị chi tiết nguyện vọng
-    print(f"\n📋 Chi tiết nguyện vọng (sample - 10 cái đầu tiên):")
+    print(f"\n Chi tiết nguyện vọng (sample - 10 cái đầu tiên):")
     for i, pref in enumerate(preferred_periods[:10]):
         print(f"  {i+1}. {pref['course']} - GV: {pref['teacher']} ({pref['gv_id']}), "
               f"Thu: {pref['day']+2} (ngày {pref['day']}), Ca: {pref['period']+1} (period {pref['period']})")
@@ -416,7 +416,7 @@ def export_to_ctt(dot_xep, output_path: str = None):
         f.write("\nEND.\n")
     
     print(f"\n✅ Xuất thành công sang {output_path}")
-    print(f"\n📊 Thống kê:")
+    print(f"\n Thống kê:")
     print(f"  - Khóa học: {len(courses_data)}")
     print(f"  - Phòng: {len(rooms_data)}")
     print(f"  - Ngành: {len(curricula_data)}")

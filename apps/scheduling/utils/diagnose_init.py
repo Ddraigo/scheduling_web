@@ -22,7 +22,7 @@ from algo_new import (
 def diagnose_initial_solution(ctt_file: str, seed: int = 42):
     """Diagnose initial solution quality."""
     print(f"=" * 70)
-    print(f"🔍 Diagnostics: Initial Solution Quality")
+    print(f" Diagnostics: Initial Solution Quality")
     print(f"=" * 70)
     
     # Parse instance
@@ -45,7 +45,7 @@ def diagnose_initial_solution(ctt_file: str, seed: int = 42):
     print(f"  ✓ Initial cost: {state.current_cost}")
     
     # Breakdown
-    print(f"\n📊 Cost breakdown:")
+    print(f"\n Cost breakdown:")
     breakdown = state.score_breakdown()
     print(f"  - Room Capacity: {breakdown.room_capacity}")
     print(f"  - Min Working Days: {breakdown.min_working_days}")
@@ -89,7 +89,7 @@ def diagnose_initial_solution(ctt_file: str, seed: int = 42):
     print(f"  ✓ Initial cost: {state2.current_cost}")
     
     breakdown2 = state2.score_breakdown()
-    print(f"\n📊 Cost breakdown (random-repair):")
+    print(f"\n Cost breakdown (random-repair):")
     print(f"  - Room Capacity: {breakdown2.room_capacity}")
     print(f"  - Min Working Days: {breakdown2.min_working_days}")
     print(f"  - Curriculum Compactness: {breakdown2.curriculum_compactness}")

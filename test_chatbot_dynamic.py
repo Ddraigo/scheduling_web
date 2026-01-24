@@ -107,7 +107,7 @@ def test_chatbot_dynamic():
             
             # Hiển thị metadata
             print(f"\n{'─'*80}")
-            print(f"🔍 Metadata:")
+            print(f" Metadata:")
             print(f"  - Intent Type: {result['intent']['type']}")
             print(f"  - Query Type: {result['intent'].get('query_type', 'N/A')}")
             print(f"  - Entities: {result['intent']['entities']}")

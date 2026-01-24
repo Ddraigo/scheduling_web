@@ -54,7 +54,7 @@ class Command(BaseCommand):
             generator = ScheduleGeneratorLLM()
             
             if verbose:
-                self.stdout.write("📊 Fetching data...")
+                self.stdout.write(" Fetching data...")
             
             result = generator.create_schedule_llm(
                 ma_dot=ma_dot,

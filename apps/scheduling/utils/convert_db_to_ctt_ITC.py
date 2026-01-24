@@ -46,7 +46,7 @@ def get_or_create_test_data(ma_dot: str = None):
             return dot_xep
         except DotXep.DoesNotExist:
             print(f"❌ Không tìm thấy DotXep với mã: {ma_dot}")
-            print(f"\n📋 Danh sách DotXep có sẵn:")
+            print(f"\n Danh sách DotXep có sẵn:")
             all_dot = DotXep.objects.annotate(
                 phan_cong_count=Count('phan_cong_list')
             ).order_by('ma_dot')
@@ -81,7 +81,7 @@ def export_to_itc_ctt(dot_xep, output_path: str = None):
         output_dir = Path(__file__).parent
         output_path = output_dir / "dot_ITC.ctt"
     
-    print(f"\n📋 Bắt đầu xuất dữ liệu sang {output_path}...")
+    print(f"\n Bắt đầu xuất dữ liệu sang {output_path}...")
     
     # ===== 1. LẤY CÁC KHÓA HỌC =====
     courses_data = []
@@ -92,7 +92,7 @@ def export_to_itc_ctt(dot_xep, output_path: str = None):
     phan_cong_list = PhanCong.objects.filter(
         ma_dot=dot_xep
     ).select_related('ma_lop__ma_mon_hoc', 'ma_gv')
-    print(f"📚 Tìm thấy {len(phan_cong_list)} phân công dạy")
+    print(f" Tìm thấy {len(phan_cong_list)} phân công dạy")
     
     for idx, phan_cong in enumerate(phan_cong_list):
         lop = phan_cong.ma_lop
@@ -141,7 +141,7 @@ def export_to_itc_ctt(dot_xep, output_path: str = None):
     sample_room_id = None
     
     phong_hoc_list = PhongHoc.objects.all().order_by('ma_phong')
-    print(f"🏫 Tìm thấy {len(phong_hoc_list)} phòng học")
+    print(f" Tìm thấy {len(phong_hoc_list)} phòng học")
     
     for phong in phong_hoc_list:
         # ===== LẤY ROOM_ID THỰC TỬ phong.ma_phong =====
@@ -184,7 +184,7 @@ def export_to_itc_ctt(dot_xep, output_path: str = None):
                 'courses': course_ids
             })
     
-    print(f"📚 Tạo {len(curricula_data)} curricula từ các môn học")
+    print(f" Tạo {len(curricula_data)} curricula từ các môn học")
     
     # ===== 4. GHI FILE .CTT (ITC-2007 STANDARD FORMAT) =====
     with open(output_path, 'w', encoding='utf-8') as f:
@@ -226,7 +226,7 @@ def export_to_itc_ctt(dot_xep, output_path: str = None):
         f.write(f"END.\n")
     
     print(f"✅ Đã xuất file: {output_path}")
-    print(f"\n📊 THỐNG KÊ:")
+    print(f"\n THỐNG KÊ:")
     print(f"  - Courses: {len(courses_data)}")
     print(f"    └─ Sử dụng mã lớp thực (ma_lop) từ database")
     print(f"  - Rooms: {len(rooms_data)}")

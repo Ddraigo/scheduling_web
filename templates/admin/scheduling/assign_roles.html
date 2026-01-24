@@ -15,9 +15,9 @@
                 <option value="">-- Chọn vai trò --</option>
                 {% for group in groups %}
                 <option value="{{ group.name }}">
-                    {% if group.name == 'Truong_Khoa' %}👔 Trưởng Khoa
-                    {% elif group.name == 'Truong_Bo_Mon' %}📚 Trưởng Bộ Môn
-                    {% elif group.name == 'Giang_Vien' %}👨‍🏫 Giảng Viên
+                    {% if group.name == 'Truong_Khoa' %} Trưởng Khoa
+                    {% elif group.name == 'Truong_Bo_Mon' %} Trưởng Bộ Môn
+                    {% elif group.name == 'Giang_Vien' %} Giảng Viên
                     {% else %}{{ group.name }}{% endif %}
                 </option>
                 {% endfor %}
@@ -29,7 +29,7 @@
             <div style="display: flex; gap: 8px; margin-bottom: 12px;">
                 <button type="button" onclick="selectAll()" style="padding: 6px 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">Chọn tất cả</button>
                 <button type="button" onclick="deselectAll()" style="padding: 6px 12px; background: #6b7280; color: white; border: none; border-radius: 4px; cursor: pointer;">Bỏ chọn tất cả</button>
-                <input type="text" id="search-box" placeholder="🔍 Tìm kiếm..." style="flex: 1; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                <input type="text" id="search-box" placeholder=" Tìm kiếm..." style="flex: 1; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 4px;">
             </div>
             
             <div id="users-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 4px; background: white;">

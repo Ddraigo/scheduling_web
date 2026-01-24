@@ -76,7 +76,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f'\n✅ HOÀN TẤT! Migrate {total_migrated} users tổng cộng.\n'))
         
         # Report summary
-        self.stdout.write('📊 SUMMARY:')
+        self.stdout.write(' SUMMARY:')
         for migration in migrations:
             old_name, new_name = migration
             try:

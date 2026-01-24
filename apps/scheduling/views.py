@@ -603,9 +603,9 @@ def assign_roles_view(request):
                 count += 1
             
             role_display = {
-                'Truong_Khoa': '👔 Trưởng Khoa',
-                'Truong_Bo_Mon': '📚 Trưởng Bộ Môn',
-                'Giang_Vien': '👨‍🏫 Giảng Viên'
+                'Truong_Khoa': ' Trưởng Khoa',
+                'Truong_Bo_Mon': ' Trưởng Bộ Môn',
+                'Giang_Vien': ' Giảng Viên'
             }.get(role, role)
             
             messages.success(request, f'✅ Đã gán role {role_display} cho {count} users!')

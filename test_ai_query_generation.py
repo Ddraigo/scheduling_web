@@ -50,7 +50,7 @@ def test_ai_query_generation():
             print(f"   Explanation: {spec.get('explanation')}")
             
             # Thực thi query
-            print("\n   📊 THỰC THI QUERY:")
+            print("\n    THỰC THI QUERY:")
             query_result = chatbot._execute_ai_generated_query(spec, ma_dot=None)
             print(f"   Success: {query_result['success']}")
             print(f"   Summary: {query_result['summary']}")

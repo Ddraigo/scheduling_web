@@ -72,12 +72,12 @@ def analyze_data(header, courses, rooms):
     """Phân tích dữ liệu và in ra báo cáo chi tiết"""
     
     print("=" * 80)
-    print("📊 BÁO CÁO PHÂN TÍCH DỮ LIỆU CTT FILE")
+    print(" BÁO CÁO PHÂN TÍCH DỮ LIỆU CTT FILE")
     print("=" * 80)
     print()
     
     # 1. THỐNG KÊ TỔNG QUAN
-    print("📋 1. THỐNG KÊ TỔNG QUAN")
+    print(" 1. THỐNG KÊ TỔNG QUAN")
     print("-" * 80)
     print(f"Tổng số courses: {len(courses)}")
     print(f"Tổng số rooms: {len(rooms)}")
@@ -88,7 +88,7 @@ def analyze_data(header, courses, rooms):
     print()
     
     # 2. PHÂN LOẠI COURSES THEO TYPE
-    print("📚 2. PHÂN LOẠI COURSES THEO LOẠI (LT vs TH)")
+    print(" 2. PHÂN LOẠI COURSES THEO LOẠI (LT vs TH)")
     print("-" * 80)
     course_by_type = Counter([c['course_type'] for c in courses])
     for ctype, count in sorted(course_by_type.items()):
@@ -97,7 +97,7 @@ def analyze_data(header, courses, rooms):
     print()
     
     # 3. PHÂN LOẠI ROOMS THEO TYPE
-    print("🏫 3. PHÂN LOẠI ROOMS THEO LOẠI (LT vs TH)")
+    print(" 3. PHÂN LOẠI ROOMS THEO LOẠI (LT vs TH)")
     print("-" * 80)
     room_by_type = Counter([r['room_type'] for r in rooms])
     for rtype, count in sorted(room_by_type.items()):
@@ -156,7 +156,7 @@ def analyze_data(header, courses, rooms):
     print("-" * 80)
     
     # Check room type matching
-    print("🔍 Kiểm tra khớp room type:")
+    print(" Kiểm tra khớp room type:")
     for ctype in ['LT', 'TH']:
         course_count = course_by_type.get(ctype, 0)
         room_count = room_by_type.get(ctype, 0)
@@ -168,7 +168,7 @@ def analyze_data(header, courses, rooms):
     print()
     
     # Check capacity matching
-    print("🔍 Kiểm tra capacity matching:")
+    print(" Kiểm tra capacity matching:")
     capacity_issues = []
     for course in courses:
         # Find rooms of same type with adequate capacity
@@ -195,7 +195,7 @@ def analyze_data(header, courses, rooms):
     print()
     
     # 7. EQUIPMENT MATCHING
-    print("🔍 Kiểm tra equipment matching:")
+    print(" Kiểm tra equipment matching:")
     equipment_issues = []
     for course in courses_with_equipment:
         # Find rooms of same type, adequate capacity, AND matching equipment

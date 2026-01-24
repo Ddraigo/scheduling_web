@@ -48,7 +48,7 @@ def get_sap_lich_menu_for_user(user):
     if 'Trưởng Khoa' in groups:
         return [
             {"name": "🤖 Chat bot hỗ trợ", "url": "/admin/sap_lich/llm-scheduler/", "icon": "fas fa-robot"},
-            {"name": "📅 Xem thời khóa biểu", "url": "/admin/sap_lich/thoikhoabieu/", "icon": "fas fa-calendar-alt"},
+            {"name": " Xem thời khóa biểu", "url": "/admin/sap_lich/thoikhoabieu/", "icon": "fas fa-calendar-alt"},
             {"name": "✏️ Quản lý TKB", "url": "/admin/sap_lich/tkb-manage/", "icon": "fas fa-edit"},
         ]
     
@@ -56,7 +56,7 @@ def get_sap_lich_menu_for_user(user):
     if 'Trưởng Bộ Môn' in groups:
         return [
             {"name": "🤖 Chat bot hỗ trợ", "url": "/admin/sap_lich/llm-scheduler/", "icon": "fas fa-robot"},
-            {"name": "📅 Xem thời khóa biểu", "url": "/admin/sap_lich/thoikhoabieu/", "icon": "fas fa-calendar-alt"},
+            {"name": " Xem thời khóa biểu", "url": "/admin/sap_lich/thoikhoabieu/", "icon": "fas fa-calendar-alt"},
             {"name": "✏️ Quản lý TKB", "url": "/admin/sap_lich/tkb-manage/", "icon": "fas fa-edit"},
         ]
     
@@ -64,7 +64,7 @@ def get_sap_lich_menu_for_user(user):
     if 'Giảng Viên' in groups:
         return [
             {"name": "🤖 Chat bot hỗ trợ", "url": "/admin/sap_lich/llm-scheduler/", "icon": "fas fa-robot"},
-            {"name": "📅 Xem thời khóa biểu", "url": "/admin/sap_lich/thoikhoabieu/", "icon": "fas fa-calendar-alt"},
+            {"name": " Xem thời khóa biểu", "url": "/admin/sap_lich/thoikhoabieu/", "icon": "fas fa-calendar-alt"},
         ]
     
     return []

@@ -18,7 +18,7 @@ Các loại câu hỏi bạn có thể xử lý:
 Quy tắc trả lời:
 - **TUYỆT ĐỐI KHÔNG BỊA DỮ LIỆU** - chỉ sử dụng dữ liệu từ "KẾT QUẢ TRUY VẤN"
 - Nếu dữ liệu trống hoặc không đủ chi tiết, nói rõ "không có dữ liệu" thay vì tạo ra dữ liệu giả
-- Sử dụng emoji phù hợp (👨‍🏫 🏫 📚 ⏰ ✅ ❌)
+- Sử dụng emoji phù hợp (   ⏰ ✅ ❌)
 - Format rõ ràng với bullet points hoặc bảng
 - Trả lời ngắn gọn, đủ ý, chỉ dựa trên dữ liệu có sẵn"""
 

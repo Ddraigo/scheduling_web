@@ -728,7 +728,7 @@
     <!-- Debug Info
     {% if user_role %}
     <div style="background: #fff3cd; padding: 10px; margin-bottom: 15px; border-radius: 5px; border-left: 4px solid #ffc107;">
-        <strong>🔍 Debug Info:</strong><br>
+        <strong> Debug Info:</strong><br>
         Role: <strong>{{ user_role }}</strong><br>
         {% if user_role == 'truong_khoa' %}
             Khoa: <strong>{{ role_info.ma_khoa }}</strong>
@@ -748,15 +748,15 @@
             <!-- View Type Toggle (ẩn nếu là Giáo Viên) -->
             {% if user_role != 'giang_vien' %}
             <div class="control-group toggle-group">
-                <label class="control-label">👁️ Góc nhìn</label>
+                <label class="control-label"> Góc nhìn</label>
                 <div class="view-toggle">
                     <button class="toggle-btn {% if view_type == 'teacher' %}active{% endif %}" 
                             onclick="changeView('teacher')">
-                        👨‍🏫 Giáo viên
+                         Giáo viên
                     </button>
                     <button class="toggle-btn {% if view_type == 'room' %}active{% endif %}" 
                             onclick="changeView('room')">
-                        🏫 Phòng học
+                         Phòng học
                     </button>
                 </div>
             </div>
@@ -764,15 +764,15 @@
 
             <!-- Display Mode Toggle -->
             <div class="control-group toggle-group">
-                <label class="control-label">📊 Hiển thị</label>
+                <label class="control-label"> Hiển thị</label>
                 <div class="view-toggle">
                     <button class="toggle-btn {% if display_mode == 'general' %}active{% endif %}" 
                             onclick="changeMode('general')">
-                        📋 Tổng quát
+                         Tổng quát
                     </button>
                     <button class="toggle-btn {% if display_mode == 'weekly' %}active{% endif %}" 
                             onclick="changeMode('weekly')">
-                        📅 Theo tuần
+                         Theo tuần
                     </button>
                 </div>
             </div>
@@ -800,7 +800,7 @@
         <div class="control-row">
             <!-- Chọn đợt xếp lịch -->
             <div class="control-group">
-                <label class="control-label">📅 Đợt xếp lịch</label>
+                <label class="control-label"> Đợt xếp lịch</label>
                 <select id="dotSelect" class="form-select" onchange="updateSchedule()">
                     <option value="">-- Chọn đợt --</option>
                     {% for dot in dot_list %}
@@ -814,7 +814,7 @@
             <!-- Chọn khoa (ẩn nếu là Trưởng Bộ Môn hoặc Giáo Viên) -->
             {% if user_role == 'admin' or user_role == 'truong_khoa' %}
             <div class="control-group">
-                <label class="control-label">🏛️ Khoa</label>
+                <label class="control-label"> Khoa</label>
                 {% if user_role == 'truong_khoa' %}
                     <!-- Hiển thị khoa cố định cho Trưởng Khoa -->
                     <input type="text" class="form-control" value="{{ khoa_list.0.ten_khoa }}" readonly style="background-color: #f5f5f5;">
@@ -835,7 +835,7 @@
             <!-- Chọn bộ môn (ẩn nếu là Giáo Viên) -->
             {% if user_role == 'admin' or user_role == 'truong_khoa' or user_role == 'truong_bo_mon' %}
             <div class="control-group">
-                <label class="control-label">📚 Bộ môn</label>
+                <label class="control-label"> Bộ môn</label>
                 {% if user_role == 'truong_bo_mon' %}
                     <!-- Hiển thị bộ môn cố định cho Trưởng Bộ Môn -->
                     <input type="text" class="form-control" value="{{ bo_mon_list.0.ten_bo_mon }}" readonly style="background-color: #f5f5f5;">
@@ -857,7 +857,7 @@
             {% if user_role != 'giang_vien' %}
             <div class="control-group">
                 {% if view_type == 'teacher' %}
-                <label class="control-label">👨‍🏫 Chọn giáo viên</label>
+                <label class="control-label"> Chọn giáo viên</label>
                 <select id="itemSelect" class="form-select" onchange="updateSchedule()">
                     <option value="">-- Chọn giáo viên --</option>
                     {% for teacher in teachers %}
@@ -867,7 +867,7 @@
                     {% endfor %}
                 </select>
                 {% else %}
-                <label class="control-label">🏫 Chọn phòng học</label>
+                <label class="control-label"> Chọn phòng học</label>
                 <select id="itemSelect" class="form-select" onchange="updateSchedule()">
                     <option value="">-- Chọn phòng --</option>
                     {% for room in rooms %}
@@ -881,9 +881,9 @@
             {% else %}
             <!-- Giáo Viên: hiển thị tên cố định -->
             <div class="control-group">
-                <label class="control-label">👨‍🏫 Giáo viên</label>
-                {% if teachers %}
-                    <input type="text" class="form-control" value="{{ teachers.0.ma_gv }} - {{ teachers.0.ten_gv }}" readonly style="background-color: #f5f5f5;">
+                <label class="control-label"> Giáo viên</label>
+                {% if selected_teacher %}
+                    <input type="text" class="form-control" value="{{ selected_teacher.ma_gv }} - {{ selected_teacher.ten_gv }}" readonly style="background-color: #f5f5f5;">
                 {% else %}
                     <input type="text" class="form-control" value="Không tìm thấy thông tin giáo viên" readonly style="background-color: #f5f5f5;">
                 {% endif %}
@@ -904,7 +904,7 @@
     {% elif not ma_dot %}
     <div class="schedule-wrapper">
         <div class="no-data-state">
-            <div class="icon">📅</div>
+            <div class="icon"></div>
             <h3>Chưa chọn đợt xếp lịch</h3>
             <p>Vui lòng chọn đợt xếp lịch để xem thời khóa biểu</p>
         </div>
@@ -912,7 +912,7 @@
     {% elif not selected_id %}
     <div class="schedule-wrapper">
         <div class="no-data-state">
-            <div class="icon">🔍</div>
+            <div class="icon"></div>
             <h3>
                 {% if view_type == 'teacher' %}
                     Chưa chọn giáo viên
@@ -1016,18 +1016,18 @@
                                              data-time-slot="{{ slot.ca_info.ten_ca }}"
                                              data-tuan-hoc="{{ class.tuan_hoc }}">
                                             <div class="class-title">
-                                                📚 {{ class.mon_hoc }}
+                                                 {{ class.mon_hoc }}
                                             </div>
                                             <div class="class-info">
                                                 🏷️ {{ class.ma_lop }}
                                             </div>
                                             {% if view_type == 'teacher' %}
                                             <div class="class-info">
-                                                🏫 {{ class.phong }}
+                                                 {{ class.phong }}
                                             </div>
                                             {% else %}
                                             <div class="class-info">
-                                                👨‍🏫 {{ class.gv_name }}
+                                                 {{ class.gv_name }}
                                             </div>
                                             {% endif %}
                                             <span class="class-badge">{{ class.week_display }}</span>

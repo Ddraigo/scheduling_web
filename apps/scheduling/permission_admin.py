@@ -102,7 +102,7 @@ class CustomUserAdmin(BaseUserAdmin):
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
             'classes': ('collapse',)
         }),
-        ('📅 Thông tin khác', {
+        (' Thông tin khác', {
             'fields': ('last_login', 'date_joined'),
             'classes': ('collapse',)
         }),
@@ -146,9 +146,9 @@ class CustomUserAdmin(BaseUserAdmin):
         
         # Map groups sang display với icon và màu
         role_config = {
-            'Truong_Khoa': {'label': '👔 Trưởng Khoa', 'color': '#dc2626'},
-            'Truong_Bo_Mon': {'label': '📚 Trưởng Bộ Môn', 'color': '#ea580c'},
-            'Giang_Vien': {'label': '👨‍🏫 Giảng Viên', 'color': '#16a34a'}
+            'Truong_Khoa': {'label': ' Trưởng Khoa', 'color': '#dc2626'},
+            'Truong_Bo_Mon': {'label': ' Trưởng Bộ Môn', 'color': '#ea580c'},
+            'Giang_Vien': {'label': ' Giảng Viên', 'color': '#16a34a'}
         }
         
         html_parts = []
@@ -193,7 +193,7 @@ class CustomUserAdmin(BaseUserAdmin):
             if gv.ma_bo_mon:
                 return format_html(
                     '<div style="line-height: 1.4;"><span style="color: #059669; font-weight: 600; font-size: 13px;">{}</span><br>'
-                    '<small style="color: #6b7280;">🏛️ {}</small></div>',
+                    '<small style="color: #6b7280;"> {}</small></div>',
                     gv.ma_bo_mon.ten_bo_mon,
                     gv.ma_bo_mon.ma_khoa.ten_khoa if gv.ma_bo_mon.ma_khoa else '—'
                 )
@@ -210,7 +210,7 @@ class CustomGroupAdmin(BaseGroupAdmin):
     search_fields = ['name']
     
     fieldsets = (
-        ('📋 Thông tin nhóm', {
+        (' Thông tin nhóm', {
             'fields': ('name',)
         }),
         ('🔑 Quyền hạn', {

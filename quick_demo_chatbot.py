@@ -48,9 +48,9 @@ def demo():
         
         if result['success']:
             print(f"\n💬 Response:\n{result['response']}\n")
-            print(f"🔍 Intent: {result['intent']['type']}")
+            print(f" Intent: {result['intent']['type']}")
             if result['intent'].get('query_type'):
-                print(f"🔍 Query Type: {result['intent']['query_type']}")
+                print(f" Query Type: {result['intent']['query_type']}")
         else:
             print(f"\n❌ Error: {result.get('error')}")
         

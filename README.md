@@ -288,13 +288,13 @@ scheduling_web/
 
 - 🗓️ **Xếp Lịch Tự Động**: Thuật toán meta-heuristic (Simulated Annealing + Tabu Search)
 - 👥 **Quản Lý Giảng Viên**: Phân công, nguyện vọng, tải giảng dạy
-- 🏫 **Quản Lý Phòng Học**: Sắp xếp phòng theo loại (LT/TH), sức chứa
-- 📊 **Thống Kê & Báo Cáo**: Dashboard trực quan, biểu đồ phân tích
+-  **Quản Lý Phòng Học**: Sắp xếp phòng theo loại (LT/TH), sức chứa
+-  **Thống Kê & Báo Cáo**: Dashboard trực quan, biểu đồ phân tích
 - 📤 **Xuất/Nhập Excel**: Import/export dữ liệu, template tự động
 - 🔐 **Xác Thực & Phân Quyền**: Django authentication + custom permissions
 - 🤖 **Chatbot AI**: Hỗ trợ truy vấn thời khóa biểu qua Google Gemini
 - ⚙️ **Cấu Hình Động**: Điều chỉnh trọng số ràng buộc mềm realtime
-- 📅 **Quản Lý Đợt**: Nhiều đợt xếp lịch độc lập cho mỗi học kỳ
+-  **Quản Lý Đợt**: Nhiều đợt xếp lịch độc lập cho mỗi học kỳ
 - 🔄 **Auto-generate Mã**: Tự động sinh mã khi tạo mới (Khoa, GV, Lớp, v.v.)
 
 ## 🎯 Workflow Cơ Bản
@@ -528,7 +528,7 @@ rm -rf staticfiles/
 python manage.py collectstatic --noinput
 ```
 
-### 🔍 Debug Mode
+###  Debug Mode
 
 Để xem chi tiết lỗi, bật debug trong `.env`:
 
