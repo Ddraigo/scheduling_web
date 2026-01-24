@@ -2,7 +2,6 @@ from django.contrib import admin
 from .models import SapLich
 
 # Register model để app "Sắp lịch" xuất hiện trong sidebar
-# Model này bị ẩn bởi JAZZMIN_SETTINGS["hide_models"] để không xuất hiện submenu
 @admin.register(SapLich)
 class SapLichAdmin(admin.ModelAdmin):
     def has_module_permission(self, request):
