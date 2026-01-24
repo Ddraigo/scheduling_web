@@ -587,6 +587,7 @@ class TKBLog(models.Model):
     ACTION_CHOICES = [
         ('CREATE', 'Tạo mới'),
         ('UPDATE', 'Cập nhật'),
+        ('MOVE', 'Di chuyển'),  # Drag & drop
         ('DELETE', 'Xóa'),
         ('RESTORE', 'Phục hồi'),
         ('SWAP', 'Hoán đổi'),

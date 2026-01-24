@@ -21,6 +21,7 @@ urlpatterns = [
     # TKB CRUD APIs
     path('api/tkb/create/', views.tkb_create_api, name='tkb_create'),
     path('api/tkb/update/', views.tkb_update_api, name='tkb_update'),
+    path('api/tkb/update-timeslot/', views.tkb_update_timeslot_api, name='tkb_update_timeslot'),  # Drag & drop
     path('api/tkb/delete/', views.tkb_delete_api, name='tkb_delete'),
     path('api/tkb/restore/', views.tkb_restore_api, name='tkb_restore'),
     path('api/tkb/swap/', views.tkb_swap_api, name='tkb_swap'),
