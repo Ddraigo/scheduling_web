@@ -4,7 +4,7 @@
 {% block object-tools-items %}
     {{ block.super }}
     
-    {# Custom Export Excel Button #}
+    {# Custom Export Excel Button - luôn hiển thị (vì có thể export dữ liệu mà mình view được) #}
     <li style="list-style: none; margin-left: 8px;">
         <a href="#" onclick="submitAction('export_to_excel', event)" 
            style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; 
@@ -17,7 +17,8 @@
         </a>
     </li>
     
-    {# Custom Delete Button #}
+    {# Custom Delete Button - hiển thị nếu có quyền delete hoặc là superuser #}
+    {% if has_delete_permission or request.user.is_superuser %}
     <li style="list-style: none; margin-left: 8px;">
         <a href="#" onclick="submitAction('delete_selected_custom', event)" 
            style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; 
@@ -29,6 +30,7 @@
             <i class="fas fa-trash-alt"></i> Xóa đã chọn
         </a>
     </li>
+    {% endif %}
 {% endblock %}
 
 {% block result_list %}

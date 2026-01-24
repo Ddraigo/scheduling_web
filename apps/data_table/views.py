@@ -172,6 +172,13 @@ def model_dt(request, aPath):
     email_fields = get_model_field_names(aModelClass, models.EmailField)
     text_fields = get_model_field_names(aModelClass, (models.TextField, models.CharField))
     
+    # Kiểm tra permissions cho user hiện tại (dựa trên meta của model/proxy)
+    app_label = aModelClass._meta.app_label
+    model_codename = aModelClass._meta.model_name  # ví dụ: 'khoaproxy'
+    has_add_permission = request.user.has_perm(f'{app_label}.add_{model_codename}')
+    has_change_permission = request.user.has_perm(f'{app_label}.change_{model_codename}')
+    has_delete_permission = request.user.has_perm(f'{app_label}.delete_{model_codename}')
+    
     context = {
         'page_title': 'DataTable - ' + aPath.lower().title(),
         'link': aPath,
@@ -190,7 +197,12 @@ def model_dt(request, aPath):
         'fk_fields_keys': list( fk_fields.keys() ),
         'fk_fields': fk_fields ,
         'choices_dict': choices_dict,
-        'segment': 'data_table'
+        'segment': 'data_table',
+        
+        # Permissions
+        'has_add_permission': has_add_permission,
+        'has_change_permission': has_change_permission,
+        'has_delete_permission': has_delete_permission,
     }
     return render(request, 'data_table/model.html', context)
 

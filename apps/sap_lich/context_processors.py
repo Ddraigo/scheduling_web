@@ -69,13 +69,18 @@ def user_role_context(request):
     has_view_saplich = user.has_perm('sap_lich.view_saplich')
     has_change_saplich = user.has_perm('sap_lich.change_saplich')
     has_add_saplich = user.has_perm('sap_lich.add_saplich')
-    has_view_data = user.has_perm('scheduling.view_monhoc') or user.has_perm('scheduling.view_giangvien')
-    has_view_nguyenvong = user.has_perm('scheduling.view_nguyenvong')
-    has_add_nguyenvong = user.has_perm('scheduling.add_nguyenvong')
+    # Sửa: Kiểm tra permissions của data_table proxy models thay vì scheduling models
+    has_view_data = (user.has_perm('data_table.view_monhocproxy') or 
+                     user.has_perm('data_table.view_giangvienproxy') or
+                     user.has_perm('data_table.view_bomonproxy'))
+    has_view_nguyenvong = user.has_perm('data_table.view_nguyenvongproxy')
+    has_add_nguyenvong = user.has_perm('data_table.add_nguyenvongproxy')
     
     logger.info(
         f"Permissions: view_saplich={has_view_saplich}, change_saplich={has_change_saplich}, "
-        f"add_saplich={has_add_saplich}, view_data={has_view_data}"
+        f"add_saplich={has_add_saplich}, view_data={has_view_data}, "
+        f"view_monhocproxy={user.has_perm('data_table.view_monhocproxy')}, "
+        f"view_giangvienproxy={user.has_perm('data_table.view_giangvienproxy')}"
     )
     
     # Xây dựng menu "Sắp lịch" nếu có quyền
@@ -98,19 +103,45 @@ def user_role_context(request):
     
     # Xây dựng submenu "Xem và Quản lý TKB"
     quan_ly_children = []
-    if has_change_saplich:
+    
+    # Xác định URL dựa trên role
+    role = role_info['role']
+    if role == 'admin':
+        base_url = '/admin/sap_lich'
+    elif role == 'truong_khoa':
+        base_url = f'/truong-khoa/{ma_gv}'
+    elif role == 'truong_bo_mon':
+        base_url = f'/truong-bo-mon/{ma_gv}'
+    elif role == 'giang_vien':
+        base_url = f'/giang-vien/{ma_gv}'
+    else:
+        base_url = '/admin/sap_lich'
+    
+    # Quản lý TKB: Admin, Trưởng Khoa, Trưởng Bộ Môn
+    if has_change_saplich and role in ['admin', 'truong_khoa', 'truong_bo_mon']:
         quan_ly_children.append({
             'icon': 'tim-icons icon-settings',
             'title': 'Quản lý TKB',
-            'url': f'/truong-khoa/{ma_gv}/quan-ly-tkb/',
+            'url': f'{base_url}/quan-ly-tkb/' if role != 'admin' else '/admin/sap_lich/tkb-manage/',
             'segment': 'quan-ly-tkb'
         })
+    
+    # Xem TKB: Tất cả roles
     if has_view_saplich:
         quan_ly_children.append({
             'icon': 'tim-icons icon-notes',
             'title': 'Xem thời khóa biểu',
-            'url': f'/truong-khoa/{ma_gv}/xem-tkb/',
+            'url': f'{base_url}/xem-tkb/' if role != 'admin' else '/admin/sap_lich/thoikhoabieu/',
             'segment': 'xem-tkb'
+        })
+    
+    # Chat Bot LLM - tất cả users
+    if role is not None:
+        quan_ly_children.append({
+            'icon': 'tim-icons icon-chat-33',
+            'title': 'Chat Bot Hỗ trợ',
+            'url': '/admin/sap_lich/llm-scheduler/',
+            'segment': 'llm-scheduler'
         })
     
     # Thêm menu "Sắp lịch" nếu có children
@@ -141,7 +172,12 @@ def user_role_context(request):
         })
         logger.info(f"Added 'Dữ liệu' menu - has_view_data={has_view_data}")
     else:
-        logger.info(f"NOT adding 'Dữ liệu' menu - has_view_data={has_view_data}, view_monhoc={user.has_perm('scheduling.view_monhoc')}, view_giangvien={user.has_perm('scheduling.view_giangvien')}")
+        logger.info(
+            f"NOT adding 'Dữ liệu' menu - has_view_data={has_view_data}, "
+            f"view_monhocproxy={user.has_perm('data_table.view_monhocproxy')}, "
+            f"view_giangvienproxy={user.has_perm('data_table.view_giangvienproxy')}, "
+            f"view_bomonproxy={user.has_perm('data_table.view_bomonproxy')}"
+        )
     
     # Menu cho Giảng viên nếu role là giang_vien
     if role_info['role'] == 'giang_vien':
